@@ -32,6 +32,10 @@ _Avoid_: Exercise item, quiz item
 A learner's submitted response to a Question at a specific moment.
 _Avoid_: Answer, response record
 
+**Learning Session**:
+A learner's active or completed run through a Skill, including ordered Questions, feedback, retries, completion, and summary.
+_Avoid_: Lesson session, practice run
+
 **Learner Profile**:
 The learner-owned product identity that describes a person's learning goal, languages, current level, daily goal, preferences, and onboarding state.
 _Avoid_: Account, user metadata
