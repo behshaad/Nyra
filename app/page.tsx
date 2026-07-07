@@ -1,5 +1,5 @@
-import { NiraExperience } from "@/components/nira-experience";
+import { NyraExperience } from "@/components/nyra-experience";
 
 export default function Home() {
-  return <NiraExperience />;
+  return <NyraExperience />;
 }

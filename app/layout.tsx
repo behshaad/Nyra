@@ -16,7 +16,7 @@ const vazirmatn = Vazirmatn({
 });
 
 export const metadata: Metadata = {
-  title: "Nira | German learning for Persian speakers",
+  title: "Nyra | German learning for Persian speakers",
   description:
     "A modern AI-assisted German learning platform built for Persian speakers."
 };

@@ -1,4 +1,4 @@
-# Nira Implementation Plan
+# Nyra Implementation Plan
 
 Status: Draft for approval
 Review date: 2026-07-08

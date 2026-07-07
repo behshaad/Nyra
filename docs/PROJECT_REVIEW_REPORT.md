@@ -1,12 +1,12 @@
-# Nira Project Review Report
+# Nyra Project Review Report
 
 Status: Draft for approval
-Reviewed source docs: `/Users/happyman/Desktop/nira`
+Reviewed source docs: `/Users/happyman/Desktop/nyra`
 Review date: 2026-07-08
 
 ## 1. Executive Summary
 
-Nira has a strong product foundation: a Persian-first German learning platform with structured CEFR progression, human-reviewed content, smart review, gamification, premium subscriptions, and AI assistance that supports rather than replaces education.
+Nyra has a strong product foundation: a Persian-first German learning platform with structured CEFR progression, human-reviewed content, smart review, gamification, premium subscriptions, and AI assistance that supports rather than replaces education.
 
 The main risk is not the product idea. The main risk is that the current documentation is still too high-level to implement safely. Several core terms are overloaded, especially `Lesson`, `Skill`, `Exercise`, `Question`, `Checkpoint`, `Progress`, and `AI Assistance`. The docs also mix MVP and future scope in ways that would cause scope creep.
 

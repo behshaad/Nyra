@@ -1,6 +1,6 @@
-# Nira
+# Nyra
 
-Nira is a modern German learning platform for Persian speakers.
+Nyra is a modern German learning platform for Persian speakers.
 
 This repository currently contains a runnable frontend foundation with:
 

@@ -24,11 +24,11 @@ import {
   stats,
   strengths,
   type StudyArea
-} from "@/lib/nira-data";
+} from "@/lib/nyra-data";
 
 const tabs: StudyArea[] = ["Learn", "Flashcards", "Admin", "Analytics"];
 
-export function NiraExperience() {
+export function NyraExperience() {
   const [activeTab, setActiveTab] = useState<StudyArea>("Learn");
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -57,10 +57,10 @@ export function NiraExperience() {
     <main className="site-shell">
       <AnimatedBackdrop />
       <header className="topbar">
-        <a className="brand" href="#top" aria-label="Nira home">
+        <a className="brand" href="#top" aria-label="Nyra home">
           <span className="brand-mark">N</span>
           <span>
-            <strong>Nira</strong>
+            <strong>Nyra</strong>
             <small>Persian-first German</small>
           </span>
         </a>
@@ -114,7 +114,7 @@ export function NiraExperience() {
             <Sparkles size={16} />
             Modern German learning for Persian speakers
           </div>
-          <h1>Nira makes German feel guided, friendly, and possible.</h1>
+          <h1>Nyra makes German feel guided, friendly, and possible.</h1>
           <p>
             A premium learning experience with CEFR structure, Persian-first
             explanations, smart flashcards, and human-reviewed educational
@@ -131,7 +131,7 @@ export function NiraExperience() {
           </div>
         </div>
 
-        <section id="learn" className="app-panel" aria-label="Nira learning studio">
+        <section id="learn" className="app-panel" aria-label="Nyra learning studio">
           <div className="app-panel-header">
             <div>
               <p className="panel-kicker">Today&apos;s path</p>
@@ -140,7 +140,7 @@ export function NiraExperience() {
             <span className="status-pill">12 day streak</span>
           </div>
 
-          <div className="tab-list" role="tablist" aria-label="Nira preview sections">
+          <div className="tab-list" role="tablist" aria-label="Nyra preview sections">
             {tabs.map((tab) => (
               <button
                 key={tab}
@@ -186,7 +186,7 @@ export function NiraExperience() {
           <span className="section-label">Learning system</span>
           <h2>Built around clarity, repetition, and real progress.</h2>
           <p>
-            Nira keeps the Duolingo-like momentum people enjoy, but the
+            Nyra keeps the Duolingo-like momentum people enjoy, but the
             product language is original: calmer visuals, stronger Persian
             support, and content that stays educator-controlled.
           </p>
@@ -214,7 +214,7 @@ export function NiraExperience() {
         </div>
         <div className="pricing-card">
           <span className="status-pill bright">Recommended</span>
-          <h3>Nira Premium</h3>
+          <h3>Nyra Premium</h3>
           <p>Full CEFR path, complete review system, and priority access to new features.</p>
           <ul>
             <li>
@@ -239,7 +239,7 @@ export function NiraExperience() {
           <h2>Educational quality stays controlled by humans.</h2>
           <p>
             Admins can draft, review, publish, and archive learning content.
-            AI can help generate drafts later, but Nira never auto-publishes
+            AI can help generate drafts later, but Nyra never auto-publishes
             educational material.
           </p>
         </div>
