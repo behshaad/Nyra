@@ -28,6 +28,10 @@ _Avoid_: Lesson
 A learner-facing prompt that expects an answer and can produce feedback.
 _Avoid_: Exercise item, quiz item
 
+**Question Attempt**:
+A learner's submitted response to a Question at a specific moment.
+_Avoid_: Answer, response record
+
 **Learner Profile**:
 The learner-owned product identity that describes a person's learning goal, languages, current level, daily goal, preferences, and onboarding state.
 _Avoid_: Account, user metadata
