@@ -27,3 +27,7 @@ _Avoid_: Lesson
 **Question**:
 A learner-facing prompt that expects an answer and can produce feedback.
 _Avoid_: Exercise item, quiz item
+
+**Learner Profile**:
+The learner-owned product identity that describes a person's learning goal, languages, current level, daily goal, preferences, and onboarding state.
+_Avoid_: Account, user metadata
