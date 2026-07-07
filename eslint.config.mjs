@@ -5,7 +5,13 @@ import tsPlugin from "@typescript-eslint/eslint-plugin";
 
 export default [
   {
-    ignores: [".next/**", "node_modules/**", "out/**", "coverage/**"]
+    ignores: [
+      ".next/**",
+      "node_modules/**",
+      "out/**",
+      "coverage/**",
+      "lib/generated/prisma/**"
+    ]
   },
   js.configs.recommended,
   {
@@ -18,6 +24,10 @@ export default [
         },
         ecmaVersion: "latest",
         sourceType: "module"
+      },
+      globals: {
+        console: "readonly",
+        process: "readonly"
       }
     },
     plugins: {

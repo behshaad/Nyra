@@ -1,0 +1,260 @@
+import {
+  LearningSessionStatus,
+  ProgressEventType,
+  PublicationStatus,
+  QuestionAttemptResult
+} from "@/lib/generated/prisma/enums";
+import type { PrismaClient } from "@/lib/generated/prisma/client";
+import { evaluateAnswer } from "@/lib/question-engine/evaluation";
+import type {
+  AnswerFeedbackView,
+  LearningQuestionView,
+  LearningSessionView
+} from "@/lib/question-engine/types";
+
+type QuestionRecord = {
+  id: string;
+  type: LearningQuestionView["type"];
+  prompt: string;
+  helper: string | null;
+  choices: unknown;
+  correctAnswer: string;
+  explanation: string;
+};
+
+function asStringArray(value: unknown) {
+  return Array.isArray(value) && value.every((item) => typeof item === "string")
+    ? value
+    : [];
+}
+
+function questionToView(question: QuestionRecord): LearningQuestionView {
+  return {
+    id: question.id,
+    type: question.type,
+    prompt: question.prompt,
+    helper: question.helper,
+    choices: asStringArray(question.choices)
+  };
+}
+
+function queueFromSession(value: unknown) {
+  return Array.isArray(value) && value.every((item) => typeof item === "string")
+    ? value
+    : [];
+}
+
+function progressPercent(totalQuestions: number, remainingQuestions: number) {
+  if (totalQuestions === 0) {
+    return 100;
+  }
+
+  return Math.round(
+    ((totalQuestions - remainingQuestions) / totalQuestions) * 100
+  );
+}
+
+export class QuestionEngine {
+  constructor(private readonly db: PrismaClient) {}
+
+  async startOrResumeSession(input: {
+    learnerProfileId: string;
+    skillSlug: string;
+  }): Promise<LearningSessionView> {
+    const skill = await this.db.skill.findUniqueOrThrow({
+      where: {
+        slug: input.skillSlug
+      },
+      include: {
+        questions: {
+          where: {
+            required: true,
+            publicationStatus: PublicationStatus.PUBLISHED
+          },
+          orderBy: {
+            order: "asc"
+          }
+        }
+      }
+    });
+
+    if (skill.publicationStatus !== PublicationStatus.PUBLISHED) {
+      throw new Error("Skill is not published.");
+    }
+
+    const existing = await this.db.learningSession.findFirst({
+      where: {
+        learnerProfileId: input.learnerProfileId,
+        skillId: skill.id,
+        status: LearningSessionStatus.ACTIVE
+      },
+      orderBy: {
+        startedAt: "desc"
+      }
+    });
+
+    const session =
+      existing ??
+      (await this.db.learningSession.create({
+        data: {
+          learnerProfileId: input.learnerProfileId,
+          skillId: skill.id,
+          questionQueue: skill.questions.map((question) => question.id),
+          progressEvents: {
+            create: {
+              learnerProfileId: input.learnerProfileId,
+              skillId: skill.id,
+              type: ProgressEventType.SKILL_STARTED
+            }
+          }
+        }
+      }));
+
+    const queue = queueFromSession(session.questionQueue);
+    const currentQuestion = skill.questions.find(
+      (question) => question.id === queue[0]
+    );
+
+    return {
+      sessionId: session.id,
+      skill: {
+        id: skill.id,
+        slug: skill.slug,
+        title: skill.title,
+        description: skill.description,
+        xp: skill.xp
+      },
+      status: session.status,
+      currentQuestion: currentQuestion ? questionToView(currentQuestion) : null,
+      progressPercent: progressPercent(skill.questions.length, queue.length),
+      remainingQuestionCount: queue.length
+    };
+  }
+
+  async submitAnswer(input: {
+    sessionId: string;
+    submittedAnswer: string;
+  }): Promise<AnswerFeedbackView> {
+    return this.db.$transaction(async (tx) => {
+      const session = await tx.learningSession.findUniqueOrThrow({
+        where: {
+          id: input.sessionId
+        },
+        include: {
+          skill: {
+            include: {
+              questions: {
+                where: {
+                  required: true,
+                  publicationStatus: PublicationStatus.PUBLISHED
+                },
+                orderBy: {
+                  order: "asc"
+                }
+              }
+            }
+          }
+        }
+      });
+
+      if (session.status === LearningSessionStatus.COMPLETED) {
+        throw new Error("Learning Session is already complete.");
+      }
+
+      const queue = queueFromSession(session.questionQueue);
+      const questionId = queue[0];
+      const question = session.skill.questions.find(
+        (candidate) => candidate.id === questionId
+      );
+
+      if (!question) {
+        throw new Error("Learning Session has no current Question.");
+      }
+
+      const isCorrect = evaluateAnswer(question, input.submittedAnswer);
+      const result = isCorrect
+        ? QuestionAttemptResult.CORRECT
+        : QuestionAttemptResult.INCORRECT;
+      const nextQueue = isCorrect
+        ? queue.slice(1)
+        : [...queue.slice(1), question.id];
+      const completed = nextQueue.length === 0;
+      const xpAwarded = completed ? session.skill.xp : 0;
+
+      await tx.questionAttempt.create({
+        data: {
+          learningSessionId: session.id,
+          questionId: question.id,
+          submittedAnswer: input.submittedAnswer,
+          result,
+          feedback: question.explanation
+        }
+      });
+
+      await tx.progressEvent.create({
+        data: {
+          learnerProfileId: session.learnerProfileId,
+          learningSessionId: session.id,
+          skillId: session.skillId,
+          type: ProgressEventType.QUESTION_ANSWERED,
+          metadata: {
+            questionId: question.id,
+            result
+          }
+        }
+      });
+
+      if (completed) {
+        await tx.progressEvent.createMany({
+          data: [
+            {
+              learnerProfileId: session.learnerProfileId,
+              learningSessionId: session.id,
+              skillId: session.skillId,
+              type: ProgressEventType.SKILL_COMPLETED
+            },
+            {
+              learnerProfileId: session.learnerProfileId,
+              learningSessionId: session.id,
+              skillId: session.skillId,
+              type: ProgressEventType.XP_AWARDED,
+              xp: xpAwarded
+            }
+          ]
+        });
+      }
+
+      await tx.learningSession.update({
+        where: {
+          id: session.id
+        },
+        data: {
+          questionQueue: nextQueue,
+          status: completed
+            ? LearningSessionStatus.COMPLETED
+            : LearningSessionStatus.ACTIVE,
+          completedAt: completed ? new Date() : null,
+          xpAwardedAt: completed ? new Date() : null
+        }
+      });
+
+      const nextQuestion = session.skill.questions.find(
+        (candidate) => candidate.id === nextQueue[0]
+      );
+
+      return {
+        sessionId: session.id,
+        questionId: question.id,
+        isCorrect,
+        explanation: question.explanation,
+        completed,
+        xpAwarded,
+        nextQuestion: nextQuestion ? questionToView(nextQuestion) : null,
+        progressPercent: progressPercent(
+          session.skill.questions.length,
+          nextQueue.length
+        )
+      };
+    });
+  }
+}

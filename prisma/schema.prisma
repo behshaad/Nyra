@@ -1,0 +1,187 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum PublicationStatus {
+  DRAFT
+  IN_REVIEW
+  PUBLISHED
+  ARCHIVED
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  FILL_IN_BLANK
+  WORD_ORDERING
+}
+
+enum LearningSessionStatus {
+  ACTIVE
+  COMPLETED
+}
+
+enum QuestionAttemptResult {
+  CORRECT
+  INCORRECT
+}
+
+enum ProgressEventType {
+  SKILL_STARTED
+  QUESTION_ANSWERED
+  SKILL_COMPLETED
+  XP_AWARDED
+  FLASHCARD_REVIEWED
+}
+
+model Course {
+  id                String   @id @default(uuid())
+  slug              String   @unique
+  title             String
+  sourceLanguage    String
+  targetLanguage    String
+  interfaceLanguage String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  levels Level[]
+}
+
+model Level {
+  id        String   @id @default(uuid())
+  courseId  String
+  order     Int
+  label     String
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  units  Unit[]
+
+  @@unique([courseId, label])
+  @@unique([courseId, order])
+}
+
+model Unit {
+  id        String   @id @default(uuid())
+  levelId   String
+  order     Int
+  slug      String   @unique
+  title     String
+  summary   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  level  Level   @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  skills Skill[]
+
+  @@unique([levelId, order])
+}
+
+model Skill {
+  id                String            @id @default(uuid())
+  unitId            String
+  order             Int
+  slug              String            @unique
+  title             String
+  description       String
+  xp                Int               @default(80)
+  publicationStatus PublicationStatus @default(DRAFT)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  unit             Unit              @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  questions        Question[]
+  learningSessions LearningSession[]
+  progressEvents   ProgressEvent[]
+
+  @@unique([unitId, order])
+}
+
+model Question {
+  id                String            @id @default(uuid())
+  skillId           String
+  order             Int
+  type              QuestionType
+  prompt            String
+  helper            String?
+  choices           Json?
+  correctAnswer     String
+  explanation       String
+  required          Boolean           @default(true)
+  publicationStatus PublicationStatus @default(PUBLISHED)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  skill    Skill             @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  attempts QuestionAttempt[]
+
+  @@unique([skillId, order])
+}
+
+model LearnerProfile {
+  id                 String   @id @default(uuid())
+  authUserId         String?  @unique
+  displayName        String
+  sourceLanguage     String
+  targetLanguage     String
+  interfaceLanguage  String
+  currentLevel       String
+  dailyGoalMinutes   Int
+  onboardingComplete Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  learningSessions LearningSession[]
+  progressEvents   ProgressEvent[]
+}
+
+model LearningSession {
+  id               String                @id @default(uuid())
+  learnerProfileId String
+  skillId          String
+  status           LearningSessionStatus @default(ACTIVE)
+  questionQueue    Json
+  startedAt        DateTime              @default(now())
+  completedAt      DateTime?
+  xpAwardedAt      DateTime?
+  updatedAt        DateTime              @updatedAt
+
+  learnerProfile LearnerProfile    @relation(fields: [learnerProfileId], references: [id], onDelete: Cascade)
+  skill          Skill             @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  attempts       QuestionAttempt[]
+  progressEvents ProgressEvent[]
+}
+
+model QuestionAttempt {
+  id                String                @id @default(uuid())
+  learningSessionId String
+  questionId        String
+  submittedAnswer   String
+  result            QuestionAttemptResult
+  feedback          String
+  createdAt         DateTime              @default(now())
+
+  learningSession LearningSession @relation(fields: [learningSessionId], references: [id], onDelete: Cascade)
+  question        Question        @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model ProgressEvent {
+  id                String            @id @default(uuid())
+  learnerProfileId  String
+  learningSessionId String?
+  skillId           String?
+  type              ProgressEventType
+  xp                Int?
+  metadata          Json?
+  createdAt         DateTime          @default(now())
+
+  learnerProfile  LearnerProfile   @relation(fields: [learnerProfileId], references: [id], onDelete: Cascade)
+  learningSession LearningSession? @relation(fields: [learningSessionId], references: [id], onDelete: SetNull)
+  skill           Skill?           @relation(fields: [skillId], references: [id], onDelete: SetNull)
+}

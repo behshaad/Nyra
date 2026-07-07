@@ -2,13 +2,14 @@
 
 Nyra is a modern German learning platform for Persian speakers.
 
-This repository currently contains a runnable frontend foundation with:
+This repository currently contains the first real product architecture slice:
 
-- A polished animated product experience.
-- A guided learning-path preview.
-- Interactive lesson questions with feedback.
-- Flashcard, admin, analytics, and premium previews.
-- TypeScript-first local data structures ready to connect to a backend later.
+- Real routes for `/`, `/learn`, `/learn/[skillId]`, `/flashcards`, `/profile`, `/admin`, and `/pricing`.
+- A focused A1 Skill learning session for `family-basics`.
+- A deterministic Question Engine for multiple choice, fill-in-the-blank, and word-ordering questions.
+- Prisma/PostgreSQL models for Course, Level, Unit, Skill, Question, Learner Profile, Learning Session, Question Attempt, and Progress Event.
+- Seed content for one Persian-to-German A1 Course slice and a development learner identity.
+- Read-only admin, static pricing, deferred flashcards, and dev-profile scaffolds.
 
 ## Development
 
@@ -18,6 +19,21 @@ npm run dev
 ```
 
 Open `http://localhost:3000`.
+
+## Database
+
+Set `DATABASE_URL` in `.env`, then run:
+
+```bash
+npm run db:push
+npm run db:seed
+```
+
+Prisma client generation runs on `postinstall`, and can also be run manually:
+
+```bash
+npm run prisma:generate
+```
 
 ## Verification
 
