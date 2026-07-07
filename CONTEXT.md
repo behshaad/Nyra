@@ -43,3 +43,19 @@ _Avoid_: Learning language
 **Interface Language**:
 The language used by Nyra's navigation, controls, account screens, and other product UI.
 _Avoid_: App language
+
+**Draft**:
+Content that is being created or edited and is not visible to learners.
+_Avoid_: Unpublished
+
+**In Review**:
+Content that is ready for human review but is not yet visible to learners.
+_Avoid_: Pending
+
+**Published**:
+Content that has been approved and can be shown to learners.
+_Avoid_: Live
+
+**Archived**:
+Content that has been removed from normal learner access without deleting its history.
+_Avoid_: Deleted, hidden
