@@ -31,3 +31,15 @@ _Avoid_: Exercise item, quiz item
 **Learner Profile**:
 The learner-owned product identity that describes a person's learning goal, languages, current level, daily goal, preferences, and onboarding state.
 _Avoid_: Account, user metadata
+
+**Source Language**:
+The language a learner uses as their base for explanations, translations, and learning support.
+_Avoid_: Native language
+
+**Target Language**:
+The language a learner is studying in a Course.
+_Avoid_: Learning language
+
+**Interface Language**:
+The language used by Nyra's navigation, controls, account screens, and other product UI.
+_Avoid_: App language
