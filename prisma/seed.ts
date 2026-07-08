@@ -72,7 +72,10 @@ async function main() {
                   slug: skill.slug,
                   title: skill.title,
                   description: skill.description,
+                  kind: skill.kind,
                   xp: skill.xp,
+                  passingScore: skill.passingScore,
+                  requeueIncorrect: skill.requeueIncorrect,
                   publicationStatus: skill.publicationStatus,
                   questions: {
                     create: skill.questions.map((question) => ({

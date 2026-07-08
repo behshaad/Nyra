@@ -22,6 +22,10 @@ type QuestionRecord = {
   explanation: string;
 };
 
+type AttemptRecord = {
+  result: QuestionAttemptResult;
+};
+
 function asStringArray(value: unknown) {
   return Array.isArray(value) && value.every((item) => typeof item === "string")
     ? value
@@ -52,6 +56,18 @@ function progressPercent(totalQuestions: number, remainingQuestions: number) {
   return Math.round(
     ((totalQuestions - remainingQuestions) / totalQuestions) * 100
   );
+}
+
+function scorePercent(totalQuestions: number, correctAttempts: number) {
+  if (totalQuestions === 0) {
+    return 100;
+  }
+
+  return Math.round((correctAttempts / totalQuestions) * 100);
+}
+
+function passed(score: number | null, passingScore: number | null) {
+  return score === null || passingScore === null ? null : score >= passingScore;
 }
 
 export class QuestionEngine {
@@ -122,12 +138,16 @@ export class QuestionEngine {
         slug: skill.slug,
         title: skill.title,
         description: skill.description,
-        xp: skill.xp
+        kind: skill.kind,
+        xp: skill.xp,
+        passingScore: skill.passingScore
       },
       status: session.status,
       currentQuestion: currentQuestion ? questionToView(currentQuestion) : null,
       progressPercent: progressPercent(skill.questions.length, queue.length),
-      remainingQuestionCount: queue.length
+      remainingQuestionCount: queue.length,
+      scorePercent: null,
+      passed: null
     };
   }
 
@@ -141,6 +161,7 @@ export class QuestionEngine {
           id: input.sessionId
         },
         include: {
+          attempts: true,
           skill: {
             include: {
               questions: {
@@ -175,11 +196,24 @@ export class QuestionEngine {
       const result = isCorrect
         ? QuestionAttemptResult.CORRECT
         : QuestionAttemptResult.INCORRECT;
-      const nextQueue = isCorrect
-        ? queue.slice(1)
-        : [...queue.slice(1), question.id];
+      const nextQueue =
+        isCorrect || !session.skill.requeueIncorrect
+          ? queue.slice(1)
+          : [...queue.slice(1), question.id];
       const completed = nextQueue.length === 0;
-      const xpAwarded = completed ? session.skill.xp : 0;
+      const correctAttemptCount =
+        session.attempts.filter(
+          (attempt: AttemptRecord) =>
+            attempt.result === QuestionAttemptResult.CORRECT
+        ).length + (isCorrect ? 1 : 0);
+      const currentScore = session.skill.requeueIncorrect
+        ? null
+        : scorePercent(session.skill.questions.length, correctAttemptCount);
+      const currentPassed = completed
+        ? passed(currentScore, session.skill.passingScore)
+        : null;
+      const xpAwarded =
+        completed && (currentPassed !== false) ? session.skill.xp : 0;
 
       await tx.questionAttempt.create({
         data: {
@@ -211,7 +245,11 @@ export class QuestionEngine {
               learnerProfileId: session.learnerProfileId,
               learningSessionId: session.id,
               skillId: session.skillId,
-              type: ProgressEventType.SKILL_COMPLETED
+              type: ProgressEventType.SKILL_COMPLETED,
+              metadata: {
+                scorePercent: currentScore,
+                passed: currentPassed
+              }
             },
             {
               learnerProfileId: session.learnerProfileId,
@@ -253,7 +291,9 @@ export class QuestionEngine {
         progressPercent: progressPercent(
           session.skill.questions.length,
           nextQueue.length
-        )
+        ),
+        scorePercent: currentScore,
+        passed: currentPassed
       };
     });
   }

@@ -1,11 +1,16 @@
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Lock } from "lucide-react";
+import { ArrowRight, CheckCircle2, FileCheck2, Trophy } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
-import { getPublishedSkills, sampleCourse } from "@/lib/learning/sample-content";
+import {
+  getA1ContentSummary,
+  sampleCourse
+} from "@/lib/learning/sample-content";
 
 export default function LearnPage() {
-  const skills = getPublishedSkills();
+  const summary = getA1ContentSummary();
+  const a1Level = sampleCourse.levels[0];
+  const firstSkill = a1Level.units[0]?.skills[0];
 
   return (
     <main className="site-shell">
@@ -18,53 +23,80 @@ export default function LearnPage() {
           <h1>A1 first, polished before broad.</h1>
           <p>
             The MVP Course is {sampleCourse.sourceLanguage} speakers learning{" "}
-            {sampleCourse.targetLanguage}. Higher levels stay future scope until the A1 loop
-            proves itself.
+            {sampleCourse.targetLanguage}. A1 now includes the complete playable path:
+            Skills, Unit Checkpoints, and the Final A1 Test.
           </p>
         </div>
 
         <section className="app-panel route-panel" aria-label="Published skills">
           <div className="app-panel-header">
             <div>
-              <p className="panel-kicker">Published now</p>
-              <h2>A1 Foundations</h2>
+              <p className="panel-kicker">Published A1</p>
+              <h2>{a1Level.title}</h2>
             </div>
-            <span className="status-pill">{skills.length} Skill</span>
+            <span className="status-pill">
+              {summary.regularSkillCount} Skills · {summary.questionCount} Questions
+            </span>
           </div>
           <div className="path-column">
-            {skills.map((skill) => (
-              <Link className="skill-node current" href={`/learn/${skill.slug}`} key={skill.slug}>
-                <span className="node-icon">
-                  <CheckCircle2 size={17} />
-                </span>
-                <div>
-                  <small>{skill.unitTitle}</small>
-                  <h3>{skill.title}</h3>
-                  <p>{skill.description}</p>
+            {a1Level.units.map((unit, unitIndex) => (
+              <section className="unit-band" key={unit.slug}>
+                <div className="unit-band-header">
+                  <div>
+                    <small>Unit {unitIndex + 1}</small>
+                    <h3>{unit.title}</h3>
+                    <p>{unit.summary}</p>
+                  </div>
+                  <strong>{unit.skills.length} items</strong>
                 </div>
-                <strong>{skill.xp} XP</strong>
-              </Link>
+                <div className="path-column compact">
+                  {unit.skills.map((skill) => (
+                    <Link
+                      className="skill-node current"
+                      href={`/learn/${skill.slug}`}
+                      key={skill.slug}
+                    >
+                      <span className="node-icon">
+                        {skill.kind === "FINAL_TEST" ? (
+                          <Trophy size={17} />
+                        ) : skill.kind === "UNIT_CHECKPOINT" ? (
+                          <FileCheck2 size={17} />
+                        ) : (
+                          <CheckCircle2 size={17} />
+                        )}
+                      </span>
+                      <div>
+                        <small>
+                          {skill.kind === "FINAL_TEST"
+                            ? "Final A1 Test"
+                            : skill.kind === "UNIT_CHECKPOINT"
+                              ? "Unit Checkpoint"
+                              : unit.title}
+                        </small>
+                        <h3>{skill.title}</h3>
+                        <p>{skill.description}</p>
+                      </div>
+                      <strong>
+                        {skill.passingScore
+                          ? `${skill.passingScore}%`
+                          : `${skill.xp} XP`}
+                      </strong>
+                    </Link>
+                  ))}
+                </div>
+              </section>
             ))}
-            <article className="skill-node locked">
-              <span className="node-icon">
-                <Lock size={17} />
-              </span>
-              <div>
-                <small>Coming later</small>
-                <h3>Checkpoints</h3>
-                <p>Unit gates are deferred until the core Skill loop is stable.</p>
-              </div>
-              <strong>Later</strong>
-            </article>
           </div>
         </section>
 
-        <div className="route-actions">
-          <Link className="primary-button" href="/learn/family-basics">
-            Start Family basics
-            <ArrowRight size={18} />
-          </Link>
-        </div>
+        {firstSkill ? (
+          <div className="route-actions">
+            <Link className="primary-button" href={`/learn/${firstSkill.slug}`}>
+              Start A1
+              <ArrowRight size={18} />
+            </Link>
+          </div>
+        ) : null}
       </section>
     </main>
   );

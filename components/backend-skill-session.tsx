@@ -114,6 +114,15 @@ export function BackendSkillSession({ skillSlug }: { skillSlug: string }) {
       return;
     }
 
+    const shouldRequeue =
+      session.skill.kind === "REGULAR" && !lastFeedback.isCorrect;
+    const remainingQuestionCount = lastFeedback.completed
+      ? 0
+      : Math.max(
+          0,
+          session.remainingQuestionCount - (shouldRequeue ? 0 : 1)
+        );
+
     setLoadState({
       status: "ready",
       session: {
@@ -121,8 +130,9 @@ export function BackendSkillSession({ skillSlug }: { skillSlug: string }) {
         status: lastFeedback.completed ? "COMPLETED" : "ACTIVE",
         currentQuestion: lastFeedback.nextQuestion,
         progressPercent: lastFeedback.progressPercent,
-        remainingQuestionCount:
-          session.remainingQuestionCount + (lastFeedback.isCorrect ? -1 : 0)
+        remainingQuestionCount,
+        scorePercent: lastFeedback.scorePercent,
+        passed: lastFeedback.passed
       }
     });
     setLastFeedback(null);
@@ -157,6 +167,14 @@ export function BackendSkillSession({ skillSlug }: { skillSlug: string }) {
     return null;
   }
 
+  const isAssessment = readySession.skill.kind !== "REGULAR";
+  const assessmentLabel =
+    readySession.skill.kind === "FINAL_TEST"
+      ? "Final A1 Test"
+      : readySession.skill.kind === "UNIT_CHECKPOINT"
+        ? "Unit Checkpoint"
+        : "Backend Learning Session";
+
   return (
     <section
       className="app-panel route-panel"
@@ -166,9 +184,18 @@ export function BackendSkillSession({ skillSlug }: { skillSlug: string }) {
         <div>
           <p className="panel-kicker">Backend Learning Session</p>
           <h2>{readySession.skill.title}</h2>
+          {isAssessment ? (
+            <p className="muted-line">
+              {assessmentLabel} · passing score {readySession.skill.passingScore}%
+            </p>
+          ) : null}
         </div>
         <span className="status-pill">
-          {completed ? `${readySession.skill.xp} XP earned` : `${readySession.skill.xp} XP`}
+          {completed && readySession.scorePercent !== null
+            ? `${readySession.scorePercent}%`
+            : completed
+              ? `${readySession.skill.xp} XP earned`
+              : `${readySession.skill.xp} XP`}
         </span>
       </div>
 
@@ -186,16 +213,29 @@ export function BackendSkillSession({ skillSlug }: { skillSlug: string }) {
         {completed ? (
           <div className="session-summary">
             <Check size={24} />
-            <h3>Skill complete</h3>
+            <h3>
+              {isAssessment
+                ? readySession.passed
+                  ? "Assessment passed"
+                  : "Review recommended"
+                : "Skill complete"}
+            </h3>
             <p>
-              This completion was handled by the backend Question Engine. Attempts and progress
-              events were persisted in PostgreSQL.
+              {isAssessment
+                ? "Your score was saved as a soft gate. You can keep learning, and Nyra will mark this area for review when needed."
+                : "This completion was handled by the backend Question Engine. Attempts and progress events were persisted in PostgreSQL."}
             </p>
             <dl>
               <div>
                 <dt>Attempts</dt>
                 <dd>{attemptCount}</dd>
               </div>
+              {readySession.scorePercent !== null ? (
+                <div>
+                  <dt>Score</dt>
+                  <dd>{readySession.scorePercent}%</dd>
+                </div>
+              ) : null}
               <div>
                 <dt>XP awarded</dt>
                 <dd>{readySession.skill.xp}</dd>

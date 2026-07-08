@@ -1,9 +1,14 @@
 import { Circle } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
-import { getPublishedResources, sampleCourse } from "@/lib/learning/sample-content";
+import {
+  getA1ContentSummary,
+  getPublishedResources,
+  sampleCourse
+} from "@/lib/learning/sample-content";
 
 export default function AdminPage() {
+  const summary = getA1ContentSummary();
   const skills = sampleCourse.levels.flatMap((level) =>
     level.units.flatMap((unit) =>
       unit.skills.map((skill) => ({
@@ -34,9 +39,11 @@ export default function AdminPage() {
           <div className="app-panel-header">
             <div>
               <p className="panel-kicker">Content hierarchy</p>
-              <h2>Published Skills</h2>
+              <h2>Published A1 Content</h2>
             </div>
-            <span className="status-pill">{skills.length} Skill</span>
+            <span className="status-pill">
+              {summary.unitCount} Units · {summary.questionCount} Questions
+            </span>
           </div>
           <div className="admin-preview">
             {skills.map(({ level, unit, skill }) => (
@@ -45,10 +52,11 @@ export default function AdminPage() {
                 <div>
                   <h3>{skill.title}</h3>
                   <p>
-                    {sampleCourse.title} / {level.label} / {unit.title}
+                    {sampleCourse.title} / {level.label} / {unit.title} /{" "}
+                    {skill.questions.length} Questions
                   </p>
                 </div>
-                <span>{skill.publicationStatus}</span>
+                <span>{skill.kind.replaceAll("_", " ")}</span>
               </article>
             ))}
           </div>

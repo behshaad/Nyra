@@ -20,6 +20,12 @@ enum QuestionType {
   WORD_ORDERING
 }
 
+enum SkillKind {
+  REGULAR
+  UNIT_CHECKPOINT
+  FINAL_TEST
+}
+
 enum ResourceType {
   GRAMMAR_NOTE
   PRONUNCIATION
@@ -98,7 +104,10 @@ model Skill {
   slug              String            @unique
   title             String
   description       String
+  kind              SkillKind         @default(REGULAR)
   xp                Int               @default(80)
+  passingScore      Int?
+  requeueIncorrect  Boolean           @default(true)
   publicationStatus PublicationStatus @default(DRAFT)
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt

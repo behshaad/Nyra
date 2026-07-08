@@ -393,6 +393,61 @@ h3 {
   gap: 10px;
 }
 
+.path-column.compact {
+  gap: 8px;
+}
+
+.unit-band {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 10px;
+  padding-top: 14px;
+}
+
+.unit-band:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.unit-band-header {
+  align-items: start;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr auto;
+}
+
+.unit-band-header small,
+.muted-line {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+
+.unit-band-header h3,
+.unit-band-header p,
+.muted-line {
+  margin: 0;
+}
+
+.unit-band-header h3 {
+  font-size: 1rem;
+  margin-top: 3px;
+}
+
+.unit-band-header p {
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.unit-band-header strong {
+  background: rgba(31, 138, 91, 0.08);
+  border-radius: 999px;
+  color: var(--green-dark);
+  font-size: 0.78rem;
+  padding: 7px 10px;
+}
+
 .skill-node,
 .lesson-card,
 .feature-card,

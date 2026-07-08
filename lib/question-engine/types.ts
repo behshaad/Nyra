@@ -1,4 +1,4 @@
-import type { QuestionType } from "@/lib/generated/prisma/enums";
+import type { QuestionType, SkillKind } from "@/lib/generated/prisma/enums";
 
 export type LearningQuestionView = {
   id: string;
@@ -15,12 +15,16 @@ export type LearningSessionView = {
     slug: string;
     title: string;
     description: string;
+    kind: SkillKind;
     xp: number;
+    passingScore: number | null;
   };
   status: "ACTIVE" | "COMPLETED";
   currentQuestion: LearningQuestionView | null;
   progressPercent: number;
   remainingQuestionCount: number;
+  scorePercent: number | null;
+  passed: boolean | null;
 };
 
 export type AnswerFeedbackView = {
@@ -32,4 +36,6 @@ export type AnswerFeedbackView = {
   xpAwarded: number;
   nextQuestion: LearningQuestionView | null;
   progressPercent: number;
+  scorePercent: number | null;
+  passed: boolean | null;
 };

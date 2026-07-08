@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, BookOpen, ChartNoAxesCombined, Crown, Sparkles } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
+import { getA1ContentSummary, sampleCourse } from "@/lib/learning/sample-content";
 
 const foundationCards = [
   {
@@ -31,6 +32,9 @@ const foundationCards = [
 ];
 
 export default function Home() {
+  const summary = getA1ContentSummary();
+  const firstSkill = sampleCourse.levels[0]?.units[0]?.skills[0];
+
   return (
     <main className="site-shell">
       <AnimatedBackdrop />
@@ -40,18 +44,20 @@ export default function Home() {
         <div className="hero-copy">
           <div className="eyebrow">
             <Sparkles size={16} />
-            Architecture milestone
+            Complete A1 path
           </div>
-          <h1>Nyra is becoming a real learning product.</h1>
+          <h1>Nyra is ready for A1 practice.</h1>
           <p>
-            The prototype is now split into routes with a Prisma/PostgreSQL foundation,
-            a deterministic Question Engine, and a focused A1 learning loop.
+            Practice 12 A1 Units with Persian-first support, German-first questions,
+            Unit Checkpoints, and a Final A1 Test.
           </p>
           <div className="hero-actions">
-            <Link className="primary-button" href="/learn/family-basics">
-              Open first Skill
-              <ArrowRight size={18} />
-            </Link>
+            {firstSkill ? (
+              <Link className="primary-button" href={`/learn/${firstSkill.slug}`}>
+                Start A1
+                <ArrowRight size={18} />
+              </Link>
+            ) : null}
             <Link className="secondary-button" href="/learn">
               View learning path
             </Link>
@@ -62,9 +68,9 @@ export default function Home() {
           <div className="app-panel-header">
             <div>
               <p className="panel-kicker">First slice</p>
-              <h2>A1 · Family basics</h2>
+              <h2>A1 · {summary.questionCount} Questions</h2>
             </div>
-            <span className="status-pill">Published</span>
+            <span className="status-pill">{summary.regularSkillCount} Skills</span>
           </div>
           <div className="foundation-grid">
             {foundationCards.map((card) => (

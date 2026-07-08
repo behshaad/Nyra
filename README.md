@@ -2,14 +2,14 @@
 
 Nyra is a modern German learning platform for Persian speakers.
 
-This repository currently contains the first real product architecture slice:
+This repository currently contains the first complete playable A1 slice:
 
 - Real routes for `/`, `/learn`, `/learn/[skillId]`, `/resources`, `/flashcards`, `/profile`, `/admin`, and `/pricing`.
-- A backend-backed A1 Skill learning session for `family-basics`.
+- A backend-backed A1 path with 12 Units, 48 regular Skills, 12 Unit Checkpoints, and 1 Final A1 Test.
 - A read-only Resource Library at `/resources`.
-- A deterministic Question Engine for multiple choice, fill-in-the-blank, and word-ordering questions.
+- A deterministic Question Engine for multiple choice, fill-in-the-blank, word-ordering, retry practice, and soft-gated assessments.
 - Prisma/PostgreSQL models for Course, Level, Unit, Skill, Question, Learner Profile, Learning Session, Question Attempt, and Progress Event.
-- Seed content for one Persian-to-German A1 Course slice and a development learner identity.
+- Seed content for the full text-only Persian-to-German A1 Course and a development learner identity.
 - Read-only admin, static pricing, deferred flashcards, and dev-profile scaffolds.
 
 ## Development
