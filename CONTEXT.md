@@ -52,6 +52,10 @@ _Avoid_: Category
 A learner's active or completed run through a Skill, including ordered Questions, feedback, retries, completion, and summary.
 _Avoid_: Lesson session, practice run
 
+**Learning Path**:
+The ordered learner-facing route through a Level's Units and Skills. A Learning Path can show upcoming Skills before all of them are fully authored, as long as publication state makes learner availability clear.
+_Avoid_: Course outline, syllabus
+
 **Learner Profile**:
 The learner-owned product identity that describes a person's learning goal, languages, current level, daily goal, preferences, and onboarding state.
 _Avoid_: Account, user metadata
