@@ -1,13 +1,16 @@
-import { Circle } from "lucide-react";
+import Link from "next/link";
+import { Circle, Plus } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
 import {
   getA1ContentSummary,
-  getPublishedResources,
   sampleCourse
 } from "@/lib/learning/sample-content";
+import { getAdminResourcesFromDb } from "@/lib/resources/resource-repository";
 
-export default function AdminPage() {
+export const dynamic = "force-dynamic";
+
+export default async function AdminPage() {
   const summary = getA1ContentSummary();
   const skills = sampleCourse.levels.flatMap((level) =>
     level.units.flatMap((unit) =>
@@ -18,7 +21,7 @@ export default function AdminPage() {
       }))
     )
   );
-  const resources = getPublishedResources();
+  const resources = await getAdminResourcesFromDb();
 
   return (
     <main className="site-shell">
@@ -27,12 +30,18 @@ export default function AdminPage() {
 
       <section className="route-page">
         <div className="route-hero">
-          <span className="section-label">Admin CMS</span>
-          <h1>Read-only content view first.</h1>
+            <span className="section-label">Admin CMS</span>
+          <h1>Content control room.</h1>
           <p>
-            Admin write forms, audit logs, billing tools, analytics, and AI drafting are deferred.
-            This page shows the current content hierarchy and publication state.
+            Resource creation is now available for dev-admin use. Authentication, audit logs,
+            billing tools, analytics, and AI drafting are still deferred.
           </p>
+          <div className="route-actions">
+            <Link className="primary-button" href="/admin/resources/new">
+              <Plus size={18} />
+              Create Resource
+            </Link>
+          </div>
         </div>
 
         <section className="app-panel route-panel" aria-label="Read-only admin content">
@@ -78,6 +87,7 @@ export default function AdminPage() {
                   <h3>{resource.title}</h3>
                   <p>
                     {resource.levelLabel} / {resource.type.replaceAll("_", " ")}
+                    {resource.unit ? ` / ${resource.unit.title}` : ""}
                   </p>
                 </div>
                 <span>{resource.publicationStatus}</span>

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ExternalLink, FileText, Mic2, NotebookText } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
-import { getPublishedResources } from "@/lib/learning/sample-content";
+import { getPublishedResourcesFromDb } from "@/lib/resources/resource-repository";
 
 const resourceIcons = {
   GRAMMAR_NOTE: NotebookText,
@@ -19,8 +19,10 @@ function formatResourceType(type: string) {
     .join(" ");
 }
 
-export default function ResourcesPage() {
-  const resources = getPublishedResources();
+export const dynamic = "force-dynamic";
+
+export default async function ResourcesPage() {
+  const resources = await getPublishedResourcesFromDb();
 
   return (
     <main className="site-shell">
@@ -59,6 +61,9 @@ export default function ResourcesPage() {
                   </div>
                 </div>
                 <p>{resource.description}</p>
+                {resource.unit ? (
+                  <span className="status-pill">{resource.unit.title}</span>
+                ) : null}
                 <div className="resource-content">
                   <strong>Preview</strong>
                   <p>{resource.content}</p>

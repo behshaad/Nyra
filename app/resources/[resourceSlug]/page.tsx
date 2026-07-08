@@ -3,10 +3,8 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, ExternalLink, FileText, Mic2, NotebookText } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
-import {
-  getPublishedResource,
-  getPublishedResources
-} from "@/lib/learning/sample-content";
+import { PublicationStatus } from "@/lib/generated/prisma/enums";
+import { getResourceBySlug } from "@/lib/resources/resource-repository";
 
 const resourceIcons = {
   GRAMMAR_NOTE: NotebookText,
@@ -23,11 +21,7 @@ function formatResourceType(type: string) {
     .join(" ");
 }
 
-export function generateStaticParams() {
-  return getPublishedResources().map((resource) => ({
-    resourceSlug: resource.slug
-  }));
-}
+export const dynamic = "force-dynamic";
 
 export default async function ResourceDetailPage({
   params
@@ -37,9 +31,9 @@ export default async function ResourceDetailPage({
   }>;
 }) {
   const { resourceSlug } = await params;
-  const resource = getPublishedResource(resourceSlug);
+  const resource = await getResourceBySlug(resourceSlug);
 
-  if (!resource) {
+  if (!resource || resource.publicationStatus !== PublicationStatus.PUBLISHED) {
     notFound();
   }
 
@@ -87,7 +81,7 @@ export default async function ResourceDetailPage({
             </div>
             <div>
               <dt>Related Unit</dt>
-              <dd>{resource.unitTitle ?? "Not linked"}</dd>
+              <dd>{resource.unit?.title ?? "Not linked"}</dd>
             </div>
             <div>
               <dt>Status</dt>
@@ -95,10 +89,10 @@ export default async function ResourceDetailPage({
             </div>
           </dl>
 
-          {resource.relatedSkillSlug ? (
+          {resource.skill ? (
             <div className="route-actions">
-              <Link className="primary-button" href={`/learn/${resource.relatedSkillSlug}`}>
-                Practice {resource.relatedSkillTitle}
+              <Link className="primary-button" href={`/learn/${resource.skill.slug}`}>
+                Practice {resource.skill.title}
                 <ArrowRight size={18} />
               </Link>
             </div>

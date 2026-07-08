@@ -1008,6 +1008,49 @@ h3 {
   margin: 5px 0 0;
 }
 
+.admin-form {
+  display: grid;
+  gap: 16px;
+}
+
+.form-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.form-grid label {
+  display: grid;
+  gap: 7px;
+}
+
+.form-grid label span {
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 780;
+}
+
+.form-grid input,
+.form-grid select,
+.form-grid textarea {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  color: var(--text);
+  min-height: 44px;
+  padding: 10px 12px;
+  width: 100%;
+}
+
+.form-grid textarea {
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.form-grid-wide {
+  grid-column: 1 / -1;
+}
+
 @keyframes riseIn {
   from {
     opacity: 0;
@@ -1105,6 +1148,7 @@ h3 {
   .profile-grid,
   .resource-library,
   .resource-meta-grid,
+  .form-grid,
   .resource-rail,
   .mini-panel-grid,
   .analytics-grid {
