@@ -62,7 +62,10 @@ export default async function SkillPage({
         : copy.skillPage.labels.regular;
 
   return (
-    <main className="site-shell learner-rtl" dir={copy.dir}>
+    <main
+      className={`site-shell ${copy.dir === "rtl" ? "learner-rtl" : ""}`}
+      dir={copy.dir}
+    >
       <AnimatedBackdrop />
       <AppHeader language={language} currentPath={`/learn/${skillId}`} />
 

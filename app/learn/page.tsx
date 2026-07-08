@@ -39,7 +39,10 @@ export default async function LearnPage({
   const nextSkill = progress.nextSkill ?? selectedUnit?.skills[0] ?? null;
 
   return (
-    <main className="site-shell learner-rtl" dir={copy.dir}>
+    <main
+      className={`site-shell ${copy.dir === "rtl" ? "learner-rtl" : ""}`}
+      dir={copy.dir}
+    >
       <AnimatedBackdrop />
       <AppHeader
         language={language}

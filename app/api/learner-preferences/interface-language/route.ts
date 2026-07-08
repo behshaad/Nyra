@@ -14,6 +14,9 @@ export async function GET(request: NextRequest) {
     },
     data: {
       interfaceLanguage
+    },
+    select: {
+      id: true
     }
   });
 
