@@ -68,6 +68,14 @@ _Avoid_: Locked gate, hard prerequisite
 The ordered learner-facing route through a Level's Units and Skills. A Learning Path can show upcoming Skills before all of them are fully authored, as long as publication state makes learner availability clear.
 _Avoid_: Course outline, syllabus
 
+**Compact Learning Path**:
+A learner-facing Learning Path view that shows the Level structure without listing every Skill at once. The learner should see a selected Unit, its Skills, and the recommended next action without excessive scrolling.
+_Avoid_: Full syllabus list, long path page
+
+**Next Skill**:
+The next recommended Skill or assessment in the learner's current Learning Path sequence. After a regular Skill it is usually the following Skill in the Unit; after the final regular Skill it is the Unit Checkpoint; after a Unit Checkpoint it is the next Unit's first Skill.
+_Avoid_: Next lesson
+
 **Learner Profile**:
 The learner-owned product identity that describes a person's learning goal, languages, current level, daily goal, preferences, and onboarding state.
 _Avoid_: Account, user metadata
@@ -79,6 +87,10 @@ _Avoid_: Native language
 **Persian-First Support**:
 A content style where explanations, grammar help, and learning scaffolding use Persian to reduce friction, while practice increasingly asks learners to recognize, choose, order, or produce German.
 _Avoid_: Persian-only teaching, translation-only content
+
+**Persian-First Learner UI**:
+A learner-facing interface style where navigation, controls, feedback, progress labels, and system messages are Persian and right-to-left, while German learning phrases remain left-to-right where readability requires it.
+_Avoid_: English learner UI, mixed-direction guessing
 
 **Target Language**:
 The language a learner is studying in a Course.
