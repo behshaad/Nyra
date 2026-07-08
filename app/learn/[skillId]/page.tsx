@@ -4,6 +4,7 @@ import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
 import { BackendSkillSession } from "@/components/backend-skill-session";
 import { getPublishedSkill, getPublishedSkills } from "@/lib/learning/sample-content";
+import { getFlatA1Skills, getNextSkillSlug } from "@/lib/learning/path-progress";
 
 export function generateStaticParams() {
   return getPublishedSkills().map((skill) => ({
@@ -20,8 +21,9 @@ export default async function SkillPage({
 }) {
   const { skillId } = await params;
   const skill = getPublishedSkill(skillId);
+  const flatSkill = getFlatA1Skills().find((candidate) => candidate.slug === skillId);
 
-  if (!skill) {
+  if (!skill || !flatSkill) {
     notFound();
   }
 
@@ -33,7 +35,7 @@ export default async function SkillPage({
         : "A1 Skill";
 
   return (
-    <main className="site-shell">
+    <main className="site-shell learner-rtl" dir="rtl">
       <AnimatedBackdrop />
       <AppHeader />
 
@@ -42,12 +44,16 @@ export default async function SkillPage({
           <span className="section-label">{pageLabel}</span>
           <h1>{skill.title}</h1>
           <p>{skill.description}</p>
-          <Link className="ghost-button" href="/learn">
-            Back to learning path
+          <Link className="ghost-button" href={`/learn?unit=${flatSkill.unitSlug}`}>
+            برگشت به واحد
           </Link>
         </div>
 
-        <BackendSkillSession skillSlug={skill.slug} />
+        <BackendSkillSession
+          skillSlug={skill.slug}
+          nextSkillSlug={getNextSkillSlug(skill.slug)}
+          unitSlug={flatSkill.unitSlug}
+        />
       </section>
     </main>
   );

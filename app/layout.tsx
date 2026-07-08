@@ -16,9 +16,9 @@ const vazirmatn = Vazirmatn({
 });
 
 export const metadata: Metadata = {
-  title: "Nyra | German learning for Persian speakers",
+  title: "Nyra | آموزش آلمانی برای فارسی‌زبان‌ها",
   description:
-    "A modern AI-assisted German learning platform built for Persian speakers."
+    "یک مسیر مدرن آموزش آلمانی برای فارسی‌زبان‌ها."
 };
 
 export default function RootLayout({
@@ -27,7 +27,7 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="fa" dir="rtl">
       <body className={`${inter.variable} ${vazirmatn.variable}`}>
         {children}
       </body>

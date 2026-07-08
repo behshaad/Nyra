@@ -1,58 +1,140 @@
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, FileCheck2, Trophy } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Circle, FileCheck2, RotateCcw, Trophy } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
 import {
   getA1ContentSummary,
   sampleCourse
 } from "@/lib/learning/sample-content";
+import { getLearningPathProgress } from "@/lib/learning/path-progress";
 
-export default function LearnPage() {
+export default async function LearnPage({
+  searchParams
+}: {
+  searchParams: Promise<{
+    unit?: string;
+  }>;
+}) {
+  const { unit: selectedUnitParam } = await searchParams;
   const summary = getA1ContentSummary();
   const a1Level = sampleCourse.levels[0];
-  const firstSkill = a1Level.units[0]?.skills[0];
+  const progress = await getLearningPathProgress();
+  const selectedUnit =
+    progress.units.find((unit) => unit.slug === selectedUnitParam) ??
+    progress.units.find((unit) => unit.slug === progress.selectedUnitSlug) ??
+    progress.units[0];
+  const nextSkill = progress.nextSkill ?? selectedUnit?.skills[0] ?? null;
 
   return (
-    <main className="site-shell">
+    <main className="site-shell learner-rtl" dir="rtl">
       <AnimatedBackdrop />
       <AppHeader />
 
       <section className="route-page">
-        <div className="route-hero">
-          <span className="section-label">Learning path</span>
-          <h1>A1 first, polished before broad.</h1>
+        <div className="route-hero compact">
+          <span className="section-label">مسیر یادگیری A1</span>
+          <h1>ادامه بده، بدون گم شدن بین درس‌ها.</h1>
           <p>
-            The MVP Course is {sampleCourse.sourceLanguage} speakers learning{" "}
-            {sampleCourse.targetLanguage}. A1 now includes the complete playable path:
-            Skills, Unit Checkpoints, and the Final A1 Test.
+            این نمای فشرده فقط واحد انتخاب‌شده، مهارت‌های همان واحد، و قدم بعدی
+            را نشان می‌دهد. کل A1 شامل {summary.regularSkillCount} مهارت،{" "}
+            {summary.checkpointCount} آزمونک واحد و {summary.questionCount} سؤال است.
           </p>
         </div>
 
-        <section className="app-panel route-panel" aria-label="Published skills">
+        <section className="learn-dashboard" aria-label="مسیر فشرده A1">
+          <aside className="app-panel unit-rail" aria-label="واحدهای A1">
+            <div className="app-panel-header">
+              <div>
+                <p className="panel-kicker">پیشرفت A1</p>
+                <h2>
+                  {progress.completedCount}/{progress.totalCount}
+                </h2>
+              </div>
+              <span className="status-pill">{a1Level.title}</span>
+            </div>
+            <div className="mini-progress" aria-hidden="true">
+              <span
+                style={{
+                  width: `${Math.round(
+                    (progress.completedCount / progress.totalCount) * 100
+                  )}%`
+                }}
+              />
+            </div>
+            <div className="unit-rail-list">
+              {progress.units.map((unit) => (
+                <Link
+                  className={`unit-chip ${
+                    unit.slug === selectedUnit?.slug ? "active" : ""
+                  } ${unit.needsReviewCount > 0 ? "needs-review" : ""}`}
+                  href={`/learn?unit=${unit.slug}`}
+                  key={unit.slug}
+                >
+                  <span>{unit.order}</span>
+                  <div>
+                    <strong>{unit.title}</strong>
+                    <small>
+                      {unit.completedCount}/{unit.skills.length} کامل شده
+                    </small>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </aside>
+
+          <section className="app-panel unit-focus" aria-label="واحد انتخاب‌شده">
+            {nextSkill ? (
+              <div className="continue-card">
+                <div>
+                  <span className="section-label">قدم بعدی</span>
+                  <h2>{nextSkill.title}</h2>
+                  <p>{nextSkill.description}</p>
+                </div>
+                <Link className="primary-button" href={`/learn/${nextSkill.slug}`}>
+                  ادامه
+                  <ArrowLeft size={18} />
+                </Link>
+              </div>
+            ) : (
+              <div className="continue-card">
+                <div>
+                  <span className="section-label">A1 کامل شد</span>
+                  <h2>همه‌ی مسیر را تمام کرده‌ای.</h2>
+                  <p>برای مرور، یکی از واحدها را انتخاب کن و مهارت‌ها را دوباره بزن.</p>
+                </div>
+                <Link className="secondary-button" href="/learn?unit=a1-first-contacts">
+                  مرور از ابتدا
+                  <RotateCcw size={18} />
+                </Link>
+              </div>
+            )}
+
           <div className="app-panel-header">
             <div>
-              <p className="panel-kicker">Published A1</p>
-              <h2>{a1Level.title}</h2>
+                <p className="panel-kicker">واحد {selectedUnit?.order}</p>
+                <h2>{selectedUnit?.title}</h2>
+                <p className="muted-line">{selectedUnit?.summary}</p>
             </div>
             <span className="status-pill">
-              {summary.regularSkillCount} Skills · {summary.questionCount} Questions
+                {selectedUnit?.progressPercent}% پیشرفت
             </span>
           </div>
-          <div className="path-column">
-            {a1Level.units.map((unit, unitIndex) => (
-              <section className="unit-band" key={unit.slug}>
-                <div className="unit-band-header">
-                  <div>
-                    <small>Unit {unitIndex + 1}</small>
-                    <h3>{unit.title}</h3>
-                    <p>{unit.summary}</p>
-                  </div>
-                  <strong>{unit.skills.length} items</strong>
-                </div>
-                <div className="path-column compact">
-                  {unit.skills.map((skill) => (
+
+            <div className="skill-grid-compact">
+              {selectedUnit?.skills.map((skill) => {
+                const isAssessment = skill.kind !== "REGULAR";
+                const stateLabel =
+                  skill.state === "completed"
+                    ? "کامل"
+                    : skill.state === "needs_review"
+                      ? "نیاز به مرور"
+                      : skill.state === "current"
+                        ? "فعلی"
+                        : "بعدی";
+
+                return (
                     <Link
-                      className="skill-node current"
+                    className={`skill-tile ${skill.state}`}
                       href={`/learn/${skill.slug}`}
                       key={skill.slug}
                     >
@@ -61,6 +143,8 @@ export default function LearnPage() {
                           <Trophy size={17} />
                         ) : skill.kind === "UNIT_CHECKPOINT" ? (
                           <FileCheck2 size={17} />
+                      ) : skill.state === "upcoming" ? (
+                        <Circle size={17} />
                         ) : (
                           <CheckCircle2 size={17} />
                         )}
@@ -68,35 +152,23 @@ export default function LearnPage() {
                       <div>
                         <small>
                           {skill.kind === "FINAL_TEST"
-                            ? "Final A1 Test"
+                          ? "آزمون نهایی A1"
                             : skill.kind === "UNIT_CHECKPOINT"
-                              ? "Unit Checkpoint"
-                              : unit.title}
+                            ? "آزمونک واحد"
+                            : isAssessment
+                              ? "سنجش"
+                              : "مهارت"}
                         </small>
                         <h3>{skill.title}</h3>
                         <p>{skill.description}</p>
                       </div>
-                      <strong>
-                        {skill.passingScore
-                          ? `${skill.passingScore}%`
-                          : `${skill.xp} XP`}
-                      </strong>
+                    <strong>{skill.scorePercent ?? stateLabel}</strong>
                     </Link>
-                  ))}
-                </div>
-              </section>
-            ))}
-          </div>
+                );
+              })}
+            </div>
+          </section>
         </section>
-
-        {firstSkill ? (
-          <div className="route-actions">
-            <Link className="primary-button" href={`/learn/${firstSkill.slug}`}>
-              Start A1
-              <ArrowRight size={18} />
-            </Link>
-          </div>
-        ) : null}
       </section>
     </main>
   );

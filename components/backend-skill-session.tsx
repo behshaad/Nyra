@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
-import { Check, ChevronRight, RotateCcw, ShieldCheck } from "lucide-react";
+import Link from "next/link";
+import { ArrowLeft, Check, ChevronRight, RotateCcw, ShieldCheck } from "lucide-react";
 import type {
   AnswerFeedbackView,
   LearningQuestionView,
@@ -33,7 +34,15 @@ async function readJson<T>(response: Response): Promise<T> {
   return data as T;
 }
 
-export function BackendSkillSession({ skillSlug }: { skillSlug: string }) {
+export function BackendSkillSession({
+  skillSlug,
+  nextSkillSlug,
+  unitSlug
+}: {
+  skillSlug: string;
+  nextSkillSlug: string | null;
+  unitSlug: string;
+}) {
   const [loadState, setLoadState] = useState<LoadState>({ status: "loading" });
   const [lastFeedback, setLastFeedback] = useState<LastFeedback | null>(null);
   const [submittingAnswer, setSubmittingAnswer] = useState<string | null>(null);
@@ -141,7 +150,7 @@ export function BackendSkillSession({ skillSlug }: { skillSlug: string }) {
   if (loadState.status === "loading") {
     return (
       <section className="app-panel route-panel">
-        <div className="hint-box">Starting backend Learning Session...</div>
+        <div className="hint-box">در حال شروع تمرین...</div>
       </section>
     );
   }
@@ -150,11 +159,11 @@ export function BackendSkillSession({ skillSlug }: { skillSlug: string }) {
     return (
       <section className="app-panel route-panel">
         <div className="feedback wrong">
-          <strong>Session could not start.</strong>
+          <strong>تمرین شروع نشد.</strong>
           <p>{loadState.message}</p>
           <button className="secondary-button" type="button" onClick={startSession}>
             <RotateCcw size={17} />
-            Try again
+            تلاش دوباره
           </button>
         </div>
       </section>
@@ -170,10 +179,10 @@ export function BackendSkillSession({ skillSlug }: { skillSlug: string }) {
   const isAssessment = readySession.skill.kind !== "REGULAR";
   const assessmentLabel =
     readySession.skill.kind === "FINAL_TEST"
-      ? "Final A1 Test"
+      ? "آزمون نهایی A1"
       : readySession.skill.kind === "UNIT_CHECKPOINT"
-        ? "Unit Checkpoint"
-        : "Backend Learning Session";
+        ? "آزمونک واحد"
+        : "تمرین مهارت";
 
   return (
     <section
@@ -182,11 +191,11 @@ export function BackendSkillSession({ skillSlug }: { skillSlug: string }) {
     >
       <div className="app-panel-header">
         <div>
-          <p className="panel-kicker">Backend Learning Session</p>
+          <p className="panel-kicker">{assessmentLabel}</p>
           <h2>{readySession.skill.title}</h2>
           {isAssessment ? (
             <p className="muted-line">
-              {assessmentLabel} · passing score {readySession.skill.passingScore}%
+              حد قبولی {readySession.skill.passingScore}%
             </p>
           ) : null}
         </div>
@@ -194,8 +203,8 @@ export function BackendSkillSession({ skillSlug }: { skillSlug: string }) {
           {completed && readySession.scorePercent !== null
             ? `${readySession.scorePercent}%`
             : completed
-              ? `${readySession.skill.xp} XP earned`
-              : `${readySession.skill.xp} XP`}
+              ? `${readySession.skill.xp} امتیاز`
+              : `${readySession.skill.xp} امتیاز`}
         </span>
       </div>
 
@@ -205,7 +214,7 @@ export function BackendSkillSession({ skillSlug }: { skillSlug: string }) {
         </div>
         <div className="question-meta">
           <span>
-            {completed ? "Session complete" : displayQuestion?.helper ?? "Question"}
+            {completed ? "تمرین کامل شد" : displayQuestion?.helper ?? "سؤال"}
           </span>
           <span>{readySession.progressPercent}%</span>
         </div>
@@ -216,35 +225,51 @@ export function BackendSkillSession({ skillSlug }: { skillSlug: string }) {
             <h3>
               {isAssessment
                 ? readySession.passed
-                  ? "Assessment passed"
-                  : "Review recommended"
-                : "Skill complete"}
+                  ? "قبول شدی"
+                  : "مرور پیشنهاد می‌شود"
+                : "مهارت کامل شد"}
             </h3>
             <p>
               {isAssessment
-                ? "Your score was saved as a soft gate. You can keep learning, and Nyra will mark this area for review when needed."
-                : "This completion was handled by the backend Question Engine. Attempts and progress events were persisted in PostgreSQL."}
+                ? "نمره ذخیره شد. اگر پایین‌تر از حد قبولی باشد، این بخش برای مرور علامت می‌خورد ولی مسیرت قفل نمی‌شود."
+                : "پیشرفتت ذخیره شد و می‌توانی مستقیم سراغ قدم بعدی بروی."}
             </p>
             <dl>
               <div>
-                <dt>Attempts</dt>
+                <dt>تلاش‌ها</dt>
                 <dd>{attemptCount}</dd>
               </div>
               {readySession.scorePercent !== null ? (
                 <div>
-                  <dt>Score</dt>
+                  <dt>نمره</dt>
                   <dd>{readySession.scorePercent}%</dd>
                 </div>
               ) : null}
               <div>
-                <dt>XP awarded</dt>
+                <dt>امتیاز</dt>
                 <dd>{readySession.skill.xp}</dd>
               </div>
             </dl>
-            <button className="secondary-button" type="button" onClick={startSession}>
-              <RotateCcw size={17} />
-              Start another session
-            </button>
+            <div className="next-actions">
+              {nextSkillSlug ? (
+                <Link className="primary-button" href={`/learn/${nextSkillSlug}`}>
+                  ادامه به مهارت بعدی
+                  <ArrowLeft size={17} />
+                </Link>
+              ) : (
+                <Link className="primary-button" href="/learn">
+                  برگشت به مسیر A1
+                  <ArrowLeft size={17} />
+                </Link>
+              )}
+              <Link className="secondary-button" href={`/learn?unit=${unitSlug}`}>
+                برگشت به واحد
+              </Link>
+              <button className="secondary-button" type="button" onClick={startSession}>
+                <RotateCcw size={17} />
+                تمرین دوباره
+              </button>
+            </div>
           </div>
         ) : displayQuestion ? (
           <>
@@ -266,24 +291,24 @@ export function BackendSkillSession({ skillSlug }: { skillSlug: string }) {
                   onClick={() => submitAnswer(option)}
                   disabled={Boolean(lastFeedback) || Boolean(submittingAnswer)}
                 >
-                  {submittingAnswer === option ? "Checking..." : option}
+                  {submittingAnswer === option ? "در حال بررسی..." : option}
                 </button>
               ))}
             </div>
 
             {lastFeedback ? (
               <div className={clsx("feedback", lastFeedback.isCorrect ? "correct" : "wrong")}>
-                <strong>{lastFeedback.isCorrect ? "Correct." : "Good mistake to catch."}</strong>
+                <strong>{lastFeedback.isCorrect ? "درست است." : "اشتباه خوبی برای یادگیری بود."}</strong>
                 <p>{lastFeedback.explanation}</p>
                 <button className="primary-button compact" type="button" onClick={continueSession}>
-                  Continue
+                  ادامه
                   <ChevronRight size={17} />
                 </button>
               </div>
             ) : (
               <div className="hint-box">
                 <ShieldCheck size={18} />
-                The server evaluates answers and requeues missed Questions.
+                پاسخ‌ها ذخیره و بررسی می‌شوند. در مهارت‌های تمرینی، سؤال‌های اشتباه دوباره برمی‌گردند.
               </div>
             )}
           </>
