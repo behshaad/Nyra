@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Save } from "lucide-react";
+import { Archive, ArrowRight, Save } from "lucide-react";
 
 type SkillOption = {
   id: string;
@@ -77,6 +77,7 @@ export function AdminResourceForm({
   );
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [archiving, setArchiving] = useState(false);
 
   const selectedUnit = useMemo(
     () => units.find((unit) => unit.id === unitId),
@@ -142,6 +143,35 @@ export function AdminResourceForm({
       );
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function archiveResource() {
+    if (mode !== "edit" || !resourceSlug) {
+      return;
+    }
+
+    setArchiving(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`/api/admin/resources/${resourceSlug}/archive`, {
+        method: "PATCH"
+      });
+      const data = (await response.json()) as {
+        error?: string;
+      };
+
+      if (!response.ok) {
+        throw new Error(data.error ?? "Unable to archive Resource.");
+      }
+
+      router.push("/admin");
+      router.refresh();
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Unable to archive Resource.");
+    } finally {
+      setArchiving(false);
     }
   }
 
@@ -276,6 +306,17 @@ export function AdminResourceForm({
           View Library
           <ArrowRight size={18} />
         </button>
+        {mode === "edit" ? (
+          <button
+            className="danger-button"
+            type="button"
+            onClick={archiveResource}
+            disabled={archiving || submitting || publicationStatus === "ARCHIVED"}
+          >
+            <Archive size={18} />
+            {archiving ? "Archiving..." : "Archive Resource"}
+          </button>
+        ) : null}
       </div>
     </form>
   );

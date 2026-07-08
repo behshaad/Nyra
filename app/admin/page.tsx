@@ -90,7 +90,15 @@ export default async function AdminPage() {
                     {resource.unit ? ` / ${resource.unit.title}` : ""}
                   </p>
                 </div>
-                <span>{resource.publicationStatus}</span>
+                <span
+                  className={
+                    resource.publicationStatus === "ARCHIVED"
+                      ? "status-archived"
+                      : undefined
+                  }
+                >
+                  {resource.publicationStatus}
+                </span>
                 <Link
                   className="ghost-button compact-link"
                   href={`/admin/resources/${resource.slug}/edit`}
