@@ -21,7 +21,7 @@ An external learning source used to understand topic progression, skill coverage
 _Avoid_: Source content, imported textbook
 
 **Unit**:
-A themed group of Skills inside a Level.
+A themed group of Skills inside a Level. For A1, a Unit represents a major learner-facing theme aligned to the Curriculum Reference's broad lesson progression, not a copied textbook chapter.
 _Avoid_: Module, chapter
 
 **Skill**:
