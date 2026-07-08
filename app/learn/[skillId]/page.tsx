@@ -8,11 +8,15 @@ import {
   resolveInterfaceLanguage,
   withInterfaceLanguage
 } from "@/lib/i18n/interface-language";
-import { getPublishedSkill, getPublishedSkills } from "@/lib/learning/sample-content";
+import { getPublishedSkillBySlug } from "@/lib/admin/skill-repository";
 import { getFlatA1Skills, getNextSkillSlug } from "@/lib/learning/path-progress";
 
-export function generateStaticParams() {
-  return getPublishedSkills().map((skill) => ({
+export const dynamic = "force-dynamic";
+
+export async function generateStaticParams() {
+  const skills = await getFlatA1Skills();
+
+  return skills.map((skill) => ({
     skillId: skill.slug
   }));
 }
@@ -32,8 +36,12 @@ export default async function SkillPage({
   const { ui } = await searchParams;
   const language = resolveInterfaceLanguage(ui);
   const copy = interfaceCopy[language];
-  const skill = getPublishedSkill(skillId);
-  const flatSkill = getFlatA1Skills().find((candidate) => candidate.slug === skillId);
+  const [skill, flatSkills, nextSkillSlug] = await Promise.all([
+    getPublishedSkillBySlug(skillId),
+    getFlatA1Skills(),
+    getNextSkillSlug(skillId)
+  ]);
+  const flatSkill = flatSkills.find((candidate) => candidate.slug === skillId);
 
   if (!skill || !flatSkill) {
     notFound();
@@ -66,7 +74,7 @@ export default async function SkillPage({
 
         <BackendSkillSession
           skillSlug={skill.slug}
-          nextSkillSlug={getNextSkillSlug(skill.slug)}
+          nextSkillSlug={nextSkillSlug}
           unitSlug={flatSkill.unitSlug}
           language={language}
         />

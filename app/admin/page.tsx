@@ -1,27 +1,29 @@
 import Link from "next/link";
-import { Circle, Pencil, Plus } from "lucide-react";
+import { Circle, GraduationCap, Pencil, Plus } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
 import {
   getA1ContentSummary,
   sampleCourse
 } from "@/lib/learning/sample-content";
+import { getAdminSkillUnits } from "@/lib/admin/skill-repository";
 import { getAdminResourcesFromDb } from "@/lib/resources/resource-repository";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
   const summary = getA1ContentSummary();
-  const skills = sampleCourse.levels.flatMap((level) =>
-    level.units.flatMap((unit) =>
-      unit.skills.map((skill) => ({
-        level,
-        unit,
-        skill
-      }))
-    )
+  const [skillUnits, resources] = await Promise.all([
+    getAdminSkillUnits(),
+    getAdminResourcesFromDb()
+  ]);
+  const skills = skillUnits.flatMap((unit) =>
+    unit.skills.map((skill) => ({
+      level: unit.level,
+      unit,
+      skill
+    }))
   );
-  const resources = await getAdminResourcesFromDb();
 
   return (
     <main className="site-shell">
@@ -37,6 +39,10 @@ export default async function AdminPage() {
             billing tools, analytics, and AI drafting are still deferred.
           </p>
           <div className="route-actions">
+            <Link className="secondary-button" href="/admin/skills">
+              <GraduationCap size={18} />
+              Manage Skills
+            </Link>
             <Link className="primary-button" href="/admin/resources/new">
               <Plus size={18} />
               Create Resource
