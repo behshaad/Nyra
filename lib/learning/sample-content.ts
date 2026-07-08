@@ -90,6 +90,324 @@ type UnitSpec = {
   skills: SkillSpec[];
 };
 
+type UnitLearnerCopy = {
+  title: string;
+  summary: string;
+  resourceFocus: string;
+};
+
+type SkillLearnerCopy = {
+  title: string;
+  description: string;
+  focus: string;
+};
+
+const unitLearnerCopy: Record<string, UnitLearnerCopy> = {
+  "a1-first-contacts": {
+    title: "اولین آشنایی‌ها",
+    summary: "سلام و احوالپرسی، معرفی خود، هجی کردن واژه‌های ساده و گفتن زبان‌ها.",
+    resourceFocus: "سلام و احوالپرسی، نام، کشورها و زبان‌ها"
+  },
+  "a1-people-and-family": {
+    title: "آدم‌ها و خانواده",
+    summary: "درباره حال، خداحافظی، اعضای خانواده، دوستان و سن صحبت کنید.",
+    resourceFocus: "آدم‌ها، خانواده، دوستان و سن"
+  },
+  "a1-food-and-drink": {
+    title: "غذا و نوشیدنی",
+    summary: "خوراکی‌ها را نام ببرید، علاقه‌ها را بگویید، صبحانه سفارش دهید و خرید ساده انجام دهید.",
+    resourceFocus: "غذا، نوشیدنی، مقدار، قیمت و درخواست مودبانه"
+  },
+  "a1-my-life": {
+    title: "زندگی من",
+    summary: "درباره کار، ساعت، اطلاعات تماس، برنامه روزانه و وسایل دیجیتال حرف بزنید.",
+    resourceFocus: "شغل، ساعت، اطلاعات تماس، برنامه روزانه و وسایل"
+  },
+  "a1-free-time": {
+    title: "وقت آزاد",
+    summary: "درباره سرگرمی‌ها، علاقه‌ها، آخر هفته، کارهای لازم و استرس صحبت کنید.",
+    resourceFocus: "سرگرمی، برنامه آخر هفته و کارهای لازم"
+  },
+  "a1-city-and-home": {
+    title: "شهر و خانه",
+    summary: "محل زندگی، جاهای شهر، اتاق‌ها، وسایل خانه و نظر ساده را توصیف کنید.",
+    resourceFocus: "مکان‌ها، خانه، اتاق‌ها و نظر دادن"
+  },
+  "a1-weather-and-dates": {
+    title: "هوا و تاریخ‌ها",
+    summary: "درباره آب‌وهوا، ماه‌ها، تولد، محل تولد و شرح حال کوتاه صحبت کنید.",
+    resourceFocus: "آب‌وهوا، ماه‌ها، تاریخ‌ها، محل تولد و شرح حال"
+  },
+  "a1-getting-around": {
+    title: "رفت‌وآمد در شهر",
+    summary: "واژه‌های حمل‌ونقل، مقایسه گزینه‌ها، زمان حرکت و مسیر پرسیدن را تمرین کنید.",
+    resourceFocus: "حمل‌ونقل، زمان‌بندی، مسیر دادن و مکان‌های شهری"
+  },
+  "a1-with-friends": {
+    title: "با دوستان",
+    summary: "قرار گذاشتن، واکنش به پیشنهاد، سفارش در رستوران و گفتگوی کوتاه را تمرین کنید.",
+    resourceFocus: "دعوت، رستوران، مهمانی و دلیل آوردن"
+  },
+  "a1-travel-and-past": {
+    title: "سفر و گذشته",
+    summary: "فصل‌ها، آرزوهای سفر، کشورهای آلمانی‌زبان، هتل و اولین جمله‌های گذشته را تمرین کنید.",
+    resourceFocus: "سفر، فصل‌ها، کشورها، هتل و شکل‌های ساده گذشته"
+  },
+  "a1-sport-and-health": {
+    title: "ورزش و سلامتی",
+    summary: "اعضای بدن، ورزش، علاقه‌ها، دستورهای تمرینی و بیماری را بیان کنید.",
+    resourceFocus: "بدن، ورزش، تمرین، بیماری و مراجعه به پزشک"
+  },
+  "a1-work-and-life": {
+    title: "کار و زندگی",
+    summary: "شغل رویایی، اولویت‌های کاری، توصیه، تعادل کار و زندگی و دعوت را تمرین کنید.",
+    resourceFocus: "شغل، اولویت‌های کاری، توصیه و تعادل کار و زندگی"
+  }
+};
+
+const skillLearnerCopy: Record<string, SkillLearnerCopy> = {
+  "greet-and-say-your-name": {
+    title: "سلام کن و نامت را بگو",
+    description: "سلام رسمی و غیررسمی را تشخیص بده و خودت را معرفی کن.",
+    focus: "سلام و معرفی"
+  },
+  "ask-for-a-name": {
+    title: "نام کسی را بپرس",
+    description: "با du و Sie نام طرف مقابل را مودبانه یا دوستانه بپرس.",
+    focus: "پرسیدن نام"
+  },
+  "say-origin-and-home": {
+    title: "اهل کجا بودن و محل زندگی",
+    description: "بگو اهل کجا هستی و کجا زندگی می‌کنی.",
+    focus: "کشور و محل زندگی"
+  },
+  "share-languages-and-contact": {
+    title: "زبان‌ها و اطلاعات تماس",
+    description: "درباره زبان‌ها، شماره تلفن و ایمیل جمله‌های ساده بساز.",
+    focus: "زبان‌ها و تماس"
+  },
+  "ask-how-someone-is": {
+    title: "حال کسی را بپرس",
+    description: "پرسش و پاسخ ساده برای احوالپرسی را تمرین کن.",
+    focus: "حال و احوال"
+  },
+  "say-goodbye-politely": {
+    title: "مودبانه خداحافظی کن",
+    description: "خداحافظی‌های رایج را در موقعیت‌های روزمره به کار ببر.",
+    focus: "خداحافظی"
+  },
+  "introduce-family": {
+    title: "خانواده را معرفی کن",
+    description: "اعضای خانواده را نام ببر و مالکیت ساده را تمرین کن.",
+    focus: "خانواده"
+  },
+  "talk-about-friends-and-age": {
+    title: "دوستان و سن",
+    description: "درباره دوستان حرف بزن و سن را بپرس یا بگو.",
+    focus: "دوستان و سن"
+  },
+  "name-fruit-and-vegetables": {
+    title: "میوه و سبزی را نام ببر",
+    description: "اسم خوراکی‌ها را بپرس و چند واژه کاربردی را هجی کن.",
+    focus: "نام خوراکی‌ها"
+  },
+  "say-food-preferences": {
+    title: "علاقه غذایی را بگو",
+    description: "بگو چه چیزی را دوست داری بخوری یا بنوشی.",
+    focus: "علاقه غذایی"
+  },
+  "plan-breakfast": {
+    title: "صبحانه را توصیف کن",
+    description: "درباره خوراکی‌ها و نوشیدنی‌های صبحانه صحبت کن.",
+    focus: "صبحانه"
+  },
+  "shop-for-food": {
+    title: "خرید خوراکی",
+    description: "خوراکی، قیمت و مقدار را ساده و مودبانه بپرس.",
+    focus: "خرید"
+  },
+  "talk-about-job-and-time": {
+    title: "شغل و ساعت",
+    description: "شغلت را بگو و ساعت را بپرس یا اعلام کن.",
+    focus: "شغل و ساعت"
+  },
+  "give-contact-details": {
+    title: "اطلاعات تماس بده",
+    description: "آدرس، شماره تلفن و ایمیل را آرام و روشن بگو.",
+    focus: "اطلاعات تماس"
+  },
+  "describe-a-daily-routine": {
+    title: "برنامه روزانه را بگو",
+    description: "کارهای روزانه را با جمله‌های کوتاه توضیح بده.",
+    focus: "برنامه روزانه"
+  },
+  "talk-about-devices": {
+    title: "درباره وسایل حرف بزن",
+    description: "بگو چه وسیله‌هایی داری و به چه چیزهایی نیاز داری.",
+    focus: "وسایل"
+  },
+  "name-hobbies": {
+    title: "سرگرمی‌ها را نام ببر",
+    description: "بگو چه سرگرمی‌هایی داری.",
+    focus: "سرگرمی‌ها"
+  },
+  "say-what-you-like-doing": {
+    title: "بگو چه کاری را دوست داری",
+    description: "درباره کارهایی که در وقت آزاد دوست داری انجام دهی حرف بزن.",
+    focus: "علاقه‌ها"
+  },
+  "talk-about-weekends": {
+    title: "درباره آخر هفته حرف بزن",
+    description: "بگو آخر هفته چه کارهایی می‌توانی انجام دهی.",
+    focus: "آخر هفته"
+  },
+  "talk-about-obligations": {
+    title: "کارهای لازم را بگو",
+    description: "بگو چه کاری باید انجام دهی و چه چیزی استرس ایجاد می‌کند.",
+    focus: "وظیفه و اجبار"
+  },
+  "say-where-you-live": {
+    title: "بگو کجا زندگی می‌کنی",
+    description: "بگو در شهر، روستا یا کشور زندگی می‌کنی.",
+    focus: "محل زندگی"
+  },
+  "describe-your-town": {
+    title: "شهر خودت را توصیف کن",
+    description: "درباره امکانات شهر و نظر ساده خودت جمله بساز.",
+    focus: "توصیف شهر"
+  },
+  "name-rooms-and-furniture": {
+    title: "اتاق‌ها و وسایل خانه",
+    description: "اتاق‌ها و وسایل رایج خانه را نام ببر.",
+    focus: "اتاق‌ها"
+  },
+  "describe-your-flat": {
+    title: "آپارتمان خودت را توصیف کن",
+    description: "درباره خانه یا آپارتمان خودت جمله‌های ساده بساز.",
+    focus: "خانه"
+  },
+  "talk-about-weather": {
+    title: "درباره هوا حرف بزن",
+    description: "اطلاعات ساده آب‌وهوا را بفهم و بیان کن.",
+    focus: "آب‌وهوا"
+  },
+  "name-months-and-seasons": {
+    title: "ماه‌ها و فصل‌ها",
+    description: "درباره ماه‌ها و زمان‌های مورد علاقه سال صحبت کن.",
+    focus: "ماه‌ها"
+  },
+  "say-birthplace-and-birthday": {
+    title: "تولد و محل تولد",
+    description: "بپرس و بگو کسی کجا و چه زمانی به دنیا آمده است.",
+    focus: "تاریخ‌های شخصی"
+  },
+  "write-a-simple-biography": {
+    title: "شرح حال کوتاه بساز",
+    description: "نام، سن، کشور، شغل و سرگرمی را در یک معرفی کوتاه ترکیب کن.",
+    focus: "شرح حال"
+  },
+  "name-transport": {
+    title: "وسایل حمل‌ونقل",
+    description: "گزینه‌های حمل‌ونقل را نام ببر و بگو چطور رفت‌وآمد می‌کنی.",
+    focus: "حمل‌ونقل"
+  },
+  "compare-transport": {
+    title: "حمل‌ونقل را مقایسه کن",
+    description: "مزیت‌ها و ایرادهای ساده وسایل رفت‌وآمد را بگو.",
+    focus: "مقایسه"
+  },
+  "read-simple-timetables": {
+    title: "زمان حرکت را بخوان",
+    description: "ساعت‌ها و اطلاعات ساده سفر را بفهم.",
+    focus: "جدول زمان‌بندی"
+  },
+  "ask-for-directions": {
+    title: "مسیر بپرس",
+    description: "بپرس چیزی کجاست و مسیر ساده را دنبال کن.",
+    focus: "مسیر"
+  },
+  "make-plans": {
+    title: "قرار بگذار",
+    description: "بپرس کسی وقت دارد یا نه و یک فعالیت پیشنهاد بده.",
+    focus: "قرار گذاشتن"
+  },
+  "react-to-suggestions": {
+    title: "به پیشنهاد واکنش نشان بده",
+    description: "قبول کن، رد کن و یک دلیل ساده بیاور.",
+    focus: "واکنش"
+  },
+  "order-at-a-restaurant": {
+    title: "در رستوران سفارش بده",
+    description: "غذا و نوشیدنی را مودبانه سفارش بده.",
+    focus: "رستوران"
+  },
+  "make-party-small-talk": {
+    title: "گفتگوی کوتاه در مهمانی",
+    description: "یک گفتگوی ساده را در مهمانی شروع کن و ادامه بده.",
+    focus: "گفتگوی کوتاه"
+  },
+  "talk-about-seasons-and-travel-wishes": {
+    title: "آرزوی سفر را بگو",
+    description: "بگو چه زمانی و به کجا می‌خواهی سفر کنی.",
+    focus: "آرزوی سفر"
+  },
+  "understand-country-facts": {
+    title: "اطلاعات کشورها را بفهم",
+    description: "واقعیت‌های ساده درباره کشورهای آلمانی‌زبان را بپرس و پاسخ بده.",
+    focus: "کشورها"
+  },
+  "book-simple-accommodation": {
+    title: "اقامت ساده پیدا کن",
+    description: "درباره هتل و محل اقامت در سفر صحبت کن.",
+    focus: "هتل"
+  },
+  "talk-about-a-past-trip": {
+    title: "از سفر گذشته بگو",
+    description: "بگو کجا بودی و دیروز یا در سفر چه کار کردی.",
+    focus: "سفر گذشته"
+  },
+  "name-body-parts": {
+    title: "اعضای بدن را نام ببر",
+    description: "اعضای پایه بدن را بگو و درد را بیان کن.",
+    focus: "بدن"
+  },
+  "talk-about-favorite-sport": {
+    title: "ورزش مورد علاقه",
+    description: "بگو چه ورزشی را دوست داری یا دوست نداری.",
+    focus: "ورزش"
+  },
+  "understand-fitness-instructions": {
+    title: "دستورهای تمرینی را بفهم",
+    description: "دستورهای ساده برای تمرین ورزشی را دنبال کن.",
+    focus: "تمرین ورزشی"
+  },
+  "visit-the-doctor": {
+    title: "مراجعه به پزشک",
+    description: "علائم بیماری را بگو و توصیه ساده را بفهم.",
+    focus: "پزشک"
+  },
+  "describe-a-dream-job": {
+    title: "شغل رویایی را توصیف کن",
+    description: "شغل‌ها را نام ببر و بگو چه چیزهایی برایت مهم است.",
+    focus: "شغل رویایی"
+  },
+  "read-simple-job-ads": {
+    title: "آگهی شغلی ساده بخوان",
+    description: "جزئیات محیط کار و اولویت‌های شغلی را بفهم.",
+    focus: "آگهی شغلی"
+  },
+  "report-advice": {
+    title: "توصیه را بازگو کن",
+    description: "بگو کسی چه چیزی توصیه یا بیان کرده است.",
+    focus: "توصیه"
+  },
+  "write-a-farewell-invitation": {
+    title: "دعوت خداحافظی بنویس",
+    description: "برای یک رویداد ساده دعوت بنویس و زمان را بگو.",
+    focus: "دعوت"
+  }
+};
+
 const wrongMeanings = [
   "او امروز بیمار است.",
   "ما فردا خرید می‌کنیم.",
@@ -235,16 +553,19 @@ function makeSkillQuestions(spec: SkillSpec): SampleQuestion[] {
 }
 
 function makeSkill(spec: SkillSpec): SampleSkill {
+  const learnerCopy = skillLearnerCopy[spec.slug];
+  const localizedSpec = learnerCopy ? { ...spec, ...learnerCopy } : spec;
+
   return {
-    id: spec.slug,
-    slug: spec.slug,
-    title: spec.title,
-    description: spec.description,
+    id: localizedSpec.slug,
+    slug: localizedSpec.slug,
+    title: localizedSpec.title,
+    description: localizedSpec.description,
     kind: "REGULAR",
     xp: 80,
     requeueIncorrect: true,
     publicationStatus: "PUBLISHED",
-    questions: makeSkillQuestions(spec)
+    questions: makeSkillQuestions(localizedSpec)
   };
 }
 
@@ -269,14 +590,27 @@ function makeCheckpoint(unit: UnitSpec, skills: SampleSkill[]): SampleSkill {
   return {
     id: slug,
     slug,
-    title: `${unit.title} checkpoint`,
-    description: `Check your A1 control of ${unit.resourceFocus}.`,
+    title: `${unit.title}: آزمونک`,
+    description: `کنترل A1 خودت را در موضوع ${unit.resourceFocus} بسنج.`,
     kind: "UNIT_CHECKPOINT",
     xp: 120,
     passingScore: 70,
     requeueIncorrect: false,
     publicationStatus: "PUBLISHED",
     questions
+  };
+}
+
+function localizeUnit(unit: UnitSpec): UnitSpec {
+  const learnerCopy = unitLearnerCopy[unit.slug];
+
+  return {
+    ...unit,
+    ...(learnerCopy ?? {}),
+    skills: unit.skills.map((skill) => ({
+      ...skill,
+      ...(skillLearnerCopy[skill.slug] ?? {})
+    }))
   };
 }
 
@@ -1255,8 +1589,8 @@ function makeFinalTest(units: SampleUnit[]): SampleSkill {
   return {
     id: slug,
     slug,
-    title: "Final A1 Test",
-    description: "Sample your readiness across the full A1 path.",
+    title: "آزمون نهایی A1",
+    description: "آمادگی خودت را در کل مسیر A1 بسنج.",
     kind: "FINAL_TEST",
     xp: 300,
     passingScore: 75,
@@ -1267,7 +1601,8 @@ function makeFinalTest(units: SampleUnit[]): SampleSkill {
 }
 
 function buildUnits() {
-  const units = unitSpecs.map((unit) => {
+  const units = unitSpecs.map((unitSpec) => {
+    const unit = localizeUnit(unitSpec);
     const skills = unit.skills.map((skill) => makeSkill(skill));
 
     return {
@@ -1295,24 +1630,27 @@ export const devLearnerProfile = {
 
 export const sampleCourse: SampleCourse = {
   slug: "persian-to-german",
-  title: "Persian Speakers Learning German",
+  title: "آلمانی برای فارسی‌زبان‌ها",
   sourceLanguage: "Persian",
   targetLanguage: "German",
   interfaceLanguage: "Persian",
   levels: [
     {
       label: "A1",
-      title: "A1 Foundations",
+      title: "پایه‌های A1",
       units: buildUnits()
     }
   ]
 };
 
-export const sampleResources: SampleResource[] = unitSpecs.flatMap((unit) => [
+export const sampleResources: SampleResource[] = unitSpecs.flatMap((unitSpec) => {
+  const unit = localizeUnit(unitSpec);
+
+  return [
   {
     slug: `${unit.slug}-grammar-guide`,
-    title: `${unit.title} grammar guide`,
-    description: `Persian-first grammar support for ${unit.resourceFocus}.`,
+    title: `راهنمای گرامر: ${unit.title}`,
+    description: `پشتیبانی گرامری فارسی‌محور برای ${unit.resourceFocus}.`,
     type: "GRAMMAR_NOTE",
     levelLabel: "A1",
     content: `این راهنما نکته‌های پایه‌ی A1 برای ${unit.resourceFocus} را با توضیح فارسی و مثال‌های کوتاه آلمانی مرور می‌کند.`,
@@ -1321,8 +1659,8 @@ export const sampleResources: SampleResource[] = unitSpecs.flatMap((unit) => [
   },
   {
     slug: `${unit.slug}-pronunciation-notes`,
-    title: `${unit.title} pronunciation notes`,
-    description: `Written pronunciation support for ${unit.resourceFocus}.`,
+    title: `نکته‌های تلفظ: ${unit.title}`,
+    description: `راهنمای نوشتاری تلفظ برای ${unit.resourceFocus}.`,
     type: "PRONUNCIATION",
     levelLabel: "A1",
     content: `برای تلفظ، واژه‌های این واحد را کوتاه، شمرده، و با توجه به تکیه‌ی هجایی تمرین کنید. فایل صوتی در نسخه‌ی بعدی اضافه می‌شود.`,
@@ -1331,15 +1669,16 @@ export const sampleResources: SampleResource[] = unitSpecs.flatMap((unit) => [
   },
   {
     slug: `${unit.slug}-worksheet`,
-    title: `${unit.title} worksheet`,
-    description: `A text-only worksheet for practicing ${unit.resourceFocus}.`,
+    title: `کاربرگ تمرین: ${unit.title}`,
+    description: `کاربرگ متنی برای تمرین ${unit.resourceFocus}.`,
     type: "WORKSHEET",
     levelLabel: "A1",
     content: `سه جمله‌ی کوتاه آلمانی درباره‌ی ${unit.resourceFocus} بنویسید و سپس معنی فارسی هر جمله را کنار آن بیاورید.`,
     publicationStatus: "PUBLISHED",
     unitSlug: unit.slug
   }
-]);
+  ];
+});
 
 export function getPublishedSkills() {
   return sampleCourse.levels.flatMap((level) =>
