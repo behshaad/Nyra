@@ -64,6 +64,10 @@ _Avoid_: Account, user metadata
 The language a learner uses as their base for explanations, translations, and learning support.
 _Avoid_: Native language
 
+**Persian-First Support**:
+A content style where explanations, grammar help, and learning scaffolding use Persian to reduce friction, while practice increasingly asks learners to recognize, choose, order, or produce German.
+_Avoid_: Persian-only teaching, translation-only content
+
 **Target Language**:
 The language a learner is studying in a Course.
 _Avoid_: Learning language
