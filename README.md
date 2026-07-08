@@ -7,11 +7,11 @@ This repository currently contains the first complete playable A1 slice:
 - Real routes for `/`, `/learn`, `/learn/[skillId]`, `/resources`, `/flashcards`, `/profile`, `/admin`, and `/pricing`.
 - A backend-backed A1 path with 12 Units, 48 regular Skills, 12 Unit Checkpoints, and 1 Final A1 Test.
 - A Postgres-backed Resource Library at `/resources` with detail pages, dev-admin creation/editing, and Resource archiving.
-- Dev-admin Skill metadata editing at `/admin/skills`.
+- Dev-admin Skill metadata editing and existing Question editing at `/admin/skills`.
 - A deterministic Question Engine for multiple choice, fill-in-the-blank, word-ordering, retry practice, and soft-gated assessments.
 - Prisma/PostgreSQL models for Course, Level, Unit, Skill, Question, Learner Profile, Learning Session, Question Attempt, and Progress Event.
 - Seed content for the full text-only Persian-to-German A1 Course and a development learner identity.
-- Dev-admin Skill metadata editing, Resource creation/editing/archive, static pricing, deferred flashcards, and dev-profile scaffolds.
+- Dev-admin Skill metadata editing, existing Question editing, Resource creation/editing/archive, static pricing, deferred flashcards, and dev-profile scaffolds.
 
 ## Development
 

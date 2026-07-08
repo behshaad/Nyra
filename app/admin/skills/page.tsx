@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Circle, FileCheck2, Pencil, Trophy } from "lucide-react";
+import { Circle, FileCheck2, ListChecks, Pencil, Trophy } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
 import { getAdminSkillUnits } from "@/lib/admin/skill-repository";
@@ -20,8 +20,9 @@ export default async function AdminSkillsPage() {
           <span className="section-label">Admin CMS</span>
           <h1>Edit Skill metadata.</h1>
           <p>
-            This page manages Skill title, description, XP, and publication status. Question
-            editing and Skill archiving are separate future slices.
+            This page manages Skill title, description, XP, publication status, and existing
+            Question content. Question creation, reordering, and Skill archiving are separate
+            future slices.
           </p>
         </div>
 
@@ -78,6 +79,13 @@ export default async function AdminSkillsPage() {
                       >
                         <Pencil size={16} />
                         Edit
+                      </Link>
+                      <Link
+                        className="ghost-button compact-link"
+                        href={`/admin/skills/${skill.slug}/questions`}
+                      >
+                        <ListChecks size={16} />
+                        Questions
                       </Link>
                     </article>
                   ))}

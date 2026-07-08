@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Circle, GraduationCap, Pencil, Plus } from "lucide-react";
+import { Circle, GraduationCap, ListChecks, Pencil, Plus } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
 import {
@@ -35,8 +35,9 @@ export default async function AdminPage() {
           <span className="section-label">Admin CMS</span>
           <h1>Content control room.</h1>
           <p>
-            Resource creation is now available for dev-admin use. Authentication, audit logs,
-            billing tools, analytics, and AI drafting are still deferred.
+            Resource creation, Skill metadata editing, and existing Question editing are now
+            available for dev-admin use. Authentication, audit logs, billing tools, analytics, and
+            AI drafting are still deferred.
           </p>
           <div className="route-actions">
             <Link className="secondary-button" href="/admin/skills">
@@ -72,6 +73,13 @@ export default async function AdminPage() {
                   </p>
                 </div>
                 <span>{skill.kind.replaceAll("_", " ")}</span>
+                <Link
+                  className="ghost-button compact-link"
+                  href={`/admin/skills/${skill.slug}/questions`}
+                >
+                  <ListChecks size={16} />
+                  Questions
+                </Link>
               </article>
             ))}
           </div>

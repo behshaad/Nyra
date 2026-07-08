@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ListChecks } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AdminSkillForm } from "@/components/admin-skill-form";
 import { AppHeader } from "@/components/app-header";
@@ -37,8 +37,14 @@ export default async function EditSkillPage({
           <h1>Edit Skill.</h1>
           <p>
             Update learner-facing Skill metadata for {skill.unit.level.label} / {skill.unit.title}.
-            Question editing stays deferred.
+            Question creation and reordering stay deferred.
           </p>
+          <div className="route-actions">
+            <Link className="secondary-button" href={`/admin/skills/${skill.slug}/questions`}>
+              <ListChecks size={18} />
+              Edit Questions
+            </Link>
+          </div>
         </div>
 
         <section className="app-panel route-panel">
