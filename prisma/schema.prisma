@@ -20,6 +20,13 @@ enum QuestionType {
   WORD_ORDERING
 }
 
+enum ResourceType {
+  GRAMMAR_NOTE
+  PRONUNCIATION
+  WORKSHEET
+  EXTERNAL_LINK
+}
+
 enum LearningSessionStatus {
   ACTIVE
   COMPLETED
@@ -77,8 +84,9 @@ model Unit {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  level  Level   @relation(fields: [levelId], references: [id], onDelete: Cascade)
-  skills Skill[]
+  level     Level      @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  skills    Skill[]
+  resources Resource[]
 
   @@unique([levelId, order])
 }
@@ -99,6 +107,7 @@ model Skill {
   questions        Question[]
   learningSessions LearningSession[]
   progressEvents   ProgressEvent[]
+  resources        Resource[]
 
   @@unique([unitId, order])
 }
@@ -184,4 +193,23 @@ model ProgressEvent {
   learnerProfile  LearnerProfile   @relation(fields: [learnerProfileId], references: [id], onDelete: Cascade)
   learningSession LearningSession? @relation(fields: [learningSessionId], references: [id], onDelete: SetNull)
   skill           Skill?           @relation(fields: [skillId], references: [id], onDelete: SetNull)
+}
+
+model Resource {
+  id                String            @id @default(uuid())
+  slug              String            @unique
+  title             String
+  description       String
+  type              ResourceType
+  levelLabel        String
+  content           String
+  url               String?
+  publicationStatus PublicationStatus @default(DRAFT)
+  unitId            String?
+  skillId           String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  unit  Unit?  @relation(fields: [unitId], references: [id], onDelete: SetNull)
+  skill Skill? @relation(fields: [skillId], references: [id], onDelete: SetNull)
 }

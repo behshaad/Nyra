@@ -25,6 +25,19 @@ export type SampleSkill = {
   questions: SampleQuestion[];
 };
 
+export type SampleResource = {
+  slug: string;
+  title: string;
+  description: string;
+  type: "GRAMMAR_NOTE" | "PRONUNCIATION" | "WORKSHEET" | "EXTERNAL_LINK";
+  levelLabel: string;
+  content: string;
+  url?: string;
+  publicationStatus: "PUBLISHED";
+  unitSlug?: string;
+  skillSlug?: string;
+};
+
 export type SampleUnit = {
   slug: string;
   title: string;
@@ -136,6 +149,47 @@ export const sampleCourse: SampleCourse = {
   ]
 };
 
+export const sampleResources: SampleResource[] = [
+  {
+    slug: "a1-possessive-pronouns-persian-guide",
+    title: "A1 possessive pronouns Persian guide",
+    description:
+      "A concise Persian-first note for choosing mein, meine, and related possessive forms.",
+    type: "GRAMMAR_NOTE",
+    levelLabel: "A1",
+    content:
+      "In German, possessive pronouns change with the gender and role of the noun. For A1, focus first on nominative forms: mein Bruder, meine Schwester, mein Kind.",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "a1-family-basics",
+    skillSlug: "family-basics"
+  },
+  {
+    slug: "family-vocabulary-pronunciation",
+    title: "Family vocabulary pronunciation",
+    description:
+      "Pronunciation support for common A1 family words such as Bruder, Schwester, Mutter, and Vater.",
+    type: "PRONUNCIATION",
+    levelLabel: "A1",
+    content:
+      "Listen for the German r in Bruder and the clear final -er sound. Audio upload is deferred; this placeholder keeps the Resource Library shape ready.",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "a1-family-basics",
+    skillSlug: "family-basics"
+  },
+  {
+    slug: "family-basics-worksheet",
+    title: "Family basics worksheet",
+    description:
+      "A worksheet placeholder for practicing family introductions and simple possessive phrases.",
+    type: "WORKSHEET",
+    levelLabel: "A1",
+    content:
+      "Write three short German sentences introducing family members. Example: Das ist mein Bruder. Das ist meine Mutter.",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "a1-family-basics"
+  }
+];
+
 export function getPublishedSkills() {
   return sampleCourse.levels.flatMap((level) =>
     level.units.flatMap((unit) =>
@@ -151,4 +205,10 @@ export function getPublishedSkills() {
 
 export function getPublishedSkill(skillSlug: string) {
   return getPublishedSkills().find((skill) => skill.slug === skillSlug);
+}
+
+export function getPublishedResources() {
+  return sampleResources.filter(
+    (resource) => resource.publicationStatus === "PUBLISHED"
+  );
 }

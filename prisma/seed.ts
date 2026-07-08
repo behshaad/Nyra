@@ -1,7 +1,11 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../lib/generated/prisma/client";
-import { devLearnerProfile, sampleCourse } from "../lib/learning/sample-content";
+import {
+  devLearnerProfile,
+  sampleCourse,
+  sampleResources
+} from "../lib/learning/sample-content";
 
 const connectionString = process.env.DATABASE_URL;
 
@@ -91,6 +95,52 @@ async function main() {
       }
     }
   });
+
+  for (const resource of sampleResources) {
+    const unit = resource.unitSlug
+      ? await prisma.unit.findUnique({
+          where: {
+            slug: resource.unitSlug
+          }
+        })
+      : null;
+    const skill = resource.skillSlug
+      ? await prisma.skill.findUnique({
+          where: {
+            slug: resource.skillSlug
+          }
+        })
+      : null;
+
+    await prisma.resource.upsert({
+      where: {
+        slug: resource.slug
+      },
+      create: {
+        slug: resource.slug,
+        title: resource.title,
+        description: resource.description,
+        type: resource.type,
+        levelLabel: resource.levelLabel,
+        content: resource.content,
+        url: resource.url,
+        publicationStatus: resource.publicationStatus,
+        unitId: unit?.id,
+        skillId: skill?.id
+      },
+      update: {
+        title: resource.title,
+        description: resource.description,
+        type: resource.type,
+        levelLabel: resource.levelLabel,
+        content: resource.content,
+        url: resource.url,
+        publicationStatus: resource.publicationStatus,
+        unitId: unit?.id,
+        skillId: skill?.id
+      }
+    });
+  }
 }
 
 main()

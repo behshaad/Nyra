@@ -860,6 +860,49 @@ h3 {
   margin-top: 26px;
 }
 
+.resource-library {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 28px;
+}
+
+.resource-library-card {
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+}
+
+.resource-card-header {
+  align-items: flex-start;
+  display: flex;
+  gap: 12px;
+}
+
+.resource-card-header h2 {
+  font-size: 1.25rem;
+  line-height: 1.15;
+  margin: 5px 0 0;
+}
+
+.resource-library-card > p,
+.resource-content p {
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.resource-content {
+  background: rgba(21, 95, 104, 0.07);
+  border-radius: var(--radius);
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+}
+
 @keyframes riseIn {
   from {
     opacity: 0;
@@ -955,6 +998,7 @@ h3 {
   .feature-grid,
   .foundation-grid,
   .profile-grid,
+  .resource-library,
   .resource-rail,
   .mini-panel-grid,
   .analytics-grid {

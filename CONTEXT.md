@@ -32,6 +32,18 @@ _Avoid_: Exercise item, quiz item
 A learner's submitted response to a Question at a specific moment.
 _Avoid_: Answer, response record
 
+**Resource**:
+Supporting learning material that helps a learner study outside a Skill's required Questions.
+_Avoid_: Extra, asset
+
+**Resource Library**:
+The learner-facing collection of Published Resources.
+_Avoid_: Materials page
+
+**Resource Type**:
+The kind of support a Resource provides, such as grammar note, pronunciation, worksheet, or external link.
+_Avoid_: Category
+
 **Learning Session**:
 A learner's active or completed run through a Skill, including ordered Questions, feedback, retries, completion, and summary.
 _Avoid_: Lesson session, practice run

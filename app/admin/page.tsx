@@ -1,7 +1,7 @@
 import { Circle } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
-import { sampleCourse } from "@/lib/learning/sample-content";
+import { getPublishedResources, sampleCourse } from "@/lib/learning/sample-content";
 
 export default function AdminPage() {
   const skills = sampleCourse.levels.flatMap((level) =>
@@ -13,6 +13,7 @@ export default function AdminPage() {
       }))
     )
   );
+  const resources = getPublishedResources();
 
   return (
     <main className="site-shell">
@@ -30,6 +31,13 @@ export default function AdminPage() {
         </div>
 
         <section className="app-panel route-panel" aria-label="Read-only admin content">
+          <div className="app-panel-header">
+            <div>
+              <p className="panel-kicker">Content hierarchy</p>
+              <h2>Published Skills</h2>
+            </div>
+            <span className="status-pill">{skills.length} Skill</span>
+          </div>
           <div className="admin-preview">
             {skills.map(({ level, unit, skill }) => (
               <article className="admin-row" key={skill.slug}>
@@ -41,6 +49,30 @@ export default function AdminPage() {
                   </p>
                 </div>
                 <span>{skill.publicationStatus}</span>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="app-panel route-panel" aria-label="Read-only admin resources">
+          <div className="app-panel-header">
+            <div>
+              <p className="panel-kicker">Resource Library</p>
+              <h2>Published Resources</h2>
+            </div>
+            <span className="status-pill">{resources.length} Resources</span>
+          </div>
+          <div className="admin-preview">
+            {resources.map((resource) => (
+              <article className="admin-row" key={resource.slug}>
+                <Circle size={12} />
+                <div>
+                  <h3>{resource.title}</h3>
+                  <p>
+                    {resource.levelLabel} / {resource.type.replaceAll("_", " ")}
+                  </p>
+                </div>
+                <span>{resource.publicationStatus}</span>
               </article>
             ))}
           </div>
