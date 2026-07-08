@@ -60,6 +60,10 @@ _Avoid_: Quiz, mini exam
 A level-level assessment that samples across all twelve A1 Units and gives the learner a clear score or result for A1 readiness.
 _Avoid_: Final quiz, placement test
 
+**Soft Gate**:
+A progress signal that marks a Unit or Level as needing review when the learner scores below the passing threshold, without blocking continued exploration.
+_Avoid_: Locked gate, hard prerequisite
+
 **Learning Path**:
 The ordered learner-facing route through a Level's Units and Skills. A Learning Path can show upcoming Skills before all of them are fully authored, as long as publication state makes learner availability clear.
 _Avoid_: Course outline, syllabus
