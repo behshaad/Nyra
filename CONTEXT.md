@@ -16,6 +16,10 @@ _Avoid_: Program, track
 A major proficiency band inside a Course, such as A1 or A2.
 _Avoid_: Stage
 
+**Curriculum Reference**:
+An external learning source used to understand topic progression, skill coverage, and proficiency expectations without copying its exact wording, exercises, or proprietary sequence as Nyra content.
+_Avoid_: Source content, imported textbook
+
 **Unit**:
 A themed group of Skills inside a Level.
 _Avoid_: Module, chapter
