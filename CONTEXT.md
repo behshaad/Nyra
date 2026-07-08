@@ -52,6 +52,14 @@ _Avoid_: Category
 A learner's active or completed run through a Skill, including ordered Questions, feedback, retries, completion, and summary.
 _Avoid_: Lesson session, practice run
 
+**Unit Checkpoint**:
+A short assessment at the end of a Unit that samples the Unit's vocabulary, grammar, reading-style comprehension, and communicative phrases.
+_Avoid_: Quiz, mini exam
+
+**Final A1 Test**:
+A level-level assessment that samples across all twelve A1 Units and gives the learner a clear score or result for A1 readiness.
+_Avoid_: Final quiz, placement test
+
 **Learning Path**:
 The ordered learner-facing route through a Level's Units and Skills. A Learning Path can show upcoming Skills before all of them are fully authored, as long as publication state makes learner availability clear.
 _Avoid_: Course outline, syllabus
