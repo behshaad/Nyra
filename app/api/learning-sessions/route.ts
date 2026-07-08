@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { getPrisma } from "@/lib/db/prisma";
+import { devAuthUserId } from "@/lib/learner/preferences";
 import { QuestionEngine } from "@/lib/question-engine";
-
-const devAuthUserId = "dev-local-learner";
 
 export async function POST(request: Request) {
   const body = (await request.json()) as {

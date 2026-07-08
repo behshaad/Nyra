@@ -1623,7 +1623,7 @@ export const devLearnerProfile = {
   displayName: "Dev Learner",
   sourceLanguage: "Persian",
   targetLanguage: "German",
-  interfaceLanguage: "Persian",
+  interfaceLanguage: "fa",
   currentLevel: "A1",
   dailyGoalMinutes: 10
 };
@@ -1633,7 +1633,7 @@ export const sampleCourse: SampleCourse = {
   title: "آلمانی برای فارسی‌زبان‌ها",
   sourceLanguage: "Persian",
   targetLanguage: "German",
-  interfaceLanguage: "Persian",
+  interfaceLanguage: "fa",
   levels: [
     {
       label: "A1",

@@ -101,7 +101,35 @@ export type InterfaceCopy = {
 export const defaultInterfaceLanguage: InterfaceLanguageCode = "fa";
 
 export function resolveInterfaceLanguage(value: unknown): InterfaceLanguageCode {
-  return value === "en" ? "en" : defaultInterfaceLanguage;
+  if (value === "en" || value === "English") {
+    return "en";
+  }
+
+  return defaultInterfaceLanguage;
+}
+
+export function interfaceLanguagePreferenceHref(input: {
+  language: InterfaceLanguageCode;
+  returnTo: string;
+}) {
+  const params = new globalThis.URLSearchParams({
+    ui: input.language,
+    returnTo: input.returnTo
+  });
+
+  return `/api/learner-preferences/interface-language?${params.toString()}`;
+}
+
+export function levelPreferenceHref(input: {
+  level: string;
+  returnTo: string;
+}) {
+  const params = new globalThis.URLSearchParams({
+    level: input.level,
+    returnTo: input.returnTo
+  });
+
+  return `/api/learner-preferences/level?${params.toString()}`;
 }
 
 export function withInterfaceLanguage(

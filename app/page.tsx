@@ -7,6 +7,7 @@ import {
   resolveInterfaceLanguage,
   withInterfaceLanguage
 } from "@/lib/i18n/interface-language";
+import { getLearnerPreferences } from "@/lib/learner/preferences";
 import { getA1ContentSummary, sampleCourse } from "@/lib/learning/sample-content";
 
 const foundationIcons = [BookOpen, Sparkles, ChartNoAxesCombined, Crown];
@@ -19,7 +20,10 @@ export default async function Home({
   }>;
 }) {
   const { ui } = await searchParams;
-  const language = resolveInterfaceLanguage(ui);
+  const preferences = await getLearnerPreferences();
+  const language = ui
+    ? resolveInterfaceLanguage(ui)
+    : preferences.interfaceLanguage;
   const copy = interfaceCopy[language];
   const summary = getA1ContentSummary();
   const firstSkill = sampleCourse.levels[0]?.units[0]?.skills[0];

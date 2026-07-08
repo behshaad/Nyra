@@ -4,9 +4,11 @@ import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
 import {
   interfaceCopy,
+  levelPreferenceHref,
   resolveInterfaceLanguage,
   withInterfaceLanguage
 } from "@/lib/i18n/interface-language";
+import { getLearnerPreferences } from "@/lib/learner/preferences";
 import {
   getA1ContentSummary,
   sampleCourse
@@ -22,7 +24,10 @@ export default async function LearnPage({
   }>;
 }) {
   const { unit: selectedUnitParam, ui } = await searchParams;
-  const language = resolveInterfaceLanguage(ui);
+  const preferences = await getLearnerPreferences();
+  const language = ui
+    ? resolveInterfaceLanguage(ui)
+    : preferences.interfaceLanguage;
   const copy = interfaceCopy[language];
   const summary = getA1ContentSummary();
   const a1Level = sampleCourse.levels[0];
@@ -47,7 +52,15 @@ export default async function LearnPage({
           <h1>{copy.learn.title}</h1>
           <p>{copy.learn.body(summary)}</p>
           <div className="level-selector" aria-label={copy.learn.levelLabel}>
-            <Link className="level-pill active" href={withInterfaceLanguage("/learn", language)}>
+            <Link
+              className={`level-pill ${
+                preferences.currentLevel === "A1" ? "active" : ""
+              }`}
+              href={levelPreferenceHref({
+                level: "A1",
+                returnTo: selectedUnitParam ? `/learn?unit=${selectedUnitParam}` : "/learn"
+              })}
+            >
               A1
             </Link>
             <span className="level-pill disabled">A2 · {copy.learn.levelComingSoon}</span>

@@ -8,6 +8,7 @@ import {
   resolveInterfaceLanguage,
   withInterfaceLanguage
 } from "@/lib/i18n/interface-language";
+import { getLearnerPreferences } from "@/lib/learner/preferences";
 import { getPublishedSkillBySlug } from "@/lib/admin/skill-repository";
 import { getFlatA1Skills, getNextSkillSlug } from "@/lib/learning/path-progress";
 
@@ -34,7 +35,10 @@ export default async function SkillPage({
 }) {
   const { skillId } = await params;
   const { ui } = await searchParams;
-  const language = resolveInterfaceLanguage(ui);
+  const preferences = await getLearnerPreferences();
+  const language = ui
+    ? resolveInterfaceLanguage(ui)
+    : preferences.interfaceLanguage;
   const copy = interfaceCopy[language];
   const [skill, flatSkills, nextSkillSlug] = await Promise.all([
     getPublishedSkillBySlug(skillId),

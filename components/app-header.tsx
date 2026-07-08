@@ -1,9 +1,11 @@
 import Link from "next/link";
 import {
+  interfaceLanguagePreferenceHref,
   interfaceCopy,
   type InterfaceLanguageCode,
   withInterfaceLanguage
 } from "@/lib/i18n/interface-language";
+import { getLearnerPreferences } from "@/lib/learner/preferences";
 
 const navItems = [
   { href: "/learn", key: "learn" },
@@ -14,15 +16,18 @@ const navItems = [
   { href: "/admin", key: "admin" }
 ] as const;
 
-export function AppHeader({
-  language = "fa",
+export async function AppHeader({
+  language,
   currentPath = "/"
 }: {
   language?: InterfaceLanguageCode;
   currentPath?: string;
 }) {
-  const copy = interfaceCopy[language];
-  const alternateLanguage: InterfaceLanguageCode = language === "fa" ? "en" : "fa";
+  const preferences = language ? null : await getLearnerPreferences();
+  const activeLanguage = language ?? preferences?.interfaceLanguage ?? "fa";
+  const copy = interfaceCopy[activeLanguage];
+  const alternateLanguage: InterfaceLanguageCode =
+    activeLanguage === "fa" ? "en" : "fa";
 
   return (
     <header className="topbar">
@@ -36,7 +41,7 @@ export function AppHeader({
 
       <nav className="desktop-nav" aria-label="Primary navigation">
         {navItems.map((item) => (
-          <Link key={item.href} href={withInterfaceLanguage(item.href, language)}>
+          <Link key={item.href} href={withInterfaceLanguage(item.href, activeLanguage)}>
             {copy.nav[item.key]}
           </Link>
         ))}
@@ -45,17 +50,20 @@ export function AppHeader({
       <div className="topbar-actions">
         <Link
           className="language-toggle"
-          href={withInterfaceLanguage(currentPath, alternateLanguage)}
+          href={interfaceLanguagePreferenceHref({
+            language: alternateLanguage,
+            returnTo: currentPath
+          })}
           aria-label={copy.header.languageLabel}
         >
-          {language === "fa" ? "English" : "فارسی"}
+          {activeLanguage === "fa" ? "English" : "فارسی"}
         </Link>
-        <Link className="ghost-button" href={withInterfaceLanguage("/admin", language)}>
+        <Link className="ghost-button" href={withInterfaceLanguage("/admin", activeLanguage)}>
           {copy.header.adminPreview}
         </Link>
         <Link
           className="primary-button compact"
-          href={withInterfaceLanguage("/learn/greet-and-say-your-name", language)}
+          href={withInterfaceLanguage("/learn/greet-and-say-your-name", activeLanguage)}
         >
           {copy.header.startLearning}
         </Link>

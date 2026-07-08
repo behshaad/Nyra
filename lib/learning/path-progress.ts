@@ -4,8 +4,7 @@ import {
   type SkillKind
 } from "@/lib/generated/prisma/enums";
 import { getPrisma } from "@/lib/db/prisma";
-
-export const devAuthUserId = "dev-local-learner";
+import { devAuthUserId } from "@/lib/learner/preferences";
 
 type CompletionMetadata = {
   scorePercent?: unknown;
@@ -136,9 +135,9 @@ export async function getFlatA1Skills() {
 
   return units.flatMap((unit) =>
     unit.skills.map((skill) => ({
-        ...skillToFlatView(skill),
-        unitSlug: unit.slug,
-        unitTitle: unit.title,
+      ...skillToFlatView(skill),
+      unitSlug: unit.slug,
+      unitTitle: unit.title,
       levelLabel: unit.levelLabel
     }))
   );
