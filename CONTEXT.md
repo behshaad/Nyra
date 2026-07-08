@@ -16,6 +16,10 @@ _Avoid_: Program, track
 A major proficiency band inside a Course, such as A1 or A2.
 _Avoid_: Stage
 
+**Level Selector**:
+A learner-facing control for choosing which Level's Learning Path to view or continue, such as A1 or A2.
+_Avoid_: Language toggle, course switcher
+
 **Curriculum Reference**:
 An external learning source used to understand topic progression, skill coverage, and proficiency expectations without copying its exact wording, exercises, or proprietary sequence as Nyra content.
 _Avoid_: Source content, imported textbook
@@ -99,6 +103,10 @@ _Avoid_: Learning language
 **Interface Language**:
 The language used by Nyra's navigation, controls, account screens, and other product UI.
 _Avoid_: App language
+
+**Interface Language Toggle**:
+A learner-facing control for changing Nyra's Interface Language, such as Persian or English, without changing the learner's Level, Source Language, Target Language, or Course.
+_Avoid_: Level selector, learning language switcher
 
 **Draft**:
 Content that is being created or edited and is not visible to learners.
