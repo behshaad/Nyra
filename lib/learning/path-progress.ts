@@ -164,6 +164,9 @@ export async function getLearningPathProgress(): Promise<LearningPathProgressVie
   const learnerProfile = await db.learnerProfile.findUnique({
     where: {
       authUserId: devAuthUserId
+    },
+    select: {
+      id: true
     }
   });
 
