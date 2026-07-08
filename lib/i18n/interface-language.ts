@@ -87,6 +87,7 @@ export type InterfaceCopy = {
     score: string;
     xp: string;
     continueNext: string;
+    continueTo: (title: string) => string;
     backToPath: string;
     backToUnit: string;
     practiceAgain: string;
@@ -162,7 +163,7 @@ export const interfaceCopy: Record<InterfaceLanguageCode, InterfaceCopy> = {
     },
     header: {
       adminPreview: "نمای ادمین",
-      startLearning: "شروع یادگیری",
+      startLearning: "ادامه یادگیری",
       languageLabel: "زبان رابط"
     },
     home: {
@@ -248,6 +249,7 @@ export const interfaceCopy: Record<InterfaceLanguageCode, InterfaceCopy> = {
       score: "نمره",
       xp: "امتیاز",
       continueNext: "ادامه به مهارت بعدی",
+      continueTo: (title) => `ادامه: ${title}`,
       backToPath: "برگشت به مسیر A1",
       backToUnit: "برگشت به واحد",
       practiceAgain: "تمرین دوباره",
@@ -272,7 +274,7 @@ export const interfaceCopy: Record<InterfaceLanguageCode, InterfaceCopy> = {
     },
     header: {
       adminPreview: "Admin Preview",
-      startLearning: "Start learning",
+      startLearning: "Continue learning",
       languageLabel: "Interface language"
     },
     home: {
@@ -358,6 +360,7 @@ export const interfaceCopy: Record<InterfaceLanguageCode, InterfaceCopy> = {
       score: "Score",
       xp: "XP",
       continueNext: "Continue to next Skill",
+      continueTo: (title) => `Continue: ${title}`,
       backToPath: "Back to A1 path",
       backToUnit: "Back to Unit",
       practiceAgain: "Practice again",

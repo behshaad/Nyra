@@ -802,6 +802,11 @@ h3 {
     transform 180ms ease;
 }
 
+.answer-option[dir="ltr"] {
+  font-family: var(--font-inter), var(--font-vazirmatn), sans-serif;
+  text-align: left;
+}
+
 .answer-option:hover:not(:disabled) {
   border-color: rgba(31, 138, 91, 0.32);
   transform: translateY(-1px);

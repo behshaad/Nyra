@@ -63,7 +63,7 @@ export async function AppHeader({
         </Link>
         <Link
           className="primary-button compact"
-          href={withInterfaceLanguage("/learn/greet-and-say-your-name", activeLanguage)}
+          href={withInterfaceLanguage("/learn", activeLanguage)}
         >
           {copy.header.startLearning}
         </Link>

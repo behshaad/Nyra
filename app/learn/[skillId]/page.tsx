@@ -46,6 +46,9 @@ export default async function SkillPage({
     getNextSkillSlug(skillId)
   ]);
   const flatSkill = flatSkills.find((candidate) => candidate.slug === skillId);
+  const nextSkill = nextSkillSlug
+    ? flatSkills.find((candidate) => candidate.slug === nextSkillSlug) ?? null
+    : null;
 
   if (!skill || !flatSkill) {
     notFound();
@@ -78,7 +81,7 @@ export default async function SkillPage({
 
         <BackendSkillSession
           skillSlug={skill.slug}
-          nextSkillSlug={nextSkillSlug}
+          nextSkill={nextSkill ? { slug: nextSkill.slug, title: nextSkill.title } : null}
           unitSlug={flatSkill.unitSlug}
           language={language}
         />

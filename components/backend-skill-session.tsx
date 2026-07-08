@@ -25,6 +25,18 @@ type LastFeedback = AnswerFeedbackView & {
   answeredQuestion: LearningQuestionView;
 };
 
+type NextSkillLink = {
+  slug: string;
+  title: string;
+} | null;
+
+function getTextDirection(value: string): "rtl" | "ltr" {
+  const hasPersianOrArabic = /[\u0600-\u06FF]/.test(value);
+  const hasLatin = /[A-Za-zÄÖÜäöüß]/.test(value);
+
+  return hasLatin && !hasPersianOrArabic ? "ltr" : "rtl";
+}
+
 async function readJson<T>(response: Response): Promise<T> {
   const data = (await response.json()) as T | { error?: string };
 
@@ -41,12 +53,12 @@ async function readJson<T>(response: Response): Promise<T> {
 
 export function BackendSkillSession({
   skillSlug,
-  nextSkillSlug,
+  nextSkill,
   unitSlug,
   language
 }: {
   skillSlug: string;
-  nextSkillSlug: string | null;
+  nextSkill: NextSkillLink;
   unitSlug: string;
   language: InterfaceLanguageCode;
 }) {
@@ -259,12 +271,12 @@ export function BackendSkillSession({
               </div>
             </dl>
             <div className="next-actions">
-              {nextSkillSlug ? (
+              {nextSkill ? (
                 <Link
                   className="primary-button"
-                  href={withInterfaceLanguage(`/learn/${nextSkillSlug}`, language)}
+                  href={withInterfaceLanguage(`/learn/${nextSkill.slug}`, language)}
                 >
-                  {copy.continueNext}
+                  {nextSkill.title ? copy.continueTo(nextSkill.title) : copy.continueNext}
                   <ArrowLeft size={17} />
                 </Link>
               ) : (
@@ -288,11 +300,12 @@ export function BackendSkillSession({
         ) : displayQuestion ? (
           <>
             <h3>{displayQuestion.prompt}</h3>
-            <div className="answer-grid" dir="rtl">
+            <div className="answer-grid">
               {displayQuestion.choices.map((option) => (
                 <button
                   key={option}
                   type="button"
+                  dir={getTextDirection(option)}
                   className={clsx(
                     "answer-option",
                     lastFeedback?.submittedAnswer === option &&
