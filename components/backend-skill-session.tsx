@@ -4,6 +4,11 @@ import { useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 import Link from "next/link";
 import { ArrowLeft, Check, ChevronRight, RotateCcw, ShieldCheck } from "lucide-react";
+import {
+  interfaceCopy,
+  type InterfaceLanguageCode,
+  withInterfaceLanguage
+} from "@/lib/i18n/interface-language";
 import type {
   AnswerFeedbackView,
   LearningQuestionView,
@@ -37,12 +42,15 @@ async function readJson<T>(response: Response): Promise<T> {
 export function BackendSkillSession({
   skillSlug,
   nextSkillSlug,
-  unitSlug
+  unitSlug,
+  language
 }: {
   skillSlug: string;
   nextSkillSlug: string | null;
   unitSlug: string;
+  language: InterfaceLanguageCode;
 }) {
+  const copy = interfaceCopy[language].session;
   const [loadState, setLoadState] = useState<LoadState>({ status: "loading" });
   const [lastFeedback, setLastFeedback] = useState<LastFeedback | null>(null);
   const [submittingAnswer, setSubmittingAnswer] = useState<string | null>(null);
@@ -150,7 +158,7 @@ export function BackendSkillSession({
   if (loadState.status === "loading") {
     return (
       <section className="app-panel route-panel">
-        <div className="hint-box">در حال شروع تمرین...</div>
+        <div className="hint-box">{copy.loading}</div>
       </section>
     );
   }
@@ -159,11 +167,11 @@ export function BackendSkillSession({
     return (
       <section className="app-panel route-panel">
         <div className="feedback wrong">
-          <strong>تمرین شروع نشد.</strong>
+          <strong>{copy.errorTitle}</strong>
           <p>{loadState.message}</p>
           <button className="secondary-button" type="button" onClick={startSession}>
             <RotateCcw size={17} />
-            تلاش دوباره
+            {copy.retry}
           </button>
         </div>
       </section>
@@ -179,10 +187,10 @@ export function BackendSkillSession({
   const isAssessment = readySession.skill.kind !== "REGULAR";
   const assessmentLabel =
     readySession.skill.kind === "FINAL_TEST"
-      ? "آزمون نهایی A1"
+      ? copy.finalTest
       : readySession.skill.kind === "UNIT_CHECKPOINT"
-        ? "آزمونک واحد"
-        : "تمرین مهارت";
+        ? copy.checkpoint
+        : copy.practice;
 
   return (
     <section
@@ -195,7 +203,7 @@ export function BackendSkillSession({
           <h2>{readySession.skill.title}</h2>
           {isAssessment ? (
             <p className="muted-line">
-              حد قبولی {readySession.skill.passingScore}%
+              {copy.passingScore(readySession.skill.passingScore)}
             </p>
           ) : null}
         </div>
@@ -203,8 +211,8 @@ export function BackendSkillSession({
           {completed && readySession.scorePercent !== null
             ? `${readySession.scorePercent}%`
             : completed
-              ? `${readySession.skill.xp} امتیاز`
-              : `${readySession.skill.xp} امتیاز`}
+              ? copy.points(readySession.skill.xp)
+              : copy.points(readySession.skill.xp)}
         </span>
       </div>
 
@@ -214,7 +222,7 @@ export function BackendSkillSession({
         </div>
         <div className="question-meta">
           <span>
-            {completed ? "تمرین کامل شد" : displayQuestion?.helper ?? "سؤال"}
+            {completed ? copy.complete : displayQuestion?.helper ?? copy.question}
           </span>
           <span>{readySession.progressPercent}%</span>
         </div>
@@ -225,49 +233,55 @@ export function BackendSkillSession({
             <h3>
               {isAssessment
                 ? readySession.passed
-                  ? "قبول شدی"
-                  : "مرور پیشنهاد می‌شود"
-                : "مهارت کامل شد"}
+                  ? copy.passed
+                  : copy.reviewRecommended
+                : copy.skillComplete}
             </h3>
             <p>
               {isAssessment
-                ? "نمره ذخیره شد. اگر پایین‌تر از حد قبولی باشد، این بخش برای مرور علامت می‌خورد ولی مسیرت قفل نمی‌شود."
-                : "پیشرفتت ذخیره شد و می‌توانی مستقیم سراغ قدم بعدی بروی."}
+                ? copy.assessmentBody
+                : copy.skillBody}
             </p>
             <dl>
               <div>
-                <dt>تلاش‌ها</dt>
+                <dt>{copy.attempts}</dt>
                 <dd>{attemptCount}</dd>
               </div>
               {readySession.scorePercent !== null ? (
                 <div>
-                  <dt>نمره</dt>
+                  <dt>{copy.score}</dt>
                   <dd>{readySession.scorePercent}%</dd>
                 </div>
               ) : null}
               <div>
-                <dt>امتیاز</dt>
+                <dt>{copy.xp}</dt>
                 <dd>{readySession.skill.xp}</dd>
               </div>
             </dl>
             <div className="next-actions">
               {nextSkillSlug ? (
-                <Link className="primary-button" href={`/learn/${nextSkillSlug}`}>
-                  ادامه به مهارت بعدی
+                <Link
+                  className="primary-button"
+                  href={withInterfaceLanguage(`/learn/${nextSkillSlug}`, language)}
+                >
+                  {copy.continueNext}
                   <ArrowLeft size={17} />
                 </Link>
               ) : (
-                <Link className="primary-button" href="/learn">
-                  برگشت به مسیر A1
+                <Link className="primary-button" href={withInterfaceLanguage("/learn", language)}>
+                  {copy.backToPath}
                   <ArrowLeft size={17} />
                 </Link>
               )}
-              <Link className="secondary-button" href={`/learn?unit=${unitSlug}`}>
-                برگشت به واحد
+              <Link
+                className="secondary-button"
+                href={withInterfaceLanguage(`/learn?unit=${unitSlug}`, language)}
+              >
+                {copy.backToUnit}
               </Link>
               <button className="secondary-button" type="button" onClick={startSession}>
                 <RotateCcw size={17} />
-                تمرین دوباره
+                {copy.practiceAgain}
               </button>
             </div>
           </div>
@@ -291,24 +305,24 @@ export function BackendSkillSession({
                   onClick={() => submitAnswer(option)}
                   disabled={Boolean(lastFeedback) || Boolean(submittingAnswer)}
                 >
-                  {submittingAnswer === option ? "در حال بررسی..." : option}
+                  {submittingAnswer === option ? copy.checking : option}
                 </button>
               ))}
             </div>
 
             {lastFeedback ? (
               <div className={clsx("feedback", lastFeedback.isCorrect ? "correct" : "wrong")}>
-                <strong>{lastFeedback.isCorrect ? "درست است." : "اشتباه خوبی برای یادگیری بود."}</strong>
+                <strong>{lastFeedback.isCorrect ? copy.correct : copy.mistake}</strong>
                 <p>{lastFeedback.explanation}</p>
                 <button className="primary-button compact" type="button" onClick={continueSession}>
-                  ادامه
+                  {copy.continue}
                   <ChevronRight size={17} />
                 </button>
               </div>
             ) : (
               <div className="hint-box">
                 <ShieldCheck size={18} />
-                پاسخ‌ها ذخیره و بررسی می‌شوند. در مهارت‌های تمرینی، سؤال‌های اشتباه دوباره برمی‌گردند.
+                {copy.hint}
               </div>
             )}
           </>

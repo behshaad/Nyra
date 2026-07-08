@@ -226,12 +226,28 @@ a {
 
 .secondary-button,
 .ghost-button,
-.icon-button {
+.icon-button,
+.language-toggle,
+.level-pill {
   background: rgba(255, 255, 255, 0.62);
   border: 1px solid var(--line);
   color: var(--text);
   min-height: 42px;
   padding: 0 14px;
+}
+
+.language-toggle,
+.level-pill {
+  align-items: center;
+  border-radius: 7px;
+  display: inline-flex;
+  font-size: 0.86rem;
+  font-weight: 800;
+  justify-content: center;
+}
+
+.language-toggle {
+  min-height: 38px;
 }
 
 .ghost-button {
@@ -410,6 +426,29 @@ h3 {
   gap: 16px;
   grid-template-columns: 340px minmax(0, 1fr);
   margin-top: 26px;
+}
+
+.level-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.level-pill {
+  min-height: 40px;
+  min-width: 82px;
+}
+
+.level-pill.active {
+  background: rgba(191, 232, 209, 0.5);
+  border-color: rgba(31, 138, 91, 0.24);
+  color: var(--green-dark);
+}
+
+.level-pill.disabled {
+  color: var(--muted);
+  opacity: 0.68;
 }
 
 .unit-rail {
