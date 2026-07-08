@@ -36,6 +36,10 @@ _Avoid_: Lesson
 A learner-facing prompt that expects an answer and can produce feedback.
 _Avoid_: Exercise item, quiz item
 
+**Question Type**:
+The authored answer pattern for a Question, such as multiple choice, fill-in-blank, or word ordering.
+_Avoid_: UI widget, answer mode
+
 **Question Attempt**:
 A learner's submitted response to a Question at a specific moment.
 _Avoid_: Answer, response record
@@ -107,6 +111,10 @@ _Avoid_: App language
 **Interface Language Toggle**:
 A learner-facing control for changing Nyra's Interface Language, such as Persian or English, without changing the learner's Level, Source Language, Target Language, or Course.
 _Avoid_: Level selector, learning language switcher
+
+**Interface Theme**:
+The learner-facing display preference for Nyra's visual mode, such as light, dark, or system.
+_Avoid_: Color palette, skin
 
 **Draft**:
 Content that is being created or edited and is not visible to learners.

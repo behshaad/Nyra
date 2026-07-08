@@ -6,7 +6,7 @@ export default function ProfilePage() {
   return (
     <main className="site-shell">
       <AnimatedBackdrop />
-      <AppHeader />
+      <AppHeader currentPath="/profile" />
 
       <section className="route-page">
         <div className="route-hero">

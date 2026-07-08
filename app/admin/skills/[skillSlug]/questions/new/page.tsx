@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ListChecks } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
-import { AdminSkillForm } from "@/components/admin-skill-form";
+import { AdminQuestionForm } from "@/components/admin-question-form";
 import { AppHeader } from "@/components/app-header";
 import { getAdminSkillBySlug } from "@/lib/admin/skill-repository";
 
 export const dynamic = "force-dynamic";
 
-export default async function EditSkillPage({
+export default async function NewQuestionPage({
   params
 }: {
   params: Promise<{
@@ -25,36 +25,35 @@ export default async function EditSkillPage({
   return (
     <main className="site-shell admin-ltr" dir="ltr">
       <AnimatedBackdrop />
-      <AppHeader currentPath={`/admin/skills/${skill.slug}/edit`} />
+      <AppHeader currentPath={`/admin/skills/${skill.slug}/questions/new`} />
 
       <section className="route-page admin-route">
         <div className="route-hero compact">
-          <Link className="ghost-button" href="/admin/skills">
+          <Link className="ghost-button" href={`/admin/skills/${skill.slug}/questions`}>
             <ArrowLeft size={17} />
-            Back to Skills
+            Back to Questions
           </Link>
           <span className="section-label">Dev Admin</span>
-          <h1>Edit Skill.</h1>
+          <h1>New Question.</h1>
           <p>
-            Update learner-facing Skill metadata for {skill.unit.level.label} / {skill.unit.title}.
-            Question creation and reordering are managed from this Skill's Question Studio.
+            Add a Published required Question to {skill.unit.level.label} / {skill.unit.title} /{" "}
+            {skill.title}. It will appear in newly started learner sessions.
           </p>
-          <div className="route-actions">
-            <Link className="secondary-button" href={`/admin/skills/${skill.slug}/questions`}>
-              <ListChecks size={18} />
-              Edit Questions
-            </Link>
-          </div>
         </div>
 
         <section className="app-panel route-panel">
-          <AdminSkillForm
+          <AdminQuestionForm
+            mode="create"
             skillSlug={skill.slug}
             initialValues={{
-              title: skill.title,
-              description: skill.description,
-              xp: skill.xp,
-              publicationStatus: skill.publicationStatus
+              type: "MULTIPLE_CHOICE",
+              prompt: "",
+              helper: "",
+              choices: [],
+              correctAnswer: "",
+              explanation: "",
+              required: true,
+              publicationStatus: "PUBLISHED"
             }}
           />
         </section>

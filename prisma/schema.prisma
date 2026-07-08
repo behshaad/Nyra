@@ -33,6 +33,12 @@ enum ResourceType {
   EXTERNAL_LINK
 }
 
+enum InterfaceTheme {
+  SYSTEM
+  LIGHT
+  DARK
+}
+
 enum LearningSessionStatus {
   ACTIVE
   COMPLETED
@@ -149,6 +155,7 @@ model LearnerProfile {
   sourceLanguage     String
   targetLanguage     String
   interfaceLanguage  String
+  interfaceTheme     InterfaceTheme @default(SYSTEM)
   currentLevel       String
   dailyGoalMinutes   Int
   onboardingComplete Boolean  @default(false)

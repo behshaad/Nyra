@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Circle, Pencil } from "lucide-react";
+import { ArrowLeft, Circle, Pencil, Plus } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
+import { AdminQuestionMoveButton } from "@/components/admin-question-move-button";
 import { getQuestionsForSkill } from "@/lib/admin/question-repository";
 
 export const dynamic = "force-dynamic";
@@ -28,11 +29,11 @@ export default async function SkillQuestionsPage({
   }
 
   return (
-    <main className="site-shell">
+    <main className="site-shell admin-ltr" dir="ltr">
       <AnimatedBackdrop />
-      <AppHeader />
+      <AppHeader currentPath={`/admin/skills/${skill.slug}/questions`} />
 
-      <section className="route-page">
+      <section className="route-page admin-route">
         <div className="route-hero compact">
           <Link className="ghost-button" href={`/admin/skills/${skill.slug}/edit`}>
             <ArrowLeft size={17} />
@@ -42,8 +43,15 @@ export default async function SkillQuestionsPage({
           <h1>Edit Questions.</h1>
           <p>
             Update existing Questions for {skill.unit.level.label} / {skill.unit.title} /{" "}
-            {skill.title}. Creation and reordering are deferred.
+            {skill.title}. New Published required Questions appear in newly started learner
+            sessions.
           </p>
+          <div className="route-actions">
+            <Link className="primary-button" href={`/admin/skills/${skill.slug}/questions/new`}>
+              <Plus size={18} />
+              New Question
+            </Link>
+          </div>
         </div>
 
         <section className="app-panel route-panel">
@@ -56,19 +64,20 @@ export default async function SkillQuestionsPage({
           </div>
 
           <div className="admin-preview">
-            {skill.questions.map((question) => {
+            {skill.questions.map((question, index) => {
               const choices = asStringArray(question.choices);
 
               return (
-                <article className="admin-row" key={question.id}>
+                <article className="admin-row question-row" key={question.id}>
                   <Circle size={12} />
                   <div>
                     <h3>
                       {question.order}. {question.prompt}
                     </h3>
                     <p>
-                      {question.type.replaceAll("_", " ")} / {choices.length} choices / Correct:{" "}
-                      {question.correctAnswer}
+                      {question.type.replaceAll("_", " ")} / {choices.length} choices /{" "}
+                      {question.required ? "Required" : "Optional"} / Correct:{" "}
+                      <strong>{question.correctAnswer}</strong>
                     </p>
                   </div>
                   <span
@@ -80,6 +89,18 @@ export default async function SkillQuestionsPage({
                   >
                     {question.publicationStatus}
                   </span>
+                  <div className="row-actions">
+                    <AdminQuestionMoveButton
+                      questionId={question.id}
+                      direction="up"
+                      disabled={index === 0}
+                    />
+                    <AdminQuestionMoveButton
+                      questionId={question.id}
+                      direction="down"
+                      disabled={index === skill.questions.length - 1}
+                    />
+                  </div>
                   <Link
                     className="ghost-button compact-link"
                     href={`/admin/questions/${question.id}/edit`}

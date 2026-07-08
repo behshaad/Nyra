@@ -11,7 +11,7 @@ export default function FlashcardsPage() {
   return (
     <main className="site-shell">
       <AnimatedBackdrop />
-      <AppHeader />
+      <AppHeader currentPath="/flashcards" />
 
       <section className="route-page">
         <div className="route-hero">

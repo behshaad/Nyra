@@ -27,7 +27,7 @@ export default async function ResourcesPage() {
   return (
     <main className="site-shell">
       <AnimatedBackdrop />
-      <AppHeader />
+      <AppHeader currentPath="/resources" />
 
       <section className="route-page">
         <div className="route-hero">

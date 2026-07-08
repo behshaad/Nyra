@@ -48,6 +48,12 @@ function queueFromSession(value: unknown) {
     : [];
 }
 
+function uniqueQuestionIdsFromAttempts(
+  attempts: Array<{ questionId: string }>
+) {
+  return new Set(attempts.map((attempt) => attempt.questionId)).size;
+}
+
 function progressPercent(totalQuestions: number, remainingQuestions: number) {
   if (totalQuestions === 0) {
     return 100;
@@ -166,8 +172,7 @@ export class QuestionEngine {
             include: {
               questions: {
                 where: {
-                  required: true,
-                  publicationStatus: PublicationStatus.PUBLISHED
+                  required: true
                 },
                 orderBy: {
                   order: "asc"
@@ -183,6 +188,8 @@ export class QuestionEngine {
       }
 
       const queue = queueFromSession(session.questionQueue);
+      const sessionQuestionCount =
+        uniqueQuestionIdsFromAttempts(session.attempts) + queue.length;
       const questionId = queue[0];
       const question = session.skill.questions.find(
         (candidate) => candidate.id === questionId
@@ -208,7 +215,7 @@ export class QuestionEngine {
         ).length + (isCorrect ? 1 : 0);
       const currentScore = session.skill.requeueIncorrect
         ? null
-        : scorePercent(session.skill.questions.length, correctAttemptCount);
+        : scorePercent(sessionQuestionCount, correctAttemptCount);
       const currentPassed = completed
         ? passed(currentScore, session.skill.passingScore)
         : null;
@@ -289,7 +296,7 @@ export class QuestionEngine {
         xpAwarded,
         nextQuestion: nextQuestion ? questionToView(nextQuestion) : null,
         progressPercent: progressPercent(
-          session.skill.questions.length,
+          sessionQuestionCount,
           nextQueue.length
         ),
         scorePercent: currentScore,

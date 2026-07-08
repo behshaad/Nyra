@@ -7,5 +7,7 @@ coverage/
 *.log
 .DS_Store
 tsconfig.tsbuildinfo
+__pycache__/
+*.pyc
 
 lib/generated/prisma/

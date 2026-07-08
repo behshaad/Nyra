@@ -29,11 +29,11 @@ export default async function EditResourcePage({
   }
 
   return (
-    <main className="site-shell">
+    <main className="site-shell admin-ltr" dir="ltr">
       <AnimatedBackdrop />
-      <AppHeader />
+      <AppHeader currentPath={`/admin/resources/${resource.slug}/edit`} />
 
-      <section className="route-page">
+      <section className="route-page admin-route">
         <div className="route-hero compact">
           <Link className="ghost-button" href="/admin">
             <ArrowLeft size={17} />
@@ -42,8 +42,7 @@ export default async function EditResourcePage({
           <span className="section-label">Dev Admin</span>
           <h1>Edit Resource.</h1>
           <p>
-            Update learner-facing Resource content. Archive/delete stays separate for the next
-            workflow slice.
+            Update learner-facing Resource content or archive it without deleting history.
           </p>
         </div>
 

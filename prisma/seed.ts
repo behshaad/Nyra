@@ -33,6 +33,7 @@ async function main() {
       sourceLanguage: devLearnerProfile.sourceLanguage,
       targetLanguage: devLearnerProfile.targetLanguage,
       interfaceLanguage: devLearnerProfile.interfaceLanguage,
+      interfaceTheme: "SYSTEM",
       currentLevel: devLearnerProfile.currentLevel,
       dailyGoalMinutes: devLearnerProfile.dailyGoalMinutes,
       onboardingComplete: true
@@ -42,6 +43,7 @@ async function main() {
       sourceLanguage: devLearnerProfile.sourceLanguage,
       targetLanguage: devLearnerProfile.targetLanguage,
       interfaceLanguage: devLearnerProfile.interfaceLanguage,
+      interfaceTheme: "SYSTEM",
       currentLevel: devLearnerProfile.currentLevel,
       dailyGoalMinutes: devLearnerProfile.dailyGoalMinutes,
       onboardingComplete: true

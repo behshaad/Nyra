@@ -6,7 +6,7 @@ export default function PricingPage() {
   return (
     <main className="site-shell">
       <AnimatedBackdrop />
-      <AppHeader />
+      <AppHeader currentPath="/pricing" />
 
       <section className="route-page">
         <div className="route-hero">

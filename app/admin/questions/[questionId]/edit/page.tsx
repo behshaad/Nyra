@@ -29,11 +29,11 @@ export default async function EditQuestionPage({
   }
 
   return (
-    <main className="site-shell">
+    <main className="site-shell admin-ltr" dir="ltr">
       <AnimatedBackdrop />
-      <AppHeader />
+      <AppHeader currentPath={`/admin/questions/${question.id}/edit`} />
 
-      <section className="route-page">
+      <section className="route-page admin-route">
         <div className="route-hero compact">
           <Link className="ghost-button" href={`/admin/skills/${question.skill.slug}/questions`}>
             <ArrowLeft size={17} />
@@ -51,11 +51,13 @@ export default async function EditQuestionPage({
             questionId={question.id}
             skillSlug={question.skill.slug}
             initialValues={{
+              type: question.type,
               prompt: question.prompt,
               helper: question.helper ?? "",
               choices: asStringArray(question.choices),
               correctAnswer: question.correctAnswer,
               explanation: question.explanation,
+              required: question.required,
               publicationStatus: question.publicationStatus
             }}
           />

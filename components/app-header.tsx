@@ -1,10 +1,16 @@
 import Link from "next/link";
+import { Monitor, Moon, Sun } from "lucide-react";
 import {
   interfaceLanguagePreferenceHref,
   interfaceCopy,
   type InterfaceLanguageCode,
   withInterfaceLanguage
 } from "@/lib/i18n/interface-language";
+import {
+  interfaceThemePreferenceHref,
+  nextInterfaceTheme,
+  type InterfaceThemeCode
+} from "@/lib/i18n/interface-theme";
 import { getLearnerPreferences } from "@/lib/learner/preferences";
 
 const navItems = [
@@ -18,16 +24,22 @@ const navItems = [
 
 export async function AppHeader({
   language,
+  theme,
   currentPath = "/"
 }: {
   language?: InterfaceLanguageCode;
+  theme?: InterfaceThemeCode;
   currentPath?: string;
 }) {
-  const preferences = language ? null : await getLearnerPreferences();
+  const preferences = language && theme ? null : await getLearnerPreferences();
   const activeLanguage = language ?? preferences?.interfaceLanguage ?? "fa";
+  const activeTheme = theme ?? preferences?.interfaceTheme ?? "SYSTEM";
   const copy = interfaceCopy[activeLanguage];
   const alternateLanguage: InterfaceLanguageCode =
     activeLanguage === "fa" ? "en" : "fa";
+  const nextTheme = nextInterfaceTheme(activeTheme);
+  const ThemeIcon =
+    activeTheme === "DARK" ? Moon : activeTheme === "LIGHT" ? Sun : Monitor;
 
   return (
     <header className="topbar">
@@ -57,6 +69,18 @@ export async function AppHeader({
           aria-label={copy.header.languageLabel}
         >
           {activeLanguage === "fa" ? "English" : "فارسی"}
+        </Link>
+        <Link
+          className="icon-button theme-toggle"
+          href={interfaceThemePreferenceHref({
+            theme: nextTheme,
+            returnTo: currentPath
+          })}
+          aria-label={`Interface theme: ${activeTheme.toLowerCase()}`}
+          title={`Theme: ${activeTheme.toLowerCase()}`}
+        >
+          <ThemeIcon size={18} />
+          <span>{activeTheme.toLowerCase()}</span>
         </Link>
         <Link className="ghost-button" href={withInterfaceLanguage("/admin", activeLanguage)}>
           {copy.header.adminPreview}

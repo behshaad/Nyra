@@ -11,11 +11,11 @@ export default async function NewResourcePage() {
   const units = await getResourceFormOptions();
 
   return (
-    <main className="site-shell">
+    <main className="site-shell admin-ltr" dir="ltr">
       <AnimatedBackdrop />
-      <AppHeader />
+      <AppHeader currentPath="/admin/resources/new" />
 
-      <section className="route-page">
+      <section className="route-page admin-route">
         <div className="route-hero compact">
           <Link className="ghost-button" href="/admin">
             <ArrowLeft size={17} />

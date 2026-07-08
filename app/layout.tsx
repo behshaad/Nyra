@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Inter, Vazirmatn } from "next/font/google";
+import { getLearnerPreferences } from "@/lib/learner/preferences";
 import "./globals.css";
 
 const inter = Inter({
@@ -21,13 +22,19 @@ export const metadata: Metadata = {
     "یک مسیر مدرن آموزش آلمانی برای فارسی‌زبان‌ها."
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children
 }: Readonly<{
   children: ReactNode;
 }>) {
+  const preferences = await getLearnerPreferences();
+  const themeAttribute =
+    preferences.interfaceTheme === "SYSTEM"
+      ? undefined
+      : preferences.interfaceTheme.toLowerCase();
+
   return (
-    <html lang="fa" dir="rtl">
+    <html lang="fa" dir="rtl" data-theme={themeAttribute}>
       <body className={`${inter.variable} ${vazirmatn.variable}`}>
         {children}
       </body>

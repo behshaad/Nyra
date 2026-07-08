@@ -1,5 +1,12 @@
 import Link from "next/link";
-import { Circle, FileCheck2, ListChecks, Pencil, Trophy } from "lucide-react";
+import {
+  ArrowLeft,
+  Circle,
+  FileCheck2,
+  ListChecks,
+  Pencil,
+  Trophy
+} from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
 import { getAdminSkillUnits } from "@/lib/admin/skill-repository";
@@ -11,22 +18,25 @@ export default async function AdminSkillsPage() {
   const skillCount = units.reduce((total, unit) => total + unit.skills.length, 0);
 
   return (
-    <main className="site-shell">
+    <main className="site-shell admin-ltr" dir="ltr">
       <AnimatedBackdrop />
-      <AppHeader />
+      <AppHeader currentPath="/admin/skills" />
 
-      <section className="route-page">
-        <div className="route-hero">
+      <section className="route-page admin-route">
+        <div className="route-hero admin-title-row">
+          <Link className="ghost-button" href="/admin">
+            <ArrowLeft size={17} />
+            Back to Admin
+          </Link>
           <span className="section-label">Admin CMS</span>
-          <h1>Edit Skill metadata.</h1>
+          <h1>Skill Studio.</h1>
           <p>
-            This page manages Skill title, description, XP, publication status, and existing
-            Question content. Question creation, reordering, and Skill archiving are separate
-            future slices.
+            Manage the authored A1 path by Unit. Regular Skills, Unit Checkpoints, and the Final
+            A1 Test share the same editing surface so publication and QA stay visible.
           </p>
         </div>
 
-        <section className="app-panel route-panel" aria-label="Admin Skills">
+        <section className="app-panel route-panel admin-list-panel" aria-label="Admin Skills">
           <div className="app-panel-header">
             <div>
               <p className="panel-kicker">Learning path</p>
