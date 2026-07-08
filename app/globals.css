@@ -1008,7 +1008,7 @@ h3 {
   align-items: center;
   display: grid;
   gap: 12px;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr auto auto;
   padding: 14px;
 }
 
@@ -1029,6 +1029,11 @@ h3 {
   font-size: 0.78rem;
   font-weight: 760;
   padding: 6px 9px;
+}
+
+.compact-link {
+  min-height: 34px;
+  padding: 0 10px;
 }
 
 .analytics-grid {
@@ -1421,6 +1426,16 @@ h3 {
 
   .skill-node {
     grid-template-columns: auto 1fr;
+  }
+
+  .admin-row {
+    grid-template-columns: auto 1fr;
+  }
+
+  .admin-row .compact-link,
+  .admin-row span {
+    grid-column: 2;
+    justify-self: start;
   }
 
   .skill-node strong {

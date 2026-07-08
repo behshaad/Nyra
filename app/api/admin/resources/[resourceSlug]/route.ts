@@ -2,7 +2,15 @@ import { NextResponse } from "next/server";
 import { getPrisma } from "@/lib/db/prisma";
 import { parseResourceInput } from "@/lib/resources/resource-validation";
 
-export async function POST(request: Request) {
+export async function PATCH(
+  request: Request,
+  context: {
+    params: Promise<{
+      resourceSlug: string;
+    }>;
+  }
+) {
+  const { resourceSlug } = await context.params;
   const body = (await request.json()) as Record<string, unknown>;
   const parsed = parseResourceInput(body);
 
@@ -12,17 +20,32 @@ export async function POST(request: Request) {
 
   const input = parsed.input;
   const db = getPrisma();
-  const existing = await db.resource.findUnique({
+  const current = await db.resource.findUnique({
     where: {
-      slug: input.slug
+      slug: resourceSlug
     }
   });
 
-  if (existing) {
+  if (!current) {
     return NextResponse.json(
-      { error: "A Resource with this slug already exists." },
-      { status: 409 }
+      { error: "Resource was not found." },
+      { status: 404 }
     );
+  }
+
+  if (input.slug !== resourceSlug) {
+    const existing = await db.resource.findUnique({
+      where: {
+        slug: input.slug
+      }
+    });
+
+    if (existing) {
+      return NextResponse.json(
+        { error: "A Resource with this slug already exists." },
+        { status: 409 }
+      );
+    }
   }
 
   if (input.unitId) {
@@ -55,7 +78,10 @@ export async function POST(request: Request) {
     }
   }
 
-  const resource = await db.resource.create({
+  const resource = await db.resource.update({
+    where: {
+      id: current.id
+    },
     data: {
       title: input.title,
       slug: input.slug,
@@ -69,10 +95,7 @@ export async function POST(request: Request) {
     }
   });
 
-  return NextResponse.json(
-    {
-      slug: resource.slug
-    },
-    { status: 201 }
-  );
+  return NextResponse.json({
+    slug: resource.slug
+  });
 }

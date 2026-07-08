@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Circle, Plus } from "lucide-react";
+import { Circle, Pencil, Plus } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
 import {
@@ -30,7 +30,7 @@ export default async function AdminPage() {
 
       <section className="route-page">
         <div className="route-hero">
-            <span className="section-label">Admin CMS</span>
+          <span className="section-label">Admin CMS</span>
           <h1>Content control room.</h1>
           <p>
             Resource creation is now available for dev-admin use. Authentication, audit logs,
@@ -91,6 +91,13 @@ export default async function AdminPage() {
                   </p>
                 </div>
                 <span>{resource.publicationStatus}</span>
+                <Link
+                  className="ghost-button compact-link"
+                  href={`/admin/resources/${resource.slug}/edit`}
+                >
+                  <Pencil size={16} />
+                  Edit
+                </Link>
               </article>
             ))}
           </div>

@@ -18,6 +18,18 @@ type UnitOption = {
   skills: SkillOption[];
 };
 
+type ResourceInitialValues = {
+  title: string;
+  slug: string;
+  type: string;
+  levelLabel: string;
+  description: string;
+  content: string;
+  unitId: string;
+  skillId: string;
+  publicationStatus: string;
+};
+
 const resourceTypes = [
   { value: "GRAMMAR_NOTE", label: "Grammar note" },
   { value: "PRONUNCIATION", label: "Pronunciation" },
@@ -40,17 +52,29 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-export function AdminResourceForm({ units }: { units: UnitOption[] }) {
+export function AdminResourceForm({
+  units,
+  mode = "create",
+  resourceSlug,
+  initialValues
+}: {
+  units: UnitOption[];
+  mode?: "create" | "edit";
+  resourceSlug?: string;
+  initialValues?: ResourceInitialValues;
+}) {
   const router = useRouter();
-  const [title, setTitle] = useState("");
-  const [slug, setSlug] = useState("");
-  const [type, setType] = useState("GRAMMAR_NOTE");
-  const [levelLabel, setLevelLabel] = useState("A1");
-  const [description, setDescription] = useState("");
-  const [content, setContent] = useState("");
-  const [unitId, setUnitId] = useState(units[0]?.id ?? "");
-  const [skillId, setSkillId] = useState("");
-  const [publicationStatus, setPublicationStatus] = useState("PUBLISHED");
+  const [title, setTitle] = useState(initialValues?.title ?? "");
+  const [slug, setSlug] = useState(initialValues?.slug ?? "");
+  const [type, setType] = useState(initialValues?.type ?? "GRAMMAR_NOTE");
+  const [levelLabel, setLevelLabel] = useState(initialValues?.levelLabel ?? "A1");
+  const [description, setDescription] = useState(initialValues?.description ?? "");
+  const [content, setContent] = useState(initialValues?.content ?? "");
+  const [unitId, setUnitId] = useState(initialValues?.unitId ?? units[0]?.id ?? "");
+  const [skillId, setSkillId] = useState(initialValues?.skillId ?? "");
+  const [publicationStatus, setPublicationStatus] = useState(
+    initialValues?.publicationStatus ?? "PUBLISHED"
+  );
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -73,8 +97,12 @@ export function AdminResourceForm({ units }: { units: UnitOption[] }) {
     setError(null);
 
     try {
-      const response = await fetch("/api/admin/resources", {
-        method: "POST",
+      const endpoint =
+        mode === "edit" && resourceSlug
+          ? `/api/admin/resources/${resourceSlug}`
+          : "/api/admin/resources";
+      const response = await fetch(endpoint, {
+        method: mode === "edit" ? "PATCH" : "POST",
         headers: {
           "Content-Type": "application/json"
         },
@@ -96,13 +124,22 @@ export function AdminResourceForm({ units }: { units: UnitOption[] }) {
       };
 
       if (!response.ok || !data.slug) {
-        throw new Error(data.error ?? "Unable to create Resource.");
+        throw new Error(
+          data.error ??
+            (mode === "edit" ? "Unable to update Resource." : "Unable to create Resource.")
+        );
       }
 
       router.push(`/resources/${data.slug}`);
       router.refresh();
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Unable to create Resource.");
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : mode === "edit"
+            ? "Unable to update Resource."
+            : "Unable to create Resource."
+      );
     } finally {
       setSubmitting(false);
     }
@@ -223,7 +260,13 @@ export function AdminResourceForm({ units }: { units: UnitOption[] }) {
       <div className="route-actions">
         <button className="primary-button" type="submit" disabled={submitting}>
           <Save size={18} />
-          {submitting ? "Creating..." : "Create Resource"}
+          {submitting
+            ? mode === "edit"
+              ? "Saving..."
+              : "Creating..."
+            : mode === "edit"
+              ? "Save Resource"
+              : "Create Resource"}
         </button>
         <button
           className="secondary-button"
