@@ -19,6 +19,9 @@ export async function POST(request: Request) {
   const learnerProfile = await db.learnerProfile.findUnique({
     where: {
       authUserId: devAuthUserId
+    },
+    select: {
+      id: true
     }
   });
 
