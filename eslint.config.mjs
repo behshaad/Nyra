@@ -27,7 +27,10 @@ export default [
       },
       globals: {
         console: "readonly",
-        process: "readonly"
+        fetch: "readonly",
+        process: "readonly",
+        Request: "readonly",
+        Response: "readonly"
       }
     },
     plugins: {

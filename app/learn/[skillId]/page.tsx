@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
-import { SkillSession } from "@/components/skill-session";
+import { BackendSkillSession } from "@/components/backend-skill-session";
 import { getPublishedSkill, getPublishedSkills } from "@/lib/learning/sample-content";
 
 export function generateStaticParams() {
@@ -40,7 +40,7 @@ export default async function SkillPage({
           </Link>
         </div>
 
-        <SkillSession skill={skill} />
+        <BackendSkillSession skillSlug={skill.slug} />
       </section>
     </main>
   );
