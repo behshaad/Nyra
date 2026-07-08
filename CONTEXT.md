@@ -25,7 +25,7 @@ A themed group of Skills inside a Level. For A1, a Unit represents a major learn
 _Avoid_: Module, chapter
 
 **Skill**:
-The smallest learner-visible learning unit that a learner opens, completes, reviews, and earns progress for.
+The smallest learner-visible learning unit that a learner opens, completes, reviews, and earns progress for. In A1, a Skill represents a communicative outcome, while grammar summaries, vocabulary support, pronunciation notes, and readings are Resources unless they need their own completion loop.
 _Avoid_: Lesson
 
 **Question**:
@@ -37,7 +37,7 @@ A learner's submitted response to a Question at a specific moment.
 _Avoid_: Answer, response record
 
 **Resource**:
-Supporting learning material that helps a learner study outside a Skill's required Questions.
+Supporting learning material that helps a learner study outside a Skill's required Questions. In A1, Resources can include warmups, grammar summaries, vocabulary support, pronunciation notes, reading support, and worksheets attached to a Unit or Skill.
 _Avoid_: Extra, asset
 
 **Resource Library**:
