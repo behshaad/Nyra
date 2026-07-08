@@ -1364,6 +1364,30 @@ export function getPublishedResources() {
   );
 }
 
+export function getPublishedResource(resourceSlug: string) {
+  const resource = getPublishedResources().find(
+    (candidate) => candidate.slug === resourceSlug
+  );
+
+  if (!resource) {
+    return undefined;
+  }
+
+  const unit = sampleCourse.levels
+    .flatMap((level) => level.units)
+    .find((candidate) => candidate.slug === resource.unitSlug);
+  const skill = resource.skillSlug
+    ? getPublishedSkill(resource.skillSlug)
+    : unit?.skills.find((candidate) => candidate.kind === "REGULAR");
+
+  return {
+    ...resource,
+    unitTitle: unit?.title,
+    relatedSkillSlug: skill?.slug,
+    relatedSkillTitle: skill?.title
+  };
+}
+
 export function getA1ContentSummary() {
   const units = sampleCourse.levels[0]?.units ?? [];
   const skills = units.flatMap((unit) => unit.skills);

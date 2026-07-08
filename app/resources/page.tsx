@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ExternalLink, FileText, Mic2, NotebookText } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
@@ -41,7 +42,11 @@ export default function ResourcesPage() {
             const Icon = resourceIcons[resource.type];
 
             return (
-              <article className="resource-library-card" key={resource.slug}>
+              <Link
+                className="resource-library-card"
+                href={`/resources/${resource.slug}`}
+                key={resource.slug}
+              >
                 <div className="resource-card-header">
                   <span className="node-icon">
                     <Icon size={18} />
@@ -58,7 +63,7 @@ export default function ResourcesPage() {
                   <strong>Preview</strong>
                   <p>{resource.content}</p>
                 </div>
-              </article>
+              </Link>
             );
           })}
         </section>
