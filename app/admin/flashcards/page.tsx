@@ -35,7 +35,7 @@ export default async function AdminFlashcardsPage() {
           <span className="section-label">Admin CMS</span>
           <h1>Flashcard Studio.</h1>
           <p>
-            Create categorized flashcard units by Level, Unit, and lesson-style grouping.
+            Create categorized Flashcard Decks by Level, Unit, and lesson-style grouping.
             Learners can study published admin decks and build personal decks from the
             learner Flashcards page.
           </p>

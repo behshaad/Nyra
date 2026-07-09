@@ -73,7 +73,7 @@ const labels = {
     example: "مثال",
     difficulty: "سختی",
     reset: "شروع دوباره",
-    createDeck: "ساخت یونیت فلش‌کارت",
+    createDeck: "ساخت دسته",
     addCard: "افزودن فلش‌کارت",
     title: "عنوان",
     slug: "اسلاگ",
@@ -85,9 +85,15 @@ const labels = {
     article: "آرتیکل",
     exampleMeaning: "معنی مثال",
     notes: "یادداشت",
-    saveDeck: "ذخیره یونیت",
+    saveDeck: "ذخیره دسته",
     saveCard: "ذخیره کارت",
-    empty: "برای شروع یک یونیت فلش‌کارت بساز یا یک دسته دیگر انتخاب کن.",
+    empty: "برای شروع یک دسته فلش‌کارت بساز یا یک دسته دیگر انتخاب کن.",
+    stepOne: "۱",
+    stepTwo: "۲",
+    stepOneBody: "اول دسته را بساز یا از فهرست سمت راست انتخاب کن.",
+    stepTwoBody: "بعد کارت‌های مربوط به همان دسته را اضافه کن.",
+    selectedDeck: "دسته انتخاب‌شده",
+    noDeckSelected: "اول یک دسته انتخاب یا ایجاد کن.",
     admin: "ادمین",
     learner: "شخصی"
   },
@@ -96,7 +102,7 @@ const labels = {
     review: "Review",
     level: "Level",
     category: "Category",
-    deck: "Flashcard unit",
+    deck: "Flashcard Deck",
     all: "All",
     allDue: "All due cards",
     flip: "Flip",
@@ -107,7 +113,7 @@ const labels = {
     example: "Example",
     difficulty: "Difficulty",
     reset: "Reset",
-    createDeck: "Create flashcard unit",
+    createDeck: "Create category",
     addCard: "Add flashcard",
     title: "Title",
     slug: "Slug",
@@ -119,9 +125,15 @@ const labels = {
     article: "Article",
     exampleMeaning: "Example meaning",
     notes: "Notes",
-    saveDeck: "Save unit",
+    saveDeck: "Save category",
     saveCard: "Save card",
-    empty: "Create a flashcard unit or choose another deck to start.",
+    empty: "Create a Flashcard Deck or choose another deck to start.",
+    stepOne: "1",
+    stepTwo: "2",
+    stepOneBody: "Create the category first, or select an existing deck from the sidebar.",
+    stepTwoBody: "Then add Flashcards that belong to the selected category.",
+    selectedDeck: "Selected deck",
+    noDeckSelected: "Select or create a category first.",
     admin: "Admin",
     learner: "Personal"
   },
@@ -130,7 +142,7 @@ const labels = {
     review: "Wiederholen",
     level: "Niveau",
     category: "Kategorie",
-    deck: "Karten-Einheit",
+    deck: "Kartendeck",
     all: "Alle",
     allDue: "Alle faelligen Karten",
     flip: "Drehen",
@@ -141,7 +153,7 @@ const labels = {
     example: "Beispiel",
     difficulty: "Schwierigkeit",
     reset: "Zuruecksetzen",
-    createDeck: "Karten-Einheit erstellen",
+    createDeck: "Kategorie erstellen",
     addCard: "Karte hinzufuegen",
     title: "Titel",
     slug: "Slug",
@@ -153,9 +165,15 @@ const labels = {
     article: "Artikel",
     exampleMeaning: "Beispielbedeutung",
     notes: "Notizen",
-    saveDeck: "Einheit speichern",
+    saveDeck: "Kategorie speichern",
     saveCard: "Karte speichern",
-    empty: "Erstelle eine Karten-Einheit oder waehle ein anderes Deck.",
+    empty: "Erstelle ein Kartendeck oder waehle ein anderes Deck.",
+    stepOne: "1",
+    stepTwo: "2",
+    stepOneBody: "Erstelle zuerst die Kategorie oder waehle ein bestehendes Deck.",
+    stepTwoBody: "Fuege danach Karten zur ausgewaehlten Kategorie hinzu.",
+    selectedDeck: "Ausgewaehltes Deck",
+    noDeckSelected: "Waehle oder erstelle zuerst eine Kategorie.",
     admin: "Admin",
     learner: "Persoenlich"
   }
@@ -631,16 +649,18 @@ export function FlashcardStudy({
           </article>
         )}
 
-        <section className="flashcard-editor-grid">
-          <form className="app-panel admin-form" onSubmit={submitDeck}>
-            <div className="app-panel-header">
+        <section className="flashcard-editor-flow">
+          <form className="app-panel admin-form flashcard-step-card" onSubmit={submitDeck}>
+            <div className="flashcard-step-header">
+              <span>{copy.stepOne}</span>
               <div>
-                <p className="panel-kicker">{copy.deck}</p>
+                <p className="panel-kicker">{copy.category}</p>
                 <h2>{copy.createDeck}</h2>
+                <small>{copy.stepOneBody}</small>
               </div>
               <Plus size={20} />
             </div>
-            <div className="form-grid">
+            <div className="form-grid flashcard-category-grid">
               <label>
                 <span>{copy.title}</span>
                 <input
@@ -703,19 +723,35 @@ export function FlashcardStudy({
             </button>
           </form>
 
-          <form className="app-panel admin-form" onSubmit={submitCard}>
-            <div className="app-panel-header">
+          <form
+            className={clsx(
+              "app-panel admin-form flashcard-step-card",
+              !activeDeck && "disabled"
+            )}
+            onSubmit={submitCard}
+          >
+            <div className="flashcard-step-header">
+              <span>{copy.stepTwo}</span>
               <div>
-                <p className="panel-kicker">{activeDeck?.title ?? copy.deck}</p>
+                <p className="panel-kicker">
+                  {activeDeck ? copy.selectedDeck : copy.deck}
+                </p>
                 <h2>{copy.addCard}</h2>
+                <small>
+                  {activeDeck
+                    ? `${activeDeck.title} · ${activeDeck.levelLabel} · ${activeDeck.category}`
+                    : copy.noDeckSelected}
+                </small>
               </div>
               <Plus size={20} />
             </div>
+            <p className="flashcard-step-note">{copy.stepTwoBody}</p>
             <div className="form-grid">
               <label>
                 <span>{copy.front}</span>
                 <input
                   required
+                  disabled={!activeDeck}
                   dir={getTextDirection(front)}
                   value={front}
                   onChange={(event) => setFront(event.target.value)}
@@ -726,6 +762,7 @@ export function FlashcardStudy({
                 <span>{copy.back}</span>
                 <input
                   required
+                  disabled={!activeDeck}
                   dir={getTextDirection(back)}
                   value={back}
                   onChange={(event) => setBack(event.target.value)}
@@ -734,11 +771,16 @@ export function FlashcardStudy({
               </label>
               <label>
                 <span>{copy.article}</span>
-                <input value={article} onChange={(event) => setArticle(event.target.value)} />
+                <input
+                  disabled={!activeDeck}
+                  value={article}
+                  onChange={(event) => setArticle(event.target.value)}
+                />
               </label>
               <label>
                 <span>{copy.difficulty}</span>
                 <select
+                  disabled={!activeDeck}
                   value={difficulty}
                   onChange={(event) => setDifficulty(event.target.value as FlashcardDifficulty)}
                 >
@@ -753,6 +795,7 @@ export function FlashcardStudy({
                 <span>{copy.example}</span>
                 <input
                   required
+                  disabled={!activeDeck}
                   dir="ltr"
                   value={example}
                   onChange={(event) => setExample(event.target.value)}
@@ -763,6 +806,7 @@ export function FlashcardStudy({
                 <span>{copy.exampleMeaning}</span>
                 <input
                   required
+                  disabled={!activeDeck}
                   value={exampleMeaning}
                   onChange={(event) => setExampleMeaning(event.target.value)}
                   placeholder="زندگی روزمره من حالا آرام‌تر است."
@@ -771,13 +815,18 @@ export function FlashcardStudy({
               <label>
                 <span>{copy.pronunciation}</span>
                 <input
+                  disabled={!activeDeck}
                   value={pronunciation}
                   onChange={(event) => setPronunciation(event.target.value)}
                 />
               </label>
               <label>
                 <span>{copy.notes}</span>
-                <input value={notes} onChange={(event) => setNotes(event.target.value)} />
+                <input
+                  disabled={!activeDeck}
+                  value={notes}
+                  onChange={(event) => setNotes(event.target.value)}
+                />
               </label>
             </div>
             {error ? <div className="feedback wrong">{error}</div> : null}

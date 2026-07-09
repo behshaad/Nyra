@@ -1866,9 +1866,61 @@ h3 {
   margin: 0;
 }
 
-.flashcard-editor-grid {
+.flashcard-editor-flow {
   display: grid;
   gap: 14px;
+  grid-template-columns: minmax(320px, 0.82fr) minmax(0, 1.18fr);
+}
+
+.flashcard-step-card {
+  align-content: start;
+}
+
+.flashcard-step-card.disabled {
+  opacity: 0.68;
+}
+
+.flashcard-step-header {
+  align-items: flex-start;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.flashcard-step-header > span {
+  align-items: center;
+  background: var(--success-soft);
+  border: 1px solid var(--success-border);
+  border-radius: 50%;
+  color: var(--green);
+  display: inline-flex;
+  font-weight: 900;
+  height: 34px;
+  justify-content: center;
+  width: 34px;
+}
+
+.flashcard-step-header svg {
+  color: var(--green);
+  margin-top: 4px;
+}
+
+.flashcard-step-header h2 {
+  font-size: 1.8rem;
+  margin: 2px 0;
+}
+
+.flashcard-step-header small,
+.flashcard-step-note {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.flashcard-step-note {
+  margin: 0;
+}
+
+.flashcard-category-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
@@ -2183,7 +2235,7 @@ h3 {
   .admin-prepared-grid,
   .feature-grid,
   .foundation-grid,
-  .flashcard-editor-grid,
+  .flashcard-editor-flow,
   .profile-grid,
   .resource-library,
   .resource-meta-grid,
