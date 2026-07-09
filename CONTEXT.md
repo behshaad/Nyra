@@ -109,7 +109,7 @@ The language used by Nyra's navigation, controls, account screens, and other pro
 _Avoid_: App language
 
 **Interface Language Toggle**:
-A learner-facing control for changing Nyra's Interface Language, such as Persian or English, without changing the learner's Level, Source Language, Target Language, or Course.
+A learner-facing control for changing Nyra's Interface Language, such as Persian, English, or German, without changing the learner's Level, Source Language, Target Language, or Course.
 _Avoid_: Level selector, learning language switcher
 
 **Interface Theme**:
