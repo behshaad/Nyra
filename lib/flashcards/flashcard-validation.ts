@@ -23,6 +23,7 @@ export type FlashcardInput = {
   example: string;
   exampleMeaning: string;
   pronunciation: string | null;
+  pronunciationAudioUrl: string | null;
   difficulty: FlashcardDifficulty;
   notes: string | null;
 };
@@ -39,6 +40,24 @@ function optionalString(value: unknown) {
   const cleaned = clean(value);
 
   return cleaned.length > 0 ? cleaned : null;
+}
+
+function optionalAudioUrl(value: unknown) {
+  const cleaned = optionalString(value);
+
+  if (!cleaned) {
+    return null;
+  }
+
+  if (
+    cleaned.startsWith("/") ||
+    cleaned.startsWith("https://") ||
+    cleaned.startsWith("http://")
+  ) {
+    return cleaned;
+  }
+
+  return null;
 }
 
 function isSlug(value: string) {
@@ -111,6 +130,7 @@ export function parseFlashcardInput(body: Record<string, unknown>):
   const example = clean(body.example);
   const exampleMeaning = clean(body.exampleMeaning);
   const pronunciation = optionalString(body.pronunciation);
+  const pronunciationAudioUrl = optionalAudioUrl(body.pronunciationAudioUrl);
   const difficulty = clean(body.difficulty) || FlashcardDifficulty.MEDIUM;
   const notes = optionalString(body.notes);
 
@@ -128,6 +148,13 @@ export function parseFlashcardInput(body: Record<string, unknown>):
     };
   }
 
+  if (clean(body.pronunciationAudioUrl) && !pronunciationAudioUrl) {
+    return {
+      ok: false,
+      error: "Pronunciation audio must be a site path or URL."
+    };
+  }
+
   return {
     ok: true,
     input: {
@@ -138,6 +165,7 @@ export function parseFlashcardInput(body: Record<string, unknown>):
       example,
       exampleMeaning,
       pronunciation,
+      pronunciationAudioUrl,
       difficulty: difficulty as FlashcardDifficulty,
       notes
     }

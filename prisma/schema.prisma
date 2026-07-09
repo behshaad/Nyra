@@ -283,11 +283,12 @@ model Flashcard {
   article        String?
   example        String
   exampleMeaning String
-  pronunciation  String?
-  difficulty     FlashcardDifficulty @default(MEDIUM)
-  notes          String?
-  createdAt      DateTime            @default(now())
-  updatedAt      DateTime            @updatedAt
+  pronunciation         String?
+  pronunciationAudioUrl String?
+  difficulty            FlashcardDifficulty @default(MEDIUM)
+  notes                 String?
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
 
   deck FlashcardDeck @relation(fields: [deckId], references: [id], onDelete: Cascade)
   reviewStates FlashcardReviewState[]

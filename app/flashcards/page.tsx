@@ -61,6 +61,7 @@ export default async function FlashcardsPage({
               example: card.example,
               exampleMeaning: card.exampleMeaning,
               pronunciation: card.pronunciation,
+              pronunciationAudioUrl: card.pronunciationAudioUrl,
               difficulty: card.difficulty,
               isDue: card.isDue,
               dueAt: card.reviewState?.dueAt.toISOString() ?? null,

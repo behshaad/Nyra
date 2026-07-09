@@ -29,6 +29,7 @@ export type FlashcardWorkspaceCard = {
   example: string;
   exampleMeaning: string;
   pronunciation: string | null;
+  pronunciationAudioUrl: string | null;
   difficulty: FlashcardDifficulty;
   isDue: boolean;
   dueAt: string | null;
@@ -70,6 +71,8 @@ const labels = {
     unknown: "نیاز به مرور",
     progress: "پیشرفت",
     pronunciation: "تلفظ",
+    pronunciationAudio: "فایل صوتی تلفظ",
+    noPronunciationAudio: "بدون فایل صوتی",
     example: "مثال",
     difficulty: "سختی",
     reset: "شروع دوباره",
@@ -110,6 +113,8 @@ const labels = {
     unknown: "Needs review",
     progress: "Progress",
     pronunciation: "Pronunciation",
+    pronunciationAudio: "Pronunciation audio file",
+    noPronunciationAudio: "No audio file",
     example: "Example",
     difficulty: "Difficulty",
     reset: "Reset",
@@ -150,6 +155,8 @@ const labels = {
     unknown: "Wiederholen",
     progress: "Fortschritt",
     pronunciation: "Aussprache",
+    pronunciationAudio: "Aussprache-Audiodatei",
+    noPronunciationAudio: "Keine Audiodatei",
     example: "Beispiel",
     difficulty: "Schwierigkeit",
     reset: "Zuruecksetzen",
@@ -240,7 +247,7 @@ export function FlashcardStudy({
   const [article, setArticle] = useState("");
   const [example, setExample] = useState("");
   const [exampleMeaning, setExampleMeaning] = useState("");
-  const [pronunciation, setPronunciation] = useState("");
+  const [pronunciationAudioUrl, setPronunciationAudioUrl] = useState("");
   const [difficulty, setDifficulty] = useState<FlashcardDifficulty>(
     FlashcardDifficulty.MEDIUM
   );
@@ -342,7 +349,7 @@ export function FlashcardStudy({
     }
   }
 
-  function pronounce() {
+  function speakPrompt() {
     if (
       !active ||
       typeof globalThis.speechSynthesis === "undefined" ||
@@ -356,6 +363,23 @@ export function FlashcardStudy({
     );
     utterance.lang = "de-DE";
     globalThis.speechSynthesis.speak(utterance);
+  }
+
+  function pronounce() {
+    if (!active) {
+      return;
+    }
+
+    if (active.pronunciationAudioUrl) {
+      const audio = new globalThis.Audio(active.pronunciationAudioUrl);
+
+      void audio.play().catch(() => {
+        speakPrompt();
+      });
+      return;
+    }
+
+    speakPrompt();
   }
 
   async function submitDeck(event: FormEvent) {
@@ -414,7 +438,7 @@ export function FlashcardStudy({
             article,
             example,
             exampleMeaning,
-            pronunciation,
+            pronunciationAudioUrl,
             difficulty,
             notes
           })
@@ -425,7 +449,7 @@ export function FlashcardStudy({
       setArticle("");
       setExample("");
       setExampleMeaning("");
-      setPronunciation("");
+      setPronunciationAudioUrl("");
       setNotes("");
       router.refresh();
     } catch (caught) {
@@ -618,9 +642,16 @@ export function FlashcardStudy({
             </button>
 
             <div className="flashcard-actions">
-              <button className="secondary-button" type="button" onClick={pronounce}>
+              <button
+                className="secondary-button"
+                disabled={!active.pronunciationAudioUrl}
+                type="button"
+                onClick={pronounce}
+              >
                 <Volume2 size={18} />
-                {copy.pronunciation}
+                {active.pronunciationAudioUrl
+                  ? copy.pronunciationAudio
+                  : copy.noPronunciationAudio}
               </button>
               <button
                 className="danger-button"
@@ -812,12 +843,14 @@ export function FlashcardStudy({
                   placeholder="زندگی روزمره من حالا آرام‌تر است."
                 />
               </label>
-              <label>
-                <span>{copy.pronunciation}</span>
+              <label className="form-grid-wide">
+                <span>{copy.pronunciationAudio}</span>
                 <input
                   disabled={!activeDeck}
-                  value={pronunciation}
-                  onChange={(event) => setPronunciation(event.target.value)}
+                  dir="ltr"
+                  value={pronunciationAudioUrl}
+                  onChange={(event) => setPronunciationAudioUrl(event.target.value)}
+                  placeholder="/audio/flashcards/a2/alltag.mp3"
                 />
               </label>
               <label>

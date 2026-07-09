@@ -77,8 +77,12 @@ A named group of Flashcards organized for review by Level, category, and optiona
 _Avoid_: Flashcard unit, card folder
 
 **Flashcard**:
-A review card inside a Flashcard Deck that pairs a German prompt with Persian support, example usage, and study metadata such as difficulty or pronunciation.
+A review card inside a Flashcard Deck that pairs a German prompt with Persian support, example usage, and study metadata such as difficulty or optional pronunciation support.
 _Avoid_: Vocabulary item, term card
+
+**Pronunciation Audio**:
+An optional audio recording attached to a Flashcard to demonstrate the German prompt's pronunciation during study or review.
+_Avoid_: Speech evaluation, audio lesson
 
 **Spaced Repetition**:
 A review scheduling method that decides when a learner should see a Flashcard again based on the learner's previous review result for that Flashcard.

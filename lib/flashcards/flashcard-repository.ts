@@ -187,6 +187,7 @@ export async function createFlashcard(input: FlashcardInput) {
       example: input.example,
       exampleMeaning: input.exampleMeaning,
       pronunciation: input.pronunciation,
+      pronunciationAudioUrl: input.pronunciationAudioUrl,
       difficulty: input.difficulty,
       notes: input.notes
     }
