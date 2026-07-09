@@ -346,17 +346,17 @@ Estimated Complexity: Medium
 Estimated Development Time: 3-5 days
 Possible Risks: Unlock rules mixed into UI instead of server-side policy.
 
-## Phase 9: Flashcards And Spaced Repetition
+## Phase 9A: Spaced Repetition Core
 
 Goal: Add review memory support tied to vocabulary.
 
 Tasks:
 
-- Generate system flashcards from vocabulary.
 - Allow personal flashcards.
 - Implement spaced repetition state.
 - Build flashcard review screen.
-- Link mistakes to related flashcards.
+- Treat new Flashcards as due now.
+- Support focused review for one Flashcard Deck and all-due review across decks.
 
 Files to create:
 
@@ -367,7 +367,6 @@ Files to create:
 Files to modify:
 
 - `prisma/schema.prisma`
-- `lib/question-engine/*`
 
 Dependencies:
 
@@ -378,11 +377,44 @@ Acceptance Criteria:
 
 - Due flashcards appear in review.
 - Review answers update due dates.
-- Mistake feedback can suggest relevant cards.
+- Unknown Flashcards reappear later in the same review session.
+- Study mode does not update spaced repetition state.
 
 Estimated Complexity: Medium
 Estimated Development Time: 3-5 days
 Possible Risks: Overcomplicated spaced repetition algorithm in MVP.
+
+## Phase 9B: Flashcard Mistake Suggestions
+
+Goal: Connect wrong Question attempts to explicitly linked Flashcards.
+
+Tasks:
+
+- Add explicit Question-to-Flashcard linking.
+- Add admin UI for attaching Flashcards to Questions.
+- Suggest linked Flashcards when a learner answers a Question incorrectly.
+- Avoid inferred text matching for the first version.
+
+Files to modify:
+
+- `prisma/schema.prisma`
+- `lib/question-engine/*`
+- `components/admin-question-form.tsx`
+- `components/backend-skill-session.tsx`
+
+Dependencies:
+
+- Phase 9A.
+
+Acceptance Criteria:
+
+- Admin can link a Question to one or more relevant Flashcards.
+- Wrong-answer feedback can suggest explicitly linked Flashcards.
+- Suggestions never depend on fuzzy text matching.
+
+Estimated Complexity: Medium
+Estimated Development Time: 2-4 days
+Possible Risks: Suggesting too many cards and distracting from the active learning session.
 
 ## Phase 10: Gamification
 
