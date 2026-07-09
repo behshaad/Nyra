@@ -53,7 +53,7 @@ The learner-facing collection of Published Resources.
 _Avoid_: Materials page
 
 **Resource Type**:
-The kind of support a Resource provides, such as grammar note, pronunciation, worksheet, or external link.
+The kind of support a Resource provides, such as book, video, audio lesson, external link, grammar resource, reading material, or learning guide.
 _Avoid_: Category
 
 **Learning Session**:
