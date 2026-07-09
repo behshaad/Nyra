@@ -371,6 +371,18 @@ export function FlashcardStudy({
   return (
     <section className="flashcard-workspace" aria-label={copy.study}>
       <aside className="app-panel flashcard-sidebar">
+        <div className="flashcard-sidebar-header">
+          <div>
+            <span className="section-label">{copy.deck}</span>
+            <strong>{activeDeck?.title ?? copy.empty}</strong>
+          </div>
+          <small>
+            {activeDeck
+              ? `${activeDeck.levelLabel} · ${activeDeck.category} · ${activeDeck.flashcards.length} cards`
+              : copy.all}
+          </small>
+        </div>
+
         <div className="segmented-control" role="group" aria-label="Flashcard mode">
           <button
             className={mode === "study" ? "active" : undefined}
@@ -394,40 +406,31 @@ export function FlashcardStudy({
           </button>
         </div>
 
-        <label>
-          <span>{copy.level}</span>
-          <select value={level} onChange={(event) => setLevel(event.target.value)}>
-            <option value="all">{copy.all}</option>
-            {levels.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className="flashcard-filter-grid">
+          <label>
+            <span>{copy.level}</span>
+            <select value={level} onChange={(event) => setLevel(event.target.value)}>
+              <option value="all">{copy.all}</option>
+              {levels.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </label>
 
-        <label>
-          <span>{copy.category}</span>
-          <select value={category} onChange={(event) => setCategory(event.target.value)}>
-            <option value="all">{copy.all}</option>
-            {categories.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label>
-          <span>{copy.deck}</span>
-          <select value={activeDeck?.id ?? ""} onChange={(event) => selectDeck(event.target.value)}>
-            {visibleDecks.map((deck) => (
-              <option key={deck.id} value={deck.id}>
-                {deck.levelLabel} / {deck.category} / {deck.title}
-              </option>
-            ))}
-          </select>
-        </label>
+          <label>
+            <span>{copy.category}</span>
+            <select value={category} onChange={(event) => setCategory(event.target.value)}>
+              <option value="all">{copy.all}</option>
+              {categories.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
 
         <div className="flashcard-deck-list">
           {visibleDecks.map((deck) => (

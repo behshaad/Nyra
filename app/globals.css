@@ -1675,18 +1675,21 @@ h3 {
 
 .flashcard-workspace {
   align-items: stretch;
-  grid-template-columns: 300px minmax(0, 1fr);
+  grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
 }
 
 .flashcard-sidebar {
   align-content: start;
   display: grid;
   gap: 14px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .flashcard-sidebar label {
   display: grid;
   gap: 7px;
+  min-width: 0;
 }
 
 .flashcard-sidebar label span,
@@ -1702,7 +1705,44 @@ h3 {
   border-radius: 7px;
   color: var(--text);
   min-height: 42px;
+  min-width: 0;
   padding: 8px 10px;
+  width: 100%;
+}
+
+.flashcard-sidebar-header {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px;
+}
+
+.flashcard-sidebar-header div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.flashcard-sidebar-header strong,
+.flashcard-sidebar-header small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flashcard-sidebar-header small {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 760;
+}
+
+.flashcard-filter-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .segmented-control {
@@ -1743,6 +1783,7 @@ h3 {
 .flashcard-stage {
   display: grid;
   gap: 14px;
+  min-width: 0;
 }
 
 .flashcard-deck-list {
@@ -1765,6 +1806,7 @@ h3 {
   grid-template-columns: auto minmax(0, 1fr);
   padding: 10px;
   text-align: start;
+  width: 100%;
 }
 
 .flashcard-deck-chip.active {
@@ -1780,6 +1822,9 @@ h3 {
 .flashcard-deck-chip strong,
 .flashcard-deck-chip small {
   display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .flashcard-deck-chip small {
@@ -1787,6 +1832,11 @@ h3 {
   font-size: 0.76rem;
   line-height: 1.45;
   margin-top: 3px;
+  white-space: nowrap;
+}
+
+.flashcard-deck-chip strong {
+  white-space: nowrap;
 }
 
 .flashcard-deck-heading {
@@ -1800,9 +1850,14 @@ h3 {
   padding: 16px;
 }
 
+.flashcard-deck-heading > div {
+  min-width: 0;
+}
+
 .flashcard-deck-heading h2 {
   font-size: 1.7rem;
   margin: 4px 0;
+  overflow-wrap: anywhere;
 }
 
 .flashcard-deck-heading p {
