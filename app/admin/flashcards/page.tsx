@@ -76,7 +76,10 @@ export default async function AdminFlashcardsPage() {
               example: card.example,
               exampleMeaning: card.exampleMeaning,
               pronunciation: card.pronunciation,
-              difficulty: card.difficulty
+              difficulty: card.difficulty,
+              isDue: true,
+              dueAt: null,
+              intervalStep: null
             }))
           }))}
           units={units.map((unit) => ({

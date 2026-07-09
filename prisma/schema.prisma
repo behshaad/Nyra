@@ -71,6 +71,11 @@ enum FlashcardDifficulty {
   HARD
 }
 
+enum FlashcardReviewResult {
+  KNOWN
+  UNKNOWN
+}
+
 model Course {
   id                String   @id @default(uuid())
   slug              String   @unique
@@ -180,6 +185,7 @@ model LearnerProfile {
   learningSessions LearningSession[]
   progressEvents   ProgressEvent[]
   flashcardDecks   FlashcardDeck[]
+  flashcardReviewStates FlashcardReviewState[]
 }
 
 model LearningSession {
@@ -284,6 +290,27 @@ model Flashcard {
   updatedAt      DateTime            @updatedAt
 
   deck FlashcardDeck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  reviewStates FlashcardReviewState[]
 
   @@unique([deckId, order])
+}
+
+model FlashcardReviewState {
+  id               String   @id @default(uuid())
+  learnerProfileId String
+  flashcardId      String
+  intervalStep     Int      @default(0)
+  dueAt            DateTime @default(now())
+  lastReviewedAt   DateTime?
+  reviewCount      Int      @default(0)
+  knownCount       Int      @default(0)
+  unknownCount     Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  learnerProfile LearnerProfile @relation(fields: [learnerProfileId], references: [id], onDelete: Cascade)
+  flashcard      Flashcard      @relation(fields: [flashcardId], references: [id], onDelete: Cascade)
+
+  @@unique([learnerProfileId, flashcardId])
+  @@index([learnerProfileId, dueAt])
 }

@@ -16,6 +16,7 @@ import {
 import {
   FlashcardDeckOwnerType,
   FlashcardDifficulty,
+  FlashcardReviewResult,
   PublicationStatus
 } from "@/lib/generated/prisma/enums";
 import type { InterfaceLanguageCode } from "@/lib/i18n/interface-language";
@@ -29,6 +30,9 @@ export type FlashcardWorkspaceCard = {
   exampleMeaning: string;
   pronunciation: string | null;
   difficulty: FlashcardDifficulty;
+  isDue: boolean;
+  dueAt: string | null;
+  intervalStep: number | null;
 };
 
 export type FlashcardWorkspaceDeck = {
@@ -60,6 +64,7 @@ const labels = {
     category: "دسته",
     deck: "دسته فلش‌کارت",
     all: "همه",
+    allDue: "همه کارت‌های موعددار",
     flip: "برگردان",
     known: "بلدم",
     unknown: "نیاز به مرور",
@@ -93,6 +98,7 @@ const labels = {
     category: "Category",
     deck: "Flashcard unit",
     all: "All",
+    allDue: "All due cards",
     flip: "Flip",
     known: "Known",
     unknown: "Needs review",
@@ -126,6 +132,7 @@ const labels = {
     category: "Kategorie",
     deck: "Karten-Einheit",
     all: "Alle",
+    allDue: "Alle faelligen Karten",
     flip: "Drehen",
     known: "Bekannt",
     unknown: "Wiederholen",
@@ -200,6 +207,7 @@ export function FlashcardStudy({
   const [level, setLevel] = useState("all");
   const [category, setCategory] = useState("all");
   const [deckId, setDeckId] = useState(decks[0]?.id ?? "");
+  const [reviewScope, setReviewScope] = useState<"deck" | "all-due">("deck");
   const [activeIndex, setActiveIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [status, setStatus] = useState<Record<string, CardStatus>>({});
@@ -222,6 +230,7 @@ export function FlashcardStudy({
   const [error, setError] = useState<string | null>(null);
   const [submittingDeck, setSubmittingDeck] = useState(false);
   const [submittingCard, setSubmittingCard] = useState(false);
+  const [reviewingCardId, setReviewingCardId] = useState<string | null>(null);
 
   const levels = useMemo(
     () => [...new Set(decks.map((deck) => deck.levelLabel))],
@@ -240,9 +249,17 @@ export function FlashcardStudy({
   const activeDeck =
     visibleDecks.find((deck) => deck.id === deckId) ?? visibleDecks[0] ?? null;
   const activeCards = activeDeck?.flashcards ?? [];
-  const filteredCards = activeCards.filter(
-    (card) => mode === "study" || status[card.id] !== "known"
+  const dueCards = visibleDecks.flatMap((deck) =>
+    deck.flashcards.filter((card) => card.isDue || status[card.id] === "unknown")
   );
+  const reviewCards =
+    reviewScope === "all-due"
+      ? dueCards
+      : activeCards.filter((card) => card.isDue || status[card.id] === "unknown");
+  const filteredCards =
+    mode === "study"
+      ? activeCards
+      : reviewCards.filter((card) => status[card.id] !== "known");
   const active = filteredCards[activeIndex % Math.max(filteredCards.length, 1)];
   const knownCount = activeCards.filter((card) => status[card.id] === "known").length;
   const progress =
@@ -250,13 +267,45 @@ export function FlashcardStudy({
 
   function selectDeck(nextDeckId: string) {
     setDeckId(nextDeckId);
+    setReviewScope("deck");
     setActiveIndex(0);
     setFlipped(false);
   }
 
-  function mark(nextStatus: CardStatus) {
+  async function mark(nextStatus: CardStatus) {
     if (!active) {
       return;
+    }
+
+    if (mode === "review") {
+      setReviewingCardId(active.id);
+      setError(null);
+
+      try {
+        await readJson<{ flashcardId: string; dueAt: string }>(
+          await fetch("/api/flashcard-reviews", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              flashcardId: active.id,
+              result:
+                nextStatus === "known"
+                  ? FlashcardReviewResult.KNOWN
+                  : FlashcardReviewResult.UNKNOWN
+            })
+          })
+        );
+      } catch (caught) {
+        setError(
+          caught instanceof Error ? caught.message : "Unable to save review."
+        );
+        setReviewingCardId(null);
+        return;
+      } finally {
+        setReviewingCardId(null);
+      }
     }
 
     setStatus((current) => ({
@@ -389,6 +438,7 @@ export function FlashcardStudy({
             type="button"
             onClick={() => {
               setMode("study");
+              setReviewScope("deck");
               setActiveIndex(0);
             }}
           >
@@ -405,6 +455,31 @@ export function FlashcardStudy({
             {copy.review}
           </button>
         </div>
+
+        {mode === "review" ? (
+          <div className="segmented-control" role="group" aria-label="Review scope">
+            <button
+              className={reviewScope === "deck" ? "active" : undefined}
+              type="button"
+              onClick={() => {
+                setReviewScope("deck");
+                setActiveIndex(0);
+              }}
+            >
+              {copy.deck}
+            </button>
+            <button
+              className={reviewScope === "all-due" ? "active" : undefined}
+              type="button"
+              onClick={() => {
+                setReviewScope("all-due");
+                setActiveIndex(0);
+              }}
+            >
+              {copy.allDue}
+            </button>
+          </div>
+        ) : null}
 
         <div className="flashcard-filter-grid">
           <label>
@@ -444,7 +519,8 @@ export function FlashcardStudy({
               <span>
                 <strong>{deck.title}</strong>
                 <small>
-                  {deck.levelLabel} · {deck.category} · {deck.flashcards.length} cards ·{" "}
+                  {deck.levelLabel} · {deck.category} ·{" "}
+                  {deck.flashcards.filter((card) => card.isDue).length}/{deck.flashcards.length} due ·{" "}
                   {deck.ownerType === FlashcardDeckOwnerType.ADMIN
                     ? copy.admin
                     : copy.learner}
@@ -504,6 +580,7 @@ export function FlashcardStudy({
               <span className="section-label">
                 {activeDeck?.levelLabel} · {copy.difficulty}:{" "}
                 {active.difficulty.toLowerCase()}
+                {mode === "review" ? ` · due` : ""}
               </span>
               <div className="study-card-face">
                 <h2 dir="ltr">
@@ -527,11 +604,21 @@ export function FlashcardStudy({
                 <Volume2 size={18} />
                 {copy.pronunciation}
               </button>
-              <button className="danger-button" type="button" onClick={() => mark("unknown")}>
+              <button
+                className="danger-button"
+                disabled={reviewingCardId === active.id}
+                type="button"
+                onClick={() => void mark("unknown")}
+              >
                 <XCircle size={18} />
                 {copy.unknown}
               </button>
-              <button className="primary-button" type="button" onClick={() => mark("known")}>
+              <button
+                className="primary-button"
+                disabled={reviewingCardId === active.id}
+                type="button"
+                onClick={() => void mark("known")}
+              >
                 <CheckCircle2 size={18} />
                 {copy.known}
               </button>

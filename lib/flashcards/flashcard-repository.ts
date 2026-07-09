@@ -9,6 +9,11 @@ import type {
   FlashcardInput
 } from "@/lib/flashcards/flashcard-validation";
 
+type FlashcardReviewStateSummary = {
+  dueAt: Date;
+  intervalStep: number;
+};
+
 export async function getDevLearnerProfileId() {
   const db = getPrisma();
   const learnerProfile = await db.learnerProfile.findUnique({
@@ -26,6 +31,7 @@ export async function getDevLearnerProfileId() {
 export async function getLearnerFlashcardDecks() {
   const db = getPrisma();
   const learnerProfileId = await getDevLearnerProfileId();
+  const now = new Date();
 
   return db.flashcardDeck.findMany({
     where: {
@@ -47,6 +53,15 @@ export async function getLearnerFlashcardDecks() {
     include: {
       unit: true,
       flashcards: {
+        include: learnerProfileId
+          ? {
+              reviewStates: {
+                where: {
+                  learnerProfileId
+                }
+              }
+            }
+          : undefined,
         orderBy: {
           order: "asc"
         }
@@ -63,7 +78,23 @@ export async function getLearnerFlashcardDecks() {
         title: "asc"
       }
     ]
-  });
+  }).then((decks) =>
+    decks.map((deck) => ({
+      ...deck,
+      flashcards: deck.flashcards.map((flashcard) => {
+        const flashcardWithReviewStates = flashcard as typeof flashcard & {
+          reviewStates?: FlashcardReviewStateSummary[];
+        };
+        const reviewState = flashcardWithReviewStates.reviewStates?.[0] ?? null;
+
+        return {
+          ...flashcard,
+          reviewState,
+          isDue: !reviewState || reviewState.dueAt <= now
+        };
+      })
+    }))
+  );
 }
 
 export async function getAdminFlashcardDecks() {
