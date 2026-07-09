@@ -105,7 +105,7 @@ The language a learner is studying in a Course.
 _Avoid_: Learning language
 
 **Interface Language**:
-The language used by Nyra's navigation, controls, account screens, and other product UI.
+The language used by Nyra's navigation, controls, account screens, and other product UI. Nyra can offer Persian, English, and German Interface Languages without changing the Course's Source Language or Target Language.
 _Avoid_: App language
 
 **Interface Language Toggle**:
