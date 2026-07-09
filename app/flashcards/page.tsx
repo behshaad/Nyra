@@ -1,7 +1,10 @@
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
 import { FlashcardStudy } from "@/components/flashcard-study";
-import { flashcards } from "@/lib/flashcards/sample-flashcards";
+import {
+  getFlashcardUnitOptions,
+  getLearnerFlashcardDecks
+} from "@/lib/flashcards/flashcard-repository";
 import {
   interfaceCopy,
   resolveInterfaceLanguage
@@ -22,6 +25,10 @@ export default async function FlashcardsPage({
     ? resolveInterfaceLanguage(ui)
     : preferences.interfaceLanguage;
   const copy = interfaceCopy[language];
+  const [decks, units] = await Promise.all([
+    getLearnerFlashcardDecks(),
+    getFlashcardUnitOptions()
+  ]);
 
   return (
     <main className={`site-shell ${copy.dir === "rtl" ? "learner-rtl" : ""}`} dir={copy.dir}>
@@ -35,7 +42,35 @@ export default async function FlashcardsPage({
           <p>{text(flashcardCopy.body, language)}</p>
         </div>
 
-        <FlashcardStudy cards={flashcards} language={language} />
+        <FlashcardStudy
+          decks={decks.map((deck) => ({
+            id: deck.id,
+            slug: deck.slug,
+            title: deck.title,
+            description: deck.description,
+            levelLabel: deck.levelLabel,
+            category: deck.category,
+            ownerType: deck.ownerType,
+            publicationStatus: deck.publicationStatus,
+            unitTitle: deck.unit?.title ?? null,
+            flashcards: deck.flashcards.map((card) => ({
+              id: card.id,
+              front: card.front,
+              back: card.back,
+              article: card.article,
+              example: card.example,
+              exampleMeaning: card.exampleMeaning,
+              pronunciation: card.pronunciation,
+              difficulty: card.difficulty
+            }))
+          }))}
+          units={units.map((unit) => ({
+            id: unit.id,
+            title: unit.title,
+            levelLabel: unit.level.label
+          }))}
+          language={language}
+        />
       </section>
     </main>
   );

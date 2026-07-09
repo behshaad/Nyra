@@ -1,0 +1,52 @@
+import { NextResponse } from "next/server";
+import { getPrisma } from "@/lib/db/prisma";
+import { createFlashcardDeck } from "@/lib/flashcards/flashcard-repository";
+import { parseFlashcardDeckInput } from "@/lib/flashcards/flashcard-validation";
+
+export async function POST(request: Request) {
+  const body = (await request.json()) as Record<string, unknown>;
+  const parsed = parseFlashcardDeckInput(body);
+
+  if (!parsed.ok) {
+    return NextResponse.json({ error: parsed.error }, { status: 400 });
+  }
+
+  const db = getPrisma();
+  const existing = await db.flashcardDeck.findUnique({
+    where: {
+      slug: parsed.input.slug
+    }
+  });
+
+  if (existing) {
+    return NextResponse.json(
+      { error: "A Flashcard deck with this slug already exists." },
+      { status: 409 }
+    );
+  }
+
+  if (parsed.input.unitId) {
+    const unit = await db.unit.findUnique({
+      where: {
+        id: parsed.input.unitId
+      }
+    });
+
+    if (!unit) {
+      return NextResponse.json(
+        { error: "Related Unit was not found." },
+        { status: 400 }
+      );
+    }
+  }
+
+  const deck = await createFlashcardDeck(parsed.input);
+
+  return NextResponse.json(
+    {
+      id: deck.id,
+      slug: deck.slug
+    },
+    { status: 201 }
+  );
+}

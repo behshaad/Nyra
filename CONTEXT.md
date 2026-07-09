@@ -72,6 +72,14 @@ _Avoid_: Final quiz, placement test
 A progress signal that marks a Unit or Level as needing review when the learner scores below the passing threshold, without blocking continued exploration.
 _Avoid_: Locked gate, hard prerequisite
 
+**Flashcard Deck**:
+A named group of Flashcards organized for review by Level, category, and optionally a Unit. A Flashcard Deck can be admin-authored for learners or learner-created for personal study.
+_Avoid_: Flashcard unit, card folder
+
+**Flashcard**:
+A review card inside a Flashcard Deck that pairs a German prompt with Persian support, example usage, and study metadata such as difficulty or pronunciation.
+_Avoid_: Vocabulary item, term card
+
 **Learning Path**:
 The ordered learner-facing route through a Level's Units and Skills. A Learning Path can show upcoming Skills before all of them are fully authored, as long as publication state makes learner availability clear.
 _Avoid_: Course outline, syllabus

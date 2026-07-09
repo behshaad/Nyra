@@ -60,6 +60,17 @@ enum ProgressEventType {
   FLASHCARD_REVIEWED
 }
 
+enum FlashcardDeckOwnerType {
+  ADMIN
+  LEARNER
+}
+
+enum FlashcardDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
 model Course {
   id                String   @id @default(uuid())
   slug              String   @unique
@@ -99,9 +110,10 @@ model Unit {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  level     Level      @relation(fields: [levelId], references: [id], onDelete: Cascade)
-  skills    Skill[]
-  resources Resource[]
+  level          Level           @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  skills         Skill[]
+  resources      Resource[]
+  flashcardDecks FlashcardDeck[]
 
   @@unique([levelId, order])
 }
@@ -167,6 +179,7 @@ model LearnerProfile {
 
   learningSessions LearningSession[]
   progressEvents   ProgressEvent[]
+  flashcardDecks   FlashcardDeck[]
 }
 
 model LearningSession {
@@ -234,4 +247,43 @@ model Resource {
 
   unit  Unit?  @relation(fields: [unitId], references: [id], onDelete: SetNull)
   skill Skill? @relation(fields: [skillId], references: [id], onDelete: SetNull)
+}
+
+model FlashcardDeck {
+  id                String                 @id @default(uuid())
+  slug              String                 @unique
+  title             String
+  description       String
+  levelLabel        String
+  category          String
+  ownerType         FlashcardDeckOwnerType @default(ADMIN)
+  publicationStatus PublicationStatus      @default(DRAFT)
+  learnerProfileId  String?
+  unitId            String?
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+
+  learnerProfile LearnerProfile? @relation(fields: [learnerProfileId], references: [id], onDelete: Cascade)
+  unit           Unit?           @relation(fields: [unitId], references: [id], onDelete: SetNull)
+  flashcards     Flashcard[]
+}
+
+model Flashcard {
+  id             String              @id @default(uuid())
+  deckId         String
+  order          Int
+  front          String
+  back           String
+  article        String?
+  example        String
+  exampleMeaning String
+  pronunciation  String?
+  difficulty     FlashcardDifficulty @default(MEDIUM)
+  notes          String?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  deck FlashcardDeck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+
+  @@unique([deckId, order])
 }

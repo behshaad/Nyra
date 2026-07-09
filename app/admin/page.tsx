@@ -35,6 +35,7 @@ import {
   sampleCourse
 } from "@/lib/learning/sample-content";
 import { getAdminSkillUnits } from "@/lib/admin/skill-repository";
+import { getAdminFlashcardDecks } from "@/lib/flashcards/flashcard-repository";
 import { getAdminResourcesFromDb } from "@/lib/resources/resource-repository";
 
 export const dynamic = "force-dynamic";
@@ -59,6 +60,8 @@ const labels = {
     skillStudioBody: "ویرایش متادیتا، وضعیت انتشار، ترتیب سؤال‌ها و محتوای سؤال.",
     resourceStudio: "استودیوی منابع",
     resourceStudioBody: "ساخت کتاب، ویدئو، صوت، گرامر، خواندن، راهنما و لینک آموزشی.",
+    flashcardStudio: "استودیوی فلش‌کارت",
+    flashcardStudioBody: "ساخت دسته‌ها، یونیت‌ها و کارت‌های سطح‌بندی‌شده برای مرور.",
     learnerQa: "بازبینی یادگیرنده",
     learnerQaBody: "بعد از انتشار، مسیر یادگیری را مثل کاربر واقعی بررسی کن.",
     flashcards: "مدیریت فلش‌کارت",
@@ -88,6 +91,8 @@ const labels = {
     skillStudioBody: "Edit metadata, publication states, Question order, and Question content.",
     resourceStudio: "Resource Studio",
     resourceStudioBody: "Create books, videos, audio, grammar, reading, guides, and educational links.",
+    flashcardStudio: "Flashcard Studio",
+    flashcardStudioBody: "Create categorized decks, learner-ready units, and review cards by Level.",
     learnerQa: "Learner QA",
     learnerQaBody: "Review the learner path after publishing or reordering content.",
     flashcards: "Flashcards",
@@ -117,6 +122,8 @@ const labels = {
     skillStudioBody: "Metadaten, Veroeffentlichung, Fragenreihenfolge und Frageninhalt bearbeiten.",
     resourceStudio: "Ressourcen Studio",
     resourceStudioBody: "Buecher, Videos, Audio, Grammatik, Lesen, Guides und Lernlinks erstellen.",
+    flashcardStudio: "Karten Studio",
+    flashcardStudioBody: "Kategorisierte Decks, Einheiten und Wiederholungskarten nach Niveau erstellen.",
     learnerQa: "Lernenden-QA",
     learnerQaBody: "Den Lernpfad nach Veroeffentlichungen aus Sicht der Lernenden pruefen.",
     flashcards: "Karten",
@@ -144,9 +151,10 @@ export default async function AdminPage({
   const copy = interfaceCopy[language];
   const t = labels[language];
   const summary = getA1ContentSummary();
-  const [skillUnits, resources] = await Promise.all([
+  const [skillUnits, resources, flashcardDecks] = await Promise.all([
     getAdminSkillUnits(),
-    getAdminResourcesFromDb()
+    getAdminResourcesFromDb(),
+    getAdminFlashcardDecks()
   ]);
   const skills = skillUnits.flatMap((unit) =>
     unit.skills.map((skill) => ({
@@ -188,10 +196,15 @@ export default async function AdminPage({
       value: resources.length,
       detail: `${archivedResources} ${t.archived}`,
       icon: FileText
+    },
+    {
+      label: t.flashcards,
+      value: flashcardDecks.reduce((total, deck) => total + deck.flashcards.length, 0),
+      detail: `${flashcardDecks.length} decks`,
+      icon: Sparkles
     }
   ];
   const preparedModules = [
-    { label: t.flashcards, icon: Sparkles },
     { label: t.profiles, icon: UsersRound },
     { label: t.localization, icon: Languages },
     { label: t.levels, icon: Layers3 },
@@ -250,6 +263,13 @@ export default async function AdminPage({
             <div>
               <strong>{t.resourceStudio}</strong>
               <span>{t.resourceStudioBody}</span>
+            </div>
+          </Link>
+          <Link className="admin-command-card" href={withInterfaceLanguage("/admin/flashcards", language)}>
+            <Sparkles size={22} />
+            <div>
+              <strong>{t.flashcardStudio}</strong>
+              <span>{t.flashcardStudioBody}</span>
             </div>
           </Link>
           <Link className="admin-command-card" href={withInterfaceLanguage("/learn", language)}>
