@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Inter, Vazirmatn } from "next/font/google";
+import { interfaceCopy } from "@/lib/i18n/interface-language";
 import { getLearnerPreferences } from "@/lib/learner/preferences";
 import "./globals.css";
 
@@ -32,9 +33,14 @@ export default async function RootLayout({
     preferences.interfaceTheme === "SYSTEM"
       ? undefined
       : preferences.interfaceTheme.toLowerCase();
+  const copy = interfaceCopy[preferences.interfaceLanguage];
 
   return (
-    <html lang="fa" dir="rtl" data-theme={themeAttribute}>
+    <html
+      lang={preferences.interfaceLanguage}
+      dir={copy.dir}
+      data-theme={themeAttribute}
+    >
       <body className={`${inter.variable} ${vazirmatn.variable}`}>
         {children}
       </body>

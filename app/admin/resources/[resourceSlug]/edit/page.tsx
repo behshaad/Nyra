@@ -55,6 +55,14 @@ export default async function EditResourcePage({
               slug: resource.slug,
               type: resource.type,
               levelLabel: resource.levelLabel,
+              language: resource.language,
+              thumbnailIcon: resource.thumbnailIcon,
+              metadata:
+                resource.metadata && typeof resource.metadata === "object"
+                  ? Object.entries(resource.metadata as Record<string, unknown>)
+                      .map(([key, value]) => `${key}: ${String(value)}`)
+                      .join("\n")
+                  : "",
               description: resource.description,
               content: resource.content,
               unitId: resource.unitId ?? "",

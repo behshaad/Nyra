@@ -1,4 +1,4 @@
-export type InterfaceLanguageCode = "fa" | "en";
+export type InterfaceLanguageCode = "fa" | "en" | "de";
 
 export type InterfaceCopy = {
   dir: "rtl" | "ltr";
@@ -104,6 +104,10 @@ export const defaultInterfaceLanguage: InterfaceLanguageCode = "fa";
 export function resolveInterfaceLanguage(value: unknown): InterfaceLanguageCode {
   if (value === "en" || value === "English") {
     return "en";
+  }
+
+  if (value === "de" || value === "Deutsch") {
+    return "de";
   }
 
   return defaultInterfaceLanguage;
@@ -370,6 +374,117 @@ export const interfaceCopy: Record<InterfaceLanguageCode, InterfaceCopy> = {
       continue: "Continue",
       hint:
         "Answers are saved and checked. In practice Skills, missed Questions come back again."
+    }
+  },
+  de: {
+    dir: "ltr",
+    brandSubtitle: "Deutschlernen mit persischer Unterstuetzung",
+    nav: {
+      learn: "Lernen",
+      resources: "Ressourcen",
+      flashcards: "Karten",
+      pricing: "Preise",
+      profile: "Profil",
+      admin: "Admin"
+    },
+    header: {
+      adminPreview: "Admin",
+      startLearning: "Weiterlernen",
+      languageLabel: "Oberflaechensprache"
+    },
+    home: {
+      eyebrow: "Kompletter A1-Pfad",
+      title: "Nyra ist bereit fuer A1-Uebung.",
+      body: "Uebe 12 A1-Einheiten mit persischer Unterstuetzung, deutschen Aufgaben, Unit-Checks und einem finalen A1-Test.",
+      startA1: "A1 starten",
+      viewPath: "Lernpfad ansehen",
+      panelKicker: "Aktueller Stand",
+      questionCount: "Fragen",
+      skillCount: "Skills",
+      cards: [
+        {
+          title: "A1-Lernpfad",
+          description: "Nyra startet mit einem vollstaendigen A1-Pfad fuer persische Deutschlernende."
+        },
+        {
+          title: "Gepruefte Inhalte",
+          description: "Lerninhalte bleiben verfasst, vorhersehbar und vertrauenswuerdig."
+        },
+        {
+          title: "Fortschritt als Ereignisse",
+          description: "Versuche und Sessions werden gespeichert, damit der naechste Schritt klar bleibt."
+        },
+        {
+          title: "Premium spaeter",
+          description: "Preise sind sichtbar, echte Abos folgen nach dem stabilen Lernkreislauf."
+        }
+      ]
+    },
+    learn: {
+      label: "A1-Lernpfad",
+      title: "Weiterlernen, ohne zwischen Skills verloren zu gehen.",
+      body: ({ regularSkillCount, checkpointCount, questionCount }) =>
+        `Diese kompakte Ansicht zeigt die gewaehlte Einheit, ihre Skills und deinen naechsten Schritt. A1 enthaelt ${regularSkillCount} Skills, ${checkpointCount} Unit-Checks und ${questionCount} Fragen.`,
+      levelLabel: "Niveau",
+      levelComingSoon: "Demnaechst",
+      progress: "A1-Fortschritt",
+      completed: "abgeschlossen",
+      nextStep: "Naechster Schritt",
+      continue: "Weiter",
+      completeLabel: "A1 abgeschlossen",
+      completeTitle: "Du hast den ganzen Pfad beendet.",
+      completeBody: "Waehle eine Einheit aus, um Skills erneut zu ueben.",
+      reviewFromStart: "Von vorn wiederholen",
+      unit: "Einheit",
+      progressPercent: "Fortschritt",
+      finalTest: "Finaler A1-Test",
+      checkpoint: "Unit-Check",
+      assessment: "Pruefung",
+      skill: "Skill",
+      completedState: "Fertig",
+      reviewState: "Wiederholen",
+      currentState: "Aktuell",
+      upcomingState: "Weiter"
+    },
+    skillPage: {
+      labels: {
+        regular: "A1-Skill",
+        checkpoint: "A1-Unit-Check",
+        finalTest: "Finaler A1-Test"
+      },
+      backToUnit: "Zurueck zur Einheit"
+    },
+    session: {
+      loading: "Uebung wird gestartet...",
+      errorTitle: "Uebung konnte nicht starten.",
+      retry: "Erneut versuchen",
+      finalTest: "Finaler A1-Test",
+      checkpoint: "Unit-Check",
+      practice: "Skill-Uebung",
+      passingScore: (score) => `Bestehensgrenze ${score}%`,
+      points: (xp) => `${xp} XP`,
+      complete: "Session abgeschlossen",
+      question: "Frage",
+      passed: "Pruefung bestanden",
+      reviewRecommended: "Wiederholung empfohlen",
+      skillComplete: "Skill abgeschlossen",
+      assessmentBody:
+        "Dein Ergebnis wurde gespeichert. Niedrige Werte markieren diesen Bereich zur Wiederholung, ohne den Pfad zu sperren.",
+      skillBody: "Dein Fortschritt wurde gespeichert und du kannst direkt fortfahren.",
+      attempts: "Versuche",
+      score: "Ergebnis",
+      xp: "XP",
+      continueNext: "Zum naechsten Skill",
+      continueTo: (title) => `Weiter: ${title}`,
+      backToPath: "Zurueck zum A1-Pfad",
+      backToUnit: "Zurueck zur Einheit",
+      practiceAgain: "Noch einmal ueben",
+      checking: "Pruefen...",
+      correct: "Richtig.",
+      mistake: "Ein guter Fehler zum Lernen.",
+      continue: "Weiter",
+      hint:
+        "Antworten werden gespeichert und geprueft. In Uebungs-Skills kommen falsche Fragen erneut."
     }
   }
 };

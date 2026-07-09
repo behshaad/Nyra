@@ -1,42 +1,41 @@
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
+import { FlashcardStudy } from "@/components/flashcard-study";
+import { flashcards } from "@/lib/flashcards/sample-flashcards";
+import {
+  interfaceCopy,
+  resolveInterfaceLanguage
+} from "@/lib/i18n/interface-language";
+import { flashcardCopy, text } from "@/lib/i18n/page-copy";
+import { getLearnerPreferences } from "@/lib/learner/preferences";
 
-const cards = [
-  { front: "die Familie", back: "خانواده", state: "Deferred" },
-  { front: "der Bruder", back: "برادر", state: "Deferred" },
-  { front: "heißen", back: "نام داشتن", state: "Deferred" }
-];
+export default async function FlashcardsPage({
+  searchParams
+}: {
+  searchParams: Promise<{
+    ui?: string;
+  }>;
+}) {
+  const { ui } = await searchParams;
+  const preferences = await getLearnerPreferences();
+  const language = ui
+    ? resolveInterfaceLanguage(ui)
+    : preferences.interfaceLanguage;
+  const copy = interfaceCopy[language];
 
-export default function FlashcardsPage() {
   return (
-    <main className="site-shell">
+    <main className={`site-shell ${copy.dir === "rtl" ? "learner-rtl" : ""}`} dir={copy.dir}>
       <AnimatedBackdrop />
-      <AppHeader currentPath="/flashcards" />
+      <AppHeader language={language} currentPath="/flashcards" />
 
       <section className="route-page">
         <div className="route-hero">
-          <span className="section-label">Flashcards</span>
-          <h1>Spaced repetition comes after the core loop.</h1>
-          <p>
-            Flashcards are intentionally scaffolded, but real due-card scheduling waits until
-            Question Attempts and Learning Sessions are proven.
-          </p>
+          <span className="section-label">{text(flashcardCopy.label, language)}</span>
+          <h1>{text(flashcardCopy.title, language)}</h1>
+          <p>{text(flashcardCopy.body, language)}</p>
         </div>
 
-        <div className="mini-panel-grid">
-          {cards.map((card) => (
-            <article className="flashcard" key={card.front}>
-              <div>
-                <span>{card.state}</span>
-                <h3>{card.front}</h3>
-                <p dir="rtl">{card.back}</p>
-              </div>
-              <div className="mini-progress">
-                <span style={{ width: "0%" }} />
-              </div>
-            </article>
-          ))}
-        </div>
+        <FlashcardStudy cards={flashcards} language={language} />
       </section>
     </main>
   );

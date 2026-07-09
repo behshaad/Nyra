@@ -34,8 +34,18 @@ export type SampleResource = {
   slug: string;
   title: string;
   description: string;
-  type: "GRAMMAR_NOTE" | "PRONUNCIATION" | "WORKSHEET" | "EXTERNAL_LINK";
+  type:
+    | "BOOK"
+    | "VIDEO"
+    | "AUDIO_LESSON"
+    | "EXTERNAL_LINK"
+    | "GRAMMAR_RESOURCE"
+    | "READING_MATERIAL"
+    | "LEARNING_GUIDE";
   levelLabel: string;
+  language: string;
+  thumbnailIcon: string;
+  metadata: Record<string, string>;
   content: string;
   url?: string;
   publicationStatus: "PUBLISHED";
@@ -1643,42 +1653,160 @@ export const sampleCourse: SampleCourse = {
   ]
 };
 
-export const sampleResources: SampleResource[] = unitSpecs.flatMap((unitSpec) => {
-  const unit = localizeUnit(unitSpec);
-
-  return [
+export const sampleResources: SampleResource[] = [
   {
-    slug: `${unit.slug}-grammar-guide`,
-    title: `راهنمای گرامر: ${unit.title}`,
-    description: `پشتیبانی گرامری فارسی‌محور برای ${unit.resourceFocus}.`,
-    type: "GRAMMAR_NOTE",
+    slug: "a1-survival-phrasebook",
+    title: "دفترچه عبارت‌های ضروری A1",
+    description: "عبارت‌های کوتاه برای سلام، معرفی، پرسیدن مسیر و خریدهای ساده.",
+    type: "BOOK",
     levelLabel: "A1",
-    content: `این راهنما نکته‌های پایه‌ی A1 برای ${unit.resourceFocus} را با توضیح فارسی و مثال‌های کوتاه آلمانی مرور می‌کند.`,
+    language: "fa/de",
+    thumbnailIcon: "book-open",
+    metadata: {
+      length: "42 pages",
+      format: "PDF guide",
+      focus: "Everyday phrases"
+    },
+    content:
+      "این راهنما عبارت‌های آلمانی پرتکرار را با معنی فارسی، موقعیت استفاده، و مثال کوتاه مرتب می‌کند تا زبان‌آموز قبل از ورود به هر مهارت یک مرجع سریع داشته باشد.",
     publicationStatus: "PUBLISHED",
-    unitSlug: unit.slug
+    unitSlug: "a1-first-contacts",
+    skillSlug: "greet-and-say-your-name"
   },
   {
-    slug: `${unit.slug}-pronunciation-notes`,
-    title: `نکته‌های تلفظ: ${unit.title}`,
-    description: `راهنمای نوشتاری تلفظ برای ${unit.resourceFocus}.`,
-    type: "PRONUNCIATION",
+    slug: "pronunciation-starter-a1",
+    title: "ویدئوی شروع تلفظ آلمانی",
+    description: "تمرین آواهای پایه، سلام‌ها و ریتم جمله‌های کوتاه آلمانی.",
+    type: "VIDEO",
     levelLabel: "A1",
-    content: `برای تلفظ، واژه‌های این واحد را کوتاه، شمرده، و با توجه به تکیه‌ی هجایی تمرین کنید. فایل صوتی در نسخه‌ی بعدی اضافه می‌شود.`,
+    language: "fa/de",
+    thumbnailIcon: "video",
+    metadata: {
+      duration: "18 min",
+      format: "Guided video",
+      focus: "Pronunciation"
+    },
+    content:
+      "این ویدئو روی صدای ch، h آغازین، تکیه واژه و خواندن جمله‌های کوتاه مثل Ich heiße Sara تمرکز دارد. توضیح‌ها فارسی هستند و نمونه‌ها آلمانی می‌مانند.",
+    url: "https://www.dw.com/de/deutsch-lernen/s-2055",
     publicationStatus: "PUBLISHED",
-    unitSlug: unit.slug
+    unitSlug: "a1-first-contacts",
+    skillSlug: "ask-for-a-name"
   },
   {
-    slug: `${unit.slug}-worksheet`,
-    title: `کاربرگ تمرین: ${unit.title}`,
-    description: `کاربرگ متنی برای تمرین ${unit.resourceFocus}.`,
-    type: "WORKSHEET",
+    slug: "family-vocabulary-audio",
+    title: "درس صوتی واژگان خانواده",
+    description: "واژه‌های خانواده با تکرار شنیداری، مکث و مثال‌های ساده.",
+    type: "AUDIO_LESSON",
     levelLabel: "A1",
-    content: `سه جمله‌ی کوتاه آلمانی درباره‌ی ${unit.resourceFocus} بنویسید و سپس معنی فارسی هر جمله را کنار آن بیاورید.`,
+    language: "fa/de",
+    thumbnailIcon: "headphones",
+    metadata: {
+      duration: "12 min",
+      format: "Audio drill",
+      focus: "Family vocabulary"
+    },
+    content:
+      "این درس صوتی برای مرور der Bruder، die Schwester، meine Familie و جمله‌های معرفی خانواده طراحی شده است. زبان‌آموز بعد از شنیدن هر جمله یک بار آن را تکرار می‌کند.",
     publicationStatus: "PUBLISHED",
-    unitSlug: unit.slug
+    unitSlug: "a1-people-and-family",
+    skillSlug: "introduce-family"
+  },
+  {
+    slug: "verb-position-mini-grammar",
+    title: "گرامر کوتاه: جایگاه فعل در جمله A1",
+    description: "توضیح فارسی درباره جایگاه دوم فعل در جمله‌های خبری و پرسشی ساده.",
+    type: "GRAMMAR_RESOURCE",
+    levelLabel: "A1",
+    language: "fa/de",
+    thumbnailIcon: "notebook-tabs",
+    metadata: {
+      length: "8 min read",
+      format: "Grammar note",
+      focus: "Verb position"
+    },
+    content:
+      "در آلمانی فعل صرف‌شده در جمله خبری معمولا جایگاه دوم را می‌گیرد: Heute lerne ich Deutsch. در پرسش بله/خیر، فعل اول می‌آید: Hast du Zeit?",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "a1-free-time",
+    skillSlug: "make-plans"
+  },
+  {
+    slug: "simple-cafe-menu-reading",
+    title: "خواندن ساده: منوی کافه",
+    description: "یک متن کوتاه A1 برای غذا، نوشیدنی، قیمت و سفارش مودبانه.",
+    type: "READING_MATERIAL",
+    levelLabel: "A1",
+    language: "de/fa",
+    thumbnailIcon: "file-text",
+    metadata: {
+      length: "650 words",
+      format: "Graded reading",
+      focus: "Food and prices"
+    },
+    content:
+      "متن آلمانی کوتاه درباره سفارش در کافه است و بعد از هر بخش، واژه‌های کلیدی و سؤال‌های فهم مطلب فارسی می‌آید. هدف، خواندن بدون ترجمه خط‌به‌خط است.",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "a1-food-and-drink",
+    skillSlug: "shop-for-food"
+  },
+  {
+    slug: "goethe-a1-exam-overview",
+    title: "راهنمای بیرونی آزمون Goethe A1",
+    description: "لینک مرجع برای آشنایی با ساختار کلی آزمون و انتظارات سطح A1.",
+    type: "EXTERNAL_LINK",
+    levelLabel: "A1",
+    language: "de/en",
+    thumbnailIcon: "external-link",
+    metadata: {
+      provider: "Goethe-Institut",
+      format: "External reference",
+      focus: "Exam orientation"
+    },
+    content:
+      "این لینک فقط برای آشنایی با قالب عمومی آزمون و سطح انتظار استفاده می‌شود. محتوای تمرین Nyra مستقل و فارسی‌محور باقی می‌ماند.",
+    url: "https://www.goethe.de/en/spr/kup/prf/prf/sd1.html",
+    publicationStatus: "PUBLISHED"
+  },
+  {
+    slug: "a1-weekly-study-plan",
+    title: "راهنمای برنامه هفتگی A1",
+    description: "یک برنامه سبک برای ترکیب مهارت‌ها، فلش‌کارت، خواندن و مرور.",
+    type: "LEARNING_GUIDE",
+    levelLabel: "A1",
+    language: "fa",
+    thumbnailIcon: "route",
+    metadata: {
+      length: "1 week",
+      format: "Study plan",
+      focus: "Learning routine"
+    },
+    content:
+      "هر روز یک مهارت کوتاه، ده دقیقه فلش‌کارت، و یک مرور شنیداری یا خواندنی انجام بده. اگر آزمونک واحد کمتر از حد قبولی شد، مسیر قفل نمی‌شود اما همان واحد را برای مرور علامت بزن.",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "a1-my-life",
+    skillSlug: "describe-a-daily-routine"
+  },
+  {
+    slug: "city-directions-map-practice",
+    title: "تمرین مسیرها با نقشه ساده شهر",
+    description: "واژگان Bahnhof، links، rechts و پرسیدن آدرس در یک سناریوی خواندنی.",
+    type: "READING_MATERIAL",
+    levelLabel: "A1",
+    language: "de/fa",
+    thumbnailIcon: "map",
+    metadata: {
+      length: "15 min",
+      format: "Scenario practice",
+      focus: "Directions"
+    },
+    content:
+      "زبان‌آموز یک نقشه ساده را می‌بیند، چند جمله آلمانی درباره مسیر می‌خواند و با پشتیبانی فارسی تشخیص می‌دهد کدام مسیر درست است.",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "a1-getting-around",
+    skillSlug: "ask-for-directions"
   }
-  ];
-});
+];
 
 export function getPublishedSkills() {
   return sampleCourse.levels.flatMap((level) =>

@@ -1,17 +1,35 @@
 import Link from "next/link";
 import {
   Archive,
+  BookOpen,
   Circle,
   FileText,
   GraduationCap,
+  Languages,
+  Layers3,
   ListChecks,
   Pencil,
   Plus,
   Rocket,
-  ShieldCheck
+  ShieldCheck,
+  Sparkles,
+  UsersRound
 } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
+import {
+  interfaceCopy,
+  resolveInterfaceLanguage,
+  withInterfaceLanguage
+} from "@/lib/i18n/interface-language";
+import {
+  adminCopy,
+  publicationStatusCopy,
+  resourceTypeCopy,
+  skillKindCopy,
+  text
+} from "@/lib/i18n/page-copy";
+import { getLearnerPreferences } from "@/lib/learner/preferences";
 import {
   getA1ContentSummary,
   sampleCourse
@@ -21,7 +39,110 @@ import { getAdminResourcesFromDb } from "@/lib/resources/resource-repository";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminPage() {
+const labels = {
+  fa: {
+    manageSkills: "مدیریت مهارت‌ها",
+    createResource: "منبع جدید",
+    units: "واحدها",
+    skills: "مهارت‌ها",
+    questions: "سؤال‌ها",
+    resources: "منابع",
+    published: "منتشر شده",
+    assessments: "سنجش‌ها",
+    archived: "آرشیو",
+    commandCenter: "ابزارهای اصلی",
+    contentHealth: "سلامت محتوا",
+    hierarchy: "ساختار محتوا",
+    resourceQueue: "صف منابع",
+    prepared: "آماده برای توسعه",
+    skillStudio: "استودیوی مهارت",
+    skillStudioBody: "ویرایش متادیتا، وضعیت انتشار، ترتیب سؤال‌ها و محتوای سؤال.",
+    resourceStudio: "استودیوی منابع",
+    resourceStudioBody: "ساخت کتاب، ویدئو، صوت، گرامر، خواندن، راهنما و لینک آموزشی.",
+    learnerQa: "بازبینی یادگیرنده",
+    learnerQaBody: "بعد از انتشار، مسیر یادگیری را مثل کاربر واقعی بررسی کن.",
+    flashcards: "مدیریت فلش‌کارت",
+    profiles: "پروفایل‌ها",
+    localization: "بومی‌سازی",
+    levels: "سطح‌ها",
+    reviews: "بازبینی‌ها",
+    questionsLink: "سؤال‌ها",
+    edit: "ویرایش"
+  },
+  en: {
+    manageSkills: "Manage Skills",
+    createResource: "Create Resource",
+    units: "Units",
+    skills: "Skills",
+    questions: "Questions",
+    resources: "Resources",
+    published: "published",
+    assessments: "assessments",
+    archived: "archived",
+    commandCenter: "Command center",
+    contentHealth: "Content health",
+    hierarchy: "Content hierarchy",
+    resourceQueue: "Resource queue",
+    prepared: "Prepared module",
+    skillStudio: "Skill Studio",
+    skillStudioBody: "Edit metadata, publication states, Question order, and Question content.",
+    resourceStudio: "Resource Studio",
+    resourceStudioBody: "Create books, videos, audio, grammar, reading, guides, and educational links.",
+    learnerQa: "Learner QA",
+    learnerQaBody: "Review the learner path after publishing or reordering content.",
+    flashcards: "Flashcards",
+    profiles: "Profiles",
+    localization: "Localization",
+    levels: "Levels",
+    reviews: "Reviews",
+    questionsLink: "Questions",
+    edit: "Edit"
+  },
+  de: {
+    manageSkills: "Skills verwalten",
+    createResource: "Ressource erstellen",
+    units: "Einheiten",
+    skills: "Skills",
+    questions: "Fragen",
+    resources: "Ressourcen",
+    published: "veroeffentlicht",
+    assessments: "Pruefungen",
+    archived: "archiviert",
+    commandCenter: "Kommandozentrale",
+    contentHealth: "Inhaltsstatus",
+    hierarchy: "Inhaltsstruktur",
+    resourceQueue: "Ressourcenliste",
+    prepared: "Vorbereitetes Modul",
+    skillStudio: "Skill Studio",
+    skillStudioBody: "Metadaten, Veroeffentlichung, Fragenreihenfolge und Frageninhalt bearbeiten.",
+    resourceStudio: "Ressourcen Studio",
+    resourceStudioBody: "Buecher, Videos, Audio, Grammatik, Lesen, Guides und Lernlinks erstellen.",
+    learnerQa: "Lernenden-QA",
+    learnerQaBody: "Den Lernpfad nach Veroeffentlichungen aus Sicht der Lernenden pruefen.",
+    flashcards: "Karten",
+    profiles: "Profile",
+    localization: "Lokalisierung",
+    levels: "Niveaus",
+    reviews: "Reviews",
+    questionsLink: "Fragen",
+    edit: "Bearbeiten"
+  }
+};
+
+export default async function AdminPage({
+  searchParams
+}: {
+  searchParams: Promise<{
+    ui?: string;
+  }>;
+}) {
+  const { ui } = await searchParams;
+  const preferences = await getLearnerPreferences();
+  const language = ui
+    ? resolveInterfaceLanguage(ui)
+    : preferences.interfaceLanguage;
+  const copy = interfaceCopy[language];
+  const t = labels[language];
   const summary = getA1ContentSummary();
   const [skillUnits, resources] = await Promise.all([
     getAdminSkillUnits(),
@@ -45,59 +166,63 @@ export default async function AdminPage() {
   ).length;
   const metrics = [
     {
-      label: "Units",
+      label: t.units,
       value: summary.unitCount,
-      detail: "A1 structure",
+      detail: "A1",
       icon: GraduationCap
     },
     {
-      label: "Skills",
+      label: t.skills,
       value: skills.length,
-      detail: `${publishedSkills} published`,
+      detail: `${publishedSkills} ${t.published}`,
       icon: Rocket
     },
     {
-      label: "Questions",
+      label: t.questions,
       value: summary.questionCount,
-      detail: `${assessmentCount} assessments`,
+      detail: `${assessmentCount} ${t.assessments}`,
       icon: ListChecks
     },
     {
-      label: "Resources",
+      label: t.resources,
       value: resources.length,
-      detail: `${archivedResources} archived`,
+      detail: `${archivedResources} ${t.archived}`,
       icon: FileText
     }
   ];
+  const preparedModules = [
+    { label: t.flashcards, icon: Sparkles },
+    { label: t.profiles, icon: UsersRound },
+    { label: t.localization, icon: Languages },
+    { label: t.levels, icon: Layers3 },
+    { label: t.reviews, icon: ShieldCheck }
+  ];
 
   return (
-    <main className="site-shell admin-ltr" dir="ltr">
+    <main className={`site-shell ${copy.dir === "rtl" ? "learner-rtl" : ""}`} dir={copy.dir}>
       <AnimatedBackdrop />
-      <AppHeader currentPath="/admin" />
+      <AppHeader language={language} currentPath="/admin" />
 
       <section className="route-page admin-route">
         <div className="admin-hero">
           <div>
-            <span className="section-label">Admin CMS</span>
-            <h1>Content control room.</h1>
+            <span className="section-label">{text(adminCopy.label, language)}</span>
+            <h1>{text(adminCopy.title, language)}</h1>
           </div>
-          <p>
-            Manage the A1 learning path, Skill metadata, Questions, and Resources from one dense
-            operational view. This remains a dev-admin surface until auth and audit logs land.
-          </p>
+          <p>{text(adminCopy.body, language)}</p>
           <div className="route-actions">
-            <Link className="primary-button" href="/admin/skills">
+            <Link className="primary-button" href={withInterfaceLanguage("/admin/skills", language)}>
               <GraduationCap size={18} />
-              Manage Skills
+              {t.manageSkills}
             </Link>
-            <Link className="secondary-button" href="/admin/resources/new">
+            <Link className="secondary-button" href={withInterfaceLanguage("/admin/resources/new", language)}>
               <Plus size={18} />
-              Create Resource
+              {t.createResource}
             </Link>
           </div>
         </div>
 
-        <section className="admin-metric-grid" aria-label="A1 content health">
+        <section className="admin-metric-grid" aria-label={t.contentHealth}>
           {metrics.map((metric) => {
             const Icon = metric.icon;
 
@@ -112,103 +237,119 @@ export default async function AdminPage() {
           })}
         </section>
 
-        <section className="admin-command-grid" aria-label="Admin command shortcuts">
-          <Link className="admin-command-card" href="/admin/skills">
+        <section className="admin-command-grid" aria-label={t.commandCenter}>
+          <Link className="admin-command-card" href={withInterfaceLanguage("/admin/skills", language)}>
             <GraduationCap size={22} />
             <div>
-              <strong>Skill Studio</strong>
-              <span>Edit Skill metadata, publication states, Question order, and Question content.</span>
+              <strong>{t.skillStudio}</strong>
+              <span>{t.skillStudioBody}</span>
             </div>
           </Link>
-          <Link className="admin-command-card" href="/admin/resources/new">
-            <Plus size={22} />
+          <Link className="admin-command-card" href={withInterfaceLanguage("/admin/resources/new", language)}>
+            <BookOpen size={22} />
             <div>
-              <strong>New Resource</strong>
-              <span>Create learner-facing grammar, pronunciation, worksheet, or link support.</span>
+              <strong>{t.resourceStudio}</strong>
+              <span>{t.resourceStudioBody}</span>
             </div>
           </Link>
-          <Link className="admin-command-card" href="/learn">
+          <Link className="admin-command-card" href={withInterfaceLanguage("/learn", language)}>
             <ShieldCheck size={22} />
             <div>
-              <strong>Learner QA</strong>
-              <span>Jump into the learner path after publishing or reordering content.</span>
+              <strong>{t.learnerQa}</strong>
+              <span>{t.learnerQaBody}</span>
             </div>
           </Link>
         </section>
 
-        <section className="app-panel route-panel admin-list-panel" aria-label="Admin content">
-          <div className="app-panel-header">
-            <div>
-              <p className="panel-kicker">Content hierarchy</p>
-              <h2>A1 Skills and assessments</h2>
-            </div>
-            <span className="status-pill">
-              {summary.unitCount} Units · {summary.questionCount} Questions
-            </span>
-          </div>
-          <div className="admin-preview">
-            {skills.map(({ level, unit, skill }) => (
-              <article className="admin-row" key={skill.slug}>
-                <Circle size={12} />
-                <div>
-                  <h3>{skill.title}</h3>
-                  <p>
-                    {sampleCourse.title} / {level.label} / {unit.title} /{" "}
-                    {skill.questions.length} Questions
-                  </p>
-                </div>
-                <span>{skill.kind.replaceAll("_", " ")}</span>
-                <Link
-                  className="ghost-button compact-link"
-                  href={`/admin/skills/${skill.slug}/questions`}
-                >
-                  <ListChecks size={16} />
-                  Questions
-                </Link>
+        <section className="admin-prepared-grid" aria-label={t.prepared}>
+          {preparedModules.map((module) => {
+            const Icon = module.icon;
+
+            return (
+              <article className="admin-prepared-card" key={module.label}>
+                <Icon size={18} />
+                <strong>{module.label}</strong>
+                <span>{t.prepared}</span>
               </article>
-            ))}
-          </div>
+            );
+          })}
         </section>
 
-        <section className="app-panel route-panel admin-list-panel" aria-label="Admin resources">
-          <div className="app-panel-header">
-            <div>
-              <p className="panel-kicker">Resource Library</p>
-              <h2>Resource queue</h2>
+        <section className="admin-two-column">
+          <section className="app-panel route-panel admin-list-panel" aria-label={t.hierarchy}>
+            <div className="app-panel-header">
+              <div>
+                <p className="panel-kicker">{t.hierarchy}</p>
+                <h2>{t.skills}</h2>
+              </div>
+              <span className="status-pill">
+                {summary.unitCount} {t.units} · {summary.questionCount} {t.questions}
+              </span>
             </div>
-            <span className="status-pill">{resources.length} Resources</span>
-          </div>
-          <div className="admin-preview">
-            {resources.map((resource) => (
-              <article className="admin-row" key={resource.slug}>
-                <Circle size={12} />
-                <div>
-                  <h3>{resource.title}</h3>
-                  <p>
-                    {resource.levelLabel} / {resource.type.replaceAll("_", " ")}
-                    {resource.unit ? ` / ${resource.unit.title}` : ""}
-                  </p>
-                </div>
-                <span
-                  className={
-                    resource.publicationStatus === "ARCHIVED"
-                      ? "status-archived"
-                      : undefined
-                  }
-                >
-                  {resource.publicationStatus === "ARCHIVED" ? <Archive size={13} /> : null}
-                  {resource.publicationStatus}
-                </span>
-                <Link
-                  className="ghost-button compact-link"
-                  href={`/admin/resources/${resource.slug}/edit`}
-                >
-                  <Pencil size={16} />
-                  Edit
-                </Link>
-              </article>
-            ))}
-          </div>
+            <div className="admin-preview compact-preview">
+              {skills.slice(0, 10).map(({ level, unit, skill }) => (
+                <article className="admin-row" key={skill.slug}>
+                  <Circle size={12} />
+                  <div>
+                    <h3>{skill.title}</h3>
+                    <p>
+                      {sampleCourse.title} / {level.label} / {unit.title} /{" "}
+                      {skill.questions.length} {t.questions}
+                    </p>
+                  </div>
+                  <span>{text(skillKindCopy[skill.kind], language)}</span>
+                  <Link
+                    className="ghost-button compact-link"
+                    href={withInterfaceLanguage(`/admin/skills/${skill.slug}/questions`, language)}
+                  >
+                    <ListChecks size={16} />
+                    {t.questionsLink}
+                  </Link>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section className="app-panel route-panel admin-list-panel" aria-label={t.resourceQueue}>
+            <div className="app-panel-header">
+              <div>
+                <p className="panel-kicker">{t.resources}</p>
+                <h2>{t.resourceQueue}</h2>
+              </div>
+              <span className="status-pill">{resources.length} {t.resources}</span>
+            </div>
+            <div className="admin-preview compact-preview">
+              {resources.map((resource) => (
+                <article className="admin-row" key={resource.slug}>
+                  <Circle size={12} />
+                  <div>
+                    <h3>{resource.title}</h3>
+                    <p>
+                      {resource.levelLabel} / {text(resourceTypeCopy[resource.type], language)}
+                      {resource.unit ? ` / ${resource.unit.title}` : ""}
+                    </p>
+                  </div>
+                  <span
+                    className={
+                      resource.publicationStatus === "ARCHIVED"
+                        ? "status-archived"
+                        : undefined
+                    }
+                  >
+                    {resource.publicationStatus === "ARCHIVED" ? <Archive size={13} /> : null}
+                    {text(publicationStatusCopy[resource.publicationStatus], language)}
+                  </span>
+                  <Link
+                    className="ghost-button compact-link"
+                    href={withInterfaceLanguage(`/admin/resources/${resource.slug}/edit`, language)}
+                  >
+                    <Pencil size={16} />
+                    {t.edit}
+                  </Link>
+                </article>
+              ))}
+            </div>
+          </section>
         </section>
       </section>
     </main>

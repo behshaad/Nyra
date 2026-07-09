@@ -27,10 +27,13 @@ enum SkillKind {
 }
 
 enum ResourceType {
-  GRAMMAR_NOTE
-  PRONUNCIATION
-  WORKSHEET
+  BOOK
+  VIDEO
+  AUDIO_LESSON
   EXTERNAL_LINK
+  GRAMMAR_RESOURCE
+  READING_MATERIAL
+  LEARNING_GUIDE
 }
 
 enum InterfaceTheme {
@@ -218,6 +221,9 @@ model Resource {
   description       String
   type              ResourceType
   levelLabel        String
+  language          String            @default("fa")
+  thumbnailIcon     String            @default("book-open")
+  metadata          Json?
   content           String
   url               String?
   publicationStatus PublicationStatus @default(DRAFT)

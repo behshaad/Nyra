@@ -15,6 +15,13 @@ import {
 } from "@/lib/learning/sample-content";
 import { getLearningPathProgress } from "@/lib/learning/path-progress";
 
+const levelOptions = [
+  { label: "A1", active: true },
+  { label: "A2", active: false },
+  { label: "B1", active: false },
+  { label: "B2", active: false }
+];
+
 export default async function LearnPage({
   searchParams
 }: {
@@ -55,18 +62,26 @@ export default async function LearnPage({
           <h1>{copy.learn.title}</h1>
           <p>{copy.learn.body(summary)}</p>
           <div className="level-selector" aria-label={copy.learn.levelLabel}>
-            <Link
-              className={`level-pill ${
-                preferences.currentLevel === "A1" ? "active" : ""
-              }`}
-              href={levelPreferenceHref({
-                level: "A1",
-                returnTo: selectedUnitParam ? `/learn?unit=${selectedUnitParam}` : "/learn"
-              })}
-            >
-              A1
-            </Link>
-            <span className="level-pill disabled">A2 · {copy.learn.levelComingSoon}</span>
+            {levelOptions.map((level) =>
+              level.active ? (
+                <Link
+                  className={`level-pill ${
+                    preferences.currentLevel === level.label ? "active" : ""
+                  }`}
+                  href={levelPreferenceHref({
+                    level: level.label,
+                    returnTo: selectedUnitParam ? `/learn?unit=${selectedUnitParam}` : "/learn"
+                  })}
+                  key={level.label}
+                >
+                  {level.label}
+                </Link>
+              ) : (
+                <span className="level-pill disabled" key={level.label}>
+                  {level.label} · {copy.learn.levelComingSoon}
+                </span>
+              )
+            )}
           </div>
         </div>
 

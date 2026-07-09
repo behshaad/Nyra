@@ -1,52 +1,123 @@
 import Link from "next/link";
-import { ExternalLink, FileText, Mic2, NotebookText } from "lucide-react";
+import {
+  BookOpen,
+  ExternalLink,
+  FileText,
+  Headphones,
+  Map,
+  NotebookTabs,
+  Route,
+  Video
+} from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
+import {
+  interfaceCopy,
+  resolveInterfaceLanguage,
+  withInterfaceLanguage
+} from "@/lib/i18n/interface-language";
+import { resourceCopy, resourceTypeCopy, text } from "@/lib/i18n/page-copy";
+import { getLearnerPreferences } from "@/lib/learner/preferences";
 import { getPublishedResourcesFromDb } from "@/lib/resources/resource-repository";
 
 const resourceIcons = {
-  GRAMMAR_NOTE: NotebookText,
-  PRONUNCIATION: Mic2,
-  WORKSHEET: FileText,
-  EXTERNAL_LINK: ExternalLink
+  BOOK: BookOpen,
+  VIDEO: Video,
+  AUDIO_LESSON: Headphones,
+  EXTERNAL_LINK: ExternalLink,
+  GRAMMAR_RESOURCE: NotebookTabs,
+  READING_MATERIAL: FileText,
+  LEARNING_GUIDE: Route
 };
 
-function formatResourceType(type: string) {
-  return type
-    .toLowerCase()
-    .split("_")
-    .map((part) => part[0].toUpperCase() + part.slice(1))
-    .join(" ");
-}
+const thumbnailIcons = {
+  "book-open": BookOpen,
+  video: Video,
+  headphones: Headphones,
+  "external-link": ExternalLink,
+  "notebook-tabs": NotebookTabs,
+  "file-text": FileText,
+  route: Route,
+  map: Map
+};
 
 export const dynamic = "force-dynamic";
 
-export default async function ResourcesPage() {
+export default async function ResourcesPage({
+  searchParams
+}: {
+  searchParams: Promise<{
+    ui?: string;
+  }>;
+}) {
+  const { ui } = await searchParams;
+  const preferences = await getLearnerPreferences();
+  const language = ui
+    ? resolveInterfaceLanguage(ui)
+    : preferences.interfaceLanguage;
+  const copy = interfaceCopy[language];
   const resources = await getPublishedResourcesFromDb();
+  const featured = resources.slice(0, 3);
 
   return (
-    <main className="site-shell">
+    <main className={`site-shell ${copy.dir === "rtl" ? "learner-rtl" : ""}`} dir={copy.dir}>
       <AnimatedBackdrop />
-      <AppHeader currentPath="/resources" />
+      <AppHeader language={language} currentPath="/resources" />
 
       <section className="route-page">
         <div className="route-hero">
-          <span className="section-label">Resource Library</span>
-          <h1>Published support material for the A1 loop.</h1>
-          <p>
-            Resources are learner-facing support materials outside required Skill Questions. This
-            first library is read-only and seeded from the Nyra content model.
-          </p>
+          <span className="section-label">{text(resourceCopy.label, language)}</span>
+          <h1>{text(resourceCopy.title, language)}</h1>
+          <p>{text(resourceCopy.body, language)}</p>
+        </div>
+
+        <section className="resource-feature-band" aria-label={text(resourceCopy.featuredTitle, language)}>
+          <div>
+            <span className="section-label">{text(resourceCopy.featuredTitle, language)}</span>
+            <p>{text(resourceCopy.featuredBody, language)}</p>
+          </div>
+          <div className="resource-feature-list">
+            {featured.map((resource) => {
+              const Icon =
+                thumbnailIcons[resource.thumbnailIcon as keyof typeof thumbnailIcons] ??
+                resourceIcons[resource.type];
+
+              return (
+                <Link
+                  className="resource-feature-item"
+                  href={withInterfaceLanguage(`/resources/${resource.slug}`, language)}
+                  key={resource.slug}
+                >
+                  <Icon size={18} />
+                  <span>{resource.title}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+
+        <div className="resource-filter-strip" aria-label="Resource filters">
+          {[...new Set(resources.map((resource) => resource.type))].map((type) => (
+            <span className="status-pill" key={type}>
+              {text(resourceTypeCopy[type], language)}
+            </span>
+          ))}
         </div>
 
         <section className="resource-library" aria-label="Published resources">
           {resources.map((resource) => {
-            const Icon = resourceIcons[resource.type];
+            const Icon =
+              thumbnailIcons[resource.thumbnailIcon as keyof typeof thumbnailIcons] ??
+              resourceIcons[resource.type];
+            const metadata =
+              resource.metadata && typeof resource.metadata === "object"
+                ? Object.entries(resource.metadata as Record<string, unknown>).slice(0, 2)
+                : [];
 
             return (
               <Link
                 className="resource-library-card"
-                href={`/resources/${resource.slug}`}
+                href={withInterfaceLanguage(`/resources/${resource.slug}`, language)}
                 key={resource.slug}
               >
                 <div className="resource-card-header">
@@ -55,7 +126,7 @@ export default async function ResourcesPage() {
                   </span>
                   <div>
                     <span className="section-label">
-                      {resource.levelLabel} · {formatResourceType(resource.type)}
+                      {resource.levelLabel} · {text(resourceTypeCopy[resource.type], language)} · {resource.language}
                     </span>
                     <h2>{resource.title}</h2>
                   </div>
@@ -65,8 +136,15 @@ export default async function ResourcesPage() {
                   <span className="status-pill">{resource.unit.title}</span>
                 ) : null}
                 <div className="resource-content">
-                  <strong>Preview</strong>
+                  <strong>{text(resourceCopy.preview, language)}</strong>
                   <p>{resource.content}</p>
+                </div>
+                <div className="resource-card-meta">
+                  {metadata.map(([key, value]) => (
+                    <span key={key}>
+                      {key}: {String(value)}
+                    </span>
+                  ))}
                 </div>
               </Link>
             );

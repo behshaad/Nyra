@@ -9,6 +9,9 @@ export type ResourceInput = {
   description: string;
   content: string;
   levelLabel: string;
+  language: string;
+  thumbnailIcon: string;
+  metadata: Record<string, string>;
   type: ResourceType;
   publicationStatus: PublicationStatus;
   unitId: string | null;
@@ -39,6 +42,9 @@ export function parseResourceInput(body: Record<string, unknown>):
   const description = clean(body.description);
   const content = clean(body.content);
   const levelLabel = clean(body.levelLabel) || "A1";
+  const language = clean(body.language) || "fa";
+  const thumbnailIcon = clean(body.thumbnailIcon) || "book-open";
+  const metadataRaw = clean(body.metadata);
   const type = clean(body.type);
   const publicationStatus = clean(body.publicationStatus);
   const unitId = optionalId(body.unitId);
@@ -65,6 +71,21 @@ export function parseResourceInput(body: Record<string, unknown>):
     };
   }
 
+  const metadata = metadataRaw
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .reduce<Record<string, string>>((result, line) => {
+      const [key, ...valueParts] = line.split(":");
+      const value = valueParts.join(":").trim();
+
+      if (key?.trim() && value) {
+        result[key.trim()] = value;
+      }
+
+      return result;
+    }, {});
+
   if (!publicationStatuses.has(publicationStatus as PublicationStatus)) {
     return {
       ok: false,
@@ -80,6 +101,9 @@ export function parseResourceInput(body: Record<string, unknown>):
       description,
       content,
       levelLabel,
+      language,
+      thumbnailIcon,
+      metadata,
       type: type as ResourceType,
       publicationStatus: publicationStatus as PublicationStatus,
       unitId,

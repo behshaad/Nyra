@@ -23,6 +23,9 @@ type ResourceInitialValues = {
   slug: string;
   type: string;
   levelLabel: string;
+  language: string;
+  thumbnailIcon: string;
+  metadata: string;
   description: string;
   content: string;
   unitId: string;
@@ -31,10 +34,24 @@ type ResourceInitialValues = {
 };
 
 const resourceTypes = [
-  { value: "GRAMMAR_NOTE", label: "Grammar note" },
-  { value: "PRONUNCIATION", label: "Pronunciation" },
-  { value: "WORKSHEET", label: "Worksheet" },
-  { value: "EXTERNAL_LINK", label: "External link" }
+  { value: "BOOK", label: "Book" },
+  { value: "VIDEO", label: "Video" },
+  { value: "AUDIO_LESSON", label: "Audio lesson" },
+  { value: "EXTERNAL_LINK", label: "External link" },
+  { value: "GRAMMAR_RESOURCE", label: "Grammar resource" },
+  { value: "READING_MATERIAL", label: "Reading material" },
+  { value: "LEARNING_GUIDE", label: "Learning guide" }
+];
+
+const resourceIcons = [
+  { value: "book-open", label: "Book" },
+  { value: "video", label: "Video" },
+  { value: "headphones", label: "Audio" },
+  { value: "external-link", label: "External link" },
+  { value: "notebook-tabs", label: "Grammar" },
+  { value: "file-text", label: "Reading" },
+  { value: "route", label: "Guide" },
+  { value: "map", label: "Map" }
 ];
 
 const publicationStatuses = [
@@ -66,8 +83,13 @@ export function AdminResourceForm({
   const router = useRouter();
   const [title, setTitle] = useState(initialValues?.title ?? "");
   const [slug, setSlug] = useState(initialValues?.slug ?? "");
-  const [type, setType] = useState(initialValues?.type ?? "GRAMMAR_NOTE");
+  const [type, setType] = useState(initialValues?.type ?? "GRAMMAR_RESOURCE");
   const [levelLabel, setLevelLabel] = useState(initialValues?.levelLabel ?? "A1");
+  const [language, setLanguage] = useState(initialValues?.language ?? "fa/de");
+  const [thumbnailIcon, setThumbnailIcon] = useState(
+    initialValues?.thumbnailIcon ?? "book-open"
+  );
+  const [metadata, setMetadata] = useState(initialValues?.metadata ?? "");
   const [description, setDescription] = useState(initialValues?.description ?? "");
   const [content, setContent] = useState(initialValues?.content ?? "");
   const [unitId, setUnitId] = useState(initialValues?.unitId ?? units[0]?.id ?? "");
@@ -112,6 +134,9 @@ export function AdminResourceForm({
           slug,
           type,
           levelLabel,
+          language,
+          thumbnailIcon,
+          metadata,
           description,
           content,
           unitId,
@@ -233,6 +258,30 @@ export function AdminResourceForm({
         </label>
 
         <label>
+          <span>Language</span>
+          <input
+            required
+            value={language}
+            onChange={(event) => setLanguage(event.target.value)}
+            placeholder="fa/de"
+          />
+        </label>
+
+        <label>
+          <span>Thumbnail Icon</span>
+          <select
+            value={thumbnailIcon}
+            onChange={(event) => setThumbnailIcon(event.target.value)}
+          >
+            {resourceIcons.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label>
           <span>Related Unit</span>
           <select
             value={unitId}
@@ -260,6 +309,16 @@ export function AdminResourceForm({
               </option>
             ))}
           </select>
+        </label>
+
+        <label className="form-grid-wide">
+          <span>Metadata, one key: value per line</span>
+          <textarea
+            rows={4}
+            value={metadata}
+            onChange={(event) => setMetadata(event.target.value)}
+            placeholder={"duration: 12 min\nformat: Audio lesson\nfocus: Family vocabulary"}
+          />
         </label>
 
         <label className="form-grid-wide">

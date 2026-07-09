@@ -29,7 +29,7 @@ export default async function Home({
   const firstSkill = sampleCourse.levels[0]?.units[0]?.skills[0];
 
   return (
-    <main className="site-shell learner-rtl" dir={copy.dir}>
+    <main className={`site-shell ${copy.dir === "rtl" ? "learner-rtl" : ""}`} dir={copy.dir}>
       <AnimatedBackdrop />
       <AppHeader language={language} currentPath="/" />
 

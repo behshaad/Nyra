@@ -17,6 +17,8 @@ const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
+  await prisma.resource.deleteMany();
+
   await prisma.course.deleteMany({
     where: {
       slug: sampleCourse.slug
@@ -127,6 +129,9 @@ async function main() {
         description: resource.description,
         type: resource.type,
         levelLabel: resource.levelLabel,
+        language: resource.language,
+        thumbnailIcon: resource.thumbnailIcon,
+        metadata: resource.metadata,
         content: resource.content,
         url: resource.url,
         publicationStatus: resource.publicationStatus,
@@ -138,6 +143,9 @@ async function main() {
         description: resource.description,
         type: resource.type,
         levelLabel: resource.levelLabel,
+        language: resource.language,
+        thumbnailIcon: resource.thumbnailIcon,
+        metadata: resource.metadata,
         content: resource.content,
         url: resource.url,
         publicationStatus: resource.publicationStatus,
