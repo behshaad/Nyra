@@ -354,6 +354,8 @@ Tasks:
 
 - Allow personal flashcards.
 - Implement spaced repetition state.
+- Store one current review state per Learner Profile and Flashcard.
+- Append `FLASHCARD_REVIEWED` Progress Events for review history.
 - Build flashcard review screen.
 - Treat new Flashcards as due now.
 - Support focused review for one Flashcard Deck and all-due review across decks.
@@ -377,6 +379,7 @@ Acceptance Criteria:
 
 - Due flashcards appear in review.
 - Review answers update due dates.
+- Review history is preserved as Progress Events.
 - Unknown Flashcards reappear later in the same review session.
 - Study mode does not update spaced repetition state.
 
