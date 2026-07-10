@@ -327,6 +327,31 @@ export function BackendSkillSession({
               <div className={clsx("feedback", lastFeedback.isCorrect ? "correct" : "wrong")}>
                 <strong>{lastFeedback.isCorrect ? copy.correct : copy.mistake}</strong>
                 <p>{lastFeedback.explanation}</p>
+                {!lastFeedback.isCorrect &&
+                lastFeedback.suggestedFlashcards.length > 0 ? (
+                  <div className="suggested-flashcards">
+                    <strong>{copy.suggestedFlashcards}</strong>
+                    <div className="suggested-flashcard-grid">
+                      {lastFeedback.suggestedFlashcards.map((card) => (
+                        <article className="suggested-flashcard" key={card.id}>
+                          <span>{card.deckTitle}</span>
+                          <h4 dir="ltr">
+                            {card.article ? `${card.article} ` : ""}
+                            {card.front}
+                          </h4>
+                          <p>{card.back}</p>
+                          <small dir="ltr">{card.example}</small>
+                        </article>
+                      ))}
+                    </div>
+                    <Link
+                      className="secondary-button compact"
+                      href={withInterfaceLanguage("/flashcards", language)}
+                    >
+                      {copy.reviewInFlashcards}
+                    </Link>
+                  </div>
+                ) : null}
                 <button className="primary-button compact" type="button" onClick={continueSession}>
                   {copy.continue}
                   <ChevronRight size={17} />

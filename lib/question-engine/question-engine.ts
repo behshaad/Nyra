@@ -1,4 +1,5 @@
 import {
+  FlashcardDeckOwnerType,
   LearningSessionStatus,
   ProgressEventType,
   PublicationStatus,
@@ -9,7 +10,8 @@ import { evaluateAnswer } from "@/lib/question-engine/evaluation";
 import type {
   AnswerFeedbackView,
   LearningQuestionView,
-  LearningSessionView
+  LearningSessionView,
+  SuggestedFlashcardView
 } from "@/lib/question-engine/types";
 
 type QuestionRecord = {
@@ -74,6 +76,34 @@ function scorePercent(totalQuestions: number, correctAttempts: number) {
 
 function passed(score: number | null, passingScore: number | null) {
   return score === null || passingScore === null ? null : score >= passingScore;
+}
+
+function suggestedFlashcardToView(
+  link: {
+    flashcard: {
+      id: string;
+      front: string;
+      back: string;
+      article: string | null;
+      example: string;
+      exampleMeaning: string;
+      pronunciationAudioUrl: string | null;
+      deck: {
+        title: string;
+      };
+    };
+  }
+): SuggestedFlashcardView {
+  return {
+    id: link.flashcard.id,
+    deckTitle: link.flashcard.deck.title,
+    front: link.flashcard.front,
+    back: link.flashcard.back,
+    article: link.flashcard.article,
+    example: link.flashcard.example,
+    exampleMeaning: link.flashcard.exampleMeaning,
+    pronunciationAudioUrl: link.flashcard.pronunciationAudioUrl
+  };
 }
 
 export class QuestionEngine {
@@ -286,12 +316,39 @@ export class QuestionEngine {
       const nextQuestion = session.skill.questions.find(
         (candidate) => candidate.id === nextQueue[0]
       );
+      const suggestedFlashcards = isCorrect
+        ? []
+        : await tx.questionSuggestedFlashcard
+            .findMany({
+              where: {
+                questionId: question.id,
+                flashcard: {
+                  publicationStatus: PublicationStatus.PUBLISHED,
+                  deck: {
+                    ownerType: FlashcardDeckOwnerType.ADMIN,
+                    publicationStatus: PublicationStatus.PUBLISHED
+                  }
+                }
+              },
+              include: {
+                flashcard: {
+                  include: {
+                    deck: true
+                  }
+                }
+              },
+              orderBy: {
+                order: "asc"
+              }
+            })
+            .then((links) => links.map(suggestedFlashcardToView));
 
       return {
         sessionId: session.id,
         questionId: question.id,
         isCorrect,
         explanation: question.explanation,
+        suggestedFlashcards,
         completed,
         xpAwarded,
         nextQuestion: nextQuestion ? questionToView(nextQuestion) : null,

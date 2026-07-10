@@ -94,6 +94,8 @@ export type InterfaceCopy = {
     checking: string;
     correct: string;
     mistake: string;
+    suggestedFlashcards: string;
+    reviewInFlashcards: string;
     continue: string;
     hint: string;
   };
@@ -260,6 +262,8 @@ export const interfaceCopy: Record<InterfaceLanguageCode, InterfaceCopy> = {
       checking: "در حال بررسی...",
       correct: "درست است.",
       mistake: "اشتباه خوبی برای یادگیری بود.",
+      suggestedFlashcards: "فلش‌کارت‌های پیشنهادی",
+      reviewInFlashcards: "مرور در فلش‌کارت‌ها",
       continue: "ادامه",
       hint:
         "پاسخ‌ها ذخیره و بررسی می‌شوند. در مهارت‌های تمرینی، سؤال‌های اشتباه دوباره برمی‌گردند."
@@ -371,6 +375,8 @@ export const interfaceCopy: Record<InterfaceLanguageCode, InterfaceCopy> = {
       checking: "Checking...",
       correct: "Correct.",
       mistake: "Good mistake to learn from.",
+      suggestedFlashcards: "Suggested Flashcards",
+      reviewInFlashcards: "Review in Flashcards",
       continue: "Continue",
       hint:
         "Answers are saved and checked. In practice Skills, missed Questions come back again."
@@ -482,6 +488,8 @@ export const interfaceCopy: Record<InterfaceLanguageCode, InterfaceCopy> = {
       checking: "Pruefen...",
       correct: "Richtig.",
       mistake: "Ein guter Fehler zum Lernen.",
+      suggestedFlashcards: "Vorgeschlagene Karten",
+      reviewInFlashcards: "In Karten wiederholen",
       continue: "Weiter",
       hint:
         "Antworten werden gespeichert und geprueft. In Uebungs-Skills kommen falsche Fragen erneut."

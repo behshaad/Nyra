@@ -164,6 +164,7 @@ model Question {
 
   skill    Skill             @relation(fields: [skillId], references: [id], onDelete: Cascade)
   attempts QuestionAttempt[]
+  suggestedFlashcards QuestionSuggestedFlashcard[]
 
   @@unique([skillId, order])
 }
@@ -293,8 +294,23 @@ model Flashcard {
 
   deck FlashcardDeck @relation(fields: [deckId], references: [id], onDelete: Cascade)
   reviewStates FlashcardReviewState[]
+  suggestedByQuestions QuestionSuggestedFlashcard[]
 
   @@unique([deckId, order])
+}
+
+model QuestionSuggestedFlashcard {
+  id          String   @id @default(uuid())
+  questionId  String
+  flashcardId String
+  order       Int
+  createdAt   DateTime @default(now())
+
+  question  Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  flashcard Flashcard @relation(fields: [flashcardId], references: [id], onDelete: Cascade)
+
+  @@unique([questionId, flashcardId])
+  @@unique([questionId, order])
 }
 
 model FlashcardReviewState {

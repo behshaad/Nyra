@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 import { getPrisma } from "@/lib/db/prisma";
+import {
+  FlashcardDeckOwnerType,
+  PublicationStatus
+} from "@/lib/generated/prisma/enums";
 import { parseQuestionInput } from "@/lib/admin/question-validation";
 
 export async function PATCH(
@@ -35,11 +39,55 @@ export async function PATCH(
     );
   }
 
-  const question = await db.question.update({
-    where: {
-      id: current.id
-    },
-    data: parsed.input
+  const { suggestedFlashcardIds, ...questionInput } = parsed.input;
+  const validSuggestionCount =
+    suggestedFlashcardIds.length === 0
+      ? 0
+      : await db.flashcard.count({
+          where: {
+            id: {
+              in: suggestedFlashcardIds
+            },
+            publicationStatus: PublicationStatus.PUBLISHED,
+            deck: {
+              ownerType: FlashcardDeckOwnerType.ADMIN,
+              publicationStatus: PublicationStatus.PUBLISHED
+            }
+          }
+        });
+
+  if (validSuggestionCount !== suggestedFlashcardIds.length) {
+    return NextResponse.json(
+      { error: "Suggested Flashcards must come from Published admin decks." },
+      { status: 400 }
+    );
+  }
+
+  const question = await db.$transaction(async (tx) => {
+    const updated = await tx.question.update({
+      where: {
+        id: current.id
+      },
+      data: questionInput
+    });
+
+    await tx.questionSuggestedFlashcard.deleteMany({
+      where: {
+        questionId: current.id
+      }
+    });
+
+    if (suggestedFlashcardIds.length > 0) {
+      await tx.questionSuggestedFlashcard.createMany({
+        data: suggestedFlashcardIds.map((flashcardId, index) => ({
+          questionId: current.id,
+          flashcardId,
+          order: index + 1
+        }))
+      });
+    }
+
+    return updated;
   });
 
   return NextResponse.json({

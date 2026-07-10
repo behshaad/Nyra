@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AdminQuestionForm } from "@/components/admin-question-form";
 import { AppHeader } from "@/components/app-header";
+import { getSuggestedFlashcardOptions } from "@/lib/admin/question-repository";
 import { getAdminSkillBySlug } from "@/lib/admin/skill-repository";
 
 export const dynamic = "force-dynamic";
@@ -16,7 +17,10 @@ export default async function NewQuestionPage({
   }>;
 }) {
   const { skillSlug } = await params;
-  const skill = await getAdminSkillBySlug(skillSlug);
+  const [skill, suggestedFlashcardOptions] = await Promise.all([
+    getAdminSkillBySlug(skillSlug),
+    getSuggestedFlashcardOptions()
+  ]);
 
   if (!skill) {
     notFound();
@@ -53,8 +57,10 @@ export default async function NewQuestionPage({
               correctAnswer: "",
               explanation: "",
               required: true,
-              publicationStatus: "PUBLISHED"
+              publicationStatus: "PUBLISHED",
+              suggestedFlashcardIds: []
             }}
+            suggestedFlashcardOptions={suggestedFlashcardOptions}
           />
         </section>
       </section>

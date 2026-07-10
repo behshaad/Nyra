@@ -4,7 +4,10 @@ import { ArrowLeft } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AdminQuestionForm } from "@/components/admin-question-form";
 import { AppHeader } from "@/components/app-header";
-import { getAdminQuestionById } from "@/lib/admin/question-repository";
+import {
+  getAdminQuestionById,
+  getSuggestedFlashcardOptions
+} from "@/lib/admin/question-repository";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +25,10 @@ export default async function EditQuestionPage({
   }>;
 }) {
   const { questionId } = await params;
-  const question = await getAdminQuestionById(questionId);
+  const [question, suggestedFlashcardOptions] = await Promise.all([
+    getAdminQuestionById(questionId),
+    getSuggestedFlashcardOptions()
+  ]);
 
   if (!question) {
     notFound();
@@ -58,8 +64,12 @@ export default async function EditQuestionPage({
               correctAnswer: question.correctAnswer,
               explanation: question.explanation,
               required: question.required,
-              publicationStatus: question.publicationStatus
+              publicationStatus: question.publicationStatus,
+              suggestedFlashcardIds: question.suggestedFlashcards.map(
+                (link) => link.flashcardId
+              )
             }}
+            suggestedFlashcardOptions={suggestedFlashcardOptions}
           />
         </section>
       </section>

@@ -27,11 +27,23 @@ export type LearningSessionView = {
   passed: boolean | null;
 };
 
+export type SuggestedFlashcardView = {
+  id: string;
+  deckTitle: string;
+  front: string;
+  back: string;
+  article: string | null;
+  example: string;
+  exampleMeaning: string;
+  pronunciationAudioUrl: string | null;
+};
+
 export type AnswerFeedbackView = {
   sessionId: string;
   questionId: string;
   isCorrect: boolean;
   explanation: string;
+  suggestedFlashcards: SuggestedFlashcardView[];
   completed: boolean;
   xpAwarded: number;
   nextQuestion: LearningQuestionView | null;

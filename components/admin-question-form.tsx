@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Save } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUp, Save, Trash2 } from "lucide-react";
 
 type QuestionInitialValues = {
   type: string;
@@ -14,6 +14,13 @@ type QuestionInitialValues = {
   explanation: string;
   required: boolean;
   publicationStatus: string;
+  suggestedFlashcardIds: string[];
+};
+
+type SuggestedFlashcardOption = {
+  id: string;
+  label: string;
+  detail: string;
 };
 
 const questionTypes = [
@@ -33,12 +40,14 @@ export function AdminQuestionForm({
   mode = "edit",
   questionId,
   skillSlug,
-  initialValues
+  initialValues,
+  suggestedFlashcardOptions
 }: {
   mode?: "create" | "edit";
   questionId?: string;
   skillSlug: string;
   initialValues: QuestionInitialValues;
+  suggestedFlashcardOptions: SuggestedFlashcardOption[];
 }) {
   const router = useRouter();
   const [type, setType] = useState(initialValues.type);
@@ -50,6 +59,9 @@ export function AdminQuestionForm({
   const [required, setRequired] = useState(initialValues.required);
   const [publicationStatus, setPublicationStatus] = useState(
     initialValues.publicationStatus
+  );
+  const [suggestedFlashcardIds, setSuggestedFlashcardIds] = useState(
+    initialValues.suggestedFlashcardIds
   );
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -77,7 +89,8 @@ export function AdminQuestionForm({
             correctAnswer,
             explanation,
             required,
-            publicationStatus
+            publicationStatus,
+            suggestedFlashcardIds
           })
         }
       );
@@ -107,6 +120,45 @@ export function AdminQuestionForm({
       setSubmitting(false);
     }
   }
+
+  function addSuggestedFlashcard(flashcardId: string) {
+    if (!flashcardId) {
+      return;
+    }
+
+    setSuggestedFlashcardIds((current) =>
+      current.includes(flashcardId) ? current : [...current, flashcardId]
+    );
+  }
+
+  function removeSuggestedFlashcard(flashcardId: string) {
+    setSuggestedFlashcardIds((current) =>
+      current.filter((candidate) => candidate !== flashcardId)
+    );
+  }
+
+  function moveSuggestedFlashcard(flashcardId: string, direction: -1 | 1) {
+    setSuggestedFlashcardIds((current) => {
+      const index = current.indexOf(flashcardId);
+      const nextIndex = index + direction;
+
+      if (index < 0 || nextIndex < 0 || nextIndex >= current.length) {
+        return current;
+      }
+
+      const next = [...current];
+      [next[index], next[nextIndex]] = [next[nextIndex], next[index]];
+
+      return next;
+    });
+  }
+
+  const availableSuggestedFlashcards = suggestedFlashcardOptions.filter(
+    (option) => !suggestedFlashcardIds.includes(option.id)
+  );
+  const selectedSuggestedFlashcards = suggestedFlashcardIds
+    .map((id) => suggestedFlashcardOptions.find((option) => option.id === id))
+    .filter((option): option is SuggestedFlashcardOption => Boolean(option));
 
   return (
     <form className="admin-form" onSubmit={submitQuestion}>
@@ -188,7 +240,65 @@ export function AdminQuestionForm({
             onChange={(event) => setExplanation(event.target.value)}
           />
         </label>
+
+        <label className="form-grid-wide">
+          <span>Suggested Flashcards</span>
+          <select
+            value=""
+            onChange={(event) => addSuggestedFlashcard(event.target.value)}
+          >
+            <option value="">Add a Published admin Flashcard</option>
+            {availableSuggestedFlashcards.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
+
+      {selectedSuggestedFlashcards.length > 0 ? (
+        <div className="admin-list compact-preview">
+          {selectedSuggestedFlashcards.map((option, index) => (
+            <div className="admin-list-row" key={option.id}>
+              <div>
+                <strong>
+                  {index + 1}. {option.label}
+                </strong>
+                <span>{option.detail}</span>
+              </div>
+              <div className="route-actions compact-actions">
+                <button
+                  className="icon-button"
+                  disabled={index === 0}
+                  type="button"
+                  onClick={() => moveSuggestedFlashcard(option.id, -1)}
+                  aria-label="Move suggested Flashcard up"
+                >
+                  <ArrowUp size={16} />
+                </button>
+                <button
+                  className="icon-button"
+                  disabled={index === selectedSuggestedFlashcards.length - 1}
+                  type="button"
+                  onClick={() => moveSuggestedFlashcard(option.id, 1)}
+                  aria-label="Move suggested Flashcard down"
+                >
+                  <ArrowDown size={16} />
+                </button>
+                <button
+                  className="icon-button"
+                  type="button"
+                  onClick={() => removeSuggestedFlashcard(option.id)}
+                  aria-label="Remove suggested Flashcard"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
 
       {error ? <div className="feedback wrong">{error}</div> : null}
 

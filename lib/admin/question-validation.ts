@@ -12,6 +12,7 @@ export type QuestionInput = {
   explanation: string;
   required: boolean;
   publicationStatus: PublicationStatus;
+  suggestedFlashcardIds: string[];
 };
 
 const publicationStatuses = new Set(Object.values(PublicationStatus));
@@ -35,6 +36,26 @@ function parseChoices(value: unknown) {
     .filter(Boolean);
 }
 
+function parseSuggestedFlashcardIds(value: unknown) {
+  const values = Array.isArray(value) ? value : [];
+  const seen = new Set<string>();
+
+  return values.filter((item): item is string => {
+    if (typeof item !== "string") {
+      return false;
+    }
+
+    const cleaned = item.trim();
+
+    if (!cleaned || seen.has(cleaned)) {
+      return false;
+    }
+
+    seen.add(cleaned);
+    return true;
+  });
+}
+
 export function parseQuestionInput(body: Record<string, unknown>):
   | { ok: true; input: QuestionInput }
   | { ok: false; error: string } {
@@ -46,6 +67,7 @@ export function parseQuestionInput(body: Record<string, unknown>):
   const explanation = clean(body.explanation);
   const required = body.required === false || body.required === "false" ? false : true;
   const publicationStatus = clean(body.publicationStatus);
+  const suggestedFlashcardIds = parseSuggestedFlashcardIds(body.suggestedFlashcardIds);
 
   if (!prompt || !explanation) {
     return {
@@ -92,7 +114,8 @@ export function parseQuestionInput(body: Record<string, unknown>):
       correctAnswer,
       explanation,
       required,
-      publicationStatus: publicationStatus as PublicationStatus
+      publicationStatus: publicationStatus as PublicationStatus,
+      suggestedFlashcardIds
     }
   };
 }

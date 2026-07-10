@@ -38,7 +38,62 @@ export async function getAdminQuestionById(questionId: string) {
             }
           }
         }
+      },
+      suggestedFlashcards: {
+        include: {
+          flashcard: {
+            include: {
+              deck: true
+            }
+          }
+        },
+        orderBy: {
+          order: "asc"
+        }
       }
     }
   });
+}
+
+export async function getSuggestedFlashcardOptions() {
+  const db = getPrisma();
+
+  const cards = await db.flashcard.findMany({
+    where: {
+      publicationStatus: "PUBLISHED",
+      deck: {
+        ownerType: "ADMIN",
+        publicationStatus: "PUBLISHED"
+      }
+    },
+    include: {
+      deck: true
+    },
+    orderBy: [
+      {
+        deck: {
+          levelLabel: "asc"
+        }
+      },
+      {
+        deck: {
+          category: "asc"
+        }
+      },
+      {
+        deck: {
+          title: "asc"
+        }
+      },
+      {
+        order: "asc"
+      }
+    ]
+  });
+
+  return cards.map((card) => ({
+    id: card.id,
+    label: `${card.deck.levelLabel} / ${card.deck.title} / ${card.front}`,
+    detail: card.back
+  }));
 }

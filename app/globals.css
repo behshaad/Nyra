@@ -1409,6 +1409,38 @@ h3 {
   margin-top: 20px;
 }
 
+.route-actions.compact-actions {
+  margin-top: 0;
+}
+
+.admin-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.admin-list-row {
+  align-items: center;
+  background: var(--control);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  padding: 12px;
+}
+
+.admin-list-row strong,
+.admin-list-row span {
+  display: block;
+}
+
+.admin-list-row span {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
 .foundation-grid,
 .profile-grid {
   display: grid;
@@ -1434,6 +1466,38 @@ h3 {
 .session-summary p {
   color: var(--muted);
   line-height: 1.6;
+}
+
+.suggested-flashcards {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.suggested-flashcard-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.suggested-flashcard {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+}
+
+.suggested-flashcard h4,
+.suggested-flashcard p {
+  margin: 0;
+}
+
+.suggested-flashcard span,
+.suggested-flashcard small {
+  color: var(--muted);
+  font-size: 0.85rem;
 }
 
 .session-summary dl {
