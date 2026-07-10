@@ -4,6 +4,7 @@ import {
   getPublishedSkills,
   sampleCourse
 } from "@/lib/learning/sample-content";
+import { questionOptionsFrom } from "@/lib/question-engine/question-options";
 
 describe("A2 sample content", () => {
   it("scaffolds the full A2 level while publishing Unit 1", () => {
@@ -38,5 +39,32 @@ describe("A2 sample content", () => {
       8,
       12
     ]);
+  });
+
+  it("uses the A2 question quality mix for published regular Skills", () => {
+    const publishedA2RegularSkills = getPublishedSkills().filter(
+      (skill) => skill.levelLabel === "A2" && skill.kind === "REGULAR"
+    );
+
+    for (const skill of publishedA2RegularSkills) {
+      expect(skill.questions.filter((question) => question.type === "MULTIPLE_CHOICE")).toHaveLength(3);
+      expect(skill.questions.filter((question) => question.type === "FILL_IN_BLANK")).toHaveLength(3);
+      expect(skill.questions.filter((question) => question.type === "WORD_ORDERING")).toHaveLength(2);
+      expect(
+        skill.questions
+          .filter((question) => question.type === "WORD_ORDERING")
+          .every((question) => questionOptionsFrom(question.choices).tiles.length > 0)
+      ).toBe(true);
+    }
+  });
+
+  it("uses the A2 checkpoint mix for published Unit Checkpoints", () => {
+    const [checkpoint] = getPublishedSkills().filter(
+      (skill) => skill.levelLabel === "A2" && skill.kind === "UNIT_CHECKPOINT"
+    );
+
+    expect(checkpoint.questions.filter((question) => question.type === "MULTIPLE_CHOICE")).toHaveLength(5);
+    expect(checkpoint.questions.filter((question) => question.type === "FILL_IN_BLANK")).toHaveLength(4);
+    expect(checkpoint.questions.filter((question) => question.type === "WORD_ORDERING")).toHaveLength(3);
   });
 });

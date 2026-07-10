@@ -11,7 +11,11 @@ export type SampleQuestion = {
   type: SampleQuestionType;
   prompt: string;
   helper: string;
-  choices: string[];
+  choices: string[] | {
+    choices: string[];
+    acceptedAnswers: string[];
+    tiles: string[];
+  };
   correctAnswer: string;
   explanation: string;
   required: boolean;
@@ -450,13 +454,29 @@ function orderedSentence(words: string[]) {
   return words.join(" ");
 }
 
+function acceptedAnswerOptions(acceptedAnswers: string[] = []) {
+  return {
+    choices: [],
+    acceptedAnswers,
+    tiles: []
+  };
+}
+
+function wordOrderingOptions(words: string[], acceptedAnswers: string[] = []) {
+  return {
+    choices: [],
+    acceptedAnswers,
+    tiles: words
+  };
+}
+
 function makeQuestion(
   skillSlug: string,
   order: number,
   type: SampleQuestionType,
   prompt: string,
   helper: string,
-  choices: string[],
+  choices: SampleQuestion["choices"],
   correctAnswer: string,
   explanation: string
 ): SampleQuestion {
@@ -562,9 +582,102 @@ function makeSkillQuestions(spec: SkillSpec): SampleQuestion[] {
   ];
 }
 
+function makeA2SkillQuestions(spec: SkillSpec): SampleQuestion[] {
+  const ordered = orderedSentence(spec.orderedWords);
+  const secondOrderWords =
+    spec.orderedWords.length > 4
+      ? [...spec.orderedWords.slice(0, 2), ...spec.orderedWords.slice(3), spec.orderedWords[2]]
+      : [...spec.orderedWords, "heute"];
+  const secondOrdered = orderedSentence(secondOrderWords);
+
+  return [
+    makeQuestion(
+      spec.slug,
+      1,
+      "MULTIPLE_CHOICE",
+      `معنی دقیق «${spec.word}» در این موقعیت چیست؟`,
+      spec.focus,
+      choiceSet(spec.meaning, wrongMeanings[0], wrongMeanings[1]),
+      spec.meaning,
+      `در این مهارت، «${spec.word}» به معنی «${spec.meaning}» استفاده می‌شود.`
+    ),
+    makeQuestion(
+      spec.slug,
+      2,
+      "MULTIPLE_CHOICE",
+      `کدام جمله برای موقعیت زیر مناسب‌تر است؟ ${spec.situation}`,
+      "کاربرد ارتباطی",
+      choiceSet(spec.phrase, wrongPhrases[0], wrongPhrases[1]),
+      spec.phrase,
+      `برای این موقعیت، «${spec.phrase}» پاسخ طبیعی و کاربردی است.`
+    ),
+    makeQuestion(
+      spec.slug,
+      3,
+      "FILL_IN_BLANK",
+      `جای خالی را تایپ کنید: ${spec.blankSentence}`,
+      "تولید کوتاه",
+      acceptedAnswerOptions(),
+      spec.blankAnswer,
+      `پاسخ درست «${spec.blankAnswer}» است.`
+    ),
+    makeQuestion(
+      spec.slug,
+      4,
+      "FILL_IN_BLANK",
+      `واژه آلمانی مناسب برای «${spec.meaning}» را تایپ کنید.`,
+      "واژگان فعال",
+      acceptedAnswerOptions([spec.word.replace(/^(der|die|das) /, "")]),
+      spec.word,
+      `«${spec.word}» واژه‌ی اصلی این مهارت است.`
+    ),
+    makeQuestion(
+      spec.slug,
+      5,
+      "FILL_IN_BLANK",
+      `جمله را کامل کنید: ${spec.phrase.replace(spec.blankAnswer, "___")}`,
+      "دقت گرامری",
+      acceptedAnswerOptions(),
+      spec.blankAnswer,
+      spec.grammarPoint
+    ),
+    makeQuestion(
+      spec.slug,
+      6,
+      "WORD_ORDERING",
+      "با کاشی‌ها جمله درست بسازید.",
+      "ترتیب واژه‌ها",
+      wordOrderingOptions(spec.orderedWords),
+      ordered,
+      "در این جمله ترتیب واژه‌ها معنی و نقش گرامری را روشن می‌کند."
+    ),
+    makeQuestion(
+      spec.slug,
+      7,
+      "WORD_ORDERING",
+      "یک جمله دوم با همین الگوی ساختاری بسازید.",
+      "ساخت جمله",
+      wordOrderingOptions(secondOrderWords),
+      secondOrdered,
+      "در تمرین ترتیب واژه، همه کاشی‌ها باید در یک جمله کامل استفاده شوند."
+    ),
+    makeQuestion(
+      spec.slug,
+      8,
+      "MULTIPLE_CHOICE",
+      `متن کوتاه: ${spec.miniText} کدام برداشت درست است؟`,
+      "درک مطلب کوتاه",
+      choiceSet(spec.miniAnswer, wrongMeanings[2], wrongMeanings[3]),
+      spec.miniAnswer,
+      "پاسخ درست از اطلاعات مستقیم متن کوتاه به دست می‌آید."
+    )
+  ];
+}
+
 function makeSkill(
   spec: SkillSpec,
-  publicationStatus: SampleSkill["publicationStatus"] = "PUBLISHED"
+  publicationStatus: SampleSkill["publicationStatus"] = "PUBLISHED",
+  questionBuilder: (spec: SkillSpec) => SampleQuestion[] = makeSkillQuestions
 ): SampleSkill {
   const learnerCopy = skillLearnerCopy[spec.slug];
   const localizedSpec = learnerCopy ? { ...spec, ...learnerCopy } : spec;
@@ -578,7 +691,7 @@ function makeSkill(
     xp: 80,
     requeueIncorrect: true,
     publicationStatus,
-    questions: publicationStatus === "PUBLISHED" ? makeSkillQuestions(localizedSpec) : []
+    questions: publicationStatus === "PUBLISHED" ? questionBuilder(localizedSpec) : []
   };
 }
 
@@ -616,6 +729,44 @@ function makeCheckpoint(
     requeueIncorrect: false,
     publicationStatus,
     questions: publicationStatus === "PUBLISHED" ? questions : []
+  };
+}
+
+function makeA2Checkpoint(
+  unit: UnitSpec,
+  skills: SampleSkill[],
+  publicationStatus: SampleSkill["publicationStatus"] = "PUBLISHED"
+): SampleSkill {
+  const slug = `${unit.slug}-checkpoint`;
+  const questionsByType = {
+    multipleChoice: skills.flatMap((skill) =>
+      skill.questions.filter((question) => question.type === "MULTIPLE_CHOICE")
+    ),
+    fillInBlank: skills.flatMap((skill) =>
+      skill.questions.filter((question) => question.type === "FILL_IN_BLANK")
+    ),
+    wordOrdering: skills.flatMap((skill) =>
+      skill.questions.filter((question) => question.type === "WORD_ORDERING")
+    )
+  };
+  const selectedQuestions = [
+    ...questionsByType.multipleChoice.slice(0, 3),
+    ...questionsByType.fillInBlank.slice(0, 4),
+    ...questionsByType.wordOrdering.slice(0, 3),
+    ...questionsByType.multipleChoice.slice(3, 5)
+  ].map((question, index) => cloneQuestion(question, slug, index + 1));
+
+  return {
+    id: slug,
+    slug,
+    title: `${unit.title}: آزمونک`,
+    description: `کنترل A2 خودت را در موضوع ${unit.resourceFocus} بسنج.`,
+    kind: "UNIT_CHECKPOINT",
+    xp: 120,
+    passingScore: 70,
+    requeueIncorrect: false,
+    publicationStatus,
+    questions: publicationStatus === "PUBLISHED" ? selectedQuestions : []
   };
 }
 
@@ -1882,13 +2033,15 @@ function makeA2FinalTest(): SampleSkill {
 }
 
 function buildA2Units(): SampleUnit[] {
-  const unitOneSkills = a2UnitOneSpec.skills.map((skill) => makeSkill(skill));
+  const unitOneSkills = a2UnitOneSpec.skills.map((skill) =>
+    makeSkill(skill, "PUBLISHED", makeA2SkillQuestions)
+  );
   const units: SampleUnit[] = [
     {
       slug: a2UnitOneSpec.slug,
       title: a2UnitOneSpec.title,
       summary: a2UnitOneSpec.summary,
-      skills: [...unitOneSkills, makeCheckpoint(a2UnitOneSpec, unitOneSkills, "A2")]
+      skills: [...unitOneSkills, makeA2Checkpoint(a2UnitOneSpec, unitOneSkills)]
     },
     ...a2DraftUnits.map((unit) => {
       const skills = unit.skills.map((skill) => makeDraftSkill(skill));
@@ -1899,7 +2052,7 @@ function buildA2Units(): SampleUnit[] {
         summary: unit.summary,
         skills: [
           ...skills,
-          makeCheckpoint({ ...unit, skills: [] }, skills, "A2", "DRAFT")
+          makeA2Checkpoint({ ...unit, skills: [] }, skills, "DRAFT")
         ]
       };
     })
