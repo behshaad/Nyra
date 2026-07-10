@@ -7,7 +7,7 @@ import {
 import { getPrisma } from "@/lib/db/prisma";
 import { getDevLearnerProfileId } from "@/lib/flashcards/flashcard-repository";
 
-const intervalDaysByStep = [0, 1, 3, 7, 14, 30, 60] as const;
+export const intervalDaysByStep = [0, 1, 3, 7, 14, 30, 60] as const;
 
 function addDays(date: Date, days: number) {
   const next = new Date(date);
@@ -16,8 +16,28 @@ function addDays(date: Date, days: number) {
   return next;
 }
 
-function nextKnownStep(currentStep: number) {
+export function nextKnownStep(currentStep: number) {
   return Math.min(currentStep + 1, intervalDaysByStep.length - 1);
+}
+
+export function getNextReviewSchedule(input: {
+  result: FlashcardReviewResult;
+  currentStep: number;
+  reviewedAt: Date;
+}) {
+  const intervalStep =
+    input.result === FlashcardReviewResult.KNOWN
+      ? nextKnownStep(input.currentStep)
+      : 0;
+  const dueAt =
+    input.result === FlashcardReviewResult.KNOWN
+      ? addDays(input.reviewedAt, intervalDaysByStep[intervalStep])
+      : input.reviewedAt;
+
+  return {
+    intervalStep,
+    dueAt
+  };
 }
 
 export async function reviewFlashcard(input: {
@@ -47,9 +67,11 @@ export async function reviewFlashcard(input: {
 
     const canReview =
       (flashcard.deck.ownerType === FlashcardDeckOwnerType.ADMIN &&
-        flashcard.deck.publicationStatus === PublicationStatus.PUBLISHED) ||
+        flashcard.deck.publicationStatus === PublicationStatus.PUBLISHED &&
+        flashcard.publicationStatus === PublicationStatus.PUBLISHED) ||
       (flashcard.deck.ownerType === FlashcardDeckOwnerType.LEARNER &&
-        flashcard.deck.learnerProfileId === learnerProfileId);
+        flashcard.deck.learnerProfileId === learnerProfileId &&
+        flashcard.publicationStatus === PublicationStatus.PUBLISHED);
 
     if (!canReview) {
       throw new Error("Flashcard is not available for this learner.");
@@ -64,14 +86,11 @@ export async function reviewFlashcard(input: {
         }
       }
     });
-    const intervalStep =
-      input.result === FlashcardReviewResult.KNOWN
-        ? nextKnownStep(existing?.intervalStep ?? 0)
-        : 0;
-    const dueAt =
-      input.result === FlashcardReviewResult.KNOWN
-        ? addDays(now, intervalDaysByStep[intervalStep])
-        : now;
+    const schedule = getNextReviewSchedule({
+      result: input.result,
+      currentStep: existing?.intervalStep ?? 0,
+      reviewedAt: now
+    });
 
     const state = await tx.flashcardReviewState.upsert({
       where: {
@@ -83,16 +102,16 @@ export async function reviewFlashcard(input: {
       create: {
         learnerProfileId,
         flashcardId: input.flashcardId,
-        intervalStep,
-        dueAt,
+        intervalStep: schedule.intervalStep,
+        dueAt: schedule.dueAt,
         lastReviewedAt: now,
         reviewCount: 1,
         knownCount: input.result === FlashcardReviewResult.KNOWN ? 1 : 0,
         unknownCount: input.result === FlashcardReviewResult.UNKNOWN ? 1 : 0
       },
       update: {
-        intervalStep,
-        dueAt,
+        intervalStep: schedule.intervalStep,
+        dueAt: schedule.dueAt,
         lastReviewedAt: now,
         reviewCount: {
           increment: 1
@@ -120,8 +139,8 @@ export async function reviewFlashcard(input: {
           flashcardId: input.flashcardId,
           deckId: flashcard.deckId,
           result: input.result,
-          intervalStep,
-          dueAt: dueAt.toISOString()
+          intervalStep: schedule.intervalStep,
+          dueAt: schedule.dueAt.toISOString()
         }
       }
     });

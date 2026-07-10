@@ -31,6 +31,7 @@ export type FlashcardWorkspaceCard = {
   pronunciation: string | null;
   pronunciationAudioUrl: string | null;
   difficulty: FlashcardDifficulty;
+  publicationStatus: PublicationStatus;
   isDue: boolean;
   dueAt: string | null;
   intervalStep: number | null;
@@ -97,6 +98,8 @@ const labels = {
     stepTwoBody: "بعد کارت‌های مربوط به همان دسته را اضافه کن.",
     selectedDeck: "دسته انتخاب‌شده",
     noDeckSelected: "اول یک دسته انتخاب یا ایجاد کن.",
+    readOnlyDeck: "این دسته برای مطالعه آماده شده و قابل ویرایش نیست.",
+    publicationStatus: "وضعیت انتشار کارت",
     admin: "ادمین",
     learner: "شخصی"
   },
@@ -139,6 +142,8 @@ const labels = {
     stepTwoBody: "Then add Flashcards that belong to the selected category.",
     selectedDeck: "Selected deck",
     noDeckSelected: "Select or create a category first.",
+    readOnlyDeck: "This prepared deck is available for study and cannot be edited here.",
+    publicationStatus: "Card publication status",
     admin: "Admin",
     learner: "Personal"
   },
@@ -181,6 +186,8 @@ const labels = {
     stepTwoBody: "Fuege danach Karten zur ausgewaehlten Kategorie hinzu.",
     selectedDeck: "Ausgewaehltes Deck",
     noDeckSelected: "Waehle oder erstelle zuerst eine Kategorie.",
+    readOnlyDeck: "Dieses vorbereitete Deck ist zum Lernen verfuegbar und hier nicht editierbar.",
+    publicationStatus: "Kartenstatus",
     admin: "Admin",
     learner: "Persoenlich"
   }
@@ -251,6 +258,9 @@ export function FlashcardStudy({
   const [difficulty, setDifficulty] = useState<FlashcardDifficulty>(
     FlashcardDifficulty.MEDIUM
   );
+  const [cardPublicationStatus, setCardPublicationStatus] = useState<PublicationStatus>(
+    PublicationStatus.PUBLISHED
+  );
   const [notes, setNotes] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submittingDeck, setSubmittingDeck] = useState(false);
@@ -273,6 +283,11 @@ export function FlashcardStudy({
   });
   const activeDeck =
     visibleDecks.find((deck) => deck.id === deckId) ?? visibleDecks[0] ?? null;
+  const canEditActiveDeck = Boolean(
+    activeDeck &&
+      ((adminMode && activeDeck.ownerType === FlashcardDeckOwnerType.ADMIN) ||
+        (!adminMode && activeDeck.ownerType === FlashcardDeckOwnerType.LEARNER))
+  );
   const activeCards = activeDeck?.flashcards ?? [];
   const dueCards = visibleDecks.flatMap((deck) =>
     deck.flashcards.filter((card) => card.isDue || status[card.id] === "unknown")
@@ -440,6 +455,10 @@ export function FlashcardStudy({
             exampleMeaning,
             pronunciationAudioUrl,
             difficulty,
+            publicationStatus: adminMode
+              ? cardPublicationStatus
+              : PublicationStatus.PUBLISHED,
+            actorOwnerType: ownerType,
             notes
           })
         })
@@ -450,6 +469,7 @@ export function FlashcardStudy({
       setExample("");
       setExampleMeaning("");
       setPronunciationAudioUrl("");
+      setCardPublicationStatus(PublicationStatus.PUBLISHED);
       setNotes("");
       router.refresh();
     } catch (caught) {
@@ -777,12 +797,15 @@ export function FlashcardStudy({
               <Plus size={20} />
             </div>
             <p className="flashcard-step-note">{copy.stepTwoBody}</p>
+            {activeDeck && !canEditActiveDeck ? (
+              <div className="hint-box">{copy.readOnlyDeck}</div>
+            ) : null}
             <div className="form-grid">
               <label>
                 <span>{copy.front}</span>
                 <input
                   required
-                  disabled={!activeDeck}
+                  disabled={!canEditActiveDeck}
                   dir={getTextDirection(front)}
                   value={front}
                   onChange={(event) => setFront(event.target.value)}
@@ -793,7 +816,7 @@ export function FlashcardStudy({
                 <span>{copy.back}</span>
                 <input
                   required
-                  disabled={!activeDeck}
+                  disabled={!canEditActiveDeck}
                   dir={getTextDirection(back)}
                   value={back}
                   onChange={(event) => setBack(event.target.value)}
@@ -803,7 +826,7 @@ export function FlashcardStudy({
               <label>
                 <span>{copy.article}</span>
                 <input
-                  disabled={!activeDeck}
+                  disabled={!canEditActiveDeck}
                   value={article}
                   onChange={(event) => setArticle(event.target.value)}
                 />
@@ -811,7 +834,7 @@ export function FlashcardStudy({
               <label>
                 <span>{copy.difficulty}</span>
                 <select
-                  disabled={!activeDeck}
+                  disabled={!canEditActiveDeck}
                   value={difficulty}
                   onChange={(event) => setDifficulty(event.target.value as FlashcardDifficulty)}
                 >
@@ -826,7 +849,7 @@ export function FlashcardStudy({
                 <span>{copy.example}</span>
                 <input
                   required
-                  disabled={!activeDeck}
+                  disabled={!canEditActiveDeck}
                   dir="ltr"
                   value={example}
                   onChange={(event) => setExample(event.target.value)}
@@ -837,7 +860,7 @@ export function FlashcardStudy({
                 <span>{copy.exampleMeaning}</span>
                 <input
                   required
-                  disabled={!activeDeck}
+                  disabled={!canEditActiveDeck}
                   value={exampleMeaning}
                   onChange={(event) => setExampleMeaning(event.target.value)}
                   placeholder="زندگی روزمره من حالا آرام‌تر است."
@@ -846,17 +869,35 @@ export function FlashcardStudy({
               <label className="form-grid-wide">
                 <span>{copy.pronunciationAudio}</span>
                 <input
-                  disabled={!activeDeck}
+                  disabled={!canEditActiveDeck}
                   dir="ltr"
                   value={pronunciationAudioUrl}
                   onChange={(event) => setPronunciationAudioUrl(event.target.value)}
                   placeholder="/audio/flashcards/a2/alltag.mp3"
                 />
               </label>
+              {adminMode ? (
+                <label>
+                  <span>{copy.publicationStatus}</span>
+                  <select
+                    disabled={!canEditActiveDeck}
+                    value={cardPublicationStatus}
+                    onChange={(event) =>
+                      setCardPublicationStatus(event.target.value as PublicationStatus)
+                    }
+                  >
+                    {Object.values(PublicationStatus).map((option) => (
+                      <option key={option} value={option}>
+                        {option.toLowerCase().replaceAll("_", " ")}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              ) : null}
               <label>
                 <span>{copy.notes}</span>
                 <input
-                  disabled={!activeDeck}
+                  disabled={!canEditActiveDeck}
                   value={notes}
                   onChange={(event) => setNotes(event.target.value)}
                 />
@@ -865,7 +906,7 @@ export function FlashcardStudy({
             {error ? <div className="feedback wrong">{error}</div> : null}
             <button
               className="primary-button"
-              disabled={submittingCard || !activeDeck}
+              disabled={submittingCard || !canEditActiveDeck}
               type="submit"
             >
               <Save size={17} />

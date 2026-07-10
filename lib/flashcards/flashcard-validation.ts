@@ -25,6 +25,7 @@ export type FlashcardInput = {
   pronunciation: string | null;
   pronunciationAudioUrl: string | null;
   difficulty: FlashcardDifficulty;
+  publicationStatus: PublicationStatus;
   notes: string | null;
 };
 
@@ -42,7 +43,7 @@ function optionalString(value: unknown) {
   return cleaned.length > 0 ? cleaned : null;
 }
 
-function optionalAudioUrl(value: unknown) {
+export function optionalAudioUrl(value: unknown) {
   const cleaned = optionalString(value);
 
   if (!cleaned) {
@@ -132,6 +133,8 @@ export function parseFlashcardInput(body: Record<string, unknown>):
   const pronunciation = optionalString(body.pronunciation);
   const pronunciationAudioUrl = optionalAudioUrl(body.pronunciationAudioUrl);
   const difficulty = clean(body.difficulty) || FlashcardDifficulty.MEDIUM;
+  const publicationStatus =
+    clean(body.publicationStatus) || PublicationStatus.PUBLISHED;
   const notes = optionalString(body.notes);
 
   if (!deckId || !front || !back || !example || !exampleMeaning) {
@@ -145,6 +148,13 @@ export function parseFlashcardInput(body: Record<string, unknown>):
     return {
       ok: false,
       error: "Flashcard difficulty is invalid."
+    };
+  }
+
+  if (!publicationStatuses.has(publicationStatus as PublicationStatus)) {
+    return {
+      ok: false,
+      error: "Publication status is invalid."
     };
   }
 
@@ -167,6 +177,7 @@ export function parseFlashcardInput(body: Record<string, unknown>):
       pronunciation,
       pronunciationAudioUrl,
       difficulty: difficulty as FlashcardDifficulty,
+      publicationStatus: publicationStatus as PublicationStatus,
       notes
     }
   };

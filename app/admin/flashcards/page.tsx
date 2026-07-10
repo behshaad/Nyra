@@ -77,6 +77,7 @@ export default async function AdminFlashcardsPage() {
               exampleMeaning: card.exampleMeaning,
               pronunciation: card.pronunciation,
               pronunciationAudioUrl: card.pronunciationAudioUrl,
+              publicationStatus: card.publicationStatus,
               difficulty: card.difficulty,
               isDue: true,
               dueAt: null,

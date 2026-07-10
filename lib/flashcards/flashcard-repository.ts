@@ -53,6 +53,9 @@ export async function getLearnerFlashcardDecks() {
     include: {
       unit: true,
       flashcards: {
+        where: {
+          publicationStatus: PublicationStatus.PUBLISHED
+        },
         include: learnerProfileId
           ? {
               reviewStates: {
@@ -189,6 +192,7 @@ export async function createFlashcard(input: FlashcardInput) {
       pronunciation: input.pronunciation,
       pronunciationAudioUrl: input.pronunciationAudioUrl,
       difficulty: input.difficulty,
+      publicationStatus: input.publicationStatus,
       notes: input.notes
     }
   });
