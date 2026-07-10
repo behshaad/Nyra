@@ -56,12 +56,13 @@ export default async function SkillPage({
     notFound();
   }
 
-  const pageLabel =
+  const basePageLabel =
     skill.kind === "FINAL_TEST"
       ? copy.skillPage.labels.finalTest
       : skill.kind === "UNIT_CHECKPOINT"
         ? copy.skillPage.labels.checkpoint
         : copy.skillPage.labels.regular;
+  const pageLabel = basePageLabel.replaceAll("A1", flatSkill.levelLabel);
 
   return (
     <main

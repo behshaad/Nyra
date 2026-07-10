@@ -46,6 +46,12 @@ export default async function LearnPage({
     sampleCourse.levels.find((level) => level.label === selectedLevelLabel) ??
     sampleCourse.levels[0];
   const progress = await getLearningPathProgress(selectedLevelLabel);
+  const levelText = {
+    label: copy.learn.label.replaceAll("A1", selectedLevelLabel),
+    body: copy.learn.body(summary).replaceAll("A1", selectedLevelLabel),
+    progress: copy.learn.progress.replaceAll("A1", selectedLevelLabel),
+    completeLabel: copy.learn.completeLabel.replaceAll("A1", selectedLevelLabel)
+  };
   const selectedUnit =
     progress.units.find((unit) => unit.slug === selectedUnitParam) ??
     progress.units.find((unit) => unit.slug === progress.selectedUnitSlug) ??
@@ -65,9 +71,9 @@ export default async function LearnPage({
 
       <section className="route-page">
         <div className="route-hero compact">
-          <span className="section-label">{copy.learn.label}</span>
+          <span className="section-label">{levelText.label}</span>
           <h1>{copy.learn.title}</h1>
-          <p>{copy.learn.body(summary)}</p>
+          <p>{levelText.body}</p>
           <div className="level-selector" aria-label={copy.learn.levelLabel}>
             {levelOptions.map((level) =>
               level.active ? (
@@ -92,11 +98,11 @@ export default async function LearnPage({
           </div>
         </div>
 
-        <section className="learn-dashboard" aria-label={copy.learn.label}>
-          <aside className="app-panel unit-rail" aria-label="A1 units">
+        <section className="learn-dashboard" aria-label={levelText.label}>
+          <aside className="app-panel unit-rail" aria-label={`${selectedLevelLabel} units`}>
             <div className="app-panel-header">
               <div>
-                <p className="panel-kicker">{copy.learn.progress}</p>
+                <p className="panel-kicker">{levelText.progress}</p>
                 <h2>
                   {progress.completedCount}/{progress.totalCount}
                 </h2>
@@ -152,7 +158,7 @@ export default async function LearnPage({
             ) : (
               <div className="continue-card">
                 <div>
-                  <span className="section-label">{copy.learn.completeLabel}</span>
+                  <span className="section-label">{levelText.completeLabel}</span>
                   <h2>{copy.learn.completeTitle}</h2>
                   <p>{copy.learn.completeBody}</p>
                 </div>
