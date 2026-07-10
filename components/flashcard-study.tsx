@@ -72,8 +72,9 @@ const labels = {
     unknown: "نیاز به مرور",
     progress: "پیشرفت",
     pronunciation: "تلفظ",
-    pronunciationAudio: "فایل صوتی تلفظ",
-    noPronunciationAudio: "بدون فایل صوتی",
+    pronunciationAudio: "آدرس صوت تلفظ",
+    noPronunciationAudio: "بدون صوت تلفظ",
+    audioPreview: "پیش‌نمایش صوت",
     example: "مثال",
     difficulty: "سختی",
     reset: "شروع دوباره",
@@ -116,8 +117,9 @@ const labels = {
     unknown: "Needs review",
     progress: "Progress",
     pronunciation: "Pronunciation",
-    pronunciationAudio: "Pronunciation audio file",
-    noPronunciationAudio: "No audio file",
+    pronunciationAudio: "Pronunciation audio URL/path",
+    noPronunciationAudio: "No pronunciation audio",
+    audioPreview: "Audio preview",
     example: "Example",
     difficulty: "Difficulty",
     reset: "Reset",
@@ -160,8 +162,9 @@ const labels = {
     unknown: "Wiederholen",
     progress: "Fortschritt",
     pronunciation: "Aussprache",
-    pronunciationAudio: "Aussprache-Audiodatei",
-    noPronunciationAudio: "Keine Audiodatei",
+    pronunciationAudio: "Aussprache-Audio URL/Pfad",
+    noPronunciationAudio: "Kein Aussprache-Audio",
+    audioPreview: "Audio-Vorschau",
     example: "Beispiel",
     difficulty: "Schwierigkeit",
     reset: "Zuruecksetzen",
@@ -673,6 +676,15 @@ export function FlashcardStudy({
                   ? copy.pronunciationAudio
                   : copy.noPronunciationAudio}
               </button>
+              {active.pronunciationAudioUrl ? (
+                <audio
+                  className="flashcard-audio-preview"
+                  controls
+                  src={active.pronunciationAudioUrl}
+                >
+                  {copy.pronunciationAudio}
+                </audio>
+              ) : null}
               <button
                 className="danger-button"
                 disabled={reviewingCardId === active.id}
@@ -875,6 +887,15 @@ export function FlashcardStudy({
                   onChange={(event) => setPronunciationAudioUrl(event.target.value)}
                   placeholder="/audio/flashcards/a2/alltag.mp3"
                 />
+                {pronunciationAudioUrl ? (
+                  <audio
+                    className="flashcard-audio-preview"
+                    controls
+                    src={pronunciationAudioUrl}
+                  >
+                    {copy.audioPreview}
+                  </audio>
+                ) : null}
               </label>
               {adminMode ? (
                 <label>

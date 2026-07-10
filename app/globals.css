@@ -1500,6 +1500,11 @@ h3 {
   font-size: 0.85rem;
 }
 
+.flashcard-audio-preview {
+  max-width: 100%;
+  min-width: 220px;
+}
+
 .session-summary dl {
   display: grid;
   gap: 10px;
