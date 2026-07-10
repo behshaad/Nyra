@@ -44,6 +44,10 @@ _Avoid_: UI widget, answer mode
 A learner's submitted response to a Question at a specific moment.
 _Avoid_: Answer, response record
 
+**Suggested Flashcard**:
+A Flashcard explicitly linked to a Question to help a learner review the gap revealed by an incorrect Question Attempt.
+_Avoid_: Related card, automatic recommendation
+
 **Resource**:
 Supporting learning material that helps a learner study outside a Skill's required Questions. In A1, Resources can include warmups, grammar summaries, vocabulary support, pronunciation notes, reading support, and worksheets attached to a Unit or Skill.
 _Avoid_: Extra, asset
