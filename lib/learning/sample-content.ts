@@ -2109,6 +2109,326 @@ const a2PublishedUnitSpecs: UnitSpec[] = [
         miniAnswer: "امیر فنجان را روی میز می‌گذارد."
       }
     ]
+  },
+  {
+    slug: "a2-food-parties-and-restaurants",
+    title: "غذا، مهمانی و رستوران",
+    summary: "درباره خرید، مهمانی، غذا خوردن بیرون و تجربه رستوران صحبت کنید.",
+    resourceFocus: "غذا، مهمانی، رستوران و خرید",
+    skills: [
+      {
+        slug: "a2-discuss-shopping-and-packaging",
+        title: "درباره خرید و بسته‌بندی حرف بزن",
+        description: "انتخاب‌های روزمره و نظر درباره مصرف را بیان کن.",
+        focus: "خرید و بسته‌بندی",
+        word: "die Plastiktuete",
+        meaning: "کیسه پلاستیکی",
+        phrase: "Ich nehme lieber eine Stofftasche.",
+        phraseMeaning: "ترجیح می‌دهم یک کیسه پارچه‌ای بردارم",
+        blankSentence: "Ich nehme lieber eine ___.",
+        blankAnswer: "Stofftasche",
+        blankChoices: ["Stofftasche", "Speisekarte", "Haltestelle"],
+        orderedWords: ["Ich", "nehme", "lieber", "eine", "Stofftasche"],
+        grammarPoint: "lieber برای بیان ترجیح می‌آید و قبل از بخش اصلی فعل قرار می‌گیرد.",
+        situation: "در خرید درباره بسته‌بندی بهتر حرف می‌زنید.",
+        miniText: "Nina kauft Obst. Sie nimmt keine Plastiktuete, sondern eine Stofftasche.",
+        miniAnswer: "نینا کیسه پارچه‌ای برمی‌دارد."
+      },
+      {
+        slug: "a2-plan-a-childrens-party",
+        title: "یک مهمانی را برنامه‌ریزی کن",
+        description: "خوراکی‌ها، زمان و کارهای لازم برای مهمانی را هماهنگ کن.",
+        focus: "مهمانی",
+        word: "der Kindergeburtstag",
+        meaning: "جشن تولد کودک",
+        phrase: "Wir bereiten den Kindergeburtstag vor.",
+        phraseMeaning: "ما جشن تولد کودک را آماده می‌کنیم",
+        blankSentence: "Wir bereiten den Kindergeburtstag ___.",
+        blankAnswer: "vor",
+        blankChoices: ["vor", "mit", "aus"],
+        orderedWords: ["Wir", "bereiten", "den", "Kindergeburtstag", "vor"],
+        grammarPoint: "در فعل جداشدنی vorbereiten، بخش vor در پایان جمله می‌آید.",
+        situation: "برای تولد یک کودک خوراکی و برنامه آماده می‌کنید.",
+        miniText: "Am Samstag kommen zehn Kinder. Die Eltern bereiten Kuchen und Spiele vor.",
+        miniAnswer: "والدین کیک و بازی آماده می‌کنند."
+      },
+      {
+        slug: "a2-order-and-react-in-a-restaurant",
+        title: "در رستوران سفارش بده و واکنش نشان بده",
+        description: "سفارش، نظر درباره غذا و درخواست مودبانه را تمرین کن.",
+        focus: "رستوران",
+        word: "die Speisekarte",
+        meaning: "منوی غذا",
+        phrase: "Koennen wir bitte die Speisekarte haben?",
+        phraseMeaning: "می‌توانیم لطفاً منو را داشته باشیم؟",
+        blankSentence: "Koennen wir bitte die ___ haben?",
+        blankAnswer: "Speisekarte",
+        blankChoices: ["Speisekarte", "Wohnung", "Stofftasche"],
+        orderedWords: ["Wir", "haetten", "gern", "die", "Speisekarte"],
+        grammarPoint: "haetten gern یک شکل مودبانه برای درخواست در رستوران است.",
+        situation: "در رستوران مودبانه منو می‌خواهید.",
+        miniText: "Im Restaurant fragt Amir nach der Speisekarte. Danach bestellt er eine Suppe.",
+        miniAnswer: "امیر اول منو می‌خواهد."
+      },
+      {
+        slug: "a2-describe-a-meal-experience",
+        title: "تجربه یک غذا را توصیف کن",
+        description: "درباره یک وعده غذا، مکان و حس کلی آن حرف بزن.",
+        focus: "تجربه غذا",
+        word: "die Spezialitaet",
+        meaning: "غذای ویژه / تخصصی",
+        phrase: "Die Spezialitaet des Hauses war sehr lecker.",
+        phraseMeaning: "غذای ویژه رستوران خیلی خوشمزه بود",
+        blankSentence: "Die Spezialitaet des Hauses war sehr ___.",
+        blankAnswer: "lecker",
+        blankChoices: ["lecker", "leer", "ledig"],
+        orderedWords: ["Die", "Spezialitaet", "war", "sehr", "lecker"],
+        grammarPoint: "برای توصیف تجربه گذشته می‌توان از war + صفت استفاده کرد.",
+        situation: "بعد از شام درباره تجربه غذا حرف می‌زنید.",
+        miniText: "Sara war in Wien essen. Die Spezialitaet des Hauses war lecker, aber teuer.",
+        miniAnswer: "غذای ویژه خوشمزه اما گران بود."
+      }
+    ]
+  },
+  {
+    slug: "a2-urban-culture-and-events",
+    title: "فرهنگ شهری و رویدادها",
+    summary: "هنر شهری، سفر کم‌هزینه، سینمای روباز و اجرای کوتاه را در شهر دنبال کنید.",
+    resourceFocus: "فرهنگ شهری، سفر و رویداد",
+    skills: [
+      {
+        slug: "a2-talk-about-street-art",
+        title: "درباره هنر شهری حرف بزن",
+        description: "اثر هنری، مکان و نظر شخصی را کوتاه توصیف کن.",
+        focus: "هنر شهری",
+        word: "die Streetart",
+        meaning: "هنر خیابانی",
+        phrase: "Die Streetart macht die Strasse bunter.",
+        phraseMeaning: "هنر خیابانی خیابان را رنگارنگ‌تر می‌کند",
+        blankSentence: "Die Streetart macht die Strasse ___.",
+        blankAnswer: "bunter",
+        blankChoices: ["bunter", "muede", "krank"],
+        orderedWords: ["Die", "Streetart", "macht", "die", "Strasse", "bunter"],
+        grammarPoint: "صفت مقایسه‌ای bunter نشان می‌دهد چیزی رنگارنگ‌تر می‌شود.",
+        situation: "درباره یک اثر هنری روی دیوار شهر نظر می‌دهید.",
+        miniText: "An der Wand ist neue Streetart. Viele Leute fotografieren das Bild.",
+        miniAnswer: "مردم از اثر هنری عکس می‌گیرند."
+      },
+      {
+        slug: "a2-plan-a-backpack-trip",
+        title: "سفر کوله‌گردی را برنامه‌ریزی کن",
+        description: "بودجه، مسیر و وسایل ضروری را توضیح بده.",
+        focus: "سفر کم‌هزینه",
+        word: "der Rucksack",
+        meaning: "کوله‌پشتی",
+        phrase: "Ich reise nur mit einem Rucksack.",
+        phraseMeaning: "فقط با یک کوله‌پشتی سفر می‌کنم",
+        blankSentence: "Ich reise nur mit einem ___.",
+        blankAnswer: "Rucksack",
+        blankChoices: ["Rucksack", "Topf", "Anzug"],
+        orderedWords: ["Ich", "reise", "nur", "mit", "einem", "Rucksack"],
+        grammarPoint: "بعد از mit از داتیو استفاده می‌شود: einem Rucksack.",
+        situation: "برای سفر کم‌هزینه وسایل ضروری را توضیح می‌دهید.",
+        miniText: "Omid reist zwei Wochen mit dem Rucksack. Er nimmt nur wenige Sachen mit.",
+        miniAnswer: "امید سبک سفر می‌کند."
+      },
+      {
+        slug: "a2-discuss-open-air-events",
+        title: "درباره رویداد روباز حرف بزن",
+        description: "زمان، مکان، بلیت و علاقه به یک برنامه فرهنگی را بیان کن.",
+        focus: "رویداد شهری",
+        word: "das Open-Air-Kino",
+        meaning: "سینمای روباز",
+        phrase: "Das Open-Air-Kino beginnt um neun Uhr.",
+        phraseMeaning: "سینمای روباز ساعت نه شروع می‌شود",
+        blankSentence: "Das Open-Air-Kino beginnt um ___ Uhr.",
+        blankAnswer: "neun",
+        blankChoices: ["neun", "neu", "nie"],
+        orderedWords: ["Das", "Open-Air-Kino", "beginnt", "um", "neun", "Uhr"],
+        grammarPoint: "برای زمان دقیق از um استفاده می‌شود.",
+        situation: "درباره زمان و مکان یک برنامه فرهنگی حرف می‌زنید.",
+        miniText: "Heute gibt es Open-Air-Kino im Park. Der Film beginnt um neun Uhr.",
+        miniAnswer: "فیلم ساعت نه شروع می‌شود."
+      },
+      {
+        slug: "a2-share-a-short-performance",
+        title: "یک اجرای کوتاه را معرفی کن",
+        description: "موضوع، حس و واکنش مخاطب را ساده توضیح بده.",
+        focus: "اجرا",
+        word: "der Poetry Slam",
+        meaning: "اجرای شعر / اسلم شعر",
+        phrase: "Beim Poetry Slam lesen Menschen kurze Texte vor.",
+        phraseMeaning: "در اجرای شعر مردم متن‌های کوتاه می‌خوانند",
+        blankSentence: "Beim Poetry Slam lesen Menschen kurze Texte ___.",
+        blankAnswer: "vor",
+        blankChoices: ["vor", "ein", "ab"],
+        orderedWords: ["Menschen", "lesen", "kurze", "Texte", "vor"],
+        grammarPoint: "در فعل جداشدنی vorlesen، بخش vor در پایان جمله می‌آید.",
+        situation: "یک اجرای کوتاه فرهنگی را به دوستتان معرفی می‌کنید.",
+        miniText: "Beim Poetry Slam liest Lara einen kurzen Text vor. Das Publikum lacht.",
+        miniAnswer: "لارا یک متن کوتاه می‌خواند."
+      }
+    ]
+  },
+  {
+    slug: "a2-school-work-and-dream-jobs",
+    title: "مدرسه، کار و شغل رویایی",
+    summary: "برنامه آموزشی، مدرسه، شغل‌ها و مسیر شغلی دلخواه را توصیف کنید.",
+    resourceFocus: "مدرسه، کار و شغل",
+    skills: [
+      {
+        slug: "a2-describe-a-plan",
+        title: "یک برنامه را توضیح بده",
+        description: "مراحل، زمان و هدف یک برنامه آموزشی یا کاری را بیان کن.",
+        focus: "برنامه",
+        word: "der Plan",
+        meaning: "برنامه",
+        phrase: "Mein Plan fuer naechstes Jahr ist klar.",
+        phraseMeaning: "برنامه من برای سال آینده روشن است",
+        blankSentence: "Mein Plan fuer naechstes Jahr ist ___.",
+        blankAnswer: "klar",
+        blankChoices: ["klar", "leer", "krank"],
+        orderedWords: ["Mein", "Plan", "ist", "klar"],
+        grammarPoint: "Plan مفرد است و با ist می‌آید.",
+        situation: "برنامه آموزشی یا کاری آینده را توضیح می‌دهید.",
+        miniText: "Reza hat einen Plan. Er macht zuerst einen Kurs und sucht dann Arbeit.",
+        miniAnswer: "رضا اول یک دوره می‌گذراند."
+      },
+      {
+        slug: "a2-talk-about-school-experience",
+        title: "درباره تجربه مدرسه حرف بزن",
+        description: "درس‌ها، معلم‌ها و مسیر آموزشی را توضیح بده.",
+        focus: "مدرسه",
+        word: "die Ausbildung",
+        meaning: "دوره آموزشی / آموزش حرفه‌ای",
+        phrase: "Ich mache eine Ausbildung im Krankenhaus.",
+        phraseMeaning: "من در بیمارستان آموزش حرفه‌ای می‌گذرانم",
+        blankSentence: "Ich mache eine ___ im Krankenhaus.",
+        blankAnswer: "Ausbildung",
+        blankChoices: ["Ausbildung", "Speisekarte", "Jacke"],
+        orderedWords: ["Ich", "mache", "eine", "Ausbildung", "im", "Krankenhaus"],
+        grammarPoint: "eine Ausbildung machen یک ترکیب رایج برای آموزش حرفه‌ای است.",
+        situation: "درباره مسیر آموزشی خود توضیح می‌دهید.",
+        miniText: "Mina macht eine Ausbildung. Sie lernt drei Tage pro Woche im Betrieb.",
+        miniAnswer: "مینا آموزش حرفه‌ای می‌گذراند."
+      },
+      {
+        slug: "a2-compare-jobs",
+        title: "شغل‌ها را مقایسه کن",
+        description: "وظیفه‌ها، محیط کار و علاقه شخصی را مقایسه کن.",
+        focus: "شغل‌ها",
+        word: "die Arbeitszeit",
+        meaning: "ساعت کاری",
+        phrase: "Die Arbeitszeit ist flexibler als frueher.",
+        phraseMeaning: "ساعت کاری از قبل انعطاف‌پذیرتر است",
+        blankSentence: "Die Arbeitszeit ist ___ als frueher.",
+        blankAnswer: "flexibler",
+        blankChoices: ["flexibler", "schwer", "krank"],
+        orderedWords: ["Die", "Arbeitszeit", "ist", "sehr", "flexibel"],
+        grammarPoint: "برای مقایسه از صفت مقایسه‌ای + als استفاده می‌شود.",
+        situation: "دو شغل را از نظر زمان کاری مقایسه می‌کنید.",
+        miniText: "Job A hat flexible Arbeitszeiten. Job B beginnt immer um sechs Uhr.",
+        miniAnswer: "Job A انعطاف بیشتری دارد."
+      },
+      {
+        slug: "a2-describe-your-dream-job",
+        title: "شغل رویایی‌ات را توضیح بده",
+        description: "دلیل انتخاب شغل و توانایی‌های لازم را بیان کن.",
+        focus: "شغل رویایی",
+        word: "der Traumjob",
+        meaning: "شغل رویایی",
+        phrase: "Mein Traumjob verbindet Sprache und Menschen.",
+        phraseMeaning: "شغل رویایی من زبان و انسان‌ها را به هم وصل می‌کند",
+        blankSentence: "Mein Traumjob ___ Sprache und Menschen.",
+        blankAnswer: "verbindet",
+        blankChoices: ["verbindet", "vertrauen", "tauscht"],
+        orderedWords: ["Mein", "Traumjob", "verbindet", "Sprache", "und", "Menschen"],
+        grammarPoint: "با فاعل مفرد Mein Traumjob، فعل verbindet می‌آید.",
+        situation: "دلیل انتخاب شغل رویایی خود را توضیح می‌دهید.",
+        miniText: "Sara moechte Lehrerin werden. Ihr Traumjob verbindet Sprache und Menschen.",
+        miniAnswer: "سارا می‌خواهد معلم شود."
+      }
+    ]
+  },
+  {
+    slug: "a2-health-happiness-and-satisfaction",
+    title: "سلامت، خوشبختی و رضایت",
+    summary: "درباره سلامت، توصیه پزشکی، رضایت و چیزهایی که خوشحال‌تان می‌کند حرف بزنید.",
+    resourceFocus: "سلامت، خوشبختی و رضایت",
+    skills: [
+      {
+        slug: "a2-explain-symptoms-to-a-doctor",
+        title: "علائم را برای پزشک توضیح بده",
+        description: "درد، مدت و شدت مشکل را روشن بیان کن.",
+        focus: "پزشک",
+        word: "die Schmerzen",
+        meaning: "دردها",
+        phrase: "Ich habe seit gestern starke Schmerzen.",
+        phraseMeaning: "از دیروز درد شدید دارم",
+        blankSentence: "Ich habe seit gestern starke ___.",
+        blankAnswer: "Schmerzen",
+        blankChoices: ["Schmerzen", "Schuhe", "Plaene"],
+        orderedWords: ["Ich", "habe", "seit", "gestern", "starke", "Schmerzen"],
+        grammarPoint: "Schmerzen معمولاً به صورت جمع استفاده می‌شود.",
+        situation: "در مطب پزشک مشکل خود را توضیح می‌دهید.",
+        miniText: "Amir hat seit gestern Schmerzen. Er geht heute zum Arzt.",
+        miniAnswer: "امیر از دیروز درد دارد."
+      },
+      {
+        slug: "a2-talk-about-happiness",
+        title: "درباره خوشبختی حرف بزن",
+        description: "چیزهایی را که برایت مهم و خوشحال‌کننده‌اند بیان کن.",
+        focus: "خوشبختی",
+        word: "zufrieden",
+        meaning: "راضی",
+        phrase: "Ich bin mit meinem Alltag zufrieden.",
+        phraseMeaning: "از زندگی روزمره‌ام راضی هستم",
+        blankSentence: "Ich bin mit meinem Alltag ___.",
+        blankAnswer: "zufrieden",
+        blankChoices: ["zufrieden", "ledig", "leer"],
+        orderedWords: ["Ich", "bin", "mit", "meinem", "Alltag", "zufrieden"],
+        grammarPoint: "بعد از mit از داتیو استفاده می‌شود: meinem Alltag.",
+        situation: "درباره چیزهایی که خوشحالتان می‌کند حرف می‌زنید.",
+        miniText: "Mina hat mehr Zeit fuer Freunde. Deshalb ist sie mit ihrem Alltag zufrieden.",
+        miniAnswer: "مینا از زندگی روزمره‌اش راضی است."
+      },
+      {
+        slug: "a2-describe-a-satisfied-person",
+        title: "یک فرد راضی را توصیف کن",
+        description: "سبک زندگی و دلیل رضایت یک نفر را توضیح بده.",
+        focus: "رضایت",
+        word: "das Glueck",
+        meaning: "خوشبختی / خوش‌شانسی",
+        phrase: "Glueck bedeutet fuer ihn Zeit mit der Familie.",
+        phraseMeaning: "خوشبختی برای او یعنی وقت با خانواده",
+        blankSentence: "Glueck bedeutet fuer ihn Zeit mit der ___.",
+        blankAnswer: "Familie",
+        blankChoices: ["Familie", "Kasse", "Spuele"],
+        orderedWords: ["Glueck", "bedeutet", "Zeit", "mit", "der", "Familie"],
+        grammarPoint: "bedeuten برای توضیح معنی یا مفهوم چیزی استفاده می‌شود.",
+        situation: "توضیح می‌دهید چرا یک نفر احساس رضایت دارد.",
+        miniText: "Fuer Reza bedeutet Glueck nicht viel Geld, sondern Zeit mit der Familie.",
+        miniAnswer: "برای رضا خوشبختی یعنی وقت با خانواده."
+      },
+      {
+        slug: "a2-give-health-advice",
+        title: "توصیه سلامتی بده",
+        description: "با باید و بهتر است توصیه ساده و محترمانه بساز.",
+        focus: "توصیه",
+        word: "sich ausruhen",
+        meaning: "استراحت کردن",
+        phrase: "Du solltest dich heute ausruhen.",
+        phraseMeaning: "امروز باید استراحت کنی",
+        blankSentence: "Du solltest dich heute ___.",
+        blankAnswer: "ausruhen",
+        blankChoices: ["ausruhen", "anprobieren", "umtauschen"],
+        orderedWords: ["Du", "solltest", "dich", "heute", "ausruhen"],
+        grammarPoint: "بعد از solltest فعل اصلی به صورت مصدر می‌آید.",
+        situation: "به دوستی که خسته یا بیمار است توصیه می‌دهید.",
+        miniText: "Nina hat Kopfschmerzen. Ihre Freundin sagt: Du solltest dich ausruhen.",
+        miniAnswer: "دوستش به او توصیه می‌کند استراحت کند."
+      }
+    ]
   }
 ];
 
@@ -2291,7 +2611,7 @@ function buildA2Units(): SampleUnit[] {
   });
   const units: SampleUnit[] = [
     ...publishedUnits,
-    ...a2DraftUnits.slice(3).map((unit) => {
+    ...a2DraftUnits.slice(7).map((unit) => {
       const skills = unit.skills.map((skill) => makeDraftSkill(skill));
 
       return {
@@ -2569,6 +2889,82 @@ export const sampleResources: SampleResource[] = [
     publicationStatus: "PUBLISHED",
     unitSlug: "a2-housing-stays-and-email",
     skillSlug: "a2-arrange-a-home-stay"
+  },
+  {
+    slug: "a2-food-parties-persian-guide",
+    title: "راهنمای A2: غذا، مهمانی و رستوران",
+    description: "پشتیبانی فارسی برای خرید، بسته‌بندی، آماده کردن مهمانی، سفارش مودبانه و توصیف تجربه غذا.",
+    type: "LEARNING_GUIDE",
+    levelLabel: "A2",
+    language: "fa/de",
+    thumbnailIcon: "utensils",
+    metadata: {
+      length: "22 min",
+      format: "Persian-first guide",
+      focus: "A2 Unit 5"
+    },
+    content:
+      "این راهنما زبان واحد پنجم A2 را در چهار موقعیت واقعی جمع می‌کند: انتخاب بسته‌بندی بهتر در خرید، آماده کردن جشن تولد، درخواست مودبانه در رستوران، و گفتن تجربه یک غذا. نکته‌های گرامری مثل lieber، فعل‌های جداشدنی و haetten gern به فارسی توضیح داده می‌شوند.",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "a2-food-parties-and-restaurants",
+    skillSlug: "a2-discuss-shopping-and-packaging"
+  },
+  {
+    slug: "a2-urban-culture-persian-guide",
+    title: "راهنمای A2: فرهنگ شهری و رویدادها",
+    description: "پشتیبانی فارسی برای هنر شهری، سفر کوله‌گردی، زمان رویدادها و معرفی اجرای کوتاه.",
+    type: "LEARNING_GUIDE",
+    levelLabel: "A2",
+    language: "fa/de",
+    thumbnailIcon: "palette",
+    metadata: {
+      length: "22 min",
+      format: "Persian-first guide",
+      focus: "A2 Unit 6"
+    },
+    content:
+      "این راهنما کمک می‌کند درباره شهر زنده‌تر حرف بزنید: Streetart را توصیف کنید، سفر سبک با Rucksack را توضیح دهید، زمان یک Open-Air-Kino را بفهمید و یک Poetry Slam را معرفی کنید. تمرکز روی داتیو با mit، زمان با um و فعل جداشدنی vorlesen است.",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "a2-urban-culture-and-events",
+    skillSlug: "a2-talk-about-street-art"
+  },
+  {
+    slug: "a2-school-work-persian-guide",
+    title: "راهنمای A2: مدرسه، کار و شغل رویایی",
+    description: "پشتیبانی فارسی برای برنامه آینده، آموزش حرفه‌ای، مقایسه شغل‌ها و توضیح شغل رویایی.",
+    type: "LEARNING_GUIDE",
+    levelLabel: "A2",
+    language: "fa/de",
+    thumbnailIcon: "graduation-cap",
+    metadata: {
+      length: "22 min",
+      format: "Persian-first guide",
+      focus: "A2 Unit 7"
+    },
+    content:
+      "این راهنما مسیر مدرسه و کار را به زبان A2 تبدیل می‌کند: گفتن یک برنامه روشن، توضیح Ausbildung، مقایسه Arbeitszeit با als، و توصیف Traumjob. توضیح‌ها فارسی هستند و جمله‌های نمونه برای تمرین گفتاری و نوشتاری آلمانی باقی می‌مانند.",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "a2-school-work-and-dream-jobs",
+    skillSlug: "a2-describe-a-plan"
+  },
+  {
+    slug: "a2-health-happiness-persian-guide",
+    title: "راهنمای A2: سلامت، خوشبختی و رضایت",
+    description: "پشتیبانی فارسی برای توضیح علائم، رضایت از زندگی روزمره، معنی خوشبختی و توصیه سلامتی.",
+    type: "LEARNING_GUIDE",
+    levelLabel: "A2",
+    language: "fa/de",
+    thumbnailIcon: "heart-pulse",
+    metadata: {
+      length: "22 min",
+      format: "Persian-first guide",
+      focus: "A2 Unit 8"
+    },
+    content:
+      "این راهنما زبان سلامت و رضایت را تمرین می‌کند: گفتن Schmerzen به پزشک، استفاده از zufrieden mit همراه داتیو، توضیح معنی Glueck برای یک شخص، و توصیه دادن با solltest + مصدر. پشتیبانی فارسی کمک می‌کند تفاوت معنی‌ها و ساختارها روشن بماند.",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "a2-health-happiness-and-satisfaction",
+    skillSlug: "a2-explain-symptoms-to-a-doctor"
   }
 ];
 
