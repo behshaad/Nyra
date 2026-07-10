@@ -4,7 +4,7 @@ import {
   type SkillKind
 } from "@/lib/generated/prisma/enums";
 import { getPrisma } from "@/lib/db/prisma";
-import { devAuthUserId } from "@/lib/learner/preferences";
+import { defaultLevelLabel, devAuthUserId } from "@/lib/learner/preferences";
 
 type CompletionMetadata = {
   scorePercent?: unknown;
@@ -80,12 +80,12 @@ function skillToFlatView(skill: DbSkillForPath) {
   };
 }
 
-async function getA1UnitsFromDb(): Promise<DbUnitForPath[]> {
+async function getUnitsFromDb(levelLabel: string): Promise<DbUnitForPath[]> {
   const db = getPrisma();
   const units = await db.unit.findMany({
     where: {
       level: {
-        label: "A1"
+        label: levelLabel
       }
     },
     include: {
@@ -112,26 +112,28 @@ async function getA1UnitsFromDb(): Promise<DbUnitForPath[]> {
     }
   });
 
-  return units.map((unit) => ({
-    slug: unit.slug,
-    order: unit.order,
-    title: unit.title,
-    summary: unit.summary,
-    levelLabel: unit.level.label,
-    skills: unit.skills.map((skill) => ({
-      slug: skill.slug,
-      title: skill.title,
-      description: skill.description,
-      kind: skill.kind,
-      xp: skill.xp,
-      passingScore: skill.passingScore,
-      questions: skill.questions
+  return units
+    .map((unit) => ({
+      slug: unit.slug,
+      order: unit.order,
+      title: unit.title,
+      summary: unit.summary,
+      levelLabel: unit.level.label,
+      skills: unit.skills.map((skill) => ({
+        slug: skill.slug,
+        title: skill.title,
+        description: skill.description,
+        kind: skill.kind,
+        xp: skill.xp,
+        passingScore: skill.passingScore,
+        questions: skill.questions
+      }))
     }))
-  }));
+    .filter((unit) => unit.skills.length > 0);
 }
 
-export async function getFlatA1Skills() {
-  const units = await getA1UnitsFromDb();
+export async function getFlatSkills(levelLabel = defaultLevelLabel) {
+  const units = await getUnitsFromDb(levelLabel);
 
   return units.flatMap((unit) =>
     unit.skills.map((skill) => ({
@@ -143,16 +145,39 @@ export async function getFlatA1Skills() {
   );
 }
 
-export async function getNextSkillSlug(skillSlug: string) {
-  const skills = await getFlatA1Skills();
+export async function getFlatPublishedSkills() {
+  const db = getPrisma();
+  const levels = await db.level.findMany({
+    select: {
+      label: true
+    },
+    orderBy: {
+      order: "asc"
+    }
+  });
+  const skillsByLevel = await Promise.all(
+    levels.map((level) => getFlatSkills(level.label))
+  );
+
+  return skillsByLevel.flat();
+}
+
+export async function getFlatA1Skills() {
+  return getFlatSkills("A1");
+}
+
+export async function getNextSkillSlug(skillSlug: string, levelLabel = defaultLevelLabel) {
+  const skills = await getFlatSkills(levelLabel);
   const index = skills.findIndex((skill) => skill.slug === skillSlug);
 
   return index >= 0 ? skills[index + 1]?.slug ?? null : null;
 }
 
-export async function getLearningPathProgress(): Promise<LearningPathProgressView> {
+export async function getLearningPathProgress(
+  levelLabel = defaultLevelLabel
+): Promise<LearningPathProgressView> {
   const db = getPrisma();
-  const unitsFromDb = await getA1UnitsFromDb();
+  const unitsFromDb = await getUnitsFromDb(levelLabel);
   const flatSkills = unitsFromDb.flatMap((unit) =>
     unit.skills.map((skill) => ({
       ...skillToFlatView(skill),

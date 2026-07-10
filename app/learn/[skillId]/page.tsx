@@ -10,12 +10,12 @@ import {
 } from "@/lib/i18n/interface-language";
 import { getLearnerPreferences } from "@/lib/learner/preferences";
 import { getPublishedSkillBySlug } from "@/lib/admin/skill-repository";
-import { getFlatA1Skills, getNextSkillSlug } from "@/lib/learning/path-progress";
+import { getFlatPublishedSkills, getNextSkillSlug } from "@/lib/learning/path-progress";
 
 export const dynamic = "force-dynamic";
 
 export async function generateStaticParams() {
-  const skills = await getFlatA1Skills();
+  const skills = await getFlatPublishedSkills();
 
   return skills.map((skill) => ({
     skillId: skill.slug
@@ -40,12 +40,14 @@ export default async function SkillPage({
     ? resolveInterfaceLanguage(ui)
     : preferences.interfaceLanguage;
   const copy = interfaceCopy[language];
-  const [skill, flatSkills, nextSkillSlug] = await Promise.all([
+  const [skill, flatSkills] = await Promise.all([
     getPublishedSkillBySlug(skillId),
-    getFlatA1Skills(),
-    getNextSkillSlug(skillId)
+    getFlatPublishedSkills()
   ]);
   const flatSkill = flatSkills.find((candidate) => candidate.slug === skillId);
+  const nextSkillSlug = flatSkill
+    ? await getNextSkillSlug(skillId, flatSkill.levelLabel)
+    : null;
   const nextSkill = nextSkillSlug
     ? flatSkills.find((candidate) => candidate.slug === nextSkillSlug) ?? null
     : null;

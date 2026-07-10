@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getPrisma } from "@/lib/db/prisma";
 import { defaultLevelLabel, devAuthUserId, safeReturnTo } from "@/lib/learner/preferences";
 
-const supportedLevelLabels = new Set(["A1"]);
+const supportedLevelLabels = new Set(["A1", "A2"]);
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;

@@ -10,14 +10,14 @@ import {
 } from "@/lib/i18n/interface-language";
 import { getLearnerPreferences } from "@/lib/learner/preferences";
 import {
-  getA1ContentSummary,
+  getLevelContentSummary,
   sampleCourse
 } from "@/lib/learning/sample-content";
 import { getLearningPathProgress } from "@/lib/learning/path-progress";
 
 const levelOptions = [
   { label: "A1", active: true },
-  { label: "A2", active: false },
+  { label: "A2", active: true },
   { label: "B1", active: false },
   { label: "B2", active: false }
 ];
@@ -36,9 +36,16 @@ export default async function LearnPage({
     ? resolveInterfaceLanguage(ui)
     : preferences.interfaceLanguage;
   const copy = interfaceCopy[language];
-  const summary = getA1ContentSummary();
-  const a1Level = sampleCourse.levels[0];
-  const progress = await getLearningPathProgress();
+  const selectedLevelLabel = levelOptions.some(
+    (level) => level.active && level.label === preferences.currentLevel
+  )
+    ? preferences.currentLevel
+    : "A1";
+  const summary = getLevelContentSummary(selectedLevelLabel);
+  const selectedLevel =
+    sampleCourse.levels.find((level) => level.label === selectedLevelLabel) ??
+    sampleCourse.levels[0];
+  const progress = await getLearningPathProgress(selectedLevelLabel);
   const selectedUnit =
     progress.units.find((unit) => unit.slug === selectedUnitParam) ??
     progress.units.find((unit) => unit.slug === progress.selectedUnitSlug) ??
@@ -94,7 +101,7 @@ export default async function LearnPage({
                   {progress.completedCount}/{progress.totalCount}
                 </h2>
               </div>
-              <span className="status-pill">{a1Level.title}</span>
+              <span className="status-pill">{selectedLevel.title}</span>
             </div>
             <div className="mini-progress" aria-hidden="true">
               <span

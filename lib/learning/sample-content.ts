@@ -26,7 +26,7 @@ export type SampleSkill = {
   xp: number;
   passingScore?: number;
   requeueIncorrect: boolean;
-  publicationStatus: "PUBLISHED";
+  publicationStatus: "DRAFT" | "IN_REVIEW" | "PUBLISHED";
   questions: SampleQuestion[];
 };
 
@@ -48,7 +48,7 @@ export type SampleResource = {
   metadata: Record<string, string>;
   content: string;
   url?: string;
-  publicationStatus: "PUBLISHED";
+  publicationStatus: "DRAFT" | "IN_REVIEW" | "PUBLISHED";
   unitSlug?: string;
   skillSlug?: string;
 };
@@ -562,7 +562,10 @@ function makeSkillQuestions(spec: SkillSpec): SampleQuestion[] {
   ];
 }
 
-function makeSkill(spec: SkillSpec): SampleSkill {
+function makeSkill(
+  spec: SkillSpec,
+  publicationStatus: SampleSkill["publicationStatus"] = "PUBLISHED"
+): SampleSkill {
   const learnerCopy = skillLearnerCopy[spec.slug];
   const localizedSpec = learnerCopy ? { ...spec, ...learnerCopy } : spec;
 
@@ -574,8 +577,8 @@ function makeSkill(spec: SkillSpec): SampleSkill {
     kind: "REGULAR",
     xp: 80,
     requeueIncorrect: true,
-    publicationStatus: "PUBLISHED",
-    questions: makeSkillQuestions(localizedSpec)
+    publicationStatus,
+    questions: publicationStatus === "PUBLISHED" ? makeSkillQuestions(localizedSpec) : []
   };
 }
 
@@ -591,7 +594,12 @@ function cloneQuestion(
   };
 }
 
-function makeCheckpoint(unit: UnitSpec, skills: SampleSkill[]): SampleSkill {
+function makeCheckpoint(
+  unit: UnitSpec,
+  skills: SampleSkill[],
+  levelLabel = "A1",
+  publicationStatus: SampleSkill["publicationStatus"] = "PUBLISHED"
+): SampleSkill {
   const slug = `${unit.slug}-checkpoint`;
   const questions = skills.flatMap((skill) => skill.questions.slice(0, 3)).map(
     (question, index) => cloneQuestion(question, slug, index + 1)
@@ -601,13 +609,13 @@ function makeCheckpoint(unit: UnitSpec, skills: SampleSkill[]): SampleSkill {
     id: slug,
     slug,
     title: `${unit.title}: آزمونک`,
-    description: `کنترل A1 خودت را در موضوع ${unit.resourceFocus} بسنج.`,
+    description: `کنترل ${levelLabel} خودت را در موضوع ${unit.resourceFocus} بسنج.`,
     kind: "UNIT_CHECKPOINT",
     xp: 120,
     passingScore: 70,
     requeueIncorrect: false,
-    publicationStatus: "PUBLISHED",
-    questions
+    publicationStatus,
+    questions: publicationStatus === "PUBLISHED" ? questions : []
   };
 }
 
@@ -1628,6 +1636,280 @@ function buildUnits() {
   return units;
 }
 
+const a2UnitOneSpec: UnitSpec = {
+  slug: "a2-german-in-global-life",
+  title: "آلمانی در زندگی جهانی",
+  summary: "دوباره ارتباط بگیرید، درباره جابه‌جایی بین کشورها حرف بزنید، تجربه‌های اخیر را بگویید و دلیل یادگیری آلمانی را توضیح دهید.",
+  resourceFocus: "ارتباط دوباره، زندگی جهانی، تجربه‌های اخیر و دلیل یادگیری آلمانی",
+  skills: [
+    {
+      slug: "a2-reconnect-and-ask-how-someone-is",
+      title: "حال کسی را دوباره بپرس",
+      description: "بعد از مدتی با کسی ارتباط بگیر و با ضمیرهای داتیو حال، کمک و علاقه را بیان کن.",
+      focus: "ارتباط دوباره و داتیو",
+      word: "wiedersehen",
+      meaning: "دوباره دیدن",
+      phrase: "Lange nicht gesehen! Wie geht es dir?",
+      phraseMeaning: "خیلی وقت است ندیدمت! حالت چطور است؟",
+      blankSentence: "Wie geht es ___?",
+      blankAnswer: "dir",
+      blankChoices: ["dir", "du", "dich"],
+      orderedWords: ["Mir", "geht", "es", "gut"],
+      grammarPoint: "بعد از Wie geht es از ضمیر داتیو مثل dir، Ihnen یا euch استفاده می‌شود.",
+      situation: "بعد از چند ماه یک همکلاسی قدیمی را می‌بینید.",
+      miniText: "Nina sieht Ben nach langer Zeit. Sie sagt: Lange nicht gesehen! Wie geht es dir?",
+      miniAnswer: "نینا حال بن را می‌پرسد."
+    },
+    {
+      slug: "a2-talk-about-moving-abroad",
+      title: "درباره رفتن به کشور دیگر حرف بزن",
+      description: "درباره کشور، شهر، کار یا تحصیل در خارج و پرسش‌های wo، woher، wohin و seit wann صحبت کن.",
+      focus: "زندگی و کار در کشور دیگر",
+      word: "die Unterkunft",
+      meaning: "محل اقامت",
+      phrase: "Ich wohne seit drei Monaten in Berlin.",
+      phraseMeaning: "سه ماه است در برلین زندگی می‌کنم.",
+      blankSentence: "Ich wohne ___ drei Monaten in Berlin.",
+      blankAnswer: "seit",
+      blankChoices: ["seit", "nach", "aus"],
+      orderedWords: ["Ich", "komme", "aus", "Teheran"],
+      grammarPoint: "برای مدت زمانی که از گذشته شروع شده و هنوز ادامه دارد از seit استفاده می‌شود.",
+      situation: "در کلاس درباره تجربه زندگی در یک شهر جدید حرف می‌زنید.",
+      miniText: "Arman kommt aus Teheran. Er wohnt seit drei Monaten in Berlin und sucht eine Unterkunft.",
+      miniAnswer: "آرمان سه ماه است در برلین زندگی می‌کند."
+    },
+    {
+      slug: "a2-describe-recent-experiences",
+      title: "تجربه‌های اخیر را در گذشته بگو",
+      description: "اتفاق‌های اخیر را با Perfekt، فعل کمکی درست و فعل‌های جداشدنی تعریف کن.",
+      focus: "تجربه‌های اخیر در Perfekt",
+      word: "kennengelernt",
+      meaning: "آشنا شده / شناخت پیدا کرده",
+      phrase: "Ich habe gestern eine Kollegin kennengelernt.",
+      phraseMeaning: "دیروز با یک همکار آشنا شدم.",
+      blankSentence: "Ich ___ gestern eine Kollegin kennengelernt.",
+      blankAnswer: "habe",
+      blankChoices: ["habe", "bin", "ist"],
+      orderedWords: ["Wir", "sind", "nach", "Berlin", "gefahren"],
+      grammarPoint: "در Perfekt، حرکت از جایی به جای دیگر معمولا با sein می‌آید.",
+      situation: "درباره روز اول در یک شهر جدید صحبت می‌کنید.",
+      miniText: "Sara ist um sieben Uhr aufgestanden. Dann ist sie zur Arbeit gefahren und hat neue Leute kennengelernt.",
+      miniAnswer: "سارا با آدم‌های جدید آشنا شده است."
+    },
+    {
+      slug: "a2-explain-why-you-learn-german",
+      title: "دلیل یادگیری آلمانی را توضیح بده",
+      description: "با weil دلیل بیاور، درباره کار و تحصیل حرف بزن و معنی واژه‌ها را بپرس.",
+      focus: "دلیل آوردن با weil",
+      word: "der Sprachkurs",
+      meaning: "کلاس زبان",
+      phrase: "Ich lerne Deutsch, weil ich in Deutschland arbeiten möchte.",
+      phraseMeaning: "آلمانی یاد می‌گیرم چون می‌خواهم در آلمان کار کنم.",
+      blankSentence: "Ich lerne Deutsch, ___ ich hier arbeiten möchte.",
+      blankAnswer: "weil",
+      blankChoices: ["weil", "aber", "oder"],
+      orderedWords: ["Was", "bedeutet", "Sprachkurs"],
+      grammarPoint: "در جمله فرعی با weil فعل صرف‌شده در پایان جمله می‌آید.",
+      situation: "کسی می‌پرسد چرا آلمانی یاد می‌گیرید.",
+      miniText: "Omid lernt Deutsch, weil er einen Master in Deutschland machen möchte.",
+      miniAnswer: "امید برای تحصیل در آلمان آلمانی یاد می‌گیرد."
+    }
+  ]
+};
+
+const a2DraftUnits: Array<Omit<UnitSpec, "skills"> & { skills: Array<Pick<SkillSpec, "slug" | "title" | "description" | "focus">> }> = [
+  {
+    slug: "a2-appearance-and-recommendations",
+    title: "ظاهر، لباس و پیشنهاد دادن",
+    summary: "لباس و ظاهر را توصیف کنید، در خرید نظر بدهید و پیشنهاد یا توصیه مودبانه بسازید.",
+    resourceFocus: "لباس، ظاهر، خرید و پیشنهاد",
+    skills: [
+      { slug: "a2-describe-clothes-and-style", title: "لباس و استایل را توصیف کن", description: "رنگ، جنس و ظاهر لباس‌ها را با جمله‌های دقیق‌تر بیان کن.", focus: "لباس و ظاهر" },
+      { slug: "a2-shop-for-clothes", title: "در خرید لباس گفتگو کن", description: "سایز، قیمت، پسندیدن و عوض کردن گزینه‌ها را تمرین کن.", focus: "خرید لباس" },
+      { slug: "a2-talk-about-public-figures", title: "درباره چهره‌های معروف حرف بزن", description: "ظاهر و تاثیر یک شخص شناخته‌شده را کوتاه توصیف کن.", focus: "توصیف افراد" },
+      { slug: "a2-make-a-recommendation", title: "پیشنهاد مودبانه بده", description: "با ساختارهای ساده پیشنهاد بده و دلیل کوتاه بیاور.", focus: "پیشنهاد دادن" }
+    ]
+  },
+  {
+    slug: "a2-family-relationships-and-friends",
+    title: "خانواده، رابطه‌ها و دوستان",
+    summary: "درباره خانواده، رابطه‌ها، زوج‌ها، دوستی و تغییرات زندگی شخصی صحبت کنید.",
+    resourceFocus: "خانواده، رابطه‌ها و دوستی",
+    skills: [
+      { slug: "a2-describe-family-relationships", title: "رابطه‌های خانوادگی را توصیف کن", description: "نسبت‌ها، نقش‌ها و وضعیت خانوادگی را روشن بیان کن.", focus: "خانواده" },
+      { slug: "a2-talk-about-couples-and-plans", title: "درباره زوج‌ها و برنامه‌ها حرف بزن", description: "برنامه‌های مشترک، ازدواج یا زندگی مشترک را ساده توضیح بده.", focus: "رابطه‌ها" },
+      { slug: "a2-describe-friendships", title: "دوستی‌ها را توصیف کن", description: "درباره آشنایی، اعتماد و فعالیت‌های مشترک حرف بزن.", focus: "دوستی" },
+      { slug: "a2-family-and-friends-check-in", title: "خبر خانواده و دوستان را بپرس", description: "حال و خبر افراد نزدیک را در گفتگوی طبیعی دنبال کن.", focus: "خبر گرفتن" }
+    ]
+  },
+  {
+    slug: "a2-housing-stays-and-email",
+    title: "خانه، اقامت و ایمیل",
+    summary: "اقامت، خانه، آشپزخانه، درخواست‌های خانگی و ایمیل‌های کاربردی را تمرین کنید.",
+    resourceFocus: "خانه، اقامت، وسایل و ایمیل",
+    skills: [
+      { slug: "a2-arrange-a-home-stay", title: "اقامت را هماهنگ کن", description: "درباره خانه، اتاق، زمان ورود و نیازها سوال بپرس.", focus: "اقامت" },
+      { slug: "a2-write-a-practical-email", title: "ایمیل کاربردی بنویس", description: "درخواست، توضیح کوتاه و پایان مودبانه را در ایمیل تمرین کن.", focus: "ایمیل" },
+      { slug: "a2-describe-kitchen-and-home-items", title: "وسایل خانه را توصیف کن", description: "وسایل آشپزخانه و محل آن‌ها را با جمله‌های دقیق‌تر بگو.", focus: "وسایل خانه" },
+      { slug: "a2-ask-someone-to-place-items", title: "از کسی بخواه چیزی را جابه‌جا کند", description: "درخواست‌های خانگی و ضمیرهای مفعولی را تمرین کن.", focus: "درخواست خانگی" }
+    ]
+  },
+  {
+    slug: "a2-food-parties-and-restaurants",
+    title: "غذا، مهمانی و رستوران",
+    summary: "درباره خرید، مهمانی، غذا خوردن بیرون و تجربه رستوران صحبت کنید.",
+    resourceFocus: "غذا، مهمانی، رستوران و خرید",
+    skills: [
+      { slug: "a2-discuss-shopping-and-packaging", title: "درباره خرید و بسته‌بندی حرف بزن", description: "انتخاب‌های روزمره و نظر درباره مصرف را بیان کن.", focus: "خرید و بسته‌بندی" },
+      { slug: "a2-plan-a-childrens-party", title: "یک مهمانی را برنامه‌ریزی کن", description: "خوراکی‌ها، زمان و کارهای لازم برای مهمانی را هماهنگ کن.", focus: "مهمانی" },
+      { slug: "a2-order-and-react-in-a-restaurant", title: "در رستوران سفارش بده و واکنش نشان بده", description: "سفارش، نظر درباره غذا و درخواست مودبانه را تمرین کن.", focus: "رستوران" },
+      { slug: "a2-describe-a-meal-experience", title: "تجربه یک غذا را توصیف کن", description: "درباره یک وعده غذا، مکان و حس کلی آن حرف بزن.", focus: "تجربه غذا" }
+    ]
+  },
+  {
+    slug: "a2-urban-culture-and-events",
+    title: "فرهنگ شهری و رویدادها",
+    summary: "هنر شهری، سفر کم‌هزینه، سینمای روباز و اجرای کوتاه را در شهر دنبال کنید.",
+    resourceFocus: "فرهنگ شهری، سفر و رویداد",
+    skills: [
+      { slug: "a2-talk-about-street-art", title: "درباره هنر شهری حرف بزن", description: "اثر هنری، مکان و نظر شخصی را کوتاه توصیف کن.", focus: "هنر شهری" },
+      { slug: "a2-plan-a-backpack-trip", title: "سفر کوله‌گردی را برنامه‌ریزی کن", description: "بودجه، مسیر و وسایل ضروری را توضیح بده.", focus: "سفر کم‌هزینه" },
+      { slug: "a2-discuss-open-air-events", title: "درباره رویداد روباز حرف بزن", description: "زمان، مکان، بلیت و علاقه به یک برنامه فرهنگی را بیان کن.", focus: "رویداد شهری" },
+      { slug: "a2-share-a-short-performance", title: "یک اجرای کوتاه را معرفی کن", description: "موضوع، حس و واکنش مخاطب را ساده توضیح بده.", focus: "اجرا" }
+    ]
+  },
+  {
+    slug: "a2-school-work-and-dream-jobs",
+    title: "مدرسه، کار و شغل رویایی",
+    summary: "برنامه آموزشی، مدرسه، شغل‌ها و مسیر شغلی دلخواه را توصیف کنید.",
+    resourceFocus: "مدرسه، کار و شغل",
+    skills: [
+      { slug: "a2-describe-a-plan", title: "یک برنامه را توضیح بده", description: "مراحل، زمان و هدف یک برنامه آموزشی یا کاری را بیان کن.", focus: "برنامه" },
+      { slug: "a2-talk-about-school-experience", title: "درباره تجربه مدرسه حرف بزن", description: "درس‌ها، معلم‌ها و مسیر آموزشی را توضیح بده.", focus: "مدرسه" },
+      { slug: "a2-compare-jobs", title: "شغل‌ها را مقایسه کن", description: "وظیفه‌ها، محیط کار و علاقه شخصی را مقایسه کن.", focus: "شغل‌ها" },
+      { slug: "a2-describe-your-dream-job", title: "شغل رویایی‌ات را توضیح بده", description: "دلیل انتخاب شغل و توانایی‌های لازم را بیان کن.", focus: "شغل رویایی" }
+    ]
+  },
+  {
+    slug: "a2-health-happiness-and-satisfaction",
+    title: "سلامت، خوشبختی و رضایت",
+    summary: "درباره سلامت، توصیه پزشکی، رضایت و چیزهایی که خوشحال‌تان می‌کند حرف بزنید.",
+    resourceFocus: "سلامت، خوشبختی و رضایت",
+    skills: [
+      { slug: "a2-explain-symptoms-to-a-doctor", title: "علائم را برای پزشک توضیح بده", description: "درد، مدت و شدت مشکل را روشن بیان کن.", focus: "پزشک" },
+      { slug: "a2-talk-about-happiness", title: "درباره خوشبختی حرف بزن", description: "چیزهایی را که برایت مهم و خوشحال‌کننده‌اند بیان کن.", focus: "خوشبختی" },
+      { slug: "a2-describe-a-satisfied-person", title: "یک فرد راضی را توصیف کن", description: "سبک زندگی و دلیل رضایت یک نفر را توضیح بده.", focus: "رضایت" },
+      { slug: "a2-give-health-advice", title: "توصیه سلامتی بده", description: "با باید و بهتر است توصیه ساده و محترمانه بساز.", focus: "توصیه" }
+    ]
+  },
+  {
+    slug: "a2-media-apps-and-free-time",
+    title: "رسانه، اپلیکیشن و وقت آزاد",
+    summary: "برنامه تلویزیونی، اپلیکیشن محبوب، روز مورد علاقه و فعالیت‌های آزاد را بیان کنید.",
+    resourceFocus: "رسانه، اپلیکیشن و وقت آزاد",
+    skills: [
+      { slug: "a2-discuss-tv-programs", title: "درباره برنامه تلویزیونی حرف بزن", description: "نوع برنامه، زمان پخش و نظر شخصی را بیان کن.", focus: "تلویزیون" },
+      { slug: "a2-present-a-favorite-app", title: "اپلیکیشن محبوبت را معرفی کن", description: "کاربرد، مزیت و دلیل علاقه به یک اپ را توضیح بده.", focus: "اپلیکیشن" },
+      { slug: "a2-describe-a-favorite-day", title: "روز مورد علاقه‌ات را توصیف کن", description: "برنامه روز، فعالیت‌ها و حس شخصی را توضیح بده.", focus: "روز محبوب" },
+      { slug: "a2-plan-free-time", title: "وقت آزاد را برنامه‌ریزی کن", description: "پیشنهاد، زمان و ترجیح برای فعالیت آزاد را بیان کن.", focus: "وقت آزاد" }
+    ]
+  },
+  {
+    slug: "a2-social-behavior-compliments-and-gifts",
+    title: "رفتار اجتماعی، تعریف و هدیه",
+    summary: "رفتار مودبانه، تعریف کردن، آشنایی و هدیه دادن را در موقعیت‌های اجتماعی تمرین کنید.",
+    resourceFocus: "رفتار اجتماعی، تعریف و هدیه",
+    skills: [
+      { slug: "a2-sound-friendly-and-polite", title: "دوستانه و مودبانه حرف بزن", description: "لحن مناسب، خواهش و پاسخ محترمانه را تمرین کن.", focus: "ادب اجتماعی" },
+      { slug: "a2-make-and-respond-to-compliments", title: "تعریف کن و پاسخ بده", description: "تعریف کوتاه، تشکر و واکنش طبیعی را بساز.", focus: "تعریف" },
+      { slug: "a2-describe-a-person-you-want-to-meet", title: "فرد مناسب برای آشنایی را توصیف کن", description: "ویژگی‌ها، علاقه‌ها و انتظارها را محترمانه بیان کن.", focus: "آشنایی" },
+      { slug: "a2-choose-a-gift", title: "هدیه انتخاب کن", description: "درباره مناسبت، سلیقه و دلیل انتخاب هدیه حرف بزن.", focus: "هدیه" }
+    ]
+  },
+  {
+    slug: "a2-money-banking-and-messages",
+    title: "پول، بانک و پیام‌ها",
+    summary: "درباره ارزش پول، بانک، حساب، پرداخت و پیام‌های روزمره صحبت کنید.",
+    resourceFocus: "پول، بانک و پیام",
+    skills: [
+      { slug: "a2-talk-about-money-values", title: "درباره پول و ارزش‌ها حرف بزن", description: "اولویت‌های مالی و غیرمالی را با مقایسه ساده بیان کن.", focus: "ارزش پول" },
+      { slug: "a2-understand-a-bank-service", title: "خدمات بانکی را بفهم", description: "اطلاعات پایه درباره بانک، کارت و حساب را دنبال کن.", focus: "بانک" },
+      { slug: "a2-discuss-shared-expenses", title: "درباره هزینه مشترک حرف بزن", description: "پرداخت، سهم و حساب مشترک را توضیح بده.", focus: "هزینه مشترک" },
+      { slug: "a2-write-a-clear-message", title: "پیام روشن بنویس", description: "در پیام کوتاه درخواست، خبر و جزئیات لازم را بیان کن.", focus: "پیام" }
+    ]
+  },
+  {
+    slug: "a2-travel-directions-and-holiday-experiences",
+    title: "سفر، مسیر و تجربه‌های تعطیلات",
+    summary: "سفر کوتاه، مسیر هتل، همسفر و تجربه‌های تعطیلات را توصیف کنید.",
+    resourceFocus: "سفر، مسیر، هتل و تجربه",
+    skills: [
+      { slug: "a2-plan-a-short-trip", title: "سفر کوتاه برنامه‌ریزی کن", description: "مقصد، زمان، وسیله سفر و فعالیت‌ها را هماهنگ کن.", focus: "سفر کوتاه" },
+      { slug: "a2-ask-for-hotel-directions", title: "مسیر هتل را بپرس", description: "آدرس، مسیر و نشانه‌های شهری را دنبال کن.", focus: "مسیر" },
+      { slug: "a2-find-a-travel-partner", title: "همسفر پیدا کن", description: "علاقه‌ها، برنامه و انتظار از همسفر را بیان کن.", focus: "همسفر" },
+      { slug: "a2-describe-holiday-photos", title: "عکس‌های سفر را توصیف کن", description: "مکان، آدم‌ها و حس یک عکس سفر را توضیح بده.", focus: "عکس سفر" }
+    ]
+  }
+];
+
+function makeDraftSkill(spec: Pick<SkillSpec, "slug" | "title" | "description" | "focus">): SampleSkill {
+  return {
+    id: spec.slug,
+    slug: spec.slug,
+    title: spec.title,
+    description: spec.description,
+    kind: "REGULAR",
+    xp: 80,
+    requeueIncorrect: true,
+    publicationStatus: "DRAFT",
+    questions: []
+  };
+}
+
+function makeA2FinalTest(): SampleSkill {
+  return {
+    id: "a2-final-test",
+    slug: "a2-final-test",
+    title: "آزمون نهایی A2",
+    description: "آمادگی خودت را در کل مسیر A2 بسنج.",
+    kind: "FINAL_TEST",
+    xp: 300,
+    passingScore: 75,
+    requeueIncorrect: false,
+    publicationStatus: "DRAFT",
+    questions: []
+  };
+}
+
+function buildA2Units(): SampleUnit[] {
+  const unitOneSkills = a2UnitOneSpec.skills.map((skill) => makeSkill(skill));
+  const units: SampleUnit[] = [
+    {
+      slug: a2UnitOneSpec.slug,
+      title: a2UnitOneSpec.title,
+      summary: a2UnitOneSpec.summary,
+      skills: [...unitOneSkills, makeCheckpoint(a2UnitOneSpec, unitOneSkills, "A2")]
+    },
+    ...a2DraftUnits.map((unit) => {
+      const skills = unit.skills.map((skill) => makeDraftSkill(skill));
+
+      return {
+        slug: unit.slug,
+        title: unit.title,
+        summary: unit.summary,
+        skills: [
+          ...skills,
+          makeCheckpoint({ ...unit, skills: [] }, skills, "A2", "DRAFT")
+        ]
+      };
+    })
+  ];
+
+  units[units.length - 1].skills.push(makeA2FinalTest());
+
+  return units;
+}
+
 export const devLearnerProfile = {
   id: "dev-learner",
   displayName: "Dev Learner",
@@ -1649,6 +1931,11 @@ export const sampleCourse: SampleCourse = {
       label: "A1",
       title: "پایه‌های A1",
       units: buildUnits()
+    },
+    {
+      label: "A2",
+      title: "گسترش A2",
+      units: buildA2Units()
     }
   ]
 };
@@ -1805,18 +2092,39 @@ export const sampleResources: SampleResource[] = [
     publicationStatus: "PUBLISHED",
     unitSlug: "a1-getting-around",
     skillSlug: "ask-for-directions"
+  },
+  {
+    slug: "a2-global-life-persian-guide",
+    title: "راهنمای A2: آلمانی در زندگی جهانی",
+    description: "پشتیبانی فارسی برای ارتباط دوباره، داتیو، Perfekt، seit و دلیل آوردن با weil.",
+    type: "LEARNING_GUIDE",
+    levelLabel: "A2",
+    language: "fa/de",
+    thumbnailIcon: "globe-2",
+    metadata: {
+      length: "18 min",
+      format: "Persian-first guide",
+      focus: "A2 Unit 1"
+    },
+    content:
+      "این راهنما چهار موقعیت اصلی واحد اول A2 را به هم وصل می‌کند: دیدن دوباره افراد، حرف زدن درباره زندگی در کشور دیگر، تعریف تجربه‌های اخیر با Perfekt، و توضیح دلیل یادگیری آلمانی با weil. توضیح‌ها فارسی هستند و نمونه‌های تمرین آلمانی می‌مانند.",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "a2-german-in-global-life",
+    skillSlug: "a2-reconnect-and-ask-how-someone-is"
   }
 ];
 
 export function getPublishedSkills() {
   return sampleCourse.levels.flatMap((level) =>
     level.units.flatMap((unit) =>
-      unit.skills.map((skill) => ({
-        ...skill,
-        levelLabel: level.label,
-        unitSlug: unit.slug,
-        unitTitle: unit.title
-      }))
+      unit.skills
+        .filter((skill) => skill.publicationStatus === "PUBLISHED")
+        .map((skill) => ({
+          ...skill,
+          levelLabel: level.label,
+          unitSlug: unit.slug,
+          unitTitle: unit.title
+        }))
     )
   );
 }
@@ -1855,8 +2163,8 @@ export function getPublishedResource(resourceSlug: string) {
   };
 }
 
-export function getA1ContentSummary() {
-  const units = sampleCourse.levels[0]?.units ?? [];
+export function getLevelContentSummary(levelLabel = "A1") {
+  const units = sampleCourse.levels.find((level) => level.label === levelLabel)?.units ?? [];
   const skills = units.flatMap((unit) => unit.skills);
   const regularSkillCount = skills.filter((skill) => skill.kind === "REGULAR").length;
   const checkpointCount = skills.filter((skill) => skill.kind === "UNIT_CHECKPOINT").length;
@@ -1871,4 +2179,8 @@ export function getA1ContentSummary() {
     questionCount,
     resourceCount: sampleResources.length
   };
+}
+
+export function getA1ContentSummary() {
+  return getLevelContentSummary("A1");
 }

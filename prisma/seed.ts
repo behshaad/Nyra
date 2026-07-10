@@ -189,18 +189,25 @@ async function main() {
     });
   }
 
+  const a2UnitOne = await prisma.unit.findUnique({
+    where: {
+      slug: "a2-german-in-global-life"
+    }
+  });
+
   await prisma.flashcardDeck.upsert({
     where: {
-      slug: "a2-lesson-1-core-vocabulary"
+      slug: "a2-unit-1-core-vocabulary"
     },
     create: {
-      slug: "a2-lesson-1-core-vocabulary",
-      title: "A2 Lesson 1 Core Vocabulary",
-      description: "Thirty admin-authored A2 flashcards for the first A2 lesson category.",
+      slug: "a2-unit-1-core-vocabulary",
+      title: "واژگان اصلی A2 واحد 1",
+      description: "سی فلش‌کارت نویسنده‌شده برای واحد اول A2: آلمانی در زندگی جهانی.",
       levelLabel: "A2",
-      category: "Lesson 1",
+      category: "Unit 1",
       ownerType: "ADMIN",
       publicationStatus: "PUBLISHED",
+      unitId: a2UnitOne?.id,
       flashcards: {
         create: a2LessonOneFlashcards.map(
           ([front, back, example, exampleMeaning, difficulty], index) => ({
@@ -223,12 +230,13 @@ async function main() {
       }
     },
     update: {
-      title: "A2 Lesson 1 Core Vocabulary",
-      description: "Thirty admin-authored A2 flashcards for the first A2 lesson category.",
+      title: "واژگان اصلی A2 واحد 1",
+      description: "سی فلش‌کارت نویسنده‌شده برای واحد اول A2: آلمانی در زندگی جهانی.",
       levelLabel: "A2",
-      category: "Lesson 1",
+      category: "Unit 1",
       ownerType: "ADMIN",
       publicationStatus: "PUBLISHED",
+      unitId: a2UnitOne?.id,
       flashcards: {
         deleteMany: {},
         create: a2LessonOneFlashcards.map(
