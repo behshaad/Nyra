@@ -56,15 +56,17 @@ export async function getLearnerFlashcardDecks() {
         where: {
           publicationStatus: PublicationStatus.PUBLISHED
         },
-        include: learnerProfileId
+        ...(learnerProfileId
           ? {
-              reviewStates: {
-                where: {
-                  learnerProfileId
+              include: {
+                reviewStates: {
+                  where: {
+                    learnerProfileId
+                  }
                 }
               }
             }
-          : undefined,
+          : {}),
         orderBy: {
           order: "asc"
         }
