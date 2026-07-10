@@ -10,6 +10,7 @@ import {
   Plus,
   RotateCcw,
   Save,
+  Trash2,
   Volume2,
   XCircle
 } from "lucide-react";
@@ -101,6 +102,10 @@ const labels = {
     noDeckSelected: "اول یک دسته انتخاب یا ایجاد کن.",
     readOnlyDeck: "این دسته برای مطالعه آماده شده و قابل ویرایش نیست.",
     publicationStatus: "وضعیت انتشار کارت",
+    deleteDeck: "حذف دسته",
+    deleteCard: "حذف کارت",
+    confirmDeleteDeck: "این دسته و همه کارت‌های شخصی داخل آن حذف شوند؟",
+    confirmDeleteCard: "این فلش‌کارت شخصی حذف شود؟",
     admin: "ادمین",
     learner: "شخصی"
   },
@@ -146,6 +151,10 @@ const labels = {
     noDeckSelected: "Select or create a category first.",
     readOnlyDeck: "This prepared deck is available for study and cannot be edited here.",
     publicationStatus: "Card publication status",
+    deleteDeck: "Delete deck",
+    deleteCard: "Delete card",
+    confirmDeleteDeck: "Delete this personal deck and all of its Flashcards?",
+    confirmDeleteCard: "Delete this personal Flashcard?",
     admin: "Admin",
     learner: "Personal"
   },
@@ -191,6 +200,10 @@ const labels = {
     noDeckSelected: "Waehle oder erstelle zuerst eine Kategorie.",
     readOnlyDeck: "Dieses vorbereitete Deck ist zum Lernen verfuegbar und hier nicht editierbar.",
     publicationStatus: "Kartenstatus",
+    deleteDeck: "Deck loeschen",
+    deleteCard: "Karte loeschen",
+    confirmDeleteDeck: "Dieses persoenliche Deck und alle Karten loeschen?",
+    confirmDeleteCard: "Diese persoenliche Karte loeschen?",
     admin: "Admin",
     learner: "Persoenlich"
   }
@@ -269,6 +282,8 @@ export function FlashcardStudy({
   const [submittingDeck, setSubmittingDeck] = useState(false);
   const [submittingCard, setSubmittingCard] = useState(false);
   const [reviewingCardId, setReviewingCardId] = useState<string | null>(null);
+  const [deletingDeckId, setDeletingDeckId] = useState<string | null>(null);
+  const [deletingCardId, setDeletingCardId] = useState<string | null>(null);
 
   const levels = useMemo(
     () => [...new Set(decks.map((deck) => deck.levelLabel))],
@@ -290,6 +305,11 @@ export function FlashcardStudy({
     activeDeck &&
       ((adminMode && activeDeck.ownerType === FlashcardDeckOwnerType.ADMIN) ||
         (!adminMode && activeDeck.ownerType === FlashcardDeckOwnerType.LEARNER))
+  );
+  const canDeleteActiveDeck = Boolean(
+    activeDeck &&
+      !adminMode &&
+      activeDeck.ownerType === FlashcardDeckOwnerType.LEARNER
   );
   const activeCards = activeDeck?.flashcards ?? [];
   const dueCards = visibleDecks.flatMap((deck) =>
@@ -482,6 +502,65 @@ export function FlashcardStudy({
     }
   }
 
+  async function deleteDeck(deck: FlashcardWorkspaceDeck) {
+    if (
+      adminMode ||
+      deck.ownerType !== FlashcardDeckOwnerType.LEARNER ||
+      !globalThis.confirm(copy.confirmDeleteDeck)
+    ) {
+      return;
+    }
+
+    setDeletingDeckId(deck.id);
+    setError(null);
+
+    try {
+      await readJson<{ deleted: boolean }>(
+        await fetch(`/api/flashcard-decks/${deck.id}`, {
+          method: "DELETE"
+        })
+      );
+      setDeckId("");
+      setActiveIndex(0);
+      setFlipped(false);
+      router.refresh();
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Unable to delete deck.");
+    } finally {
+      setDeletingDeckId(null);
+    }
+  }
+
+  async function deleteCard(card: FlashcardWorkspaceCard) {
+    if (!canDeleteActiveDeck || !globalThis.confirm(copy.confirmDeleteCard)) {
+      return;
+    }
+
+    setDeletingCardId(card.id);
+    setError(null);
+
+    try {
+      await readJson<{ deleted: boolean }>(
+        await fetch(`/api/flashcards/${card.id}`, {
+          method: "DELETE"
+        })
+      );
+      setActiveIndex(0);
+      setFlipped(false);
+      setStatus((current) => {
+        const next = { ...current };
+        delete next[card.id];
+
+        return next;
+      });
+      router.refresh();
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Unable to delete flashcard.");
+    } finally {
+      setDeletingCardId(null);
+    }
+  }
+
   return (
     <section className="flashcard-workspace" aria-label={copy.study}>
       <aside className="app-panel flashcard-sidebar">
@@ -574,24 +653,39 @@ export function FlashcardStudy({
 
         <div className="flashcard-deck-list">
           {visibleDecks.map((deck) => (
-            <button
+            <div
               className={clsx("flashcard-deck-chip", activeDeck?.id === deck.id && "active")}
               key={deck.id}
-              type="button"
-              onClick={() => selectDeck(deck.id)}
             >
-              <Layers3 size={15} />
-              <span>
-                <strong>{deck.title}</strong>
-                <small>
-                  {deck.levelLabel} · {deck.category} ·{" "}
-                  {deck.flashcards.filter((card) => card.isDue).length}/{deck.flashcards.length} due ·{" "}
-                  {deck.ownerType === FlashcardDeckOwnerType.ADMIN
-                    ? copy.admin
-                    : copy.learner}
-                </small>
-              </span>
-            </button>
+              <button
+                className="flashcard-deck-select"
+                type="button"
+                onClick={() => selectDeck(deck.id)}
+              >
+                <Layers3 size={15} />
+                <span>
+                  <strong>{deck.title}</strong>
+                  <small>
+                    {deck.levelLabel} · {deck.category} ·{" "}
+                    {deck.flashcards.filter((card) => card.isDue).length}/{deck.flashcards.length} due ·{" "}
+                    {deck.ownerType === FlashcardDeckOwnerType.ADMIN
+                      ? copy.admin
+                      : copy.learner}
+                  </small>
+                </span>
+              </button>
+              {!adminMode && deck.ownerType === FlashcardDeckOwnerType.LEARNER ? (
+                <button
+                  aria-label={copy.deleteDeck}
+                  className="icon-button danger-icon"
+                  disabled={deletingDeckId === deck.id}
+                  type="button"
+                  onClick={() => void deleteDeck(deck)}
+                >
+                  <Trash2 size={15} />
+                </button>
+              ) : null}
+            </div>
           ))}
         </div>
 
@@ -703,6 +797,17 @@ export function FlashcardStudy({
                 <CheckCircle2 size={18} />
                 {copy.known}
               </button>
+              {canDeleteActiveDeck ? (
+                <button
+                  className="danger-button"
+                  disabled={deletingCardId === active.id}
+                  type="button"
+                  onClick={() => void deleteCard(active)}
+                >
+                  <Trash2 size={18} />
+                  {copy.deleteCard}
+                </button>
+              ) : null}
             </div>
           </>
         ) : (

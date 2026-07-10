@@ -20,3 +20,14 @@ export function canCreateFlashcardInDeck(input: {
     input.deck.learnerProfileId === input.learnerProfileId
   );
 }
+
+export function canDeleteLearnerFlashcardDeck(input: {
+  learnerProfileId: string | null;
+  deck: FlashcardDeckAccessRecord;
+}) {
+  return (
+    input.deck.ownerType === FlashcardDeckOwnerType.LEARNER &&
+    Boolean(input.learnerProfileId) &&
+    input.deck.learnerProfileId === input.learnerProfileId
+  );
+}

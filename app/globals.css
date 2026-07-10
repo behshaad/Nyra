@@ -1869,10 +1869,9 @@ h3 {
   border: 1px solid var(--line);
   border-radius: 8px;
   color: var(--text);
-  cursor: pointer;
-  display: grid;
+  display: flex;
   gap: 8px;
-  grid-template-columns: auto minmax(0, 1fr);
+  justify-content: space-between;
   padding: 10px;
   text-align: start;
   width: 100%;
@@ -1886,6 +1885,25 @@ h3 {
 .flashcard-deck-chip svg {
   color: var(--green);
   margin-top: 2px;
+}
+
+.flashcard-deck-select {
+  align-items: flex-start;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  flex: 1;
+  gap: 8px;
+  grid-template-columns: auto minmax(0, 1fr);
+  min-width: 0;
+  padding: 0;
+  text-align: start;
+}
+
+.danger-icon svg {
+  color: var(--danger);
 }
 
 .flashcard-deck-chip strong,
