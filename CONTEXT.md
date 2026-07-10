@@ -44,6 +44,10 @@ _Avoid_: UI widget, answer mode
 A learner's submitted response to a Question at a specific moment.
 _Avoid_: Answer, response record
 
+**Accepted Answer**:
+An authored answer variant that should be treated as correct for a Question, alongside the Question's canonical correct answer. Accepted Answers are used for deterministic tolerance such as spelling variants, umlaut alternatives, or harmless punctuation differences, not for broad subjective equivalence.
+_Avoid_: Fuzzy answer, approximate answer
+
 **Suggested Flashcard**:
 A Flashcard explicitly linked to a Question to help a learner review the gap revealed by an incorrect Question Attempt. A Question can have multiple Suggested Flashcards, ordered by author priority.
 _Avoid_: Related card, automatic recommendation
