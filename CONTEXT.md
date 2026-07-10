@@ -68,9 +68,9 @@ _Avoid_: Lesson session, practice run
 A short assessment at the end of a Unit that samples the Unit's vocabulary, grammar, reading-style comprehension, and communicative phrases.
 _Avoid_: Quiz, mini exam
 
-**Final A1 Test**:
-A level-level assessment that samples across all twelve A1 Units and gives the learner a clear score or result for A1 readiness.
-_Avoid_: Final quiz, placement test
+**Final Level Test**:
+A level-level assessment that samples across all Units in a Level and gives the learner a clear score or readiness result for that Level.
+_Avoid_: Final A1 Test, Final A2 Test, final quiz, placement test
 
 **Soft Gate**:
 A progress signal that marks a Unit or Level as needing review when the learner scores below the passing threshold, without blocking continued exploration.
