@@ -92,6 +92,18 @@ _Avoid_: Speech evaluation, audio lesson
 A review scheduling method that decides when a learner should see a Flashcard again based on the learner's previous review result for that Flashcard.
 _Avoid_: Random review, simple shuffle
 
+**New Flashcard**:
+A Flashcard the learner has not reviewed yet.
+_Avoid_: Due card, unseen item
+
+**Due Flashcard**:
+A Flashcard the learner has reviewed before and should review again now according to Spaced Repetition.
+_Avoid_: New card, overdue-only card
+
+**Review Queue**:
+The set of New Flashcards and Due Flashcards selected for an intentional Flashcard review session.
+_Avoid_: Study list, random deck
+
 **Learning Path**:
 The ordered learner-facing route through a Level's Units and Skills. A Learning Path can show upcoming Skills before all of them are fully authored, as long as publication state makes learner availability clear.
 _Avoid_: Course outline, syllabus
