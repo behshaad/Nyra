@@ -104,8 +104,12 @@ const labels = {
     publicationStatus: "وضعیت انتشار کارت",
     deleteDeck: "حذف دسته",
     deleteCard: "حذف کارت",
+    archiveDeck: "آرشیو دسته",
+    archiveCard: "آرشیو کارت",
     confirmDeleteDeck: "این دسته و همه کارت‌های شخصی داخل آن حذف شوند؟",
     confirmDeleteCard: "این فلش‌کارت شخصی حذف شود؟",
+    confirmArchiveDeck: "این دسته ادمین از صفحه یادگیرنده حذف و آرشیو شود؟",
+    confirmArchiveCard: "این کارت ادمین از صفحه یادگیرنده حذف و آرشیو شود؟",
     admin: "ادمین",
     learner: "شخصی"
   },
@@ -153,8 +157,12 @@ const labels = {
     publicationStatus: "Card publication status",
     deleteDeck: "Delete deck",
     deleteCard: "Delete card",
+    archiveDeck: "Archive deck",
+    archiveCard: "Archive card",
     confirmDeleteDeck: "Delete this personal deck and all of its Flashcards?",
     confirmDeleteCard: "Delete this personal Flashcard?",
+    confirmArchiveDeck: "Archive this admin deck and remove it from learner access?",
+    confirmArchiveCard: "Archive this admin card and remove it from learner access?",
     admin: "Admin",
     learner: "Personal"
   },
@@ -202,8 +210,12 @@ const labels = {
     publicationStatus: "Kartenstatus",
     deleteDeck: "Deck loeschen",
     deleteCard: "Karte loeschen",
+    archiveDeck: "Deck archivieren",
+    archiveCard: "Karte archivieren",
     confirmDeleteDeck: "Dieses persoenliche Deck und alle Karten loeschen?",
     confirmDeleteCard: "Diese persoenliche Karte loeschen?",
+    confirmArchiveDeck: "Dieses Admin-Deck archivieren und fuer Lernende entfernen?",
+    confirmArchiveCard: "Diese Admin-Karte archivieren und fuer Lernende entfernen?",
     admin: "Admin",
     learner: "Persoenlich"
   }
@@ -284,6 +296,8 @@ export function FlashcardStudy({
   const [reviewingCardId, setReviewingCardId] = useState<string | null>(null);
   const [deletingDeckId, setDeletingDeckId] = useState<string | null>(null);
   const [deletingCardId, setDeletingCardId] = useState<string | null>(null);
+  const [archivingDeckId, setArchivingDeckId] = useState<string | null>(null);
+  const [archivingCardId, setArchivingCardId] = useState<string | null>(null);
 
   const levels = useMemo(
     () => [...new Set(decks.map((deck) => deck.levelLabel))],
@@ -310,6 +324,12 @@ export function FlashcardStudy({
     activeDeck &&
       !adminMode &&
       activeDeck.ownerType === FlashcardDeckOwnerType.LEARNER
+  );
+  const canArchiveActiveDeck = Boolean(
+    activeDeck &&
+      adminMode &&
+      activeDeck.ownerType === FlashcardDeckOwnerType.ADMIN &&
+      activeDeck.publicationStatus !== PublicationStatus.ARCHIVED
   );
   const activeCards = activeDeck?.flashcards ?? [];
   const dueCards = visibleDecks.flatMap((deck) =>
@@ -561,6 +581,73 @@ export function FlashcardStudy({
     }
   }
 
+  async function archiveDeck(deck: FlashcardWorkspaceDeck) {
+    if (
+      !adminMode ||
+      deck.ownerType !== FlashcardDeckOwnerType.ADMIN ||
+      deck.publicationStatus === PublicationStatus.ARCHIVED ||
+      !globalThis.confirm(copy.confirmArchiveDeck)
+    ) {
+      return;
+    }
+
+    setArchivingDeckId(deck.id);
+    setError(null);
+
+    try {
+      await readJson<{ publicationStatus: PublicationStatus }>(
+        await fetch(`/api/flashcard-decks/${deck.id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            publicationStatus: PublicationStatus.ARCHIVED
+          })
+        })
+      );
+      router.refresh();
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Unable to archive deck.");
+    } finally {
+      setArchivingDeckId(null);
+    }
+  }
+
+  async function archiveCard(card: FlashcardWorkspaceCard) {
+    if (
+      !canArchiveActiveDeck ||
+      card.publicationStatus === PublicationStatus.ARCHIVED ||
+      !globalThis.confirm(copy.confirmArchiveCard)
+    ) {
+      return;
+    }
+
+    setArchivingCardId(card.id);
+    setError(null);
+
+    try {
+      await readJson<{ publicationStatus: PublicationStatus }>(
+        await fetch(`/api/flashcards/${card.id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            publicationStatus: PublicationStatus.ARCHIVED
+          })
+        })
+      );
+      setActiveIndex(0);
+      setFlipped(false);
+      router.refresh();
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Unable to archive flashcard.");
+    } finally {
+      setArchivingCardId(null);
+    }
+  }
+
   return (
     <section className="flashcard-workspace" aria-label={copy.study}>
       <aside className="app-panel flashcard-sidebar">
@@ -681,6 +768,19 @@ export function FlashcardStudy({
                   disabled={deletingDeckId === deck.id}
                   type="button"
                   onClick={() => void deleteDeck(deck)}
+                >
+                  <Trash2 size={15} />
+                </button>
+              ) : null}
+              {adminMode &&
+              deck.ownerType === FlashcardDeckOwnerType.ADMIN &&
+              deck.publicationStatus !== PublicationStatus.ARCHIVED ? (
+                <button
+                  aria-label={copy.archiveDeck}
+                  className="icon-button danger-icon"
+                  disabled={archivingDeckId === deck.id}
+                  type="button"
+                  onClick={() => void archiveDeck(deck)}
                 >
                   <Trash2 size={15} />
                 </button>
@@ -806,6 +906,18 @@ export function FlashcardStudy({
                 >
                   <Trash2 size={18} />
                   {copy.deleteCard}
+                </button>
+              ) : null}
+              {canArchiveActiveDeck &&
+              active.publicationStatus !== PublicationStatus.ARCHIVED ? (
+                <button
+                  className="danger-button"
+                  disabled={archivingCardId === active.id}
+                  type="button"
+                  onClick={() => void archiveCard(active)}
+                >
+                  <Trash2 size={18} />
+                  {copy.archiveCard}
                 </button>
               ) : null}
             </div>

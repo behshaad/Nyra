@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { FlashcardDeckOwnerType } from "@/lib/generated/prisma/enums";
 import {
+  canArchiveAdminFlashcardDeck,
   canCreateFlashcardInDeck,
   canDeleteLearnerFlashcardDeck
 } from "@/lib/flashcards/flashcard-access";
@@ -81,6 +82,19 @@ describe("flashcard deck access", () => {
           ownerType: FlashcardDeckOwnerType.LEARNER,
           learnerProfileId: "learner-2"
         }
+      })
+    ).toBe(false);
+  });
+
+  it("allows archiving only admin-authored flashcard decks", () => {
+    expect(
+      canArchiveAdminFlashcardDeck({
+        ownerType: FlashcardDeckOwnerType.ADMIN
+      })
+    ).toBe(true);
+    expect(
+      canArchiveAdminFlashcardDeck({
+        ownerType: FlashcardDeckOwnerType.LEARNER
       })
     ).toBe(false);
   });

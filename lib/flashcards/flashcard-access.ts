@@ -31,3 +31,7 @@ export function canDeleteLearnerFlashcardDeck(input: {
     input.deck.learnerProfileId === input.learnerProfileId
   );
 }
+
+export function canArchiveAdminFlashcardDeck(deck: Pick<FlashcardDeckAccessRecord, "ownerType">) {
+  return deck.ownerType === FlashcardDeckOwnerType.ADMIN;
+}
