@@ -45,7 +45,7 @@ A learner's submitted response to a Question at a specific moment.
 _Avoid_: Answer, response record
 
 **Suggested Flashcard**:
-A Flashcard explicitly linked to a Question to help a learner review the gap revealed by an incorrect Question Attempt.
+A Flashcard explicitly linked to a Question to help a learner review the gap revealed by an incorrect Question Attempt. A Question can have multiple Suggested Flashcards, ordered by author priority.
 _Avoid_: Related card, automatic recommendation
 
 **Resource**:
