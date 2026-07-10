@@ -1,0 +1,3 @@
+# A2 unit theme map
+
+Nyra's A2 Learning Path will use twelve original Unit themes informed by the broad coverage of `Starten-wir-A2-Arbeitsbuch-GBL.pdf`: global German life; appearance and recommendations; family, relationships, and friends; housing, stays, and email; food, parties, and restaurants; urban culture and events; school, work, and dream jobs; health, happiness, and satisfaction; media, apps, and free time; social behavior, compliments, and gifts; money, banking, and messages; and travel, directions, and holiday experiences. These themes preserve A2 coverage while avoiding copied workbook lesson titles as Nyra's canonical Unit names.
