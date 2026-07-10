@@ -8,14 +8,9 @@ import {
   getAdminQuestionById,
   getSuggestedFlashcardOptions
 } from "@/lib/admin/question-repository";
+import { questionOptionsFrom } from "@/lib/question-engine/question-options";
 
 export const dynamic = "force-dynamic";
-
-function asStringArray(value: unknown) {
-  return Array.isArray(value) && value.every((item) => typeof item === "string")
-    ? value
-    : [];
-}
 
 export default async function EditQuestionPage({
   params
@@ -33,6 +28,8 @@ export default async function EditQuestionPage({
   if (!question) {
     notFound();
   }
+
+  const options = questionOptionsFrom(question.choices);
 
   return (
     <main className="site-shell admin-ltr" dir="ltr">
@@ -60,7 +57,9 @@ export default async function EditQuestionPage({
               type: question.type,
               prompt: question.prompt,
               helper: question.helper ?? "",
-              choices: asStringArray(question.choices),
+              choices: options.choices,
+              acceptedAnswers: options.acceptedAnswers,
+              tiles: options.tiles,
               correctAnswer: question.correctAnswer,
               explanation: question.explanation,
               required: question.required,

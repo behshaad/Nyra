@@ -5,14 +5,9 @@ import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
 import { AdminQuestionMoveButton } from "@/components/admin-question-move-button";
 import { getQuestionsForSkill } from "@/lib/admin/question-repository";
+import { questionOptionsFrom } from "@/lib/question-engine/question-options";
 
 export const dynamic = "force-dynamic";
-
-function asStringArray(value: unknown) {
-  return Array.isArray(value) && value.every((item) => typeof item === "string")
-    ? value
-    : [];
-}
 
 export default async function SkillQuestionsPage({
   params
@@ -65,7 +60,7 @@ export default async function SkillQuestionsPage({
 
           <div className="admin-preview">
             {skill.questions.map((question, index) => {
-              const choices = asStringArray(question.choices);
+              const options = questionOptionsFrom(question.choices);
 
               return (
                 <article className="admin-row question-row" key={question.id}>
@@ -75,7 +70,8 @@ export default async function SkillQuestionsPage({
                       {question.order}. {question.prompt}
                     </h3>
                     <p>
-                      {question.type.replaceAll("_", " ")} / {choices.length} choices /{" "}
+                      {question.type.replaceAll("_", " ")} / {options.choices.length} choices
+                      {options.tiles.length > 0 ? ` / ${options.tiles.length} tiles` : ""} /{" "}
                       {question.required ? "Required" : "Optional"} / Correct:{" "}
                       <strong>{question.correctAnswer}</strong>
                     </p>

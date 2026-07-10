@@ -2,12 +2,20 @@ import {
   PublicationStatus,
   QuestionType
 } from "@/lib/generated/prisma/enums";
+import {
+  parseLineList,
+  serializeQuestionOptions
+} from "@/lib/question-engine/question-options";
 
 export type QuestionInput = {
   type: QuestionType;
   prompt: string;
   helper: string | null;
-  choices: string[];
+  choices: string[] | {
+    choices: string[];
+    acceptedAnswers: string[];
+    tiles: string[];
+  };
   correctAnswer: string;
   explanation: string;
   required: boolean;
@@ -20,20 +28,6 @@ const questionTypes = new Set(Object.values(QuestionType));
 
 function clean(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
-}
-
-function parseChoices(value: unknown) {
-  if (Array.isArray(value)) {
-    return value
-      .filter((choice): choice is string => typeof choice === "string")
-      .map((choice) => choice.trim())
-      .filter(Boolean);
-  }
-
-  return clean(value)
-    .split("\n")
-    .map((choice) => choice.trim())
-    .filter(Boolean);
 }
 
 function parseSuggestedFlashcardIds(value: unknown) {
@@ -62,7 +56,9 @@ export function parseQuestionInput(body: Record<string, unknown>):
   const prompt = clean(body.prompt);
   const helper = clean(body.helper);
   const type = clean(body.type);
-  const choices = parseChoices(body.choices);
+  const choices = parseLineList(body.choices);
+  const acceptedAnswers = parseLineList(body.acceptedAnswers);
+  const tiles = parseLineList(body.tiles);
   const correctAnswer = clean(body.correctAnswer);
   const explanation = clean(body.explanation);
   const required = body.required === false || body.required === "false" ? false : true;
@@ -76,17 +72,42 @@ export function parseQuestionInput(body: Record<string, unknown>):
     };
   }
 
-  if (choices.length === 0) {
+  if (type === QuestionType.MULTIPLE_CHOICE && choices.length === 0) {
     return {
       ok: false,
       error: "At least one choice is required."
     };
   }
 
-  if (!correctAnswer || !choices.includes(correctAnswer)) {
+  if (!correctAnswer) {
     return {
       ok: false,
-      error: "Correct answer must match one of the choices exactly."
+      error: "Correct answer is required."
+    };
+  }
+
+  if (type === QuestionType.MULTIPLE_CHOICE && !choices.includes(correctAnswer)) {
+    return {
+      ok: false,
+      error: "Correct answer must match one of the choices exactly for multiple choice."
+    };
+  }
+
+  if (type === QuestionType.WORD_ORDERING) {
+    const effectiveTiles = tiles.length > 0 ? tiles : choices;
+
+    if (effectiveTiles.length === 0) {
+      return {
+        ok: false,
+        error: "Word ordering requires word tiles."
+      };
+    }
+  }
+
+  if (type === QuestionType.FILL_IN_BLANK && choices.length > 0 && !choices.includes(correctAnswer)) {
+    return {
+      ok: false,
+      error: "Fill-in choices are optional, but if provided they must include the correct answer."
     };
   }
 
@@ -110,7 +131,11 @@ export function parseQuestionInput(body: Record<string, unknown>):
       type: type as QuestionType,
       prompt,
       helper: helper || null,
-      choices,
+      choices: serializeQuestionOptions({
+        choices,
+        acceptedAnswers,
+        tiles: type === QuestionType.WORD_ORDERING ? tiles : []
+      }),
       correctAnswer,
       explanation,
       required,

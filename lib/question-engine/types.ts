@@ -6,6 +6,7 @@ export type LearningQuestionView = {
   prompt: string;
   helper: string | null;
   choices: string[];
+  tiles: string[];
 };
 
 export type LearningSessionView = {

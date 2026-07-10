@@ -7,6 +7,7 @@ import {
 } from "@/lib/generated/prisma/enums";
 import type { PrismaClient } from "@/lib/generated/prisma/client";
 import { evaluateAnswer } from "@/lib/question-engine/evaluation";
+import { questionOptionsFrom } from "@/lib/question-engine/question-options";
 import type {
   AnswerFeedbackView,
   LearningQuestionView,
@@ -28,19 +29,16 @@ type AttemptRecord = {
   result: QuestionAttemptResult;
 };
 
-function asStringArray(value: unknown) {
-  return Array.isArray(value) && value.every((item) => typeof item === "string")
-    ? value
-    : [];
-}
-
 function questionToView(question: QuestionRecord): LearningQuestionView {
+  const options = questionOptionsFrom(question.choices);
+
   return {
     id: question.id,
     type: question.type,
     prompt: question.prompt,
     helper: question.helper,
-    choices: asStringArray(question.choices)
+    choices: options.choices,
+    tiles: options.tiles.length > 0 ? options.tiles : options.choices
   };
 }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import type { FormEvent } from "react";
 import clsx from "clsx";
 import Link from "next/link";
 import { ArrowLeft, Check, ChevronRight, RotateCcw, ShieldCheck } from "lucide-react";
@@ -66,6 +67,8 @@ export function BackendSkillSession({
   const [loadState, setLoadState] = useState<LoadState>({ status: "loading" });
   const [lastFeedback, setLastFeedback] = useState<LastFeedback | null>(null);
   const [submittingAnswer, setSubmittingAnswer] = useState<string | null>(null);
+  const [typedAnswer, setTypedAnswer] = useState("");
+  const [selectedTileIds, setSelectedTileIds] = useState<string[]>([]);
   const [attemptCount, setAttemptCount] = useState(0);
 
   async function startSession() {
@@ -100,7 +103,25 @@ export function BackendSkillSession({
     () => lastFeedback?.answeredQuestion ?? session?.currentQuestion ?? null,
     [lastFeedback, session]
   );
+  const wordTiles = useMemo(
+    () =>
+      (displayQuestion?.tiles ?? []).map((tile, index) => ({
+        id: `${index}-${tile}`,
+        label: tile
+      })),
+    [displayQuestion]
+  );
+  const selectedTileLabels = selectedTileIds
+    .map((tileId) => wordTiles.find((tile) => tile.id === tileId)?.label)
+    .filter((tile): tile is string => Boolean(tile));
+  const builtWordOrderAnswer = selectedTileLabels.join(" ");
+  const availableTiles = wordTiles.filter((tile) => !selectedTileIds.includes(tile.id));
   const completed = session?.status === "COMPLETED" && !lastFeedback;
+
+  useEffect(() => {
+    setTypedAnswer("");
+    setSelectedTileIds([]);
+  }, [displayQuestion?.id]);
 
   async function submitAnswer(option: string) {
     if (!session || !session.currentQuestion || lastFeedback) {
@@ -135,6 +156,22 @@ export function BackendSkillSession({
       });
     } finally {
       setSubmittingAnswer(null);
+    }
+  }
+
+  function submitTypedAnswer(event: FormEvent) {
+    event.preventDefault();
+
+    if (typedAnswer.trim()) {
+      void submitAnswer(typedAnswer);
+    }
+  }
+
+  function submitWordOrderAnswer(event: FormEvent) {
+    event.preventDefault();
+
+    if (builtWordOrderAnswer) {
+      void submitAnswer(builtWordOrderAnswer);
     }
   }
 
@@ -300,28 +337,108 @@ export function BackendSkillSession({
         ) : displayQuestion ? (
           <>
             <h3>{displayQuestion.prompt}</h3>
-            <div className="answer-grid">
-              {displayQuestion.choices.map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  dir={getTextDirection(option)}
-                  className={clsx(
-                    "answer-option",
-                    lastFeedback?.submittedAnswer === option &&
-                      lastFeedback.isCorrect &&
-                      "correct",
-                    lastFeedback?.submittedAnswer === option &&
-                      !lastFeedback.isCorrect &&
-                      "wrong"
-                  )}
-                  onClick={() => submitAnswer(option)}
+            {displayQuestion.type === "FILL_IN_BLANK" ? (
+              <form className="typed-answer-form" onSubmit={submitTypedAnswer}>
+                <input
+                  dir={getTextDirection(typedAnswer)}
+                  value={typedAnswer}
+                  onChange={(event) => setTypedAnswer(event.target.value)}
                   disabled={Boolean(lastFeedback) || Boolean(submittingAnswer)}
+                  aria-label={displayQuestion.prompt}
+                />
+                <button
+                  className="primary-button compact"
+                  type="submit"
+                  disabled={
+                    Boolean(lastFeedback) ||
+                    Boolean(submittingAnswer) ||
+                    typedAnswer.trim().length === 0
+                  }
                 >
-                  {submittingAnswer === option ? copy.checking : option}
+                  {submittingAnswer === typedAnswer ? copy.checking : copy.continue}
                 </button>
-              ))}
-            </div>
+              </form>
+            ) : displayQuestion.type === "WORD_ORDERING" ? (
+              <form className="word-order-form" onSubmit={submitWordOrderAnswer}>
+                <div
+                  className={clsx(
+                    "word-order-answer",
+                    lastFeedback && (lastFeedback.isCorrect ? "correct" : "wrong")
+                  )}
+                  dir={getTextDirection(builtWordOrderAnswer)}
+                >
+                  {selectedTileLabels.length > 0 ? (
+                    selectedTileLabels.map((tile, index) => (
+                      <button
+                        className="word-tile selected"
+                        key={`${tile}-${index}`}
+                        type="button"
+                        disabled={Boolean(lastFeedback) || Boolean(submittingAnswer)}
+                        onClick={() =>
+                          setSelectedTileIds((current) =>
+                            current.filter((_, currentIndex) => currentIndex !== index)
+                          )
+                        }
+                      >
+                        {tile}
+                      </button>
+                    ))
+                  ) : (
+                    <span>{copy.hint}</span>
+                  )}
+                </div>
+                <div className="word-tile-bank">
+                  {availableTiles.map((tile) => (
+                    <button
+                      className="word-tile"
+                      key={tile.id}
+                      type="button"
+                      dir={getTextDirection(tile.label)}
+                      disabled={Boolean(lastFeedback) || Boolean(submittingAnswer)}
+                      onClick={() =>
+                        setSelectedTileIds((current) => [...current, tile.id])
+                      }
+                    >
+                      {tile.label}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  className="primary-button compact"
+                  type="submit"
+                  disabled={
+                    Boolean(lastFeedback) ||
+                    Boolean(submittingAnswer) ||
+                    selectedTileIds.length === 0
+                  }
+                >
+                  {submittingAnswer === builtWordOrderAnswer ? copy.checking : copy.continue}
+                </button>
+              </form>
+            ) : (
+              <div className="answer-grid">
+                {displayQuestion.choices.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    dir={getTextDirection(option)}
+                    className={clsx(
+                      "answer-option",
+                      lastFeedback?.submittedAnswer === option &&
+                        lastFeedback.isCorrect &&
+                        "correct",
+                      lastFeedback?.submittedAnswer === option &&
+                        !lastFeedback.isCorrect &&
+                        "wrong"
+                    )}
+                    onClick={() => submitAnswer(option)}
+                    disabled={Boolean(lastFeedback) || Boolean(submittingAnswer)}
+                  >
+                    {submittingAnswer === option ? copy.checking : option}
+                  </button>
+                ))}
+              </div>
+            )}
 
             {lastFeedback ? (
               <div className={clsx("feedback", lastFeedback.isCorrect ? "correct" : "wrong")}>

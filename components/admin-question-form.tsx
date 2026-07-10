@@ -10,6 +10,8 @@ type QuestionInitialValues = {
   prompt: string;
   helper: string;
   choices: string[];
+  acceptedAnswers: string[];
+  tiles: string[];
   correctAnswer: string;
   explanation: string;
   required: boolean;
@@ -54,6 +56,10 @@ export function AdminQuestionForm({
   const [prompt, setPrompt] = useState(initialValues.prompt);
   const [helper, setHelper] = useState(initialValues.helper);
   const [choices, setChoices] = useState(initialValues.choices.join("\n"));
+  const [acceptedAnswers, setAcceptedAnswers] = useState(
+    initialValues.acceptedAnswers.join("\n")
+  );
+  const [tiles, setTiles] = useState(initialValues.tiles.join("\n"));
   const [correctAnswer, setCorrectAnswer] = useState(initialValues.correctAnswer);
   const [explanation, setExplanation] = useState(initialValues.explanation);
   const [required, setRequired] = useState(initialValues.required);
@@ -86,6 +92,8 @@ export function AdminQuestionForm({
             prompt,
             helper,
             choices,
+            acceptedAnswers,
+            tiles,
             correctAnswer,
             explanation,
             required,
@@ -213,14 +221,43 @@ export function AdminQuestionForm({
         </label>
 
         <label className="form-grid-wide">
-          <span>Choices, one per line</span>
+          <span>
+            {type === "WORD_ORDERING"
+              ? "Optional distractor choices, one per line"
+              : type === "FILL_IN_BLANK"
+                ? "Optional answer choices, one per line"
+                : "Choices, one per line"}
+          </span>
           <textarea
-            required
+            required={type === "MULTIPLE_CHOICE"}
             rows={6}
             value={choices}
             onChange={(event) => setChoices(event.target.value)}
           />
         </label>
+
+        <label className="form-grid-wide">
+          <span>Accepted Answers, one per line</span>
+          <textarea
+            rows={4}
+            value={acceptedAnswers}
+            onChange={(event) => setAcceptedAnswers(event.target.value)}
+            placeholder="Optional deterministic variants, such as moechte for möchte."
+          />
+        </label>
+
+        {type === "WORD_ORDERING" ? (
+          <label className="form-grid-wide">
+            <span>Word Tiles, one per line</span>
+            <textarea
+              required
+              rows={4}
+              value={tiles}
+              onChange={(event) => setTiles(event.target.value)}
+              placeholder={"Ich\nlerne\nDeutsch"}
+            />
+          </label>
+        ) : null}
 
         <label className="form-grid-wide">
           <span>Correct Answer</span>

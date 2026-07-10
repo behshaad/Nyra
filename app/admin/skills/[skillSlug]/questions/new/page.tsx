@@ -54,6 +54,8 @@ export default async function NewQuestionPage({
               prompt: "",
               helper: "",
               choices: [],
+              acceptedAnswers: [],
+              tiles: [],
               correctAnswer: "",
               explanation: "",
               required: true,
