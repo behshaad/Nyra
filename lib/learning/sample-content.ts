@@ -1868,6 +1868,250 @@ const a2UnitOneSpec: UnitSpec = {
   ]
 };
 
+const a2PublishedUnitSpecs: UnitSpec[] = [
+  a2UnitOneSpec,
+  {
+    slug: "a2-appearance-and-recommendations",
+    title: "ظاهر، لباس و پیشنهاد دادن",
+    summary: "لباس و ظاهر را توصیف کنید، در خرید نظر بدهید و پیشنهاد یا توصیه مودبانه بسازید.",
+    resourceFocus: "لباس، ظاهر، خرید و پیشنهاد",
+    skills: [
+      {
+        slug: "a2-describe-clothes-and-style",
+        title: "لباس و استایل را توصیف کن",
+        description: "رنگ، جنس و ظاهر لباس‌ها را با جمله‌های دقیق‌تر بیان کن.",
+        focus: "لباس و ظاهر",
+        word: "der Mantel",
+        meaning: "پالتو",
+        phrase: "Der Mantel sieht sehr elegant aus.",
+        phraseMeaning: "پالتو خیلی شیک به نظر می‌رسد",
+        blankSentence: "Der Mantel sieht sehr ___ aus.",
+        blankAnswer: "elegant",
+        blankChoices: ["elegant", "durstig", "gestern"],
+        orderedWords: ["Der", "Mantel", "sieht", "elegant", "aus"],
+        grammarPoint: "در فعل جداشدنی aussehen، بخش aus در پایان جمله می‌آید.",
+        situation: "در فروشگاه ظاهر یک پالتو را توصیف می‌کنید.",
+        miniText: "Lena probiert einen Mantel. Er sieht elegant aus, aber er ist teuer.",
+        miniAnswer: "پالتو شیک است اما گران است."
+      },
+      {
+        slug: "a2-shop-for-clothes",
+        title: "در خرید لباس گفتگو کن",
+        description: "سایز، قیمت، پسندیدن و عوض کردن گزینه‌ها را تمرین کن.",
+        focus: "خرید لباس",
+        word: "die Groesse",
+        meaning: "سایز / اندازه",
+        phrase: "Haben Sie diese Jacke in Groesse M?",
+        phraseMeaning: "آیا این کت را در سایز M دارید؟",
+        blankSentence: "Haben Sie diese Jacke in ___ M?",
+        blankAnswer: "Groesse",
+        blankChoices: ["Groesse", "Kasse", "Farbe"],
+        orderedWords: ["Ich", "nehme", "die", "Jacke", "in", "M"],
+        grammarPoint: "برای پرسیدن سایز لباس از in Groesse استفاده می‌شود.",
+        situation: "در بوتیک دنبال سایز مناسب می‌گردید.",
+        miniText: "Omid fragt nach Groesse M. Die Verkaeuferin bringt eine andere Jacke.",
+        miniAnswer: "امید سایز M می‌خواهد."
+      },
+      {
+        slug: "a2-talk-about-public-figures",
+        title: "درباره چهره‌های معروف حرف بزن",
+        description: "ظاهر و تاثیر یک شخص شناخته‌شده را کوتاه توصیف کن.",
+        focus: "توصیف افراد",
+        word: "der Schauspieler",
+        meaning: "بازیگر مرد",
+        phrase: "Der Schauspieler traegt oft einen schwarzen Anzug.",
+        phraseMeaning: "بازیگر اغلب کت‌وشلوار مشکی می‌پوشد",
+        blankSentence: "Der Schauspieler traegt oft einen schwarzen ___.",
+        blankAnswer: "Anzug",
+        blankChoices: ["Anzug", "Termin", "Bahnhof"],
+        orderedWords: ["Der", "Schauspieler", "traegt", "einen", "Anzug"],
+        grammarPoint: "بعد از traegt، مفعول مستقیم با آکوزاتیو می‌آید.",
+        situation: "ظاهر یک بازیگر را برای دوستتان توصیف می‌کنید.",
+        miniText: "Der Schauspieler ist bekannt. Auf Fotos traegt er oft einen schwarzen Anzug.",
+        miniAnswer: "او اغلب کت‌وشلوار مشکی می‌پوشد."
+      },
+      {
+        slug: "a2-make-a-recommendation",
+        title: "پیشنهاد مودبانه بده",
+        description: "با ساختارهای ساده پیشنهاد بده و دلیل کوتاه بیاور.",
+        focus: "پیشنهاد دادن",
+        word: "empfehlen",
+        meaning: "پیشنهاد کردن / توصیه کردن",
+        phrase: "Ich empfehle dir diese Schuhe.",
+        phraseMeaning: "من این کفش‌ها را به تو پیشنهاد می‌کنم",
+        blankSentence: "Ich ___ dir diese Schuhe.",
+        blankAnswer: "empfehle",
+        blankChoices: ["empfehle", "gefaellt", "hilfst"],
+        orderedWords: ["Ich", "empfehle", "dir", "diese", "Schuhe"],
+        grammarPoint: "در جمله Ich empfehle dir، ضمیر dir داتیو است.",
+        situation: "به دوستتان یک لباس یا کفش مناسب پیشنهاد می‌دهید.",
+        miniText: "Die Schuhe sind bequem und nicht teuer. Sara empfiehlt sie ihrer Freundin.",
+        miniAnswer: "سارا کفش‌ها را پیشنهاد می‌کند."
+      }
+    ]
+  },
+  {
+    slug: "a2-family-relationships-and-friends",
+    title: "خانواده، رابطه‌ها و دوستان",
+    summary: "درباره خانواده، رابطه‌ها، زوج‌ها، دوستی و تغییرات زندگی شخصی صحبت کنید.",
+    resourceFocus: "خانواده، رابطه‌ها و دوستی",
+    skills: [
+      {
+        slug: "a2-describe-family-relationships",
+        title: "رابطه‌های خانوادگی را توصیف کن",
+        description: "نسبت‌ها، نقش‌ها و وضعیت خانوادگی را روشن بیان کن.",
+        focus: "خانواده",
+        word: "die Verwandten",
+        meaning: "خویشاوندان",
+        phrase: "Meine Verwandten wohnen in verschiedenen Staedten.",
+        phraseMeaning: "خویشاوندان من در شهرهای مختلف زندگی می‌کنند",
+        blankSentence: "Meine ___ wohnen in verschiedenen Staedten.",
+        blankAnswer: "Verwandten",
+        blankChoices: ["Verwandten", "Schuhe", "Konten"],
+        orderedWords: ["Meine", "Verwandten", "wohnen", "in", "Berlin"],
+        grammarPoint: "Verwandten جمع است و فعل wohnen با آن می‌آید.",
+        situation: "درباره خانواده گسترده خود حرف می‌زنید.",
+        miniText: "Mina hat viele Verwandte. Einige wohnen in Berlin, andere in Wien.",
+        miniAnswer: "خویشاوندان مینا در شهرهای مختلف زندگی می‌کنند."
+      },
+      {
+        slug: "a2-talk-about-couples-and-plans",
+        title: "درباره زوج‌ها و برنامه‌ها حرف بزن",
+        description: "برنامه‌های مشترک، ازدواج یا زندگی مشترک را ساده توضیح بده.",
+        focus: "رابطه‌ها",
+        word: "verheiratet",
+        meaning: "متاهل",
+        phrase: "Sie sind seit zwei Jahren verheiratet.",
+        phraseMeaning: "آن‌ها دو سال است ازدواج کرده‌اند",
+        blankSentence: "Sie sind seit zwei Jahren ___.",
+        blankAnswer: "verheiratet",
+        blankChoices: ["verheiratet", "geoeffnet", "billig"],
+        orderedWords: ["Sie", "sind", "seit", "zwei", "Jahren", "verheiratet"],
+        grammarPoint: "برای مدت ادامه‌دار از seit همراه با داتیو زمانی استفاده می‌شود.",
+        situation: "درباره وضعیت رابطه یک زوج توضیح می‌دهید.",
+        miniText: "Nina und Ben sind verheiratet. Sie planen eine Reise mit der Familie.",
+        miniAnswer: "نینا و بن متاهل هستند."
+      },
+      {
+        slug: "a2-describe-friendships",
+        title: "دوستی‌ها را توصیف کن",
+        description: "درباره آشنایی، اعتماد و فعالیت‌های مشترک حرف بزن.",
+        focus: "دوستی",
+        word: "vertrauen",
+        meaning: "اعتماد کردن",
+        phrase: "Ich vertraue meiner besten Freundin.",
+        phraseMeaning: "من به بهترین دوستم اعتماد دارم",
+        blankSentence: "Ich ___ meiner besten Freundin.",
+        blankAnswer: "vertraue",
+        blankChoices: ["vertraue", "traegt", "tauscht"],
+        orderedWords: ["Ich", "vertraue", "meiner", "besten", "Freundin"],
+        grammarPoint: "فعل vertrauen با داتیو می‌آید.",
+        situation: "توضیح می‌دهید چرا یک دوست برایتان مهم است.",
+        miniText: "Ali kennt Reza seit der Schule. Er vertraut ihm und spricht oft mit ihm.",
+        miniAnswer: "علی به رضا اعتماد دارد."
+      },
+      {
+        slug: "a2-family-and-friends-check-in",
+        title: "خبر خانواده و دوستان را بپرس",
+        description: "حال و خبر افراد نزدیک را در گفتگوی طبیعی دنبال کن.",
+        focus: "خبر گرفتن",
+        word: "sich melden",
+        meaning: "خبر دادن / تماس گرفتن",
+        phrase: "Melde dich bitte am Wochenende.",
+        phraseMeaning: "لطفاً آخر هفته خبر بده",
+        blankSentence: "Melde dich bitte am ___.",
+        blankAnswer: "Wochenende",
+        blankChoices: ["Wochenende", "Schrank", "Anzug"],
+        orderedWords: ["Melde", "dich", "bitte", "am", "Wochenende"],
+        grammarPoint: "در درخواست دوستانه، فعل در ابتدای جمله می‌آید.",
+        situation: "از دوستی می‌خواهید آخر هفته خبر بدهد.",
+        miniText: "Sara ist sehr beschaeftigt. Ihre Mutter sagt: Melde dich bitte am Wochenende.",
+        miniAnswer: "مادر از سارا می‌خواهد آخر هفته خبر بدهد."
+      }
+    ]
+  },
+  {
+    slug: "a2-housing-stays-and-email",
+    title: "خانه، اقامت و ایمیل",
+    summary: "اقامت، خانه، آشپزخانه، درخواست‌های خانگی و ایمیل‌های کاربردی را تمرین کنید.",
+    resourceFocus: "خانه، اقامت، وسایل و ایمیل",
+    skills: [
+      {
+        slug: "a2-arrange-a-home-stay",
+        title: "اقامت را هماهنگ کن",
+        description: "درباره خانه، اتاق، زمان ورود و نیازها سوال بپرس.",
+        focus: "اقامت",
+        word: "der Wohnungstausch",
+        meaning: "تعویض خانه / خانه‌تبادل",
+        phrase: "Wir tauschen die Wohnung fuer eine Woche.",
+        phraseMeaning: "ما خانه را برای یک هفته عوض می‌کنیم",
+        blankSentence: "Wir tauschen die Wohnung fuer eine ___.",
+        blankAnswer: "Woche",
+        blankChoices: ["Woche", "Bluse", "Frage"],
+        orderedWords: ["Wir", "tauschen", "die", "Wohnung", "fuer", "eine", "Woche"],
+        grammarPoint: "برای مدت با fuer و آکوزاتیو می‌توان بازه زمانی را بیان کرد.",
+        situation: "برای اقامت کوتاه درباره تعویض خانه حرف می‌زنید.",
+        miniText: "Familie Novak tauscht die Wohnung fuer eine Woche. Die Gaeste kommen am Montag.",
+        miniAnswer: "تعویض خانه برای یک هفته است."
+      },
+      {
+        slug: "a2-write-a-practical-email",
+        title: "ایمیل کاربردی بنویس",
+        description: "درخواست، توضیح کوتاه و پایان مودبانه را در ایمیل تمرین کن.",
+        focus: "ایمیل",
+        word: "die Anfrage",
+        meaning: "درخواست / پرس‌وجو",
+        phrase: "Vielen Dank fuer Ihre Anfrage.",
+        phraseMeaning: "از درخواست شما بسیار سپاسگزاریم",
+        blankSentence: "Vielen Dank fuer Ihre ___.",
+        blankAnswer: "Anfrage",
+        blankChoices: ["Anfrage", "Kueche", "Jacke"],
+        orderedWords: ["Vielen", "Dank", "fuer", "Ihre", "Anfrage"],
+        grammarPoint: "در ایمیل رسمی از Ihre برای خطاب مودبانه استفاده می‌شود.",
+        situation: "به یک درخواست اقامت با ایمیل پاسخ می‌دهید.",
+        miniText: "Herr Meier schreibt eine Anfrage. Die Vermieterin antwortet freundlich.",
+        miniAnswer: "آقای مایر یک درخواست نوشته است."
+      },
+      {
+        slug: "a2-describe-kitchen-and-home-items",
+        title: "وسایل خانه را توصیف کن",
+        description: "وسایل آشپزخانه و محل آن‌ها را با جمله‌های دقیق‌تر بگو.",
+        focus: "وسایل خانه",
+        word: "der Topf",
+        meaning: "قابلمه",
+        phrase: "Der Topf steht im Schrank.",
+        phraseMeaning: "قابلمه در کمد است",
+        blankSentence: "Der Topf steht im ___.",
+        blankAnswer: "Schrank",
+        blankChoices: ["Schrank", "Anzug", "Projekt"],
+        orderedWords: ["Der", "Topf", "steht", "im", "Schrank"],
+        grammarPoint: "برای محل ثابت از stehen و حرف اضافه مکانی استفاده می‌شود.",
+        situation: "به مهمان توضیح می‌دهید وسایل آشپزخانه کجاست.",
+        miniText: "Der Topf steht im Schrank. Die Teller sind neben der Spuele.",
+        miniAnswer: "قابلمه در کمد است."
+      },
+      {
+        slug: "a2-ask-someone-to-place-items",
+        title: "از کسی بخواه چیزی را جابه‌جا کند",
+        description: "درخواست‌های خانگی و ضمیرهای مفعولی را تمرین کن.",
+        focus: "درخواست خانگی",
+        word: "stellen",
+        meaning: "گذاشتن به حالت ایستاده",
+        phrase: "Stell die Tasse bitte auf den Tisch.",
+        phraseMeaning: "لطفاً فنجان را روی میز بگذار",
+        blankSentence: "Stell die Tasse bitte auf den ___.",
+        blankAnswer: "Tisch",
+        blankChoices: ["Tisch", "Mantel", "Traum"],
+        orderedWords: ["Stell", "die", "Tasse", "bitte", "auf", "den", "Tisch"],
+        grammarPoint: "در درخواست جهت‌دار با auf den Tisch از آکوزاتیو استفاده می‌شود.",
+        situation: "در آشپزخانه از کسی می‌خواهید فنجان را روی میز بگذارد.",
+        miniText: "Die Tasse steht noch in der Kueche. Amir stellt sie auf den Tisch.",
+        miniAnswer: "امیر فنجان را روی میز می‌گذارد."
+      }
+    ]
+  }
+];
+
 const a2DraftUnits: Array<Omit<UnitSpec, "skills"> & { skills: Array<Pick<SkillSpec, "slug" | "title" | "description" | "focus">> }> = [
   {
     slug: "a2-appearance-and-recommendations",
@@ -2033,17 +2277,21 @@ function makeA2FinalTest(): SampleSkill {
 }
 
 function buildA2Units(): SampleUnit[] {
-  const unitOneSkills = a2UnitOneSpec.skills.map((skill) =>
-    makeSkill(skill, "PUBLISHED", makeA2SkillQuestions)
-  );
+  const publishedUnits = a2PublishedUnitSpecs.map((unit) => {
+    const skills = unit.skills.map((skill) =>
+      makeSkill(skill, "PUBLISHED", makeA2SkillQuestions)
+    );
+
+    return {
+      slug: unit.slug,
+      title: unit.title,
+      summary: unit.summary,
+      skills: [...skills, makeA2Checkpoint(unit, skills)]
+    };
+  });
   const units: SampleUnit[] = [
-    {
-      slug: a2UnitOneSpec.slug,
-      title: a2UnitOneSpec.title,
-      summary: a2UnitOneSpec.summary,
-      skills: [...unitOneSkills, makeA2Checkpoint(a2UnitOneSpec, unitOneSkills)]
-    },
-    ...a2DraftUnits.map((unit) => {
+    ...publishedUnits,
+    ...a2DraftUnits.slice(3).map((unit) => {
       const skills = unit.skills.map((skill) => makeDraftSkill(skill));
 
       return {
@@ -2264,6 +2512,63 @@ export const sampleResources: SampleResource[] = [
     publicationStatus: "PUBLISHED",
     unitSlug: "a2-german-in-global-life",
     skillSlug: "a2-reconnect-and-ask-how-someone-is"
+  },
+  {
+    slug: "a2-appearance-recommendations-persian-guide",
+    title: "راهنمای A2: ظاهر، لباس و پیشنهاد دادن",
+    description: "پشتیبانی فارسی برای توصیف لباس، خرید، آکوزاتیو و پیشنهاد دادن با داتیو.",
+    type: "LEARNING_GUIDE",
+    levelLabel: "A2",
+    language: "fa/de",
+    thumbnailIcon: "shirt",
+    metadata: {
+      length: "20 min",
+      format: "Persian-first guide",
+      focus: "A2 Unit 2"
+    },
+    content:
+      "این راهنما نشان می‌دهد چطور درباره ظاهر و لباس دقیق‌تر حرف بزنید، در خرید لباس سایز و نظر خود را بیان کنید، و با جمله‌هایی مثل Ich empfehle dir... پیشنهاد مودبانه بدهید. توضیح‌ها فارسی هستند و مثال‌های اصلی آلمانی می‌مانند.",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "a2-appearance-and-recommendations",
+    skillSlug: "a2-describe-clothes-and-style"
+  },
+  {
+    slug: "a2-family-relationships-persian-guide",
+    title: "راهنمای A2: خانواده، رابطه‌ها و دوستان",
+    description: "پشتیبانی فارسی برای نسبت‌های خانوادگی، seit، داتیو با vertrauen و خبر گرفتن.",
+    type: "LEARNING_GUIDE",
+    levelLabel: "A2",
+    language: "fa/de",
+    thumbnailIcon: "users-round",
+    metadata: {
+      length: "20 min",
+      format: "Persian-first guide",
+      focus: "A2 Unit 3"
+    },
+    content:
+      "این راهنما واژه‌های رابطه‌های خانوادگی و دوستی را با موقعیت‌های واقعی ترکیب می‌کند: توصیف خویشاوندان، حرف زدن درباره زوج‌ها، توضیح اعتماد در دوستی، و درخواست خبر دادن. تمرکز گرامری روی seit، داتیو و درخواست دوستانه است.",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "a2-family-relationships-and-friends",
+    skillSlug: "a2-describe-family-relationships"
+  },
+  {
+    slug: "a2-housing-email-persian-guide",
+    title: "راهنمای A2: خانه، اقامت و ایمیل",
+    description: "پشتیبانی فارسی برای هماهنگی اقامت، ایمیل رسمی، وسایل خانه و درخواست‌های خانگی.",
+    type: "LEARNING_GUIDE",
+    levelLabel: "A2",
+    language: "fa/de",
+    thumbnailIcon: "home",
+    metadata: {
+      length: "22 min",
+      format: "Persian-first guide",
+      focus: "A2 Unit 4"
+    },
+    content:
+      "این راهنما زبان لازم برای اقامت کوتاه و خانه را جمع می‌کند: پرسیدن درباره خانه، نوشتن ایمیل کوتاه و مودبانه، گفتن جای وسایل آشپزخانه، و درخواست جابه‌جایی اشیا. مثال‌ها آلمانی هستند و نکته‌های کاربردی به فارسی توضیح داده می‌شوند.",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "a2-housing-stays-and-email",
+    skillSlug: "a2-arrange-a-home-stay"
   }
 ];
 
