@@ -55,6 +55,11 @@ const labels = {
     contentHealth: "سلامت محتوا",
     hierarchy: "ساختار محتوا",
     resourceQueue: "صف منابع",
+    flashcardDecks: "دسته‌های فلش‌کارت",
+    flashcardDeckQueue: "کنترل دسته‌های فلش‌کارت",
+    newFlashcardDeck: "دسته فلش‌کارت جدید",
+    manage: "مدیریت",
+    preview: "پیش‌نمایش",
     prepared: "آماده برای توسعه",
     skillStudio: "استودیوی مهارت",
     skillStudioBody: "ویرایش متادیتا، وضعیت انتشار، ترتیب سؤال‌ها و محتوای سؤال.",
@@ -86,6 +91,11 @@ const labels = {
     contentHealth: "Content health",
     hierarchy: "Content hierarchy",
     resourceQueue: "Resource queue",
+    flashcardDecks: "Flashcard Decks",
+    flashcardDeckQueue: "Flashcard Deck controls",
+    newFlashcardDeck: "New Flashcard Deck",
+    manage: "Manage",
+    preview: "Preview",
     prepared: "Prepared module",
     skillStudio: "Skill Studio",
     skillStudioBody: "Edit metadata, publication states, Question order, and Question content.",
@@ -117,6 +127,11 @@ const labels = {
     contentHealth: "Inhaltsstatus",
     hierarchy: "Inhaltsstruktur",
     resourceQueue: "Ressourcenliste",
+    flashcardDecks: "Kartendecks",
+    flashcardDeckQueue: "Kartendeck-Steuerung",
+    newFlashcardDeck: "Neues Kartendeck",
+    manage: "Verwalten",
+    preview: "Vorschau",
     prepared: "Vorbereitetes Modul",
     skillStudio: "Skill Studio",
     skillStudioBody: "Metadaten, Veroeffentlichung, Fragenreihenfolge und Frageninhalt bearbeiten.",
@@ -172,6 +187,9 @@ export default async function AdminPage({
   const archivedResources = resources.filter(
     (resource) => resource.publicationStatus === "ARCHIVED"
   ).length;
+  const adminFlashcardDecks = flashcardDecks.filter(
+    (deck) => deck.ownerType === "ADMIN"
+  );
   const metrics = [
     {
       label: t.units,
@@ -370,6 +388,63 @@ export default async function AdminPage({
               ))}
             </div>
           </section>
+        </section>
+
+        <section className="app-panel route-panel admin-list-panel" aria-label={t.flashcardDeckQueue}>
+          <div className="app-panel-header">
+            <div>
+              <p className="panel-kicker">{t.flashcards}</p>
+              <h2>{t.flashcardDecks}</h2>
+            </div>
+            <div className="route-actions compact-actions">
+              <Link
+                className="primary-button compact"
+                href={withInterfaceLanguage("/admin/flashcards", language)}
+              >
+                <Plus size={16} />
+                {t.newFlashcardDeck}
+              </Link>
+            </div>
+          </div>
+          <div className="admin-preview compact-preview">
+            {adminFlashcardDecks.map((deck) => (
+              <article className="admin-row" key={deck.slug}>
+                <Circle size={12} />
+                <div>
+                  <h3>{deck.title}</h3>
+                  <p>
+                    {deck.levelLabel} / {deck.category}
+                    {deck.unit ? ` / ${deck.unit.title}` : ""} / {deck.flashcards.length}{" "}
+                    {t.flashcards}
+                  </p>
+                </div>
+                <span
+                  className={
+                    deck.publicationStatus === "ARCHIVED"
+                      ? "status-archived"
+                      : undefined
+                  }
+                >
+                  {deck.publicationStatus === "ARCHIVED" ? <Archive size={13} /> : null}
+                  {text(publicationStatusCopy[deck.publicationStatus], language)}
+                </span>
+                <Link
+                  className="ghost-button compact-link"
+                  href={withInterfaceLanguage("/admin/flashcards", language)}
+                >
+                  <Pencil size={16} />
+                  {t.manage}
+                </Link>
+                <Link
+                  className="ghost-button compact-link"
+                  href={withInterfaceLanguage("/flashcards", language)}
+                >
+                  <BookOpen size={16} />
+                  {t.preview}
+                </Link>
+              </article>
+            ))}
+          </div>
         </section>
       </section>
     </main>
