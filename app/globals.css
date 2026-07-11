@@ -3669,22 +3669,9 @@ h3 {
 }
 
 .world-map-stage .practice-main {
+  grid-template-rows: minmax(0, 1fr);
   min-height: 0;
   overflow: hidden;
-}
-
-.world-map-stage .practice-topbar {
-  background: linear-gradient(180deg, rgba(4, 13, 23, 0.86), rgba(4, 13, 23, 0.58));
-  min-height: 52px;
-  padding: 6px 20px;
-}
-
-.world-map-stage .practice-topbar-copy {
-  display: none;
-}
-
-.world-map-stage .practice-stats {
-  margin-left: auto;
 }
 
 .world-map-content {
@@ -3697,7 +3684,7 @@ h3 {
 .world-map {
   align-items: center;
   display: flex;
-  height: calc(100dvh - 52px);
+  height: 100dvh;
   justify-content: center;
   min-height: 0;
   overflow: hidden;
@@ -3995,8 +3982,8 @@ h3 {
 
   .world-map-canvas {
     height: auto;
-    max-height: calc(100dvh - 84px);
-    width: min(100%, calc((100dvh - 84px) * 864 / 1821));
+    max-height: 100dvh;
+    width: min(100%, calc(100dvh * 864 / 1821));
   }
 
   .world-map-stage .practice-progress-sidebar {
@@ -4019,35 +4006,6 @@ h3 {
     margin-top: 0;
     min-height: 100dvh;
     padding-bottom: env(safe-area-inset-bottom);
-  }
-
-  .world-map-stage .practice-topbar {
-    align-items: stretch;
-    flex-direction: row;
-    min-height: calc(34px + env(safe-area-inset-top));
-    padding: env(safe-area-inset-top) 0 0;
-  }
-
-  .world-map-stage .practice-stats {
-    flex-wrap: nowrap;
-    gap: 4px;
-    justify-content: flex-end;
-    margin-left: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-    width: 100%;
-  }
-
-  .world-map-stage .practice-stats::-webkit-scrollbar {
-    display: none;
-  }
-
-  .world-map-stage .practice-stats > span,
-  .world-map-stage .practice-language,
-  .world-map-stage .practice-avatar {
-    flex: 0 0 auto;
-    min-height: 32px;
-    padding-inline: 7px;
   }
 
   .world-map-content {

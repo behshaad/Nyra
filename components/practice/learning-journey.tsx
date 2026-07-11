@@ -226,7 +226,6 @@ function PracticeWorld({
     <section className="practice-stage world-map-stage" aria-label="Practice world map">
       <PracticeSidebar language={language} />
       <div className="practice-main">
-        <PracticeTopbar />
         <div className="practice-content world-map-content">
           <WorldMap
             activeLevel={activeLevel}
@@ -268,16 +267,6 @@ function PracticeSidebar({
         })}
       </nav>
     </aside>
-  );
-}
-
-function PracticeTopbar() {
-  return (
-    <header className="practice-topbar">
-      <div className="practice-stats">
-        <span className="practice-language">DE</span>
-      </div>
-    </header>
   );
 }
 
