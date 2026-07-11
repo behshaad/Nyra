@@ -22,6 +22,15 @@ npm run dev
 
 Open `http://localhost:3000`.
 
+Admin routes are protected by a temporary Basic Auth bridge until Supabase Auth
+and Nyra-owned admin roles are wired in. Set these values outside local
+development when accessing `/admin` or `/api/admin/*`:
+
+```bash
+ADMIN_USERNAME=...
+ADMIN_PASSWORD=...
+```
+
 ## Database
 
 Set `DATABASE_URL` in `.env`, then run:

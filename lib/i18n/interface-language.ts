@@ -148,12 +148,14 @@ export function withInterfaceLanguage(
     return href;
   }
 
-  const [pathname, query = ""] = href.split("?");
+  const [hrefWithoutHash, hash = ""] = href.split("#");
+  const [pathname, query = ""] = hrefWithoutHash.split("?");
   const params = new globalThis.URLSearchParams(query);
   params.set("ui", language);
   const serialized = params.toString();
+  const hashFragment = hash ? `#${hash}` : "";
 
-  return serialized ? `${pathname}?${serialized}` : pathname;
+  return serialized ? `${pathname}?${serialized}${hashFragment}` : `${pathname}${hashFragment}`;
 }
 
 export const interfaceCopy: Record<InterfaceLanguageCode, InterfaceCopy> = {

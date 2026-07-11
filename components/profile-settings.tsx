@@ -183,7 +183,7 @@ export function ProfileSettings({
         </div>
       </section>
 
-      <section className="app-panel account-panel">
+      <section className="app-panel account-panel" id="settings">
         <div className="app-panel-header">
           <div>
             <p className="panel-kicker">{copy.prepared}</p>
