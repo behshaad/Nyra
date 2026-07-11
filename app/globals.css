@@ -3895,3 +3895,177 @@ h3 {
     grid-template-columns: minmax(720px, 1fr) 208px;
   }
 }
+
+@media (max-width: 1180px) {
+  .practice-shell {
+    height: auto;
+    min-height: 100dvh;
+    overflow-x: clip;
+    overflow-y: auto;
+  }
+
+  .world-map-stage {
+    height: auto;
+    min-height: 100dvh;
+    overflow-x: clip;
+    overflow-y: auto;
+  }
+
+  .world-map-stage .practice-main {
+    overflow: visible;
+  }
+
+  .world-map-content {
+    height: auto;
+    overflow: visible;
+    padding: 0 12px 24px 0;
+  }
+
+  .world-map {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    padding-block: 10px;
+  }
+
+  .world-map-canvas {
+    height: auto;
+    max-height: calc(100dvh - 84px);
+    width: min(100%, calc((100dvh - 84px) * 864 / 1821));
+  }
+
+  .world-map-stage .practice-progress-sidebar {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    max-height: none;
+    overflow: visible;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 840px) {
+  .practice-shell {
+    padding: 0;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+
+  .world-map-stage {
+    border-radius: 0;
+    height: auto;
+    margin-top: 0;
+    min-height: 100dvh;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .world-map-stage .practice-topbar {
+    align-items: stretch;
+    flex-direction: row;
+    min-height: calc(52px + env(safe-area-inset-top));
+    padding: calc(6px + env(safe-area-inset-top)) 12px 6px;
+  }
+
+  .world-map-stage .practice-stats {
+    flex-wrap: nowrap;
+    gap: 5px;
+    justify-content: flex-end;
+    margin-left: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    width: 100%;
+  }
+
+  .world-map-stage .practice-stats::-webkit-scrollbar {
+    display: none;
+  }
+
+  .world-map-stage .practice-stats > span,
+  .world-map-stage .practice-language,
+  .world-map-stage .practice-avatar {
+    flex: 0 0 auto;
+    min-height: 32px;
+    padding-inline: 8px;
+  }
+
+  .world-map-content {
+    gap: 10px;
+    padding: 8px 10px max(18px, env(safe-area-inset-bottom));
+  }
+
+  .world-map {
+    padding-block: 0;
+  }
+
+  .world-map-canvas {
+    max-height: none;
+    width: min(100%, calc((100dvh - 76px - env(safe-area-inset-top)) * 864 / 1821));
+  }
+
+  .world-map .journey-title {
+    left: clamp(12px, 4vw, 18px);
+    top: clamp(12px, 4vw, 18px);
+  }
+
+  .world-map .journey-title h1 {
+    font-size: clamp(0.82rem, 4.8vw, 1.22rem);
+  }
+
+  .world-map .journey-title p {
+    font-size: clamp(0.48rem, 2.35vw, 0.62rem);
+    margin-top: 5px;
+    max-width: 34vw;
+  }
+
+  .world-map .journey-level-rail {
+    gap: clamp(6px, 2.1vw, 10px);
+    left: clamp(12px, 4vw, 18px);
+  }
+
+  .world-map .journey-level-rail button {
+    min-height: 20px;
+  }
+
+  .world-map .journey-level-rail strong {
+    font-size: clamp(0.5rem, 2.4vw, 0.64rem);
+  }
+
+  .world-map .journey-level-rail small {
+    font-size: clamp(0.36rem, 1.8vw, 0.45rem);
+  }
+
+  .level-world-node {
+    min-width: 44px;
+  }
+
+  .level-world-node .journey-node-hex,
+  .level-world-node.current .journey-node-hex {
+    height: clamp(44px, 11vw, 49px);
+    width: clamp(44px, 12.4vw, 56px);
+  }
+
+  .level-world-node .journey-node-copy {
+    max-width: 64px;
+    padding: 3px 4px;
+  }
+
+  .level-world-node .journey-node-copy strong {
+    font-size: clamp(0.52rem, 2.4vw, 0.59rem);
+  }
+
+  .level-world-node .journey-node-copy small,
+  .level-world-node .journey-node-copy em {
+    font-size: clamp(0.36rem, 1.7vw, 0.39rem);
+  }
+
+  .world-region-label {
+    font-size: clamp(0.48rem, 2.1vw, 0.58rem);
+    padding: 2px 6px;
+  }
+
+  .world-map-stage .practice-progress-sidebar {
+    grid-template-columns: 1fr;
+    padding-top: 0;
+  }
+
+  .world-layout-coordinate {
+    font-size: clamp(0.48rem, 2.1vw, 0.58rem);
+  }
+}
