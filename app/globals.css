@@ -2474,9 +2474,10 @@ h3 {
     radial-gradient(circle at 86% 18%, rgba(55, 154, 206, 0.18), transparent 32%),
     linear-gradient(135deg, #071014 0%, #091a1c 45%, #061013 100%);
   color: #edf7ed;
+  height: 100vh;
   min-height: 100vh;
   overflow-x: hidden;
-  padding: 18px;
+  padding: 0;
 }
 
 .practice-shell .topbar,
@@ -2503,19 +2504,19 @@ h3 {
 
 .practice-stage {
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.025)),
+    radial-gradient(circle at 52% 24%, rgba(124, 168, 88, 0.08), transparent 42%),
     rgba(2, 11, 15, 0.86);
-  border: 1px solid rgba(174, 231, 141, 0.18);
-  border-radius: 8px;
+  border: 0;
+  border-radius: 0;
   box-shadow:
-    0 34px 100px rgba(0, 0, 0, 0.56),
+    0 34px 100px rgba(0, 0, 0, 0.44),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
   display: grid;
-  grid-template-columns: 152px minmax(0, 1fr);
+  grid-template-columns: 136px minmax(0, 1fr);
+  height: 100vh;
   margin: 0 auto;
-  max-width: 1320px;
-  height: calc(100vh - 36px);
-  min-height: 760px;
+  max-width: none;
+  min-height: 720px;
   overflow: hidden;
   position: relative;
 }
@@ -2540,7 +2541,7 @@ h3 {
   flex-direction: column;
   gap: 18px;
   min-width: 0;
-  padding: 28px 14px;
+  padding: 22px 12px;
   position: relative;
   z-index: 3;
 }
@@ -2567,7 +2568,7 @@ h3 {
 
 .practice-side-nav {
   display: grid;
-  gap: 8px;
+  gap: 6px;
 }
 
 .practice-side-nav a {
@@ -2579,8 +2580,8 @@ h3 {
   font-size: 0.82rem;
   font-weight: 760;
   gap: 10px;
-  min-height: 42px;
-  padding: 0 10px;
+  min-height: 38px;
+  padding: 0 9px;
   transition: background 180ms ease, color 180ms ease, border-color 180ms ease, transform 180ms ease;
 }
 
@@ -2601,7 +2602,7 @@ h3 {
   display: grid;
   gap: 7px;
   margin-top: auto;
-  padding: 14px;
+  padding: 12px;
   text-align: center;
 }
 
@@ -2643,8 +2644,8 @@ h3 {
   display: flex;
   gap: 18px;
   justify-content: space-between;
-  min-height: 86px;
-  padding: 18px 28px;
+  min-height: 58px;
+  padding: 9px 22px;
 }
 
 .practice-topbar p,
@@ -2655,12 +2656,12 @@ h3 {
 
 .practice-topbar p {
   color: rgba(237, 247, 237, 0.58);
-  font-size: 0.78rem;
+  font-size: 0.68rem;
 }
 
 .practice-topbar strong {
   display: block;
-  font-size: 1.16rem;
+  font-size: 0.98rem;
   line-height: 1.15;
 }
 
@@ -2673,7 +2674,7 @@ h3 {
   align-items: center;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 7px;
   justify-content: flex-end;
 }
 
@@ -2685,9 +2686,9 @@ h3 {
   border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 8px;
   display: inline-flex;
-  gap: 7px;
-  min-height: 38px;
-  padding: 7px 10px;
+  gap: 6px;
+  min-height: 34px;
+  padding: 5px 9px;
 }
 
 .practice-stats small {
@@ -2721,20 +2722,21 @@ h3 {
 
 .practice-content {
   display: grid;
-  gap: 18px;
-  grid-template-columns: minmax(0, 1fr) 250px;
+  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) 208px;
   min-height: 0;
-  min-height: 0;
-  padding: 22px 28px 0;
+  padding: 0 14px 0 0;
 }
 
 .journey-camera {
   background: #061117;
-  border: 1px solid rgba(174, 231, 141, 0.12);
-  border-radius: 8px;
-  box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.42);
-  height: calc(100vh - 300px);
-  min-height: 520px;
+  border: 0;
+  border-radius: 0;
+  box-shadow:
+    inset -42px 0 80px rgba(0, 0, 0, 0.52),
+    inset 42px 0 80px rgba(0, 0, 0, 0.24);
+  height: calc(100vh - 168px);
+  min-height: 570px;
   overflow: hidden;
   overflow-y: auto;
   position: relative;
@@ -2744,13 +2746,22 @@ h3 {
 
 .journey-map-canvas {
   background:
-    linear-gradient(90deg, rgba(4, 11, 18, 0.3), transparent 20%, transparent 76%, rgba(4, 11, 18, 0.48)),
-    linear-gradient(180deg, rgba(5, 12, 18, 0.1), rgba(4, 10, 16, 0.82)),
-    url("/practice/germany-journey-map.png") center top / 100% 100% no-repeat;
+    linear-gradient(90deg, rgba(4, 11, 18, 0.26), transparent 16%, transparent 82%, rgba(4, 11, 18, 0.42)),
+    linear-gradient(180deg, rgba(5, 12, 18, 0.04), rgba(4, 10, 16, 0.5));
   min-height: 100%;
   overflow: hidden;
   position: relative;
   width: 100%;
+}
+
+.journey-map-image {
+  height: 100%;
+  inset: 0;
+  object-fit: cover;
+  object-position: center center;
+  position: absolute;
+  width: 100%;
+  z-index: 0;
 }
 
 .journey-world-light {
@@ -2762,12 +2773,102 @@ h3 {
   mix-blend-mode: screen;
   opacity: 0.36;
   position: absolute;
+  z-index: 1;
+}
+
+.journey-ambient-layer {
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
+}
+
+.journey-ambient-layer span {
+  display: block;
+  position: absolute;
+}
+
+.cloud {
+  background:
+    radial-gradient(circle at 24% 50%, rgba(255, 255, 255, 0.14), transparent 42%),
+    radial-gradient(circle at 58% 42%, rgba(255, 255, 255, 0.12), transparent 48%);
+  filter: blur(12px);
+  height: 100px;
+  opacity: 0.46;
+  width: 290px;
+}
+
+.cloud-one {
+  animation: cloud-drift 36s ease-in-out infinite alternate;
+  left: -80px;
+  top: 8%;
+}
+
+.cloud-two {
+  animation: cloud-drift 48s ease-in-out infinite alternate-reverse;
+  right: -130px;
+  top: 38%;
+}
+
+.fog {
+  background: linear-gradient(90deg, transparent, rgba(202, 224, 212, 0.12), transparent);
+  filter: blur(18px);
+  height: 120px;
+  opacity: 0.55;
+  width: 110%;
+}
+
+.fog-one {
+  animation: fog-slide 28s ease-in-out infinite alternate;
+  left: -8%;
+  top: 23%;
+}
+
+.fog-two {
+  animation: fog-slide 34s ease-in-out infinite alternate-reverse;
+  left: -4%;
+  top: 64%;
+}
+
+.light-ray {
+  background: linear-gradient(90deg, transparent, rgba(255, 229, 156, 0.16), transparent);
+  filter: blur(8px);
+  height: 780px;
+  opacity: 0.32;
+  transform: rotate(23deg);
+  width: 80px;
+}
+
+.ray-one {
+  animation: light-breathe 8s ease-in-out infinite;
+  left: 30%;
+  top: -4%;
+}
+
+.ray-two {
+  animation: light-breathe 11s ease-in-out infinite reverse;
+  right: 20%;
+  top: 32%;
+}
+
+.water-shimmer {
+  animation: water-shimmer 5.5s ease-in-out infinite;
+  background: linear-gradient(120deg, transparent, rgba(102, 211, 220, 0.22), transparent);
+  filter: blur(4px);
+  height: 34px;
+  left: 7%;
+  opacity: 0.44;
+  top: 58%;
+  transform: rotate(-28deg);
+  width: 280px;
 }
 
 .journey-background {
   inset: 0;
   pointer-events: none;
   position: absolute;
+  z-index: 3;
 }
 
 .journey-background::before {
@@ -2915,14 +3016,14 @@ h3 {
 }
 
 .journey-title {
-  left: 28px;
+  left: 24px;
   position: absolute;
-  top: 34px;
-  z-index: 4;
+  top: 24px;
+  z-index: 7;
 }
 
 .journey-title h1 {
-  font-size: clamp(2.15rem, 4vw, 3.1rem);
+  font-size: clamp(1.85rem, 3.2vw, 2.8rem);
   line-height: 0.96;
   margin: 0;
 }
@@ -2939,8 +3040,8 @@ h3 {
   gap: 22px;
   left: 24px;
   position: absolute;
-  top: 230px;
-  z-index: 5;
+  top: 204px;
+  z-index: 8;
 }
 
 .journey-level-rail button {
@@ -2983,7 +3084,7 @@ h3 {
   inset: 0;
   overflow: visible;
   position: absolute;
-  z-index: 2;
+  z-index: 4;
 }
 
 .journey-path path {
@@ -2995,25 +3096,26 @@ h3 {
 .journey-path-shadow {
   filter: drop-shadow(0 18px 16px rgba(0, 0, 0, 0.58));
   stroke: rgba(21, 13, 7, 0.48);
-  stroke-width: 1.5;
+  stroke-width: 2.25;
 }
 
 .journey-path-core {
-  stroke: rgba(255, 230, 139, 0.44);
-  stroke-width: 0.72;
+  filter: drop-shadow(0 0 10px rgba(255, 219, 110, 0.28));
+  stroke: rgba(255, 230, 139, 0.58);
+  stroke-width: 1;
 }
 
 .journey-path-lights {
   stroke: rgba(255, 251, 178, 0.74);
   stroke-dasharray: 0.25 1.2;
-  stroke-width: 0.28;
+  stroke-width: 0.34;
 }
 
 .journey-node-layer {
   height: 100%;
   inset: 0;
   position: absolute;
-  z-index: 6;
+  z-index: 9;
 }
 
 .journey-node-position {
@@ -3030,9 +3132,9 @@ h3 {
   align-items: center;
   cursor: pointer;
   display: grid;
-  gap: 8px;
+  gap: 6px;
   justify-items: center;
-  min-width: 104px;
+  min-width: 96px;
   position: relative;
   text-align: center;
 }
@@ -3045,10 +3147,10 @@ h3 {
   clip-path: polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0 50%);
   color: #092114;
   display: inline-flex;
-  height: 70px;
+  height: 62px;
   justify-content: center;
   position: relative;
-  width: 80px;
+  width: 72px;
 }
 
 .journey-node-hex::before {
@@ -3062,7 +3164,7 @@ h3 {
 .journey-node.current .journey-node-hex {
   box-shadow:
     0 0 0 10px rgba(255, 211, 82, 0.11),
-    0 0 42px rgba(255, 210, 74, 0.84),
+    0 0 48px rgba(255, 210, 74, 0.86),
     inset 0 0 28px rgba(255, 255, 255, 0.18);
 }
 
@@ -3089,14 +3191,14 @@ h3 {
 }
 
 .journey-node-copy {
-  background: rgba(3, 15, 19, 0.74);
+  background: rgba(3, 15, 19, 0.68);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   box-shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
   display: grid;
   gap: 2px;
-  max-width: 132px;
-  padding: 7px 9px;
+  max-width: 126px;
+  padding: 6px 8px;
 }
 
 .journey-node.locked .journey-node-copy {
@@ -3149,10 +3251,11 @@ h3 {
 
 .practice-progress-sidebar {
   display: grid;
-  gap: 14px;
+  gap: 10px;
   min-width: 0;
   position: relative;
   align-self: start;
+  padding-top: 10px;
 }
 
 .progress-orb-card,
@@ -3161,13 +3264,13 @@ h3 {
   border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 8px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  padding: 16px;
+  padding: 12px;
 }
 
 .progress-orb-card h2,
 .practice-side-card h2 {
   font-size: 0.95rem;
-  margin: 0 0 14px;
+  margin: 0 0 10px;
 }
 
 .progress-orb {
@@ -3177,21 +3280,21 @@ h3 {
     conic-gradient(#9fdd55 var(--progress), rgba(255, 255, 255, 0.12) 0);
   border-radius: 999px;
   display: flex;
-  height: 92px;
+  height: 72px;
   justify-content: center;
-  margin: 0 auto 14px;
-  width: 92px;
+  margin: 0 auto 10px;
+  width: 72px;
 }
 
 .progress-orb strong {
-  font-size: 1.35rem;
+  font-size: 1.08rem;
 }
 
 .progress-orb-card p,
 .practice-side-card p {
   color: rgba(237, 247, 237, 0.64);
   font-size: 0.76rem;
-  line-height: 1.5;
+  line-height: 1.35;
 }
 
 .progress-orb-card a,
@@ -3204,8 +3307,8 @@ h3 {
   display: flex;
   font-weight: 800;
   justify-content: center;
-  min-height: 36px;
-  padding: 10px;
+  min-height: 32px;
+  padding: 8px;
   width: 100%;
 }
 
@@ -3226,7 +3329,7 @@ h3 {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 999px;
   height: 8px;
-  margin: 14px 0;
+  margin: 10px 0;
   overflow: hidden;
 }
 
@@ -3243,9 +3346,9 @@ h3 {
   border-radius: 8px;
   color: #081612;
   display: flex;
-  height: 46px;
+  height: 38px;
   justify-content: center;
-  width: 46px;
+  width: 38px;
 }
 
 .rewards-card {
@@ -3254,15 +3357,15 @@ h3 {
 
 .rewards-card span {
   color: rgba(237, 247, 237, 0.78);
-  font-size: 0.78rem;
-  margin-top: 10px;
+  font-size: 0.72rem;
+  margin-top: 8px;
 }
 
 .practice-bottom-panel {
   display: grid;
-  gap: 14px;
-  grid-template-columns: minmax(0, 1fr) minmax(330px, 0.9fr);
-  padding: 18px 28px 28px;
+  gap: 10px;
+  grid-template-columns: minmax(0, 0.95fr) minmax(300px, 0.82fr);
+  padding: 8px 14px 10px 0;
   position: relative;
   z-index: 5;
 }
@@ -3274,13 +3377,13 @@ h3 {
   border-radius: 8px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
   min-width: 0;
-  padding: 16px;
+  padding: 12px;
 }
 
 .current-lesson-card {
   align-items: center;
   display: grid;
-  gap: 14px;
+  gap: 10px;
   grid-template-columns: auto 1fr auto;
 }
 
@@ -3290,9 +3393,9 @@ h3 {
   border-radius: 8px;
   color: #061313;
   display: inline-flex;
-  height: 58px;
+  height: 46px;
   justify-content: center;
-  width: 58px;
+  width: 46px;
 }
 
 .current-lesson-card small,
@@ -3309,7 +3412,9 @@ h3 {
 
 .current-lesson-card p {
   line-height: 1.45;
-  margin: 4px 0 6px;
+  margin: 3px 0 4px;
+  max-height: 2.9em;
+  overflow: hidden;
 }
 
 .current-lesson-card a {
@@ -3338,9 +3443,9 @@ h3 {
 
 .achievement-list {
   display: grid;
-  gap: 10px;
+  gap: 8px;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  margin-top: 14px;
+  margin-top: 10px;
 }
 
 .achievement-list span {
@@ -3351,8 +3456,8 @@ h3 {
   display: grid;
   gap: 5px;
   justify-items: center;
-  min-height: 92px;
-  padding: 10px;
+  min-height: 72px;
+  padding: 8px;
   text-align: center;
 }
 
@@ -3363,6 +3468,50 @@ h3 {
 .achievement-list small {
   color: rgba(237, 247, 237, 0.58);
   font-size: 0.64rem;
+}
+
+@keyframes cloud-drift {
+  from {
+    transform: translate3d(-16px, 0, 0);
+  }
+
+  to {
+    transform: translate3d(80px, 18px, 0);
+  }
+}
+
+@keyframes fog-slide {
+  from {
+    transform: translate3d(-42px, 0, 0);
+  }
+
+  to {
+    transform: translate3d(54px, 10px, 0);
+  }
+}
+
+@keyframes light-breathe {
+  0%,
+  100% {
+    opacity: 0.16;
+  }
+
+  50% {
+    opacity: 0.38;
+  }
+}
+
+@keyframes water-shimmer {
+  0%,
+  100% {
+    opacity: 0.18;
+    transform: translate3d(-18px, 0, 0) rotate(-28deg);
+  }
+
+  50% {
+    opacity: 0.5;
+    transform: translate3d(36px, 4px, 0) rotate(-28deg);
+  }
 }
 
 @media (max-width: 1180px) {
@@ -3476,6 +3625,6 @@ h3 {
 .journey-node.current .journey-node-hex {
   background: linear-gradient(145deg, #ffe66f, #7a5b18);
   color: #fff7bc;
-  height: 92px;
-  width: 104px;
+  height: 82px;
+  width: 94px;
 }

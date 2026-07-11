@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
@@ -81,17 +82,17 @@ function formatPercent(done: number, total: number) {
 function getLevelOrigin(index: number) {
   return {
     x: index % 2 === 0 ? 42 : 58,
-    y: 260 + index * 520
+    y: 320 + index * 620
   };
 }
 
 function getNodePosition(index: number, mapHeight: number) {
-  const x = 50 + Math.sin(index * 0.54) * 23 + Math.sin(index * 1.18) * 5;
-  const y = mapHeight - 250 - index * 64;
+  const x = 34 + Math.sin(index * 0.48) * 18 + Math.sin(index * 1.08) * 5;
+  const y = mapHeight - 320 - index * 88;
 
   return {
-    x: Math.max(18, Math.min(82, x)),
-    y: Math.max(170, y)
+    x: Math.max(16, Math.min(76, x)),
+    y: Math.max(220, y)
   };
 }
 
@@ -156,11 +157,18 @@ function LearningJourneyContent({
 
   useEffect(() => {
     const node = globalThis.document?.querySelector(".journey-node-position.is-current");
+    const camera = globalThis.document?.querySelector(".journey-camera");
 
-    node?.scrollIntoView({
+    if (
+      !(node instanceof globalThis.HTMLElement) ||
+      !(camera instanceof globalThis.HTMLElement)
+    ) {
+      return;
+    }
+
+    camera.scrollTo({
       behavior: "smooth",
-      block: "center",
-      inline: "center"
+      top: Math.max(0, node.offsetTop - camera.clientHeight / 2)
     });
   }, [currentNode?.id]);
 
@@ -173,7 +181,7 @@ function LearningJourneyContent({
           <JourneyCamera
             activeLevel={activeLevel}
             levels={journey.levels}
-            mapHeight={Math.max(1680, 660 + nodes.length * 64)}
+            mapHeight={Math.max(2200, 920 + nodes.length * 88)}
             nodes={nodes}
             currentNode={currentNode}
             onSelectLevel={setActiveLevelLabel}
@@ -272,7 +280,25 @@ function JourneyCamera({
   return (
     <section className="journey-camera" aria-label="German world map">
       <div className="journey-map-canvas" style={{ height: mapHeight }}>
+        <Image
+          alt=""
+          aria-hidden="true"
+          className="journey-map-image"
+          fill
+          priority
+          sizes="(max-width: 840px) 100vw, calc(100vw - 344px)"
+          src="/practice/germany-journey-map.png"
+        />
         <div className="journey-world-light" />
+        <div className="journey-ambient-layer" aria-hidden="true">
+          <span className="cloud cloud-one" />
+          <span className="cloud cloud-two" />
+          <span className="fog fog-one" />
+          <span className="fog fog-two" />
+          <span className="light-ray ray-one" />
+          <span className="light-ray ray-two" />
+          <span className="water-shimmer shimmer-one" />
+        </div>
         <JourneyBackground tone={activeLevel?.worldTone ?? "village"} />
         <div className="journey-title">
           <h1>Dein Weg.<br /><span>Deine Sprache.</span></h1>
