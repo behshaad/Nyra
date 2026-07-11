@@ -1,68 +1,117 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
-import { useEffect } from "react";
+import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { create } from "zustand";
 import {
+  BarChart3,
   BookOpenCheck,
-  Castle,
   Check,
   ChevronRight,
   Crown,
+  Dumbbell,
   Flame,
   Gem,
-  GraduationCap,
   Lock,
-  Mountain,
-  Play,
+  Settings,
   ShieldCheck,
   Sparkles,
   Star,
-  BarChart3,
-  Bot,
-  Dumbbell,
-  Settings,
   Trophy,
   Zap
 } from "lucide-react";
 import type {
-  PracticeJourneyLevel,
-  PracticeJourneyNode,
   PracticeJourneyView,
   PracticeJourneyWorldTone
 } from "@/lib/practice/journey";
 import type { InterfaceLanguageCode } from "@/lib/i18n/interface-language";
 
+type WorldLevelState = "completed" | "current" | "locked" | "future";
+
+type WorldLevel = {
+  label: "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
+  title: string;
+  region: string;
+  tone: PracticeJourneyWorldTone;
+  href: string;
+  completedCount: number;
+  totalCount: number;
+  xp: number;
+  state: WorldLevelState;
+};
+
 type JourneyStore = {
-  activeLevelLabel: string | null;
-  setActiveLevelLabel: (label: string) => void;
+  focusedLevelLabel: string | null;
+  setFocusedLevelLabel: (label: string) => void;
 };
 
 const queryClient = new QueryClient();
 
 const useJourneyStore = create<JourneyStore>((set) => ({
-  activeLevelLabel: null,
-  setActiveLevelLabel: (label) => set({ activeLevelLabel: label })
+  focusedLevelLabel: null,
+  setFocusedLevelLabel: (label) => set({ focusedLevelLabel: label })
 }));
 
-const worldCopy: Record<
-  PracticeJourneyWorldTone,
+const cefrWorlds: Array<{
+  label: WorldLevel["label"];
+  title: string;
+  region: string;
+  tone: PracticeJourneyWorldTone;
+  subtitle: string;
+  position: { x: number; y: number };
+}> = [
   {
-    title: string;
-    subtitle: string;
+    label: "A1",
+    title: "Anfaenger",
+    region: "Dorfleben",
+    tone: "village",
+    subtitle: "Village",
+    position: { x: 47, y: 64 }
+  },
+  {
+    label: "A2",
+    title: "Grundstufe",
+    region: "Kleinstadt",
+    tone: "town",
+    subtitle: "Small town",
+    position: { x: 34, y: 52 }
+  },
+  {
+    label: "B1",
+    title: "Mittelstufe",
+    region: "Grossstadt",
+    tone: "city",
+    subtitle: "City",
+    position: { x: 61, y: 43 }
+  },
+  {
+    label: "B2",
+    title: "Oberstufe",
+    region: "Die Burg",
+    tone: "castle",
+    subtitle: "Castle",
+    position: { x: 38, y: 33 }
+  },
+  {
+    label: "C1",
+    title: "Fortgeschritten",
+    region: "Bergstadt",
+    tone: "mountain",
+    subtitle: "Mountains",
+    position: { x: 62, y: 26 }
+  },
+  {
+    label: "C2",
+    title: "Mastery",
+    region: "Die Akademie",
+    tone: "academy",
+    subtitle: "Academy",
+    position: { x: 50, y: 14 }
   }
-> = {
-  village: { title: "Village", subtitle: "Windmill fields" },
-  town: { title: "Small town", subtitle: "Station and river" },
-  city: { title: "Large city", subtitle: "Urban fluency" },
-  castle: { title: "Castle", subtitle: "Highlands" },
-  mountain: { title: "Mountain", subtitle: "Alpine mastery" },
-  academy: { title: "Academy", subtitle: "Scholar path" }
-};
+];
 
 const navItems = [
   { href: "/learn", label: "Learn", icon: BookOpenCheck },
@@ -71,7 +120,6 @@ const navItems = [
   { href: "/resources", label: "Vocabulary", icon: Star },
   { href: "/resources", label: "Grammar", icon: BookOpenCheck },
   { href: "/profile", label: "Progress", icon: BarChart3 },
-  { href: "/admin", label: "Community", icon: Bot },
   { href: "/profile", label: "Settings", icon: Settings }
 ];
 
@@ -79,32 +127,57 @@ function formatPercent(done: number, total: number) {
   return total === 0 ? 0 : Math.round((done / total) * 100);
 }
 
-function getLevelOrigin(index: number) {
-  return {
-    x: index % 2 === 0 ? 42 : 58,
-    y: 320 + index * 620
-  };
+function levelHref(label: string, language: InterfaceLanguageCode) {
+  const href = `/practice/${label.toLowerCase()}`;
+
+  return language === "fa" ? href : `${href}?ui=${language}`;
 }
 
-function getNodePosition(index: number, mapHeight: number) {
-  const x = 34 + Math.sin(index * 0.48) * 18 + Math.sin(index * 1.08) * 5;
-  const y = mapHeight - 320 - index * 88;
+function buildWorldLevels(
+  journey: PracticeJourneyView,
+  language: InterfaceLanguageCode
+): WorldLevel[] {
+  const byLabel = new Map(journey.levels.map((level) => [level.label, level]));
+  const currentLabel =
+    journey.currentNode?.levelLabel ??
+    journey.levels.find((level) => level.totalCount > level.completedCount)?.label ??
+    "A1";
+  let currentAssigned = false;
 
-  return {
-    x: Math.max(16, Math.min(76, x)),
-    y: Math.max(220, y)
-  };
+  return cefrWorlds.map((world) => {
+    const level = byLabel.get(world.label);
+    const completedCount = level?.completedCount ?? 0;
+    const totalCount = level?.totalCount ?? 0;
+    let state: WorldLevelState = "locked";
+
+    if (totalCount > 0 && completedCount >= totalCount) {
+      state = "completed";
+    } else if (!currentAssigned && (world.label === currentLabel || totalCount > 0)) {
+      state = "current";
+      currentAssigned = true;
+    } else if (!currentAssigned) {
+      state = "future";
+    }
+
+    return {
+      label: world.label,
+      title: level?.title ?? world.title,
+      region: world.region,
+      tone: level?.worldTone ?? world.tone,
+      href: levelHref(world.label, language),
+      completedCount,
+      totalCount,
+      xp:
+        level?.units.reduce(
+          (total, unit) => total + unit.nodes.reduce((sum, node) => sum + node.xp, 0),
+          0
+        ) ?? 0,
+      state
+    };
+  });
 }
 
-function flattenNodes(levels: PracticeJourneyLevel[]) {
-  return levels.flatMap((level) => level.units.flatMap((unit) => unit.nodes));
-}
-
-function JourneyProviders({
-  children
-}: {
-  children: ReactNode;
-}) {
+function JourneyProviders({ children }: { children: ReactNode }) {
   return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 }
 
@@ -117,12 +190,12 @@ export function LearningJourney({
 }) {
   return (
     <JourneyProviders>
-      <LearningJourneyContent initialJourney={initialJourney} language={language} />
+      <PracticeWorld initialJourney={initialJourney} language={language} />
     </JourneyProviders>
   );
 }
 
-function LearningJourneyContent({
+function PracticeWorld({
   initialJourney,
   language
 }: {
@@ -142,49 +215,29 @@ function LearningJourneyContent({
     },
     initialData: initialJourney
   });
-  const activeLevelLabel = useJourneyStore((state) => state.activeLevelLabel);
-  const setActiveLevelLabel = useJourneyStore((state) => state.setActiveLevelLabel);
+  const focusedLevelLabel = useJourneyStore((state) => state.focusedLevelLabel);
+  const setFocusedLevelLabel = useJourneyStore((state) => state.setFocusedLevelLabel);
+  const levels = buildWorldLevels(journey, language);
   const activeLevel =
-    journey.levels.find((level) => level.label === activeLevelLabel) ??
-    journey.levels.find((level) =>
-      level.units.some((unit) => unit.nodes.some((node) => node.state === "current"))
-    ) ??
-    journey.levels[0];
-  const nodes = flattenNodes(activeLevel ? [activeLevel] : journey.levels);
-  const currentNode = journey.currentNode ?? nodes.find((node) => node.state === "current") ?? null;
+    levels.find((level) => level.label === focusedLevelLabel) ??
+    levels.find((level) => level.state === "current") ??
+    levels[0];
   const percent = formatPercent(journey.completedCount, journey.totalCount);
-  const dailyXp = Math.min(20, Math.max(0, Math.round((journey.completedCount / Math.max(1, journey.totalCount)) * 20)));
-
-  useEffect(() => {
-    const node = globalThis.document?.querySelector(".journey-node-position.is-current");
-    const camera = globalThis.document?.querySelector(".journey-camera");
-
-    if (
-      !(node instanceof globalThis.HTMLElement) ||
-      !(camera instanceof globalThis.HTMLElement)
-    ) {
-      return;
-    }
-
-    camera.scrollTo({
-      behavior: "smooth",
-      top: Math.max(0, node.offsetTop - camera.clientHeight / 2)
-    });
-  }, [currentNode?.id]);
+  const dailyXp = Math.min(
+    20,
+    Math.max(0, Math.round((journey.completedCount / Math.max(1, journey.totalCount)) * 20))
+  );
 
   return (
-    <section className="practice-stage" aria-label="Practice learning journey">
+    <section className="practice-stage world-map-stage" aria-label="Practice world map">
       <PracticeSidebar activeLevel={activeLevel?.label ?? null} language={language} />
       <div className="practice-main">
         <PracticeTopbar journey={journey} language={language} />
-        <div className="practice-content">
-          <JourneyCamera
+        <div className="practice-content world-map-content">
+          <WorldMap
             activeLevel={activeLevel}
-            levels={journey.levels}
-            mapHeight={Math.max(2200, 920 + nodes.length * 88)}
-            nodes={nodes}
-            currentNode={currentNode}
-            onSelectLevel={setActiveLevelLabel}
+            levels={levels}
+            onFocusLevel={setFocusedLevelLabel}
           />
           <ProgressSidebar
             activeLevel={activeLevel}
@@ -193,7 +246,7 @@ function LearningJourneyContent({
             dailyXp={dailyXp}
           />
         </div>
-        <PracticeBottomPanel currentNode={currentNode} journey={journey} />
+        <PracticeBottomPanel activeLevel={activeLevel} journey={journey} />
       </div>
     </section>
   );
@@ -218,7 +271,11 @@ function PracticeSidebar({
           const href = language === "fa" ? item.href : `${item.href}?ui=${language}`;
 
           return (
-            <Link className={item.href === "/practice" ? "active" : ""} href={href} key={item.href}>
+            <Link
+              className={item.href === "/practice" ? "active" : ""}
+              href={href}
+              key={`${item.href}-${item.label}`}
+            >
               <Icon size={16} />
               <span>{item.label}</span>
             </Link>
@@ -227,8 +284,8 @@ function PracticeSidebar({
       </nav>
       <div className="practice-premium-card">
         <Gem size={28} />
-        <strong>Premium</strong>
-        <span>Unlock all features and lessons.</span>
+        <strong>Go Premium</strong>
+        <span>Unlock all lessons and features</span>
         <Link href={language === "fa" ? "/pricing" : `/pricing?ui=${language}`}>Upgrade</Link>
       </div>
       {activeLevel ? <span className="practice-side-level">Current world {activeLevel}</span> : null}
@@ -245,7 +302,7 @@ function PracticeTopbar({
 }) {
   return (
     <header className="practice-topbar">
-      <div>
+      <div className="practice-topbar-copy">
         <p>{journey.course?.title ?? "German Learning Path"}</p>
         <strong>Dein Weg. <span>Deine Sprache.</span></strong>
       </div>
@@ -262,24 +319,18 @@ function PracticeTopbar({
   );
 }
 
-function JourneyCamera({
+function WorldMap({
   activeLevel,
   levels,
-  mapHeight,
-  nodes,
-  currentNode,
-  onSelectLevel
+  onFocusLevel
 }: {
-  activeLevel?: PracticeJourneyLevel;
-  levels: PracticeJourneyLevel[];
-  mapHeight: number;
-  nodes: PracticeJourneyNode[];
-  currentNode: PracticeJourneyNode | null;
-  onSelectLevel: (label: string) => void;
+  activeLevel?: WorldLevel;
+  levels: WorldLevel[];
+  onFocusLevel: (label: string) => void;
 }) {
   return (
-    <section className="journey-camera" aria-label="German world map">
-      <div className="journey-map-canvas" style={{ height: mapHeight }}>
+    <section className="journey-camera world-map" aria-label="Germany world map">
+      <div className="journey-map-canvas world-map-canvas">
         <Image
           alt=""
           aria-hidden="true"
@@ -299,79 +350,49 @@ function JourneyCamera({
           <span className="light-ray ray-two" />
           <span className="water-shimmer shimmer-one" />
         </div>
-        <JourneyBackground tone={activeLevel?.worldTone ?? "village"} />
+        <Environment tone={activeLevel?.tone ?? "village"} />
         <div className="journey-title">
           <h1>Dein Weg.<br /><span>Deine Sprache.</span></h1>
           <p>Lerne Deutsch Schritt fuer Schritt und entdecke neue Welten.</p>
         </div>
-        <LevelRail levels={levels} activeLabel={activeLevel?.label ?? null} onSelectLevel={onSelectLevel} />
-        <JourneyPath mapHeight={mapHeight} nodes={nodes} />
-        <div className="journey-node-layer">
-          {nodes.map((node, index) => (
-            <JourneyNode
+        <LevelRail levels={levels} activeLabel={activeLevel?.label ?? null} onFocusLevel={onFocusLevel} />
+        <JourneyRoad />
+        <div className="journey-node-layer level-node-layer">
+          {levels.map((level, index) => (
+            <LevelNode
               index={index}
-              key={node.id}
-              node={node}
-              position={getNodePosition(index, mapHeight)}
-              isCurrent={currentNode?.id === node.id}
-              mapHeight={mapHeight}
+              key={level.label}
+              level={level}
+              onFocus={() => onFocusLevel(level.label)}
             />
           ))}
         </div>
-        <WorldMarkers
-          activeLabel={activeLevel?.label ?? null}
-          levels={levels}
-          mapHeight={mapHeight}
-          onSelectLevel={onSelectLevel}
-        />
+        <WorldMarkers levels={levels} />
       </div>
     </section>
   );
 }
 
-function JourneyBackground({ tone }: { tone: PracticeJourneyWorldTone }) {
-  const Icon =
-    tone === "academy"
-      ? GraduationCap
-      : tone === "mountain"
-        ? Mountain
-        : tone === "castle"
-          ? Castle
-          : Crown;
-
-  return (
-    <div className={`journey-background world-${tone}`} aria-hidden="true">
-      <div className="journey-river" />
-      <div className="journey-mountains" />
-      <div className="journey-forest forest-left" />
-      <div className="journey-forest forest-right" />
-      <div className="journey-village village-low" />
-      <div className="journey-village village-mid" />
-      <div className="journey-castle">
-        <Icon size={74} />
-      </div>
-      <div className="journey-windmill" />
-      <div className="journey-train" />
-    </div>
-  );
+function Environment({ tone }: { tone: PracticeJourneyWorldTone }) {
+  return <div className={`journey-background world-${tone}`} aria-hidden="true" />;
 }
 
 function LevelRail({
   levels,
   activeLabel,
-  onSelectLevel
+  onFocusLevel
 }: {
-  levels: PracticeJourneyLevel[];
+  levels: WorldLevel[];
   activeLabel: string | null;
-  onSelectLevel: (label: string) => void;
+  onFocusLevel: (label: string) => void;
 }) {
   return (
     <div className="journey-level-rail" aria-label="Levels">
-      {levels.map((level) => (
+      {[...levels].reverse().map((level) => (
         <button
           className={level.label === activeLabel ? "active" : ""}
-          key={level.id}
-          onClick={() => onSelectLevel(level.label)}
+          key={level.label}
+          onClick={() => onFocusLevel(level.label)}
           type="button"
         >
           <span />
@@ -383,27 +404,21 @@ function LevelRail({
   );
 }
 
-function JourneyPath({
-  mapHeight,
-  nodes
-}: {
-  mapHeight: number;
-  nodes: PracticeJourneyNode[];
-}) {
-  const points = nodes.map((_, index) => getNodePosition(index, mapHeight)).reverse();
+function JourneyRoad() {
+  const points = [...cefrWorlds].reverse().map((world) => world.position);
   const path = points.reduce((draft, point, index) => {
     if (index === 0) {
       return `M ${point.x} ${point.y}`;
     }
 
     const previous = points[index - 1];
-    const controlY = previous.y + (point.y - previous.y) * 0.5;
+    const controlY = previous.y + (point.y - previous.y) * 0.48;
 
     return `${draft} C ${previous.x} ${controlY}, ${point.x} ${controlY}, ${point.x} ${point.y}`;
   }, "");
 
   return (
-    <svg className="journey-path" viewBox={`0 0 100 ${mapHeight}`} preserveAspectRatio="none" aria-hidden="true">
+    <svg className="journey-path level-road" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
       <path className="journey-path-shadow" d={path} />
       <motion.path
         className="journey-path-core"
@@ -417,111 +432,87 @@ function JourneyPath({
   );
 }
 
-function JourneyNode({
-  node,
-  position,
+function LevelNode({
+  level,
   index,
-  isCurrent,
-  mapHeight
+  onFocus
 }: {
-  node: PracticeJourneyNode;
-  position: { x: number; y: number };
+  level: WorldLevel;
   index: number;
-  isCurrent: boolean;
-  mapHeight: number;
+  onFocus: () => void;
 }) {
-  const isLocked = node.state === "locked";
-  const isCheckpoint = node.kind !== "REGULAR";
-  const content = (
-    <motion.span
-      className={`journey-node ${node.state} ${isCheckpoint ? "assessment" : ""}`}
-      whileHover={isLocked ? undefined : { scale: 1.08, y: -5 }}
-      animate={
-        isCurrent
-          ? {
-              scale: [1, 1.05, 1],
-              filter: [
-                "drop-shadow(0 0 16px rgba(143, 224, 80, 0.55))",
-                "drop-shadow(0 0 34px rgba(143, 224, 80, 0.92))",
-                "drop-shadow(0 0 16px rgba(143, 224, 80, 0.55))"
-              ]
-            }
-          : isLocked
-            ? { y: [0, -4, 0] }
-            : undefined
-      }
-      transition={
-        isCurrent || isLocked
-          ? { duration: isCurrent ? 2.3 : 4.8, repeat: Infinity, ease: "easeInOut", delay: index * 0.08 }
-          : undefined
-      }
-    >
-      <span className="journey-node-hex">
-        {node.state === "completed" || node.state === "needs_review" ? (
-          <Check size={22} />
-        ) : isLocked ? (
-          <Lock size={21} />
-        ) : (
-          <Play size={21} />
-        )}
-      </span>
-      <span className="journey-node-copy">
-        <strong>{node.levelLabel}</strong>
-        <small>{node.kind === "FINAL_TEST" ? "Final Test" : node.kind === "UNIT_CHECKPOINT" ? "Checkpoint" : node.title}</small>
-        <em>{node.questionCount} Q / {node.xp} XP</em>
-      </span>
-    </motion.span>
-  );
+  const world = cefrWorlds.find((candidate) => candidate.label === level.label) ?? cefrWorlds[0];
+  const locked = level.state === "locked" || level.state === "future";
+  const current = level.state === "current";
+  const completion = level.totalCount > 0 ? `${level.completedCount} / ${level.totalCount}` : "0 / 30";
 
   return (
     <div
-      className={`journey-node-position ${isCurrent ? "is-current" : ""}`}
-      style={{
-        left: `${position.x}%`,
-        top: Math.min(mapHeight - 170, position.y)
-      }}
+      className={`journey-node-position level-node-position ${current ? "is-current" : ""}`}
+      onMouseEnter={onFocus}
+      style={{ left: `${world.position.x}%`, top: `${world.position.y}%` }}
     >
-      {isLocked ? (
-        <span aria-label={`${node.title} locked`}>{content}</span>
-      ) : (
-        <Link href={node.href} aria-label={`Open ${node.title}`}>
-          {content}
-        </Link>
-      )}
+      <Link href={level.href} aria-label={`Open ${level.label} world`}>
+        <motion.span
+          animate={
+            current
+              ? {
+                  scale: [1, 1.055, 1],
+                  filter: [
+                    "drop-shadow(0 0 18px rgba(255, 213, 78, 0.62))",
+                    "drop-shadow(0 0 38px rgba(255, 213, 78, 0.94))",
+                    "drop-shadow(0 0 18px rgba(255, 213, 78, 0.62))"
+                  ]
+                }
+              : locked
+                ? { y: [0, -3, 0] }
+                : undefined
+          }
+          className={`journey-node level-world-node ${level.state} world-${level.tone}`}
+          transition={
+            current || locked
+              ? { duration: current ? 2.4 : 5.4, repeat: Infinity, ease: "easeInOut", delay: index * 0.08 }
+              : undefined
+          }
+          whileHover={{ scale: 1.08, y: -5 }}
+        >
+          <span className="journey-node-hex">
+            {level.state === "completed" ? (
+              <Check size={22} />
+            ) : locked ? (
+              <Lock size={21} />
+            ) : (
+              <Check size={21} />
+            )}
+          </span>
+          <span className="journey-node-copy">
+            <strong>{level.label}</strong>
+            <small>{level.title}</small>
+            <em>{completion}</em>
+          </span>
+        </motion.span>
+      </Link>
     </div>
   );
 }
 
-function WorldMarkers({
-  levels,
-  activeLabel,
-  mapHeight,
-  onSelectLevel
-}: {
-  levels: PracticeJourneyLevel[];
-  activeLabel: string | null;
-  mapHeight: number;
-  onSelectLevel: (label: string) => void;
-}) {
+function WorldMarkers({ levels }: { levels: WorldLevel[] }) {
   return (
     <div className="journey-world-markers" aria-hidden="true">
-      {levels.map((level, index) => {
-        const origin = getLevelOrigin(index);
-        const top = Math.min(mapHeight - 120, origin.y);
-        const copy = worldCopy[level.worldTone];
+      {levels.map((level) => {
+        const world = cefrWorlds.find((candidate) => candidate.label === level.label) ?? cefrWorlds[0];
 
         return (
-          <button
-            className={level.label === activeLabel ? "active" : ""}
-            key={level.id}
-            onClick={() => onSelectLevel(level.label)}
-            style={{ left: `${origin.x}%`, top }}
-            type="button"
+          <span
+            className="world-region-label"
+            key={level.label}
+            style={{
+              left: `${Math.min(82, world.position.x + 11)}%`,
+              top: `${Math.max(10, world.position.y - 2)}%`
+            }}
           >
-            <strong>{level.label}</strong>
-            <span>{copy.title}</span>
-            <small>{copy.subtitle}</small>
-          </button>
+            <strong>{level.region}</strong>
+          </span>
         );
       })}
     </div>
@@ -534,7 +525,7 @@ function ProgressSidebar({
   percent,
   dailyXp
 }: {
-  activeLevel?: PracticeJourneyLevel;
+  activeLevel?: WorldLevel;
   journey: PracticeJourneyView;
   percent: number;
   dailyXp: number;
@@ -551,7 +542,7 @@ function ProgressSidebar({
           <strong>{percent}%</strong>
         </div>
         <p>{journey.completedCount} / {journey.totalCount} Skills abgeschlossen</p>
-        <Link href="/learn">Uebersicht</Link>
+        <Link href="/learn">Details ansehen</Link>
       </div>
       <div className="practice-side-card">
         <h2>Tagesziel</h2>
@@ -574,23 +565,23 @@ function ProgressSidebar({
       <div className="practice-side-card rewards-card">
         <h2>Belohnungen</h2>
         <span><Gem size={16} /> {journey.totalXp} XP</span>
-        <span><Crown size={16} /> {activeLevel?.completedCount ?? 0} Skills</span>
-        <span><Sparkles size={16} /> Neues Dorf</span>
+        <span><Crown size={16} /> {activeLevel?.completedCount ?? 0} Levels</span>
+        <span><Sparkles size={16} /> Neues Ziel</span>
       </div>
     </aside>
   );
 }
 
 function PracticeBottomPanel({
-  currentNode,
+  activeLevel,
   journey
 }: {
-  currentNode: PracticeJourneyNode | null;
+  activeLevel?: WorldLevel;
   journey: PracticeJourneyView;
 }) {
   const achievements = [
     { icon: Flame, value: "12", label: "Day Streak" },
-    { icon: Crown, value: String(journey.completedCount), label: "Skills" },
+    { icon: Crown, value: String(journey.completedCount), label: "Progress" },
     { icon: Zap, value: String(journey.totalXp), label: "XP gesammelt" },
     { icon: Trophy, value: String(journey.needsReviewCount), label: "Review" }
   ];
@@ -600,13 +591,13 @@ function PracticeBottomPanel({
       <div className="current-lesson-card">
         <span className="lesson-icon"><BookOpenCheck size={22} /></span>
         <div>
-          <small>Aktuelle Lektion</small>
-          <strong>{currentNode?.title ?? "Journey complete"}</strong>
-          <p>{currentNode?.description ?? "Pick any completed Skill to review again."}</p>
-          <span>{currentNode?.questionCount ?? 0} Fragen</span>
-          <span>{currentNode?.xp ?? 0} XP</span>
+          <small>Aktuelle Welt</small>
+          <strong>{activeLevel ? `${activeLevel.label} ${activeLevel.title}` : "Journey complete"}</strong>
+          <p>{activeLevel ? `${activeLevel.region} ist dein aktuelles Ziel auf der Deutschlandkarte.` : "Pick a CEFR world to continue."}</p>
+          <span>{activeLevel?.completedCount ?? 0} abgeschlossen</span>{" "}
+          <span>{activeLevel?.xp ?? 0} XP</span>
         </div>
-        {currentNode ? <Link href={currentNode.href}>Weiterlernen <ChevronRight size={16} /></Link> : null}
+        {activeLevel ? <Link href={activeLevel.href}>Weiterlernen <ChevronRight size={16} /></Link> : null}
       </div>
       <div className="achievement-strip">
         <div className="achievement-header">

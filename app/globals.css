@@ -2631,7 +2631,7 @@ h3 {
 
 .practice-main {
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr);
   min-width: 0;
   position: relative;
   z-index: 3;
@@ -3627,4 +3627,242 @@ h3 {
   color: #fff7bc;
   height: 82px;
   width: 94px;
+}
+
+.world-map-stage {
+  height: 100dvh;
+  min-height: 720px;
+  overflow: hidden;
+}
+
+.world-map-stage .practice-main {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.world-map-stage .practice-topbar {
+  background: linear-gradient(180deg, rgba(4, 13, 23, 0.86), rgba(4, 13, 23, 0.58));
+  min-height: 52px;
+  padding: 6px 20px;
+}
+
+.world-map-stage .practice-topbar-copy {
+  display: none;
+}
+
+.world-map-stage .practice-stats {
+  margin-left: auto;
+}
+
+.world-map-content {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  padding-right: 14px;
+}
+
+.world-map {
+  height: calc(100dvh - 52px);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.world-map-canvas {
+  aspect-ratio: 864 / 1821;
+  height: 100%;
+  min-height: 0;
+}
+
+.world-map .journey-map-image {
+  object-fit: cover;
+  object-position: center 54%;
+}
+
+.world-map .journey-title {
+  left: 24px;
+  max-width: 300px;
+  top: 28px;
+}
+
+.world-map .journey-title h1 {
+  font-size: clamp(1.7rem, 2.7vw, 2.58rem);
+}
+
+.world-map .journey-title p {
+  font-size: 0.88rem;
+  line-height: 1.42;
+  max-width: 255px;
+}
+
+.world-map .journey-level-rail {
+  gap: clamp(12px, 3.55vh, 30px);
+  top: 32%;
+}
+
+.world-map .journey-level-rail button {
+  min-height: 32px;
+}
+
+.world-map .journey-level-rail strong {
+  font-size: 1rem;
+}
+
+.world-map .journey-level-rail small {
+  font-size: 0.68rem;
+}
+
+.level-road {
+  height: 100%;
+  width: 100%;
+}
+
+.level-road .journey-path-shadow {
+  stroke-width: 3.1;
+}
+
+.level-road .journey-path-core {
+  stroke-width: 1.38;
+}
+
+.level-road .journey-path-lights {
+  stroke-width: 0.42;
+}
+
+.level-node-layer {
+  height: 100%;
+}
+
+.level-node-position {
+  z-index: 11;
+}
+
+.level-world-node {
+  min-width: 108px;
+}
+
+.level-world-node .journey-node-hex {
+  height: clamp(70px, 7.75vh, 92px);
+  width: clamp(82px, 8.85vh, 104px);
+}
+
+.level-world-node.current .journey-node-hex,
+.level-world-node.completed .journey-node-hex {
+  background: linear-gradient(145deg, #b8f06d, #376b30);
+}
+
+.level-world-node.world-academy .journey-node-hex,
+.level-world-node.world-mountain .journey-node-hex {
+  background: linear-gradient(145deg, #d79dff, #4e2d77);
+  color: #fff;
+}
+
+.level-world-node.world-castle .journey-node-hex,
+.level-world-node.world-city .journey-node-hex {
+  background: linear-gradient(145deg, #7fbdff, #244c80);
+  color: #fff;
+}
+
+.level-world-node.locked .journey-node-hex,
+.level-world-node.future .journey-node-hex {
+  background: linear-gradient(145deg, rgba(93, 107, 130, 0.82), rgba(18, 30, 45, 0.95));
+}
+
+.level-world-node.current .journey-node-hex {
+  background: linear-gradient(145deg, #ffe36b, #755717);
+  box-shadow:
+    0 0 0 10px rgba(255, 213, 78, 0.12),
+    0 0 48px rgba(255, 213, 78, 0.86),
+    inset 0 0 28px rgba(255, 255, 255, 0.22);
+}
+
+.level-world-node .journey-node-copy {
+  background: rgba(2, 12, 19, 0.72);
+  max-width: 124px;
+}
+
+.world-region-label {
+  background: linear-gradient(90deg, rgba(12, 24, 42, 0.9), rgba(13, 26, 42, 0.48));
+  border: 1px solid rgba(255, 209, 94, 0.18);
+  border-radius: 6px;
+  color: #ffe49e;
+  display: inline-flex;
+  font-size: 0.72rem;
+  font-weight: 850;
+  padding: 4px 10px;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 7;
+}
+
+.world-map-stage .practice-progress-sidebar {
+  gap: 8px;
+  max-height: calc(100dvh - 68px);
+  overflow: hidden;
+}
+
+.world-map-stage .progress-orb-card,
+.world-map-stage .practice-side-card {
+  padding: 12px;
+}
+
+.world-map-stage .progress-orb-card,
+.world-map-stage .practice-side-card {
+  background: rgba(4, 15, 25, 0.74);
+  backdrop-filter: blur(18px);
+}
+
+.world-map-stage .practice-bottom-panel {
+  grid-template-columns: minmax(0, 0.7fr) minmax(280px, 0.92fr);
+  bottom: 0;
+  left: 136px;
+  padding: 0 14px 10px 0;
+  position: absolute;
+  right: 222px;
+}
+
+.world-map-stage .current-lesson-card,
+.world-map-stage .achievement-strip {
+  background: rgba(4, 15, 25, 0.78);
+  backdrop-filter: blur(18px);
+  padding: 8px 10px;
+}
+
+.world-map-stage .current-lesson-card {
+  gap: 8px;
+}
+
+.world-map-stage .lesson-icon {
+  height: 36px;
+  width: 36px;
+}
+
+.world-map-stage .current-lesson-card p {
+  display: none;
+}
+
+.world-map-stage .current-lesson-card a {
+  min-height: 30px;
+  padding: 0 10px;
+}
+
+.world-map-stage .achievement-list {
+  gap: 7px;
+  margin-top: 8px;
+}
+
+.world-map-stage .achievement-list span {
+  gap: 3px;
+  min-height: 52px;
+  padding: 6px;
+}
+
+.world-map-stage .achievement-list svg {
+  height: 20px;
+  width: 20px;
+}
+
+@media (min-width: 1181px) {
+  .world-map-stage .practice-content {
+    grid-template-columns: minmax(720px, 1fr) 208px;
+  }
 }
