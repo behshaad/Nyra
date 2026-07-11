@@ -1622,6 +1622,66 @@ h3 {
   margin-top: 24px;
 }
 
+.profile-progress-section {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.profile-progress-section .app-panel-header p {
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 6px 0 0;
+}
+
+.profile-progress-section .status-pill {
+  align-items: center;
+  display: inline-flex;
+  gap: 6px;
+}
+
+.profile-progress-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.profile-progress-card {
+  background:
+    radial-gradient(circle at 18% 0%, rgba(154, 224, 92, 0.14), transparent 38%),
+    var(--control);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 7px;
+  min-height: 132px;
+  padding: 14px;
+}
+
+.profile-progress-card svg {
+  color: var(--green);
+}
+
+.profile-progress-card span,
+.profile-progress-card small {
+  color: var(--muted);
+}
+
+.profile-progress-card span {
+  font-size: 0.78rem;
+  font-weight: 760;
+}
+
+.profile-progress-card strong {
+  font-size: 1.65rem;
+  line-height: 1;
+}
+
+.profile-progress-card small {
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
 .resource-feature-band {
   align-items: center;
   background: var(--hero-panel);
@@ -2340,6 +2400,10 @@ h3 {
     grid-template-columns: 1fr;
   }
 
+  .profile-progress-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .hero-section {
     min-height: auto;
   }
@@ -2387,6 +2451,7 @@ h3 {
   .foundation-grid,
   .flashcard-editor-flow,
   .profile-grid,
+  .profile-progress-grid,
   .resource-library,
   .resource-meta-grid,
   .form-grid,
@@ -2723,9 +2788,9 @@ h3 {
 .practice-content {
   display: grid;
   gap: 10px;
-  grid-template-columns: minmax(0, 1fr) 208px;
+  grid-template-columns: minmax(0, 1fr);
   min-height: 0;
-  padding: 0 14px 0 0;
+  padding: 0;
 }
 
 .journey-camera {
@@ -3892,7 +3957,7 @@ h3 {
 
 @media (min-width: 1181px) {
   .world-map-stage .practice-content {
-    grid-template-columns: minmax(720px, 1fr) 208px;
+    grid-template-columns: minmax(720px, 1fr);
   }
 }
 
@@ -3918,7 +3983,7 @@ h3 {
   .world-map-content {
     height: auto;
     overflow: visible;
-    padding: 0 12px 24px 0;
+    padding: 0 0 24px;
   }
 
   .world-map {

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import type { CSSProperties, PointerEvent as ReactPointerEvent, ReactNode } from "react";
+import type { PointerEvent as ReactPointerEvent, ReactNode } from "react";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { create } from "zustand";
@@ -11,18 +11,11 @@ import {
   BarChart3,
   BookOpenCheck,
   Check,
-  ChevronRight,
-  Crown,
   Dumbbell,
-  Flame,
-  Gem,
   Lock,
   Settings,
   ShieldCheck,
-  Sparkles,
-  Star,
-  Trophy,
-  Zap
+  Star
 } from "lucide-react";
 import type {
   PracticeJourneyView,
@@ -122,10 +115,6 @@ const navItems = [
   { href: "/profile", label: "Progress", icon: BarChart3 },
   { href: "/profile", label: "Settings", icon: Settings }
 ];
-
-function formatPercent(done: number, total: number) {
-  return total === 0 ? 0 : Math.round((done / total) * 100);
-}
 
 function levelHref(label: string, language: InterfaceLanguageCode) {
   const href = `/practice/${label.toLowerCase()}`;
@@ -232,41 +221,27 @@ function PracticeWorld({
     levels.find((level) => level.label === focusedLevelLabel) ??
     levels.find((level) => level.state === "current") ??
     levels[0];
-  const percent = formatPercent(journey.completedCount, journey.totalCount);
-  const dailyXp = Math.min(
-    20,
-    Math.max(0, Math.round((journey.completedCount / Math.max(1, journey.totalCount)) * 20))
-  );
 
   return (
     <section className="practice-stage world-map-stage" aria-label="Practice world map">
-      <PracticeSidebar activeLevel={activeLevel?.label ?? null} language={language} />
+      <PracticeSidebar language={language} />
       <div className="practice-main">
-        <PracticeTopbar journey={journey} language={language} />
+        <PracticeTopbar />
         <div className="practice-content world-map-content">
           <WorldMap
             activeLevel={activeLevel}
             levels={levels}
             onFocusLevel={setFocusedLevelLabel}
           />
-          <ProgressSidebar
-            activeLevel={activeLevel}
-            journey={journey}
-            percent={percent}
-            dailyXp={dailyXp}
-          />
         </div>
-        <PracticeBottomPanel activeLevel={activeLevel} journey={journey} />
       </div>
     </section>
   );
 }
 
 function PracticeSidebar({
-  activeLevel,
   language
 }: {
-  activeLevel: string | null;
   language: InterfaceLanguageCode;
 }) {
   return (
@@ -292,38 +267,15 @@ function PracticeSidebar({
           );
         })}
       </nav>
-      <div className="practice-premium-card">
-        <Gem size={28} />
-        <strong>Go Premium</strong>
-        <span>Unlock all lessons and features</span>
-        <Link href={language === "fa" ? "/pricing" : `/pricing?ui=${language}`}>Upgrade</Link>
-      </div>
-      {activeLevel ? <span className="practice-side-level">Current world {activeLevel}</span> : null}
     </aside>
   );
 }
 
-function PracticeTopbar({
-  journey,
-  language
-}: {
-  journey: PracticeJourneyView;
-  language: InterfaceLanguageCode;
-}) {
+function PracticeTopbar() {
   return (
     <header className="practice-topbar">
-      <div className="practice-topbar-copy">
-        <p>{journey.course?.title ?? "German Learning Path"}</p>
-        <strong>Dein Weg. <span>Deine Sprache.</span></strong>
-      </div>
       <div className="practice-stats">
-        <span><Flame size={17} /> 12 <small>Day Streak</small></span>
-        <span><Gem size={17} /> {journey.totalXp} <small>XP</small></span>
-        <span><Trophy size={17} /> {journey.completedCount} <small>Done</small></span>
         <span className="practice-language">DE</span>
-        <Link href={language === "fa" ? "/profile" : `/profile?ui=${language}`} className="practice-avatar">
-          <span>L</span>
-        </Link>
       </div>
     </header>
   );
@@ -595,108 +547,5 @@ function WorldMarkers({
         );
       })}
     </div>
-  );
-}
-
-function ProgressSidebar({
-  activeLevel,
-  journey,
-  percent,
-  dailyXp
-}: {
-  activeLevel?: WorldLevel;
-  journey: PracticeJourneyView;
-  percent: number;
-  dailyXp: number;
-}) {
-  const levelPercent = activeLevel
-    ? formatPercent(activeLevel.completedCount, activeLevel.totalCount)
-    : percent;
-
-  return (
-    <aside className="practice-progress-sidebar" aria-label="Practice progress">
-      <div className="progress-orb-card">
-        <h2>Dein Fortschritt</h2>
-        <div className="progress-orb" style={{ "--progress": `${percent}%` } as CSSProperties}>
-          <strong>{percent}%</strong>
-        </div>
-        <p>{journey.completedCount} / {journey.totalCount} Skills abgeschlossen</p>
-        <Link href="/learn">Details ansehen</Link>
-      </div>
-      <div className="practice-side-card">
-        <h2>Tagesziel</h2>
-        <div className="daily-goal">
-          <Zap size={18} />
-          <strong>{dailyXp}</strong>
-          <span>/ 20 XP</span>
-        </div>
-        <div className="daily-bar"><span style={{ width: `${(dailyXp / 20) * 100}%` }} /></div>
-        <button type="button">Weiter lernen</button>
-      </div>
-      <div className="practice-side-card">
-        <h2>Aktuelles Level</h2>
-        <div className="current-level-chip">
-          <strong>{activeLevel?.label ?? "A1"}</strong>
-          <span>{activeLevel?.title ?? "Grundstufe"}</span>
-        </div>
-        <p>{levelPercent}% in dieser Welt abgeschlossen.</p>
-      </div>
-      <div className="practice-side-card rewards-card">
-        <h2>Belohnungen</h2>
-        <span><Gem size={16} /> {journey.totalXp} XP</span>
-        <span><Crown size={16} /> {activeLevel?.completedCount ?? 0} Levels</span>
-        <span><Sparkles size={16} /> Neues Ziel</span>
-      </div>
-    </aside>
-  );
-}
-
-function PracticeBottomPanel({
-  activeLevel,
-  journey
-}: {
-  activeLevel?: WorldLevel;
-  journey: PracticeJourneyView;
-}) {
-  const achievements = [
-    { icon: Flame, value: "12", label: "Day Streak" },
-    { icon: Crown, value: String(journey.completedCount), label: "Progress" },
-    { icon: Zap, value: String(journey.totalXp), label: "XP gesammelt" },
-    { icon: Trophy, value: String(journey.needsReviewCount), label: "Review" }
-  ];
-
-  return (
-    <footer className="practice-bottom-panel">
-      <div className="current-lesson-card">
-        <span className="lesson-icon"><BookOpenCheck size={22} /></span>
-        <div>
-          <small>Aktuelle Welt</small>
-          <strong>{activeLevel ? `${activeLevel.label} ${activeLevel.title}` : "Journey complete"}</strong>
-          <p>{activeLevel ? `${activeLevel.region} ist dein aktuelles Ziel auf der Deutschlandkarte.` : "Pick a CEFR world to continue."}</p>
-          <span>{activeLevel?.completedCount ?? 0} abgeschlossen</span>{" "}
-          <span>{activeLevel?.xp ?? 0} XP</span>
-        </div>
-        {activeLevel ? <Link href={activeLevel.href}>Weiterlernen <ChevronRight size={16} /></Link> : null}
-      </div>
-      <div className="achievement-strip">
-        <div className="achievement-header">
-          <strong>Erfolge</strong>
-          <Link href="/profile">Alle ansehen</Link>
-        </div>
-        <div className="achievement-list">
-          {achievements.map((achievement) => {
-            const Icon = achievement.icon;
-
-            return (
-              <span key={achievement.label}>
-                <Icon size={24} />
-                <strong>{achievement.value}</strong>
-                <small>{achievement.label}</small>
-              </span>
-            );
-          })}
-        </div>
-      </div>
-    </footer>
   );
 }
