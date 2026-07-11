@@ -2467,3 +2467,1015 @@ h3 {
     grid-column: 2;
   }
 }
+
+.practice-shell {
+  background:
+    radial-gradient(circle at 16% 0%, rgba(127, 214, 80, 0.16), transparent 28%),
+    radial-gradient(circle at 86% 18%, rgba(55, 154, 206, 0.18), transparent 32%),
+    linear-gradient(135deg, #071014 0%, #091a1c 45%, #061013 100%);
+  color: #edf7ed;
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding: 18px;
+}
+
+.practice-shell .topbar,
+.practice-shell .mobile-nav {
+  background: rgba(6, 18, 22, 0.76);
+  border-color: rgba(163, 231, 130, 0.16);
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.34);
+  color: #ecf7ec;
+}
+
+.practice-shell .brand-mark,
+.practice-brand-mark {
+  background: linear-gradient(135deg, #a8e15e, #4fb470);
+  box-shadow: 0 0 22px rgba(151, 222, 83, 0.32);
+  color: #061313;
+}
+
+.practice-shell .desktop-nav a.active,
+.practice-shell .mobile-nav a.active,
+.practice-shell .desktop-nav a:hover {
+  background: rgba(146, 221, 74, 0.14);
+  color: #f5fff4;
+}
+
+.practice-stage {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.025)),
+    rgba(2, 11, 15, 0.86);
+  border: 1px solid rgba(174, 231, 141, 0.18);
+  border-radius: 8px;
+  box-shadow:
+    0 34px 100px rgba(0, 0, 0, 0.56),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  display: grid;
+  grid-template-columns: 152px minmax(0, 1fr);
+  margin: 0 auto;
+  max-width: 1320px;
+  height: calc(100vh - 36px);
+  min-height: 760px;
+  overflow: hidden;
+  position: relative;
+}
+
+.practice-stage::before {
+  background:
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent),
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.1), transparent 34%);
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
+}
+
+.practice-sidebar {
+  background:
+    linear-gradient(180deg, rgba(11, 29, 34, 0.94), rgba(4, 15, 20, 0.96)),
+    rgba(4, 14, 18, 0.92);
+  border-right: 1px solid rgba(174, 231, 141, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+  padding: 28px 14px;
+  position: relative;
+  z-index: 3;
+}
+
+.practice-brand {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.practice-brand-mark {
+  align-items: center;
+  border-radius: 8px;
+  display: inline-flex;
+  font-weight: 900;
+  height: 32px;
+  justify-content: center;
+  width: 32px;
+}
+
+.practice-brand strong {
+  font-size: 1rem;
+}
+
+.practice-side-nav {
+  display: grid;
+  gap: 8px;
+}
+
+.practice-side-nav a {
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: rgba(237, 247, 237, 0.68);
+  display: flex;
+  font-size: 0.82rem;
+  font-weight: 760;
+  gap: 10px;
+  min-height: 42px;
+  padding: 0 10px;
+  transition: background 180ms ease, color 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.practice-side-nav a:hover,
+.practice-side-nav a.active {
+  background: linear-gradient(90deg, rgba(146, 221, 74, 0.22), rgba(146, 221, 74, 0.04));
+  border-color: rgba(146, 221, 74, 0.2);
+  color: #f5fff4;
+  transform: translateX(2px);
+}
+
+.practice-premium-card {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(253, 201, 78, 0.24), transparent 46%),
+    rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 217, 106, 0.16);
+  border-radius: 8px;
+  display: grid;
+  gap: 7px;
+  margin-top: auto;
+  padding: 14px;
+  text-align: center;
+}
+
+.practice-premium-card svg {
+  color: #ffd96a;
+  justify-self: center;
+}
+
+.practice-premium-card span,
+.practice-side-level {
+  color: rgba(237, 247, 237, 0.58);
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.practice-premium-card a {
+  background: linear-gradient(135deg, #a8e15e, #5fbd66);
+  border-radius: 7px;
+  color: #061313;
+  font-size: 0.75rem;
+  font-weight: 850;
+  margin-top: 4px;
+  min-height: 32px;
+  padding: 8px 10px;
+}
+
+.practice-main {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-width: 0;
+  position: relative;
+  z-index: 3;
+}
+
+.practice-topbar {
+  align-items: center;
+  background: rgba(5, 18, 23, 0.72);
+  border-bottom: 1px solid rgba(174, 231, 141, 0.12);
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  min-height: 86px;
+  padding: 18px 28px;
+}
+
+.practice-topbar p,
+.practice-topbar strong,
+.practice-topbar small {
+  margin: 0;
+}
+
+.practice-topbar p {
+  color: rgba(237, 247, 237, 0.58);
+  font-size: 0.78rem;
+}
+
+.practice-topbar strong {
+  display: block;
+  font-size: 1.16rem;
+  line-height: 1.15;
+}
+
+.practice-topbar strong span,
+.journey-title span {
+  color: #9fdd55;
+}
+
+.practice-stats {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.practice-stats > span,
+.practice-language,
+.practice-avatar {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  display: inline-flex;
+  gap: 7px;
+  min-height: 38px;
+  padding: 7px 10px;
+}
+
+.practice-stats small {
+  color: rgba(237, 247, 237, 0.56);
+  font-size: 0.62rem;
+}
+
+.practice-stats svg:first-child {
+  color: #ff8c42;
+}
+
+.practice-stats span:nth-child(2) svg {
+  color: #60eaa5;
+}
+
+.practice-stats span:nth-child(3) svg {
+  color: #ffd153;
+}
+
+.practice-avatar span {
+  align-items: center;
+  background: linear-gradient(135deg, #f3bf6b, #8be06d);
+  border-radius: 999px;
+  color: #10201b;
+  display: inline-flex;
+  font-weight: 900;
+  height: 26px;
+  justify-content: center;
+  width: 26px;
+}
+
+.practice-content {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) 250px;
+  min-height: 0;
+  min-height: 0;
+  padding: 22px 28px 0;
+}
+
+.journey-camera {
+  background: #061117;
+  border: 1px solid rgba(174, 231, 141, 0.12);
+  border-radius: 8px;
+  box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.42);
+  height: calc(100vh - 300px);
+  min-height: 520px;
+  overflow: hidden;
+  overflow-y: auto;
+  position: relative;
+  scroll-behavior: smooth;
+  scrollbar-color: rgba(159, 221, 85, 0.58) rgba(255, 255, 255, 0.06);
+}
+
+.journey-map-canvas {
+  background:
+    linear-gradient(90deg, rgba(4, 11, 18, 0.3), transparent 20%, transparent 76%, rgba(4, 11, 18, 0.48)),
+    linear-gradient(180deg, rgba(5, 12, 18, 0.1), rgba(4, 10, 16, 0.82)),
+    url("/practice/germany-journey-map.png") center top / 100% 100% no-repeat;
+  min-height: 100%;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.journey-world-light {
+  background:
+    radial-gradient(circle at 62% 24%, rgba(255, 224, 137, 0.2), transparent 18%),
+    radial-gradient(circle at 42% 64%, rgba(160, 225, 95, 0.18), transparent 22%);
+  filter: blur(3px);
+  inset: 0;
+  mix-blend-mode: screen;
+  opacity: 0.36;
+  position: absolute;
+}
+
+.journey-background {
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.journey-background::before {
+  background:
+    linear-gradient(180deg, rgba(2, 8, 14, 0.28), transparent 18%, transparent 78%, rgba(3, 9, 12, 0.52)),
+    radial-gradient(circle at 48% 92%, rgba(172, 231, 95, 0.18), transparent 18%),
+    radial-gradient(circle at 63% 8%, rgba(142, 176, 222, 0.14), transparent 16%);
+  content: "";
+  inset: 0;
+  position: absolute;
+}
+
+.journey-background > * {
+  display: none;
+}
+
+.journey-river {
+  background: linear-gradient(145deg, transparent 12%, rgba(59, 165, 191, 0.45) 28%, rgba(29, 95, 123, 0.28) 43%, transparent 68%);
+  filter: blur(8px);
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 54%;
+}
+
+.journey-mountains {
+  background:
+    linear-gradient(135deg, transparent 44%, rgba(204, 218, 208, 0.18) 45%, transparent 52%),
+    linear-gradient(225deg, transparent 40%, rgba(136, 161, 158, 0.26) 41%, transparent 56%);
+  clip-path: polygon(44% 0, 56% 18%, 64% 8%, 78% 30%, 100% 8%, 100% 0);
+  inset: 0;
+  opacity: 0.86;
+  position: absolute;
+}
+
+.journey-forest {
+  background-image:
+    radial-gradient(circle, rgba(36, 91, 52, 0.8) 0 24%, transparent 26%),
+    radial-gradient(circle, rgba(74, 128, 60, 0.72) 0 18%, transparent 20%);
+  background-size: 46px 46px, 32px 32px;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.28));
+  position: absolute;
+}
+
+.forest-left {
+  bottom: 0;
+  height: 58%;
+  left: -4%;
+  transform: rotate(-14deg);
+  width: 38%;
+}
+
+.forest-right {
+  height: 76%;
+  right: -6%;
+  top: 12%;
+  transform: rotate(16deg);
+  width: 34%;
+}
+
+.journey-village {
+  background:
+    linear-gradient(45deg, transparent 0 48%, rgba(238, 174, 88, 0.56) 49% 51%, transparent 52%),
+    repeating-linear-gradient(90deg, rgba(255, 213, 124, 0.42) 0 7px, rgba(40, 32, 27, 0.6) 7px 18px);
+  border-radius: 45% 45% 8px 8px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.38);
+  height: 88px;
+  position: absolute;
+  width: 150px;
+}
+
+.village-low {
+  bottom: 9%;
+  left: 47%;
+}
+
+.village-mid {
+  left: 62%;
+  top: 49%;
+  transform: scale(0.72);
+}
+
+.journey-castle {
+  align-items: center;
+  color: rgba(255, 224, 147, 0.72);
+  display: flex;
+  filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.46));
+  justify-content: center;
+  position: absolute;
+  right: 23%;
+  top: 10%;
+}
+
+.journey-windmill {
+  border-bottom: 64px solid rgba(196, 174, 110, 0.45);
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  bottom: 18%;
+  height: 0;
+  left: 24%;
+  position: absolute;
+  width: 28px;
+}
+
+.journey-windmill::before,
+.journey-windmill::after {
+  background: rgba(233, 234, 196, 0.65);
+  content: "";
+  height: 4px;
+  left: -26px;
+  position: absolute;
+  top: -16px;
+  width: 92px;
+}
+
+.journey-windmill::after {
+  transform: rotate(90deg);
+}
+
+.journey-train {
+  background: linear-gradient(90deg, rgba(255, 215, 92, 0.72), rgba(132, 58, 45, 0.68));
+  border-radius: 999px;
+  box-shadow: 0 0 18px rgba(255, 215, 92, 0.4);
+  height: 7px;
+  left: 58%;
+  position: absolute;
+  top: 62%;
+  transform: rotate(-24deg);
+  width: 80px;
+}
+
+.world-town .journey-river,
+.world-city .journey-river {
+  opacity: 1;
+}
+
+.world-castle .journey-castle,
+.world-academy .journey-castle {
+  transform: scale(1.25);
+}
+
+.world-mountain .journey-mountains {
+  opacity: 1;
+}
+
+.journey-title {
+  left: 28px;
+  position: absolute;
+  top: 34px;
+  z-index: 4;
+}
+
+.journey-title h1 {
+  font-size: clamp(2.15rem, 4vw, 3.1rem);
+  line-height: 0.96;
+  margin: 0;
+}
+
+.journey-title p {
+  color: rgba(237, 247, 237, 0.72);
+  line-height: 1.5;
+  margin: 14px 0 0;
+  max-width: 320px;
+}
+
+.journey-level-rail {
+  display: grid;
+  gap: 22px;
+  left: 24px;
+  position: absolute;
+  top: 230px;
+  z-index: 5;
+}
+
+.journey-level-rail button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: rgba(237, 247, 237, 0.64);
+  cursor: pointer;
+  display: grid;
+  gap: 2px 10px;
+  grid-template-columns: auto 1fr;
+  min-height: 38px;
+  padding: 0;
+  text-align: left;
+}
+
+.journey-level-rail button span {
+  background: #a7e45d;
+  border-radius: 999px;
+  box-shadow: 0 0 14px rgba(167, 228, 93, 0.55);
+  grid-row: span 2;
+  height: 10px;
+  width: 10px;
+}
+
+.journey-level-rail button.active {
+  color: #f7fff3;
+}
+
+.journey-level-rail strong {
+  font-size: 1.12rem;
+}
+
+.journey-level-rail small {
+  font-size: 0.74rem;
+}
+
+.journey-path {
+  height: 100%;
+  inset: 0;
+  overflow: visible;
+  position: absolute;
+  z-index: 2;
+}
+
+.journey-path path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.journey-path-shadow {
+  filter: drop-shadow(0 18px 16px rgba(0, 0, 0, 0.58));
+  stroke: rgba(21, 13, 7, 0.48);
+  stroke-width: 1.5;
+}
+
+.journey-path-core {
+  stroke: rgba(255, 230, 139, 0.44);
+  stroke-width: 0.72;
+}
+
+.journey-path-lights {
+  stroke: rgba(255, 251, 178, 0.74);
+  stroke-dasharray: 0.25 1.2;
+  stroke-width: 0.28;
+}
+
+.journey-node-layer {
+  height: 100%;
+  inset: 0;
+  position: absolute;
+  z-index: 6;
+}
+
+.journey-node-position {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.journey-node-position > a,
+.journey-node-position > span {
+  display: block;
+}
+
+.journey-node {
+  align-items: center;
+  cursor: pointer;
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  min-width: 104px;
+  position: relative;
+  text-align: center;
+}
+
+.journey-node-hex {
+  align-items: center;
+  background:
+    linear-gradient(145deg, rgba(185, 245, 91, 0.92), rgba(54, 131, 46, 0.94)),
+    rgba(102, 177, 67, 0.9);
+  clip-path: polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0 50%);
+  color: #092114;
+  display: inline-flex;
+  height: 70px;
+  justify-content: center;
+  position: relative;
+  width: 80px;
+}
+
+.journey-node-hex::before {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.32), transparent 48%);
+  clip-path: inherit;
+  content: "";
+  inset: 8px;
+  position: absolute;
+}
+
+.journey-node.current .journey-node-hex {
+  box-shadow:
+    0 0 0 10px rgba(255, 211, 82, 0.11),
+    0 0 42px rgba(255, 210, 74, 0.84),
+    inset 0 0 28px rgba(255, 255, 255, 0.18);
+}
+
+.journey-node.completed .journey-node-hex {
+  background: linear-gradient(145deg, #b7f268, #368a42);
+}
+
+.journey-node.needs_review .journey-node-hex {
+  background: linear-gradient(145deg, #ffd36a, #b66d26);
+}
+
+.journey-node.locked {
+  cursor: default;
+}
+
+.journey-node.locked .journey-node-hex {
+  background: linear-gradient(145deg, rgba(93, 122, 146, 0.72), rgba(25, 45, 60, 0.92));
+  color: rgba(237, 247, 237, 0.82);
+}
+
+.journey-node.assessment .journey-node-hex {
+  background: linear-gradient(145deg, #b88aff, #563c9a);
+  color: #fff;
+}
+
+.journey-node-copy {
+  background: rgba(3, 15, 19, 0.74);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
+  display: grid;
+  gap: 2px;
+  max-width: 132px;
+  padding: 7px 9px;
+}
+
+.journey-node.locked .journey-node-copy {
+  opacity: 0.72;
+}
+
+.journey-node-copy strong {
+  font-size: 1.06rem;
+}
+
+.journey-node-copy small,
+.journey-node-copy em {
+  color: rgba(237, 247, 237, 0.72);
+  font-size: 0.68rem;
+  font-style: normal;
+  overflow-wrap: anywhere;
+}
+
+.journey-world-markers {
+  height: 100%;
+  inset: 0;
+  position: absolute;
+  z-index: 3;
+}
+
+.journey-world-markers button {
+  background: linear-gradient(90deg, rgba(14, 24, 43, 0.84), rgba(11, 22, 35, 0.56));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(237, 247, 237, 0.72);
+  cursor: pointer;
+  display: grid;
+  gap: 2px;
+  min-width: 104px;
+  padding: 7px 10px;
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.journey-world-markers button.active {
+  border-color: rgba(167, 228, 93, 0.36);
+  box-shadow: 0 0 24px rgba(167, 228, 93, 0.2);
+  color: #f5fff4;
+}
+
+.journey-world-markers span,
+.journey-world-markers small {
+  font-size: 0.65rem;
+}
+
+.practice-progress-sidebar {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  position: relative;
+  align-self: start;
+}
+
+.progress-orb-card,
+.practice-side-card {
+  background: rgba(6, 20, 25, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  padding: 16px;
+}
+
+.progress-orb-card h2,
+.practice-side-card h2 {
+  font-size: 0.95rem;
+  margin: 0 0 14px;
+}
+
+.progress-orb {
+  align-items: center;
+  background:
+    radial-gradient(circle at center, #07171b 56%, transparent 58%),
+    conic-gradient(#9fdd55 var(--progress), rgba(255, 255, 255, 0.12) 0);
+  border-radius: 999px;
+  display: flex;
+  height: 92px;
+  justify-content: center;
+  margin: 0 auto 14px;
+  width: 92px;
+}
+
+.progress-orb strong {
+  font-size: 1.35rem;
+}
+
+.progress-orb-card p,
+.practice-side-card p {
+  color: rgba(237, 247, 237, 0.64);
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.progress-orb-card a,
+.practice-side-card button {
+  background: rgba(255, 255, 255, 0.07);
+  border: 0;
+  border-radius: 7px;
+  color: #f5fff4;
+  cursor: pointer;
+  display: flex;
+  font-weight: 800;
+  justify-content: center;
+  min-height: 36px;
+  padding: 10px;
+  width: 100%;
+}
+
+.daily-goal,
+.current-level-chip,
+.rewards-card span {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.daily-goal svg,
+.rewards-card svg {
+  color: #9fdd55;
+}
+
+.daily-bar {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  height: 8px;
+  margin: 14px 0;
+  overflow: hidden;
+}
+
+.daily-bar span {
+  background: linear-gradient(90deg, #9fdd55, #5fc878);
+  border-radius: inherit;
+  display: block;
+  height: 100%;
+}
+
+.current-level-chip strong {
+  align-items: center;
+  background: radial-gradient(circle at 30% 20%, #cdf98f, #557e2f);
+  border-radius: 8px;
+  color: #081612;
+  display: flex;
+  height: 46px;
+  justify-content: center;
+  width: 46px;
+}
+
+.rewards-card {
+  gap: 11px;
+}
+
+.rewards-card span {
+  color: rgba(237, 247, 237, 0.78);
+  font-size: 0.78rem;
+  margin-top: 10px;
+}
+
+.practice-bottom-panel {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(0, 1fr) minmax(330px, 0.9fr);
+  padding: 18px 28px 28px;
+  position: relative;
+  z-index: 5;
+}
+
+.current-lesson-card,
+.achievement-strip {
+  background: rgba(6, 20, 25, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  min-width: 0;
+  padding: 16px;
+}
+
+.current-lesson-card {
+  align-items: center;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: auto 1fr auto;
+}
+
+.lesson-icon {
+  align-items: center;
+  background: linear-gradient(135deg, #a8e15e, #477d43);
+  border-radius: 8px;
+  color: #061313;
+  display: inline-flex;
+  height: 58px;
+  justify-content: center;
+  width: 58px;
+}
+
+.current-lesson-card small,
+.current-lesson-card p,
+.current-lesson-card span:not(.lesson-icon) {
+  color: rgba(237, 247, 237, 0.62);
+  font-size: 0.75rem;
+}
+
+.current-lesson-card strong {
+  display: block;
+  margin-top: 2px;
+}
+
+.current-lesson-card p {
+  line-height: 1.45;
+  margin: 4px 0 6px;
+}
+
+.current-lesson-card a {
+  align-items: center;
+  background: linear-gradient(135deg, #a8e15e, #5fbd66);
+  border-radius: 7px;
+  color: #061313;
+  display: inline-flex;
+  font-weight: 900;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 14px;
+}
+
+.achievement-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.achievement-header a {
+  color: #9fdd55;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.achievement-list {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 14px;
+}
+
+.achievement-list span {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  display: grid;
+  gap: 5px;
+  justify-items: center;
+  min-height: 92px;
+  padding: 10px;
+  text-align: center;
+}
+
+.achievement-list svg {
+  color: #ffd153;
+}
+
+.achievement-list small {
+  color: rgba(237, 247, 237, 0.58);
+  font-size: 0.64rem;
+}
+
+@media (max-width: 1180px) {
+  .practice-stage {
+    grid-template-columns: 86px minmax(0, 1fr);
+  }
+
+  .practice-brand strong,
+  .practice-side-nav span,
+  .practice-premium-card span,
+  .practice-premium-card strong,
+  .practice-side-level {
+    display: none;
+  }
+
+  .practice-side-nav a {
+    justify-content: center;
+  }
+
+  .practice-premium-card {
+    padding: 12px 8px;
+  }
+
+  .practice-content {
+    grid-template-columns: 1fr;
+  }
+
+  .practice-progress-sidebar {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 840px) {
+  .practice-shell {
+    padding: 10px;
+    padding-bottom: 78px;
+  }
+
+  .practice-stage {
+    border-radius: 8px;
+    grid-template-columns: 1fr;
+    margin-top: 18px;
+    min-height: auto;
+  }
+
+  .practice-sidebar {
+    display: none;
+  }
+
+  .practice-topbar {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .practice-stats {
+    justify-content: flex-start;
+  }
+
+  .practice-content {
+    padding: 14px;
+  }
+
+  .journey-camera {
+    min-height: 760px;
+  }
+
+  .journey-title {
+    left: 18px;
+    top: 18px;
+  }
+
+  .journey-level-rail {
+    left: 18px;
+    top: 178px;
+  }
+
+  .journey-world-markers button {
+    min-width: 74px;
+  }
+
+  .journey-node {
+    min-width: 98px;
+  }
+
+  .journey-node-hex {
+    height: 68px;
+    width: 78px;
+  }
+
+  .journey-node-copy {
+    max-width: 112px;
+    padding: 7px;
+  }
+
+  .practice-progress-sidebar,
+  .practice-bottom-panel,
+  .achievement-list {
+    grid-template-columns: 1fr;
+  }
+
+  .current-lesson-card {
+    align-items: stretch;
+    grid-template-columns: auto 1fr;
+  }
+
+  .current-lesson-card a {
+    grid-column: 1 / -1;
+  }
+}
+.journey-node.current .journey-node-hex {
+  background: linear-gradient(145deg, #ffe66f, #7a5b18);
+  color: #fff7bc;
+  height: 92px;
+  width: 104px;
+}

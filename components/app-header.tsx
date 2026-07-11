@@ -16,6 +16,7 @@ import { ThemeSync } from "@/components/theme-sync";
 
 const navItems = [
   { href: "/learn", key: "learn" },
+  { href: "/practice", key: "practice" },
   { href: "/resources", key: "resources" },
   { href: "/flashcards", key: "flashcards" },
   { href: "/pricing", key: "pricing" },

@@ -5,6 +5,7 @@ export type InterfaceCopy = {
   brandSubtitle: string;
   nav: {
     learn: string;
+    practice: string;
     resources: string;
     flashcards: string;
     pricing: string;
@@ -161,6 +162,7 @@ export const interfaceCopy: Record<InterfaceLanguageCode, InterfaceCopy> = {
     brandSubtitle: "آلمانی برای فارسی‌زبان‌ها",
     nav: {
       learn: "یادگیری",
+      practice: "تمرین",
       resources: "منابع",
       flashcards: "فلش‌کارت",
       pricing: "قیمت‌گذاری",
@@ -274,6 +276,7 @@ export const interfaceCopy: Record<InterfaceLanguageCode, InterfaceCopy> = {
     brandSubtitle: "Persian-first German",
     nav: {
       learn: "Learn",
+      practice: "Practice",
       resources: "Resources",
       flashcards: "Flashcards",
       pricing: "Pricing",
@@ -387,6 +390,7 @@ export const interfaceCopy: Record<InterfaceLanguageCode, InterfaceCopy> = {
     brandSubtitle: "Deutschlernen mit persischer Unterstuetzung",
     nav: {
       learn: "Lernen",
+      practice: "Ueben",
       resources: "Ressourcen",
       flashcards: "Karten",
       pricing: "Preise",
