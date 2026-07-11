@@ -469,15 +469,19 @@ function LevelNode({
           : undefined
       }
       whileHover={{ scale: 1.08, y: -5 }}
+      whileTap={{ scale: 0.96 }}
     >
+      <span className="journey-node-aura" aria-hidden="true" />
       <span className="journey-node-hex">
-        {level.state === "completed" ? (
-          <Check size={22} />
-        ) : locked ? (
-          <Lock size={21} />
-        ) : (
-          <Check size={21} />
-        )}
+        <span className="journey-node-core">
+          {level.state === "completed" ? (
+            <Check size={22} />
+          ) : locked ? (
+            <Lock size={21} />
+          ) : (
+            <Check size={21} />
+          )}
+        </span>
       </span>
       <span className="journey-node-copy">
         <strong>{level.label}</strong>

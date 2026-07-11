@@ -3165,33 +3165,82 @@ h3 {
   align-items: center;
   cursor: pointer;
   display: grid;
-  gap: 6px;
+  gap: 5px;
   justify-items: center;
   min-width: 96px;
   position: relative;
   text-align: center;
+  transform-origin: center;
+  will-change: filter, transform;
+}
+
+.journey-node-aura {
+  background:
+    radial-gradient(circle, rgba(255, 238, 158, 0.38), rgba(255, 197, 66, 0.12) 34%, transparent 68%);
+  border-radius: 999px;
+  filter: blur(2px);
+  height: 82px;
+  left: 50%;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 4px;
+  transform: translateX(-50%);
+  transition: opacity 220ms ease, transform 220ms ease;
+  width: 98px;
+  z-index: -1;
 }
 
 .journey-node-hex {
   align-items: center;
   background:
-    linear-gradient(145deg, rgba(185, 245, 91, 0.92), rgba(54, 131, 46, 0.94)),
+    radial-gradient(circle at 34% 18%, rgba(255, 255, 255, 0.68), transparent 18%),
+    linear-gradient(145deg, rgba(185, 245, 91, 0.96), rgba(54, 131, 46, 0.96)),
     rgba(102, 177, 67, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   clip-path: polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0 50%);
   color: #092114;
   display: inline-flex;
   height: 62px;
   justify-content: center;
   position: relative;
+  transition: box-shadow 220ms ease, filter 220ms ease;
   width: 72px;
 }
 
 .journey-node-hex::before {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.32), transparent 48%);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.42), transparent 48%),
+    linear-gradient(315deg, transparent 55%, rgba(255, 255, 255, 0.16));
   clip-path: inherit;
   content: "";
   inset: 8px;
   position: absolute;
+}
+
+.journey-node-hex::after {
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.28));
+  clip-path: inherit;
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.journey-node-core {
+  align-items: center;
+  background: rgba(4, 17, 21, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 999px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    0 4px 12px rgba(0, 0, 0, 0.18);
+  display: inline-flex;
+  height: 58%;
+  justify-content: center;
+  position: relative;
+  width: 58%;
+  z-index: 2;
 }
 
 .journey-node.current .journey-node-hex {
@@ -3205,6 +3254,12 @@ h3 {
   background: linear-gradient(145deg, #b7f268, #368a42);
 }
 
+.journey-node.completed .journey-node-aura {
+  background:
+    radial-gradient(circle, rgba(181, 245, 99, 0.42), rgba(81, 207, 105, 0.12) 38%, transparent 70%);
+  opacity: 0.78;
+}
+
 .journey-node.needs_review .journey-node-hex {
   background: linear-gradient(145deg, #ffd36a, #b66d26);
 }
@@ -3214,7 +3269,9 @@ h3 {
 }
 
 .journey-node.locked .journey-node-hex {
-  background: linear-gradient(145deg, rgba(93, 122, 146, 0.72), rgba(25, 45, 60, 0.92));
+  background:
+    radial-gradient(circle at 34% 18%, rgba(255, 255, 255, 0.2), transparent 19%),
+    linear-gradient(145deg, rgba(93, 122, 146, 0.72), rgba(25, 45, 60, 0.94));
   color: rgba(237, 247, 237, 0.82);
 }
 
@@ -3796,68 +3853,148 @@ h3 {
 }
 
 .level-world-node {
-  min-width: 59px;
+  filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.38));
+  min-height: 72px;
+  min-width: 64px;
 }
 
 .level-world-node .journey-node-hex {
-  height: clamp(36px, 4.1vh, 49px);
-  width: clamp(43px, 4.72vh, 56px);
+  box-shadow:
+    0 12px 22px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -10px 18px rgba(0, 0, 0, 0.2);
+  height: clamp(38px, 4.2vh, 51px);
+  width: clamp(46px, 4.92vh, 59px);
 }
 
 .level-world-node .journey-node-hex::before {
-  inset: 5px;
+  inset: 4px;
+}
+
+.level-world-node .journey-node-core {
+  height: 52%;
+  width: 52%;
 }
 
 .level-world-node.current .journey-node-hex,
 .level-world-node.completed .journey-node-hex {
-  background: linear-gradient(145deg, #b8f06d, #376b30);
+  background:
+    radial-gradient(circle at 34% 18%, rgba(255, 255, 255, 0.76), transparent 18%),
+    linear-gradient(145deg, #c9ff78 0%, #77cf62 48%, #275f35 100%);
+  color: #082216;
 }
 
 .level-world-node.world-academy .journey-node-hex,
 .level-world-node.world-mountain .journey-node-hex {
-  background: linear-gradient(145deg, #d79dff, #4e2d77);
+  background:
+    radial-gradient(circle at 34% 18%, rgba(255, 255, 255, 0.64), transparent 18%),
+    linear-gradient(145deg, #dfa7ff 0%, #8356c8 48%, #332054 100%);
   color: #fff;
 }
 
 .level-world-node.world-castle .journey-node-hex,
 .level-world-node.world-city .journey-node-hex {
-  background: linear-gradient(145deg, #7fbdff, #244c80);
+  background:
+    radial-gradient(circle at 34% 18%, rgba(255, 255, 255, 0.66), transparent 18%),
+    linear-gradient(145deg, #9ed2ff 0%, #4a83c9 48%, #173c6d 100%);
   color: #fff;
 }
 
 .level-world-node.locked .journey-node-hex,
 .level-world-node.future .journey-node-hex {
-  background: linear-gradient(145deg, rgba(93, 107, 130, 0.82), rgba(18, 30, 45, 0.95));
+  background:
+    radial-gradient(circle at 34% 18%, rgba(255, 255, 255, 0.22), transparent 18%),
+    linear-gradient(145deg, rgba(94, 111, 133, 0.82), rgba(25, 38, 55, 0.96));
+  box-shadow:
+    0 10px 18px rgba(0, 0, 0, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -10px 16px rgba(0, 0, 0, 0.28);
+  color: rgba(236, 245, 247, 0.88);
+  filter: saturate(0.68) brightness(0.88);
+}
+
+.level-world-node.future .journey-node-hex {
+  opacity: 0.92;
+}
+
+.level-world-node.locked .journey-node-core,
+.level-world-node.future .journey-node-core {
+  background: rgba(2, 13, 20, 0.34);
+  border-color: rgba(255, 255, 255, 0.18);
 }
 
 .level-world-node.current .journey-node-hex {
-  background: linear-gradient(145deg, #ffe36b, #755717);
+  background:
+    radial-gradient(circle at 34% 17%, rgba(255, 255, 255, 0.8), transparent 18%),
+    linear-gradient(145deg, #fff27c 0%, #e1b643 45%, #6a4a11 100%);
   box-shadow:
-    0 0 0 7px rgba(255, 213, 78, 0.12),
-    0 0 34px rgba(255, 213, 78, 0.86),
-    inset 0 0 20px rgba(255, 255, 255, 0.22);
-  height: clamp(36px, 4.1vh, 49px);
-  width: clamp(43px, 4.72vh, 56px);
+    0 0 0 8px rgba(255, 213, 78, 0.12),
+    0 0 34px rgba(255, 213, 78, 0.78),
+    0 16px 28px rgba(0, 0, 0, 0.44),
+    inset 0 1px 0 rgba(255, 255, 255, 0.38),
+    inset 0 -11px 18px rgba(0, 0, 0, 0.22);
+  color: #fff5bc;
+  height: clamp(42px, 4.55vh, 56px);
+  width: clamp(50px, 5.34vh, 65px);
+}
+
+.level-world-node.current .journey-node-aura {
+  opacity: 1;
+  transform: translateX(-50%) scale(1.04);
+}
+
+.level-world-node.locked .journey-node-aura,
+.level-world-node.future .journey-node-aura {
+  background:
+    radial-gradient(circle, rgba(121, 153, 184, 0.2), rgba(57, 88, 117, 0.08) 40%, transparent 70%);
+  opacity: 0.42;
 }
 
 .level-world-node .journey-node-copy {
-  background: rgba(2, 12, 19, 0.72);
-  max-width: 69px;
-  padding: 4px 5px;
+  background:
+    linear-gradient(180deg, rgba(7, 20, 27, 0.82), rgba(3, 12, 17, 0.68));
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 10px 20px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  gap: 1px;
+  max-width: 72px;
+  padding: 4px 6px 5px;
+  transform: translateY(-1px);
 }
 
 .level-world-node .journey-node-copy strong {
-  font-size: 0.59rem;
+  font-size: 0.62rem;
+  letter-spacing: 0;
+  line-height: 1;
 }
 
 .level-world-node .journey-node-copy small,
 .level-world-node .journey-node-copy em {
-  font-size: 0.39rem;
+  font-size: 0.38rem;
+  line-height: 1.28;
+}
+
+.level-world-node.completed .journey-node-copy {
+  border-color: rgba(177, 241, 104, 0.24);
+}
+
+.level-world-node.current .journey-node-copy {
+  border-color: rgba(255, 224, 112, 0.3);
+  box-shadow:
+    0 12px 24px rgba(0, 0, 0, 0.32),
+    0 0 22px rgba(255, 215, 88, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.level-world-node.locked .journey-node-copy,
+.level-world-node.future .journey-node-copy {
+  opacity: 0.68;
 }
 
 .level-world-node .journey-node-hex svg {
-  height: 15px;
-  width: 15px;
+  height: 14px;
+  width: 14px;
 }
 
 .world-region-label {
@@ -4055,7 +4192,14 @@ h3 {
   }
 
   .level-world-node {
+    min-height: 62px;
     min-width: 44px;
+  }
+
+  .level-world-node .journey-node-aura {
+    height: 64px;
+    top: 0;
+    width: 72px;
   }
 
   .level-world-node .journey-node-hex,
@@ -4064,9 +4208,14 @@ h3 {
     width: clamp(44px, 12.4vw, 56px);
   }
 
+  .level-world-node .journey-node-core {
+    height: 50%;
+    width: 50%;
+  }
+
   .level-world-node .journey-node-copy {
     max-width: 64px;
-    padding: 3px 4px;
+    padding: 4px 5px;
   }
 
   .level-world-node .journey-node-copy strong {
