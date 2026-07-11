@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   BookOpenCheck,
   CreditCard,
+  Globe2,
   Library,
   LogOut,
   Menu,
@@ -48,6 +49,7 @@ const labels = {
     menu: "باز کردن منو",
     closeMenu: "بستن منو",
     profile: "باز کردن منوی پروفایل",
+    languageMenu: "تغییر زبان رابط",
     pricing: "قیمت‌گذاری",
     account: "حساب",
     settings: "تنظیمات",
@@ -61,6 +63,7 @@ const labels = {
     menu: "Open menu",
     closeMenu: "Close menu",
     profile: "Open profile menu",
+    languageMenu: "Change interface language",
     pricing: "Pricing",
     account: "Account",
     settings: "Settings",
@@ -74,6 +77,7 @@ const labels = {
     menu: "Menue oeffnen",
     closeMenu: "Menue schliessen",
     profile: "Profilmenue oeffnen",
+    languageMenu: "Oberflaechensprache aendern",
     pricing: "Preise",
     account: "Konto",
     settings: "Einstellungen",
@@ -112,6 +116,7 @@ export function AppHeaderClient({
 }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [systemTheme, setSystemTheme] = useState<"LIGHT" | "DARK">("LIGHT");
   const headerRef = useRef<ElementRef<"header">>(null);
   const activeTheme = theme === "SYSTEM" ? systemTheme : theme;
@@ -136,6 +141,7 @@ export function AppHeaderClient({
   useEffect(() => {
     setIsMobileMenuOpen(false);
     setIsProfileOpen(false);
+    setIsLanguageOpen(false);
   }, [currentPath]);
 
   useEffect(() => {
@@ -143,6 +149,7 @@ export function AppHeaderClient({
       if (event.key === "Escape") {
         setIsMobileMenuOpen(false);
         setIsProfileOpen(false);
+        setIsLanguageOpen(false);
       }
     }
 
@@ -154,6 +161,7 @@ export function AppHeaderClient({
       ) {
         setIsMobileMenuOpen(false);
         setIsProfileOpen(false);
+        setIsLanguageOpen(false);
       }
     }
 
@@ -187,7 +195,7 @@ export function AppHeaderClient({
   });
 
   return (
-    <header className="topbar" ref={headerRef}>
+    <header className={`topbar ${language === "fa" ? "persian-nav" : ""}`} ref={headerRef}>
       <div className="topbar-left">
         <Link className="brand" href={withInterfaceLanguage("/", language)} aria-label={localLabels.home}>
           <span className="brand-mark" aria-hidden="true">N</span>
@@ -202,8 +210,12 @@ export function AppHeaderClient({
         <div className="desktop-controls">
           <LanguageSwitcher
             currentPath={currentPath}
+            id="desktop-language-menu"
+            isOpen={isLanguageOpen}
             language={language}
+            menuLabel={localLabels.languageMenu}
             label={headerLabels.languageLabel}
+            onOpenChange={setIsLanguageOpen}
           />
           <ThemeToggle
             currentPath={currentPath}
@@ -222,6 +234,7 @@ export function AppHeaderClient({
           onClick={() => {
             setIsMobileMenuOpen((open) => !open);
             setIsProfileOpen(false);
+            setIsLanguageOpen(false);
           }}
         >
           {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -237,6 +250,7 @@ export function AppHeaderClient({
             onClick={() => {
               setIsProfileOpen((open) => !open);
               setIsMobileMenuOpen(false);
+              setIsLanguageOpen(false);
             }}
           >
             <span className="profile-avatar" aria-hidden="true">
@@ -306,8 +320,12 @@ export function AppHeaderClient({
             <div className="mobile-menu-controls">
               <LanguageSwitcher
                 currentPath={currentPath}
+                id="mobile-language-menu"
+                isOpen={isLanguageOpen}
                 language={language}
+                menuLabel={localLabels.languageMenu}
                 label={headerLabels.languageLabel}
+                onOpenChange={setIsLanguageOpen}
               />
               <ThemeToggle
                 currentPath={currentPath}
@@ -325,28 +343,66 @@ export function AppHeaderClient({
 
 function LanguageSwitcher({
   currentPath,
+  id,
+  isOpen,
   label,
-  language
+  language,
+  menuLabel,
+  onOpenChange
 }: {
   currentPath: string;
+  id: string;
+  isOpen: boolean;
   label: string;
   language: InterfaceLanguageCode;
+  menuLabel: string;
+  onOpenChange: (isOpen: boolean) => void;
 }) {
   return (
-    <div className="language-switcher" aria-label={label}>
-      {languageOptions.map((option) => (
-        <Link
-          className={option.code === language ? "active" : undefined}
-          href={interfaceLanguagePreferenceHref({
-            language: option.code,
-            returnTo: currentPath
-          })}
-          key={option.code}
-          aria-current={option.code === language ? "true" : undefined}
-        >
-          {option.label}
-        </Link>
-      ))}
+    <div className="language-menu-wrap">
+      <button
+        className="icon-button language-globe-button"
+        type="button"
+        aria-expanded={isOpen}
+        aria-label={menuLabel}
+        aria-controls={id}
+        title={menuLabel}
+        onClick={() => onOpenChange(!isOpen)}
+      >
+        <Globe2 size={18} aria-hidden="true" />
+        <span>{language.toUpperCase()}</span>
+      </button>
+
+      <AnimatePresence>
+        {isOpen ? (
+          <motion.div
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="language-dropdown"
+            exit={{ opacity: 0, scale: 0.98, y: -6 }}
+            id={id}
+            initial={{ opacity: 0, scale: 0.98, y: -6 }}
+            role="menu"
+            aria-label={label}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+          >
+            {languageOptions.map((option) => (
+              <Link
+                className={option.code === language ? "active" : undefined}
+                href={interfaceLanguagePreferenceHref({
+                  language: option.code,
+                  returnTo: currentPath
+                })}
+                key={option.code}
+                role="menuitem"
+                aria-current={option.code === language ? "true" : undefined}
+                onClick={() => onOpenChange(false)}
+              >
+                <span>{option.label}</span>
+              </Link>
+            ))}
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }

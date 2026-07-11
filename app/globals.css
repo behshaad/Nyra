@@ -135,6 +135,16 @@ body {
   direction: ltr;
 }
 
+.topbar.persian-nav,
+.topbar.persian-nav .topbar-left,
+.topbar.persian-nav .desktop-nav {
+  direction: rtl;
+}
+
+.topbar.persian-nav .topbar-actions {
+  direction: ltr;
+}
+
 .site-shell[dir="rtl"] {
   text-align: right;
 }
@@ -358,7 +368,7 @@ a {
 .danger-button,
 .icon-button,
 .language-toggle,
-.language-switcher,
+.language-globe-button,
 .level-pill {
   background: var(--control);
   border: 1px solid var(--line);
@@ -367,34 +377,66 @@ a {
   padding: 0 14px;
 }
 
-.language-switcher {
-  direction: ltr;
-  display: inline-flex;
-  gap: 3px;
-  min-height: 40px;
-  padding: 3px;
+.language-menu-wrap {
+  position: relative;
 }
 
-.language-switcher a {
+.language-globe-button {
   align-items: center;
-  border-radius: 6px;
+  cursor: pointer;
   display: inline-flex;
-  font-size: 0.74rem;
+  gap: 7px;
+  min-height: 44px;
+  min-width: 54px;
+  padding: 0 11px;
+}
+
+.language-globe-button span {
+  font-size: 0.68rem;
   font-weight: 850;
-  justify-content: center;
-  min-height: 32px;
-  min-width: 36px;
-  padding: 0 8px;
+  letter-spacing: 0.04em;
+}
+
+.language-dropdown {
+  background: var(--panel-strong);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 18px 46px rgba(63, 49, 64, 0.16);
+  display: grid;
+  gap: 4px;
+  min-width: 132px;
+  padding: 7px;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  z-index: 31;
+}
+
+.language-dropdown a {
+  align-items: center;
+  border-radius: 7px;
+  color: var(--text);
+  display: flex;
+  font-size: 0.84rem;
+  font-weight: 850;
+  min-height: 38px;
+  padding: 0 10px;
   transition:
     background 180ms ease,
-    color 180ms ease,
-    transform 180ms ease;
+    color 180ms ease;
 }
 
-.language-switcher a.active {
-  background: var(--surface-strong);
+.language-dropdown a:hover,
+.language-dropdown a:focus-visible,
+.language-dropdown a.active {
+  background: var(--control-hover);
   color: var(--green-dark);
-  box-shadow: 0 8px 18px rgba(92, 49, 76, 0.08);
+}
+
+.topbar.persian-nav .profile-dropdown,
+.topbar.persian-nav .language-dropdown {
+  left: 0;
+  right: auto;
 }
 
 .language-toggle,
@@ -578,8 +620,17 @@ select:focus-visible {
   padding-top: 10px;
 }
 
-.mobile-menu .language-switcher {
+.mobile-menu .language-menu-wrap {
+  position: static;
   justify-self: start;
+}
+
+.mobile-menu .language-dropdown {
+  left: 10px;
+  min-width: 0;
+  right: 10px;
+  top: calc(100% + 8px);
+  width: calc(100% - 20px);
 }
 
 .mobile-menu .theme-toggle {
