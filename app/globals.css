@@ -3695,38 +3695,38 @@ h3 {
 }
 
 .world-map .journey-title h1 {
-  font-size: clamp(1.22rem, 1.95vw, 1.82rem);
+  font-size: clamp(0.92rem, 1.46vw, 1.36rem);
 }
 
 .world-map .journey-title p {
-  font-size: 0.7rem;
+  font-size: 0.46rem;
   line-height: 1.42;
   margin-top: 8px;
   max-width: 255px;
 }
 
 .world-map .journey-level-rail {
-  gap: clamp(8px, 2.6vh, 20px);
-  opacity: 0.72;
+  gap: clamp(7px, 2.2vh, 17px);
+  opacity: 0.58;
   top: 32%;
 }
 
 .world-map .journey-level-rail button {
-  min-height: 26px;
+  min-height: 22px;
 }
 
 .world-map .journey-level-rail strong {
-  font-size: 0.78rem;
+  font-size: 0.59rem;
 }
 
 .world-map .journey-level-rail small {
-  font-size: 0.54rem;
+  font-size: 0.41rem;
 }
 
 .world-map .journey-level-rail button span {
-  box-shadow: 0 0 10px rgba(167, 228, 93, 0.42);
-  height: 7px;
-  width: 7px;
+  box-shadow: 0 0 8px rgba(167, 228, 93, 0.36);
+  height: 5px;
+  width: 5px;
 }
 
 .level-road {
@@ -3755,12 +3755,16 @@ h3 {
 }
 
 .level-world-node {
-  min-width: 84px;
+  min-width: 59px;
 }
 
 .level-world-node .journey-node-hex {
-  height: clamp(52px, 5.9vh, 70px);
-  width: clamp(62px, 6.75vh, 80px);
+  height: clamp(36px, 4.1vh, 49px);
+  width: clamp(43px, 4.72vh, 56px);
+}
+
+.level-world-node .journey-node-hex::before {
+  inset: 5px;
 }
 
 .level-world-node.current .journey-node-hex,
@@ -3788,24 +3792,31 @@ h3 {
 .level-world-node.current .journey-node-hex {
   background: linear-gradient(145deg, #ffe36b, #755717);
   box-shadow:
-    0 0 0 10px rgba(255, 213, 78, 0.12),
-    0 0 48px rgba(255, 213, 78, 0.86),
-    inset 0 0 28px rgba(255, 255, 255, 0.22);
+    0 0 0 7px rgba(255, 213, 78, 0.12),
+    0 0 34px rgba(255, 213, 78, 0.86),
+    inset 0 0 20px rgba(255, 255, 255, 0.22);
+  height: clamp(36px, 4.1vh, 49px);
+  width: clamp(43px, 4.72vh, 56px);
 }
 
 .level-world-node .journey-node-copy {
   background: rgba(2, 12, 19, 0.72);
-  max-width: 98px;
-  padding: 5px 7px;
+  max-width: 69px;
+  padding: 4px 5px;
 }
 
 .level-world-node .journey-node-copy strong {
-  font-size: 0.84rem;
+  font-size: 0.59rem;
 }
 
 .level-world-node .journey-node-copy small,
 .level-world-node .journey-node-copy em {
-  font-size: 0.55rem;
+  font-size: 0.39rem;
+}
+
+.level-world-node .journey-node-hex svg {
+  height: 15px;
+  width: 15px;
 }
 
 .world-region-label {
@@ -3814,9 +3825,9 @@ h3 {
   border-radius: 6px;
   color: #ffe49e;
   display: inline-flex;
-  font-size: 0.72rem;
+  font-size: 0.58rem;
   font-weight: 850;
-  padding: 4px 10px;
+  padding: 3px 8px;
   position: absolute;
   transform: translate(-50%, -50%);
   z-index: 7;
