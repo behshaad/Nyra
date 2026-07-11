@@ -3079,38 +3079,6 @@ h3 {
   font-size: 0.74rem;
 }
 
-.journey-path {
-  height: 100%;
-  inset: 0;
-  overflow: visible;
-  position: absolute;
-  z-index: 4;
-}
-
-.journey-path path {
-  fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.journey-path-shadow {
-  filter: drop-shadow(0 18px 16px rgba(0, 0, 0, 0.58));
-  stroke: rgba(21, 13, 7, 0.48);
-  stroke-width: 2.25;
-}
-
-.journey-path-core {
-  filter: drop-shadow(0 0 10px rgba(255, 219, 110, 0.28));
-  stroke: rgba(255, 230, 139, 0.58);
-  stroke-width: 1;
-}
-
-.journey-path-lights {
-  stroke: rgba(255, 251, 178, 0.74);
-  stroke-dasharray: 0.25 1.2;
-  stroke-width: 0.34;
-}
-
 .journey-node-layer {
   height: 100%;
   inset: 0;
@@ -3727,23 +3695,6 @@ h3 {
   box-shadow: 0 0 8px rgba(167, 228, 93, 0.36);
   height: 5px;
   width: 5px;
-}
-
-.level-road {
-  height: 100%;
-  width: 100%;
-}
-
-.level-road .journey-path-shadow {
-  stroke-width: 3.1;
-}
-
-.level-road .journey-path-core {
-  stroke-width: 1.38;
-}
-
-.level-road .journey-path-lights {
-  stroke-width: 0.42;
 }
 
 .level-node-layer {

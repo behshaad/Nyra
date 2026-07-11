@@ -28,11 +28,12 @@ import type {
   PracticeJourneyWorldTone
 } from "@/lib/practice/journey";
 import type { InterfaceLanguageCode } from "@/lib/i18n/interface-language";
+import { WORLD_LAYOUT, type WorldLevelLabel } from "@/components/practice/world-map/worldLayout";
 
 type WorldLevelState = "completed" | "current" | "locked" | "future";
 
 type WorldLevel = {
-  label: "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
+  label: WorldLevelLabel;
   title: string;
   region: string;
   tone: PracticeJourneyWorldTone;
@@ -56,60 +57,53 @@ const useJourneyStore = create<JourneyStore>((set) => ({
 }));
 
 const cefrWorlds: Array<{
-  label: WorldLevel["label"];
+  label: WorldLevelLabel;
   title: string;
   region: string;
   tone: PracticeJourneyWorldTone;
   subtitle: string;
-  position: { x: number; y: number };
 }> = [
   {
     label: "A1",
     title: "Anfaenger",
     region: "Dorfleben",
     tone: "village",
-    subtitle: "Village",
-    position: { x: 47, y: 64 }
+    subtitle: "Village"
   },
   {
     label: "A2",
     title: "Grundstufe",
     region: "Kleinstadt",
     tone: "town",
-    subtitle: "Small town",
-    position: { x: 34, y: 52 }
+    subtitle: "Small town"
   },
   {
     label: "B1",
     title: "Mittelstufe",
     region: "Grossstadt",
     tone: "city",
-    subtitle: "City",
-    position: { x: 61, y: 43 }
+    subtitle: "City"
   },
   {
     label: "B2",
     title: "Oberstufe",
     region: "Die Burg",
     tone: "castle",
-    subtitle: "Castle",
-    position: { x: 38, y: 33 }
+    subtitle: "Castle"
   },
   {
     label: "C1",
     title: "Fortgeschritten",
     region: "Bergstadt",
     tone: "mountain",
-    subtitle: "Mountains",
-    position: { x: 62, y: 26 }
+    subtitle: "Mountains"
   },
   {
     label: "C2",
     title: "Mastery",
     region: "Die Akademie",
     tone: "academy",
-    subtitle: "Academy",
-    position: { x: 50, y: 14 }
+    subtitle: "Academy"
   }
 ];
 
@@ -356,7 +350,6 @@ function WorldMap({
           <p>Lerne Deutsch Schritt fuer Schritt und entdecke neue Welten.</p>
         </div>
         <LevelRail levels={levels} activeLabel={activeLevel?.label ?? null} onFocusLevel={onFocusLevel} />
-        <JourneyRoad />
         <div className="journey-node-layer level-node-layer">
           {levels.map((level, index) => (
             <LevelNode
@@ -404,34 +397,6 @@ function LevelRail({
   );
 }
 
-function JourneyRoad() {
-  const points = [...cefrWorlds].reverse().map((world) => world.position);
-  const path = points.reduce((draft, point, index) => {
-    if (index === 0) {
-      return `M ${point.x} ${point.y}`;
-    }
-
-    const previous = points[index - 1];
-    const controlY = previous.y + (point.y - previous.y) * 0.48;
-
-    return `${draft} C ${previous.x} ${controlY}, ${point.x} ${controlY}, ${point.x} ${point.y}`;
-  }, "");
-
-  return (
-    <svg className="journey-path level-road" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-      <path className="journey-path-shadow" d={path} />
-      <motion.path
-        className="journey-path-core"
-        d={path}
-        initial={{ pathLength: 0 }}
-        animate={{ pathLength: 1 }}
-        transition={{ duration: 1.2, ease: "easeOut" }}
-      />
-      <path className="journey-path-lights" d={path} />
-    </svg>
-  );
-}
-
 function LevelNode({
   level,
   index,
@@ -441,7 +406,7 @@ function LevelNode({
   index: number;
   onFocus: () => void;
 }) {
-  const world = cefrWorlds.find((candidate) => candidate.label === level.label) ?? cefrWorlds[0];
+  const position = WORLD_LAYOUT[level.label];
   const locked = level.state === "locked" || level.state === "future";
   const current = level.state === "current";
   const completion = level.totalCount > 0 ? `${level.completedCount} / ${level.totalCount}` : "0 / 30";
@@ -450,7 +415,7 @@ function LevelNode({
     <div
       className={`journey-node-position level-node-position ${current ? "is-current" : ""}`}
       onMouseEnter={onFocus}
-      style={{ left: `${world.position.x}%`, top: `${world.position.y}%` }}
+      style={{ left: `${position.x}%`, top: `${position.y}%` }}
     >
       <Link href={level.href} aria-label={`Open ${level.label} world`}>
         <motion.span
@@ -500,15 +465,15 @@ function WorldMarkers({ levels }: { levels: WorldLevel[] }) {
   return (
     <div className="journey-world-markers" aria-hidden="true">
       {levels.map((level) => {
-        const world = cefrWorlds.find((candidate) => candidate.label === level.label) ?? cefrWorlds[0];
+        const position = WORLD_LAYOUT[level.label];
 
         return (
           <span
             className="world-region-label"
             key={level.label}
             style={{
-              left: `${Math.min(82, world.position.x + 11)}%`,
-              top: `${Math.max(10, world.position.y - 2)}%`
+              left: `${Math.min(82, position.x + 11)}%`,
+              top: `${Math.max(10, position.y - 2)}%`
             }}
           >
             <strong>{level.region}</strong>
