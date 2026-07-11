@@ -3674,8 +3674,17 @@ h3 {
 }
 
 .world-map .journey-map-image {
-  object-fit: cover;
-  object-position: center 54%;
+  bottom: auto !important;
+  height: auto !important;
+  left: 50% !important;
+  max-width: none;
+  min-height: 100%;
+  object-fit: contain;
+  object-position: center center;
+  right: auto !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%);
+  width: max(100%, calc((100dvh - 52px) * 864 / 1821)) !important;
 }
 
 .world-map .journey-title {
