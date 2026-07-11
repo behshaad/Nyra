@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import type { CSSProperties, ReactNode } from "react";
+import { useEffect, useState } from "react";
+import type { CSSProperties, PointerEvent as ReactPointerEvent, ReactNode } from "react";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { create } from "zustand";
@@ -28,7 +29,12 @@ import type {
   PracticeJourneyWorldTone
 } from "@/lib/practice/journey";
 import type { InterfaceLanguageCode } from "@/lib/i18n/interface-language";
-import { WORLD_LAYOUT, type WorldLevelLabel } from "@/components/practice/world-map/worldLayout";
+import {
+  DEBUG_WORLD_LAYOUT,
+  WORLD_LAYOUT,
+  type WorldLevelLabel,
+  type WorldMapPoint
+} from "@/components/practice/world-map/worldLayout";
 
 type WorldLevelState = "completed" | "current" | "locked" | "future";
 
@@ -125,6 +131,16 @@ function levelHref(label: string, language: InterfaceLanguageCode) {
   const href = `/practice/${label.toLowerCase()}`;
 
   return language === "fa" ? href : `${href}?ui=${language}`;
+}
+
+function formatLayoutForCopy(layout: Record<WorldLevelLabel, WorldMapPoint>) {
+  return cefrWorlds
+    .map((world) => {
+      const point = layout[world.label];
+
+      return `${world.label}: { x: ${point.x.toFixed(1)}, y: ${point.y.toFixed(1)} }`;
+    })
+    .join("\n");
 }
 
 function buildWorldLevels(
@@ -322,9 +338,81 @@ function WorldMap({
   levels: WorldLevel[];
   onFocusLevel: (label: string) => void;
 }) {
+  const [debugLayout, setDebugLayout] = useState<Record<WorldLevelLabel, WorldMapPoint>>(
+    () => ({ ...WORLD_LAYOUT })
+  );
+  const [draggingLevel, setDraggingLevel] = useState<WorldLevelLabel | null>(null);
+  const [layoutPrintRequest, setLayoutPrintRequest] = useState(0);
+  const activeLayout = DEBUG_WORLD_LAYOUT ? debugLayout : WORLD_LAYOUT;
+  const debugClassName = DEBUG_WORLD_LAYOUT ? " is-debugging-world-layout" : "";
+
+  useEffect(() => {
+    if (!DEBUG_WORLD_LAYOUT || draggingLevel === null) {
+      return;
+    }
+
+    const updateDraggedPoint = (clientX: number, clientY: number) => {
+      const canvas = globalThis.document?.querySelector(".world-map-canvas");
+
+      if (!(canvas instanceof globalThis.HTMLElement)) {
+        return;
+      }
+
+      const rect = canvas.getBoundingClientRect();
+      const x = Math.min(100, Math.max(0, ((clientX - rect.left) / rect.width) * 100));
+      const y = Math.min(100, Math.max(0, ((clientY - rect.top) / rect.height) * 100));
+
+      setDebugLayout((current) => ({
+        ...current,
+        [draggingLevel]: {
+          x: Number(x.toFixed(1)),
+          y: Number(y.toFixed(1))
+        }
+      }));
+    };
+
+    const handlePointerMove = (event: globalThis.PointerEvent) => {
+      event.preventDefault();
+      updateDraggedPoint(event.clientX, event.clientY);
+    };
+
+    const handlePointerUp = (event: globalThis.PointerEvent) => {
+      event.preventDefault();
+      updateDraggedPoint(event.clientX, event.clientY);
+      setDraggingLevel(null);
+      setLayoutPrintRequest((current) => current + 1);
+    };
+
+    globalThis.addEventListener("pointermove", handlePointerMove);
+    globalThis.addEventListener("pointerup", handlePointerUp, { once: true });
+
+    return () => {
+      globalThis.removeEventListener("pointermove", handlePointerMove);
+      globalThis.removeEventListener("pointerup", handlePointerUp);
+    };
+  }, [draggingLevel]);
+
+  useEffect(() => {
+    if (!DEBUG_WORLD_LAYOUT || draggingLevel !== null || layoutPrintRequest === 0) {
+      return;
+    }
+
+    console.log(formatLayoutForCopy(debugLayout));
+  }, [debugLayout, draggingLevel, layoutPrintRequest]);
+
+  const startDebugDrag = (level: WorldLevelLabel, event: ReactPointerEvent) => {
+    if (!DEBUG_WORLD_LAYOUT) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    setDraggingLevel(level);
+  };
+
   return (
     <section className="journey-camera world-map" aria-label="Germany world map">
-      <div className="journey-map-canvas world-map-canvas">
+      <div className={`journey-map-canvas world-map-canvas${debugClassName}`}>
         <Image
           alt=""
           aria-hidden="true"
@@ -345,6 +433,7 @@ function WorldMap({
           <span className="water-shimmer shimmer-one" />
         </div>
         <Environment tone={activeLevel?.tone ?? "village"} />
+        {DEBUG_WORLD_LAYOUT ? <div className="world-layout-debug-grid" aria-hidden="true" /> : null}
         <div className="journey-title">
           <h1>Dein Weg.<br /><span>Deine Sprache.</span></h1>
           <p>Lerne Deutsch Schritt fuer Schritt und entdecke neue Welten.</p>
@@ -355,12 +444,14 @@ function WorldMap({
             <LevelNode
               index={index}
               key={level.label}
+              layout={activeLayout}
               level={level}
               onFocus={() => onFocusLevel(level.label)}
+              onStartDebugDrag={startDebugDrag}
             />
           ))}
         </div>
-        <WorldMarkers levels={levels} />
+        <WorldMarkers layout={activeLayout} levels={levels} />
       </div>
     </section>
   );
@@ -400,72 +491,95 @@ function LevelRail({
 function LevelNode({
   level,
   index,
-  onFocus
+  layout,
+  onFocus,
+  onStartDebugDrag
 }: {
   level: WorldLevel;
   index: number;
+  layout: Record<WorldLevelLabel, WorldMapPoint>;
   onFocus: () => void;
+  onStartDebugDrag: (level: WorldLevelLabel, event: ReactPointerEvent) => void;
 }) {
-  const position = WORLD_LAYOUT[level.label];
+  const position = layout[level.label];
   const locked = level.state === "locked" || level.state === "future";
   const current = level.state === "current";
   const completion = level.totalCount > 0 ? `${level.completedCount} / ${level.totalCount}` : "0 / 30";
+  const content = (
+    <motion.span
+      animate={
+        current
+          ? {
+              scale: [1, 1.055, 1],
+              filter: [
+                "drop-shadow(0 0 18px rgba(255, 213, 78, 0.62))",
+                "drop-shadow(0 0 38px rgba(255, 213, 78, 0.94))",
+                "drop-shadow(0 0 18px rgba(255, 213, 78, 0.62))"
+              ]
+            }
+          : locked
+            ? { y: [0, -3, 0] }
+            : undefined
+      }
+      className={`journey-node level-world-node ${level.state} world-${level.tone}`}
+      transition={
+        current || locked
+          ? { duration: current ? 2.4 : 5.4, repeat: Infinity, ease: "easeInOut", delay: index * 0.08 }
+          : undefined
+      }
+      whileHover={{ scale: 1.08, y: -5 }}
+    >
+      <span className="journey-node-hex">
+        {level.state === "completed" ? (
+          <Check size={22} />
+        ) : locked ? (
+          <Lock size={21} />
+        ) : (
+          <Check size={21} />
+        )}
+      </span>
+      <span className="journey-node-copy">
+        <strong>{level.label}</strong>
+        <small>{level.title}</small>
+        <em>{completion}</em>
+      </span>
+    </motion.span>
+  );
 
   return (
     <div
       className={`journey-node-position level-node-position ${current ? "is-current" : ""}`}
       onMouseEnter={onFocus}
+      onPointerDown={(event) => onStartDebugDrag(level.label, event)}
       style={{ left: `${position.x}%`, top: `${position.y}%` }}
     >
-      <Link href={level.href} aria-label={`Open ${level.label} world`}>
-        <motion.span
-          animate={
-            current
-              ? {
-                  scale: [1, 1.055, 1],
-                  filter: [
-                    "drop-shadow(0 0 18px rgba(255, 213, 78, 0.62))",
-                    "drop-shadow(0 0 38px rgba(255, 213, 78, 0.94))",
-                    "drop-shadow(0 0 18px rgba(255, 213, 78, 0.62))"
-                  ]
-                }
-              : locked
-                ? { y: [0, -3, 0] }
-                : undefined
-          }
-          className={`journey-node level-world-node ${level.state} world-${level.tone}`}
-          transition={
-            current || locked
-              ? { duration: current ? 2.4 : 5.4, repeat: Infinity, ease: "easeInOut", delay: index * 0.08 }
-              : undefined
-          }
-          whileHover={{ scale: 1.08, y: -5 }}
-        >
-          <span className="journey-node-hex">
-            {level.state === "completed" ? (
-              <Check size={22} />
-            ) : locked ? (
-              <Lock size={21} />
-            ) : (
-              <Check size={21} />
-            )}
+      {DEBUG_WORLD_LAYOUT ? (
+        <>
+          <span aria-label={`Move ${level.label} world`}>{content}</span>
+          <span className="world-layout-coordinate">
+            {level.label}: {position.x.toFixed(1)}, {position.y.toFixed(1)}
           </span>
-          <span className="journey-node-copy">
-            <strong>{level.label}</strong>
-            <small>{level.title}</small>
-            <em>{completion}</em>
-          </span>
-        </motion.span>
-      </Link>
+        </>
+      ) : (
+        <Link href={level.href} aria-label={`Open ${level.label} world`}>
+          {content}
+        </Link>
+      )}
     </div>
   );
 }
 
-function WorldMarkers({ levels }: { levels: WorldLevel[] }) {
+function WorldMarkers({
+  layout,
+  levels
+}: {
+  layout: Record<WorldLevelLabel, WorldMapPoint>;
+  levels: WorldLevel[];
+}) {
   return (
     <div className="journey-world-markers" aria-hidden="true">
       {levels.map((level) => {
-        const position = WORLD_LAYOUT[level.label];
+        const position = layout[level.label];
 
         return (
           <span

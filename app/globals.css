@@ -3648,12 +3648,29 @@ h3 {
   width: auto;
 }
 
+.world-map-canvas.is-debugging-world-layout {
+  cursor: crosshair;
+}
+
 .world-map .journey-map-image {
   height: 100% !important;
   inset: 0 !important;
   object-fit: contain;
   object-position: center center;
   width: 100% !important;
+}
+
+.world-layout-debug-grid {
+  background-image:
+    linear-gradient(rgba(166, 255, 123, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(166, 255, 123, 0.1) 1px, transparent 1px),
+    linear-gradient(rgba(166, 255, 123, 0.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(166, 255, 123, 0.18) 1px, transparent 1px);
+  background-size: 5% 5%, 5% 5%, 10% 10%, 10% 10%;
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 8;
 }
 
 .world-map .journey-title {
@@ -3703,6 +3720,27 @@ h3 {
 
 .level-node-position {
   z-index: 11;
+}
+
+.is-debugging-world-layout .level-node-position {
+  cursor: grab;
+}
+
+.world-layout-coordinate {
+  background: rgba(2, 12, 19, 0.84);
+  border: 1px solid rgba(166, 255, 123, 0.28);
+  border-radius: 5px;
+  color: rgba(225, 255, 214, 0.9);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.52rem;
+  left: calc(100% + 5px);
+  line-height: 1;
+  padding: 3px 5px;
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
 }
 
 .level-world-node {

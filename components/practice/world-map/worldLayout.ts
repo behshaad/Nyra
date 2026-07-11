@@ -5,6 +5,8 @@ export type WorldMapPoint = {
   y: number;
 };
 
+export const DEBUG_WORLD_LAYOUT = false;
+
 export const WORLD_LAYOUT: Record<WorldLevelLabel, WorldMapPoint> = {
   A1: { x: 47, y: 64 },
   A2: { x: 34, y: 52 },
