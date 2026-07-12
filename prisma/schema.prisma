@@ -263,6 +263,8 @@ model FlashcardDeck {
   description       String
   levelLabel        String
   category          String
+  iconKey           String                 @default("layers-3")
+  colorKey          String                 @default("teal")
   ownerType         FlashcardDeckOwnerType @default(ADMIN)
   publicationStatus PublicationStatus      @default(DRAFT)
   learnerProfileId  String?

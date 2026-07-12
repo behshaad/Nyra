@@ -10,9 +10,18 @@ export type FlashcardDeckInput = {
   description: string;
   levelLabel: string;
   category: string;
+  iconKey: FlashcardDeckIconKey;
+  colorKey: FlashcardDeckColorKey;
   ownerType: FlashcardDeckOwnerType;
   publicationStatus: PublicationStatus;
   unitId: string | null;
+};
+
+export type FlashcardDeckUpdateInput = {
+  title: string;
+  description: string;
+  iconKey: FlashcardDeckIconKey;
+  colorKey: FlashcardDeckColorKey;
 };
 
 export type FlashcardInput = {
@@ -29,9 +38,34 @@ export type FlashcardInput = {
   notes: string | null;
 };
 
+export type FlashcardUpdateInput = Omit<FlashcardInput, "deckId">;
+
+export const flashcardDeckIconKeys = [
+  "layers-3",
+  "book-open",
+  "sparkles",
+  "graduation-cap",
+  "pen-line",
+  "message-circle"
+] as const;
+
+export const flashcardDeckColorKeys = [
+  "teal",
+  "rose",
+  "amber",
+  "indigo",
+  "emerald",
+  "slate"
+] as const;
+
+export type FlashcardDeckIconKey = (typeof flashcardDeckIconKeys)[number];
+export type FlashcardDeckColorKey = (typeof flashcardDeckColorKeys)[number];
+
 const ownerTypes = new Set(Object.values(FlashcardDeckOwnerType));
 const publicationStatuses = new Set(Object.values(PublicationStatus));
 const difficulties = new Set(Object.values(FlashcardDifficulty));
+const deckIconKeys = new Set<string>(flashcardDeckIconKeys);
+const deckColorKeys = new Set<string>(flashcardDeckColorKeys);
 
 function clean(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
@@ -61,6 +95,22 @@ export function optionalAudioUrl(value: unknown) {
   return null;
 }
 
+function iconKey(value: unknown): FlashcardDeckIconKey {
+  const cleaned = clean(value);
+
+  return deckIconKeys.has(cleaned)
+    ? (cleaned as FlashcardDeckIconKey)
+    : "layers-3";
+}
+
+function colorKey(value: unknown): FlashcardDeckColorKey {
+  const cleaned = clean(value);
+
+  return deckColorKeys.has(cleaned)
+    ? (cleaned as FlashcardDeckColorKey)
+    : "teal";
+}
+
 function isSlug(value: string) {
   return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
 }
@@ -73,6 +123,8 @@ export function parseFlashcardDeckInput(body: Record<string, unknown>):
   const description = clean(body.description);
   const levelLabel = clean(body.levelLabel) || "A1";
   const category = clean(body.category) || "Custom";
+  const deckIconKey = iconKey(body.iconKey);
+  const deckColorKey = colorKey(body.colorKey);
   const ownerType = clean(body.ownerType) || FlashcardDeckOwnerType.LEARNER;
   const publicationStatus =
     clean(body.publicationStatus) || PublicationStatus.PUBLISHED;
@@ -114,6 +166,8 @@ export function parseFlashcardDeckInput(body: Record<string, unknown>):
       description,
       levelLabel,
       category,
+      iconKey: deckIconKey,
+      colorKey: deckColorKey,
       ownerType: ownerType as FlashcardDeckOwnerType,
       publicationStatus: publicationStatus as PublicationStatus,
       unitId
@@ -121,10 +175,37 @@ export function parseFlashcardDeckInput(body: Record<string, unknown>):
   };
 }
 
-export function parseFlashcardInput(body: Record<string, unknown>):
-  | { ok: true; input: FlashcardInput }
+export function parseFlashcardDeckUpdateInput(body: Record<string, unknown>):
+  | { ok: true; input: FlashcardDeckUpdateInput }
   | { ok: false; error: string } {
-  const deckId = clean(body.deckId);
+  const title = clean(body.title);
+  const description = clean(body.description);
+  const deckIconKey = iconKey(body.iconKey);
+  const deckColorKey = colorKey(body.colorKey);
+
+  if (!title) {
+    return {
+      ok: false,
+      error: "Title is required."
+    };
+  }
+
+  return {
+    ok: true,
+    input: {
+      title,
+      description,
+      iconKey: deckIconKey,
+      colorKey: deckColorKey
+    }
+  };
+}
+
+function parseFlashcardContentInput(body: Record<string, unknown>, options?: {
+  requireRichContent?: boolean;
+}):
+  | { ok: true; input: FlashcardUpdateInput }
+  | { ok: false; error: string } {
   const front = clean(body.front);
   const back = clean(body.back);
   const article = optionalString(body.article);
@@ -137,10 +218,17 @@ export function parseFlashcardInput(body: Record<string, unknown>):
     clean(body.publicationStatus) || PublicationStatus.PUBLISHED;
   const notes = optionalString(body.notes);
 
-  if (!deckId || !front || !back || !example || !exampleMeaning) {
+  if (!front || !back) {
     return {
       ok: false,
-      error: "Deck, front, back, example, and example meaning are required."
+      error: "Front and back are required."
+    };
+  }
+
+  if (options?.requireRichContent && (!example || !exampleMeaning)) {
+    return {
+      ok: false,
+      error: "Example and example meaning are required."
     };
   }
 
@@ -168,7 +256,6 @@ export function parseFlashcardInput(body: Record<string, unknown>):
   return {
     ok: true,
     input: {
-      deckId,
       front,
       back,
       article,
@@ -181,4 +268,45 @@ export function parseFlashcardInput(body: Record<string, unknown>):
       notes
     }
   };
+}
+
+export function parseFlashcardInput(
+  body: Record<string, unknown>,
+  options?: {
+    requireRichContent?: boolean;
+  }
+):
+  | { ok: true; input: FlashcardInput }
+  | { ok: false; error: string } {
+  const deckId = clean(body.deckId);
+
+  if (!deckId) {
+    return {
+      ok: false,
+      error: "Deck is required."
+    };
+  }
+
+  const parsed = parseFlashcardContentInput(body, options);
+
+  if (!parsed.ok) {
+    return parsed;
+  }
+
+  return {
+    ok: true,
+    input: {
+      deckId,
+      ...parsed.input
+    }
+  };
+}
+
+export function parseFlashcardUpdateInput(
+  body: Record<string, unknown>,
+  options?: {
+    requireRichContent?: boolean;
+  }
+) {
+  return parseFlashcardContentInput(body, options);
 }

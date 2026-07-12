@@ -6,6 +6,7 @@ import {
   canDeleteLearnerFlashcardDeck
 } from "@/lib/flashcards/flashcard-access";
 import { getDevLearnerProfileId } from "@/lib/flashcards/flashcard-repository";
+import { parseFlashcardDeckUpdateInput } from "@/lib/flashcards/flashcard-validation";
 
 function clean(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
@@ -22,13 +23,7 @@ export async function PATCH(
   const { deckId } = await context.params;
   const body = (await request.json()) as Record<string, unknown>;
   const publicationStatus = clean(body.publicationStatus);
-
-  if (publicationStatus !== PublicationStatus.ARCHIVED) {
-    return NextResponse.json(
-      { error: "Only archive is supported for admin Flashcard Decks." },
-      { status: 400 }
-    );
-  }
+  const parsedUpdate = parseFlashcardDeckUpdateInput(body);
 
   const db = getPrisma();
   const deck = await db.flashcardDeck.findUnique({
@@ -37,7 +32,8 @@ export async function PATCH(
     },
     select: {
       id: true,
-      ownerType: true
+      ownerType: true,
+      learnerProfileId: true
     }
   });
 
@@ -48,9 +44,38 @@ export async function PATCH(
     );
   }
 
-  if (!canArchiveAdminFlashcardDeck(deck)) {
+  if (publicationStatus === PublicationStatus.ARCHIVED) {
+    if (!canArchiveAdminFlashcardDeck(deck)) {
+      return NextResponse.json(
+        { error: "Personal Flashcard Decks can be deleted, not archived." },
+        { status: 403 }
+      );
+    }
+
+    const updated = await db.flashcardDeck.update({
+      where: {
+        id: deck.id
+      },
+      data: {
+        publicationStatus
+      }
+    });
+
+    return NextResponse.json({
+      id: updated.id,
+      publicationStatus: updated.publicationStatus
+    });
+  }
+
+  if (!parsedUpdate.ok) {
+    return NextResponse.json({ error: parsedUpdate.error }, { status: 400 });
+  }
+
+  const learnerProfileId = await getDevLearnerProfileId();
+
+  if (!canDeleteLearnerFlashcardDeck({ learnerProfileId, deck })) {
     return NextResponse.json(
-      { error: "Personal Flashcard Decks can be deleted, not archived." },
+      { error: "You cannot edit this Flashcard Deck." },
       { status: 403 }
     );
   }
@@ -59,14 +84,21 @@ export async function PATCH(
     where: {
       id: deck.id
     },
-    data: {
-      publicationStatus
-    }
+    data: parsedUpdate.input
   });
 
   return NextResponse.json({
     id: updated.id,
-    publicationStatus: updated.publicationStatus
+    slug: updated.slug,
+    title: updated.title,
+    description: updated.description,
+    levelLabel: updated.levelLabel,
+    category: updated.category,
+    iconKey: updated.iconKey,
+    colorKey: updated.colorKey,
+    ownerType: updated.ownerType,
+    publicationStatus: updated.publicationStatus,
+    unitId: updated.unitId
   });
 }
 

@@ -1,6 +1,6 @@
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
-import { FlashcardStudy } from "@/components/flashcard-study";
+import { FlashcardLibrary } from "@/components/flashcard-library";
 import {
   getFlashcardUnitOptions,
   getLearnerFlashcardDecks
@@ -42,7 +42,7 @@ export default async function FlashcardsPage({
           <p>{text(flashcardCopy.body, language)}</p>
         </div>
 
-        <FlashcardStudy
+        <FlashcardLibrary
           decks={decks.map((deck) => ({
             id: deck.id,
             slug: deck.slug,
@@ -50,6 +50,8 @@ export default async function FlashcardsPage({
             description: deck.description,
             levelLabel: deck.levelLabel,
             category: deck.category,
+            iconKey: deck.iconKey,
+            colorKey: deck.colorKey,
             ownerType: deck.ownerType,
             publicationStatus: deck.publicationStatus,
             unitTitle: deck.unit?.title ?? null,

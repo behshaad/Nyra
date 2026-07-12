@@ -14,14 +14,16 @@ function clean(value: unknown) {
 
 export async function POST(request: Request) {
   const body = (await request.json()) as Record<string, unknown>;
-  const parsed = parseFlashcardInput(body);
+  const actorOwnerType = clean(body.actorOwnerType) || FlashcardDeckOwnerType.LEARNER;
+  const parsed = parseFlashcardInput(body, {
+    requireRichContent: actorOwnerType === FlashcardDeckOwnerType.ADMIN
+  });
 
   if (!parsed.ok) {
     return NextResponse.json({ error: parsed.error }, { status: 400 });
   }
 
   const db = getPrisma();
-  const actorOwnerType = clean(body.actorOwnerType) || FlashcardDeckOwnerType.LEARNER;
 
   if (!Object.values(FlashcardDeckOwnerType).includes(actorOwnerType as FlashcardDeckOwnerType)) {
     return NextResponse.json(
@@ -66,7 +68,18 @@ export async function POST(request: Request) {
 
   return NextResponse.json(
     {
-      id: card.id
+      id: card.id,
+      deckId: card.deckId,
+      front: card.front,
+      back: card.back,
+      article: card.article,
+      example: card.example,
+      exampleMeaning: card.exampleMeaning,
+      pronunciation: card.pronunciation,
+      pronunciationAudioUrl: card.pronunciationAudioUrl,
+      difficulty: card.difficulty,
+      publicationStatus: card.publicationStatus,
+      notes: card.notes
     },
     { status: 201 }
   );

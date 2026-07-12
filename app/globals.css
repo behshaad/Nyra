@@ -2405,6 +2405,447 @@ h3 {
   gap: 10px;
 }
 
+.flashcard-layer-shell {
+  display: grid;
+  min-width: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.flashcard-layer {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+
+.flashcard-library-section {
+  display: grid;
+  gap: 14px;
+}
+
+.flashcard-library-heading {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+}
+
+.flashcard-library-heading h2 {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  margin: 0;
+}
+
+.flashcard-library-heading p,
+.flashcard-empty-library p {
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 6px 0 0;
+}
+
+.flashcard-add-button {
+  align-items: center;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--hover-shadow);
+  color: var(--green-dark);
+  cursor: pointer;
+  display: inline-flex;
+  height: 42px;
+  justify-content: center;
+  min-width: 42px;
+  transition:
+    background 180ms ease,
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.flashcard-add-button:hover {
+  background: var(--control-hover);
+  transform: translateY(-1px);
+}
+
+.flashcard-library-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.flashcard-library-card {
+  --deck-accent: var(--green);
+  --deck-accent-soft: var(--success-soft);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  cursor: pointer;
+  display: grid;
+  gap: 14px;
+  min-height: 176px;
+  padding: 16px;
+  text-align: start;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.flashcard-library-card:hover,
+.flashcard-library-card:focus-visible {
+  border-color: color-mix(in srgb, var(--deck-accent) 42%, var(--line));
+  box-shadow: var(--hover-shadow);
+  transform: translateY(-2px);
+}
+
+.flashcard-library-icon {
+  align-items: center;
+  background: var(--deck-accent-soft);
+  border: 1px solid color-mix(in srgb, var(--deck-accent) 28%, transparent);
+  border-radius: 8px;
+  color: var(--deck-accent);
+  display: inline-flex;
+  height: 42px;
+  justify-content: center;
+  width: 42px;
+}
+
+.flashcard-library-card strong,
+.flashcard-library-card small,
+.flashcard-library-meta {
+  display: block;
+  min-width: 0;
+}
+
+.flashcard-library-card strong {
+  font-size: 1.05rem;
+  overflow-wrap: anywhere;
+}
+
+.flashcard-library-card small {
+  color: var(--muted);
+  line-height: 1.5;
+  margin-top: 6px;
+}
+
+.flashcard-library-meta {
+  align-self: end;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.flashcard-empty-library {
+  background: var(--surface);
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  padding: 18px;
+}
+
+.flashcard-focused-heading {
+  --deck-accent: var(--green);
+  --deck-accent-soft: var(--success-soft);
+  align-items: flex-start;
+  background:
+    linear-gradient(135deg, var(--deck-accent-soft), transparent 52%),
+    var(--surface);
+  border: 1px solid color-mix(in srgb, var(--deck-accent) 25%, var(--line));
+  border-radius: 8px;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  padding: 16px;
+}
+
+.flashcard-focused-heading h2 {
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  margin: 4px 0;
+  overflow-wrap: anywhere;
+}
+
+.flashcard-focused-heading p {
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.flashcard-mode-row {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.flashcard-mode-row .segmented-control {
+  min-width: min(100%, 300px);
+}
+
+.flashcard-focused-card {
+  min-height: min(58vh, 520px);
+}
+
+.study-card-face.is-hidden {
+  opacity: 0;
+  transform: rotateY(10deg) scale(0.98);
+  pointer-events: none;
+}
+
+.study-card-back.is-visible {
+  opacity: 1;
+  transform: rotateY(0) scale(1);
+}
+
+.flashcard-layer-form {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+}
+
+.flashcard-layer-form label {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.flashcard-layer-form label span,
+.flashcard-choice-field legend {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 850;
+}
+
+.flashcard-layer-form input,
+.flashcard-layer-form textarea {
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  color: var(--text);
+  min-height: 44px;
+  min-width: 0;
+  padding: 10px 12px;
+  width: 100%;
+}
+
+.flashcard-layer-form textarea {
+  resize: vertical;
+}
+
+.flashcard-step-band {
+  display: grid;
+  gap: 4px;
+}
+
+.flashcard-step-band span {
+  color: var(--green);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.flashcard-step-band h2 {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  margin: 0;
+}
+
+.flashcard-choice-field {
+  border: 0;
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+}
+
+.flashcard-choice-field > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.flashcard-choice-field button {
+  align-items: center;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  cursor: pointer;
+  display: inline-flex;
+  height: 42px;
+  justify-content: center;
+  min-width: 42px;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.flashcard-choice-field button:hover,
+.flashcard-choice-field button.active {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px var(--focus);
+}
+
+.flashcard-choice-field button[class*="flashcard-swatch"] {
+  color: transparent;
+}
+
+.flashcard-layer-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.flashcard-card-builder {
+  align-items: start;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.1fr);
+}
+
+.flashcard-two-fields {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.flashcard-card-list {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.flashcard-mini-card,
+.flashcard-empty-card,
+.flashcard-finish-layer {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.flashcard-mini-card {
+  align-items: center;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 12px;
+}
+
+.flashcard-mini-card strong,
+.flashcard-mini-card span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.flashcard-mini-card span {
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+.flashcard-mini-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.flashcard-empty-card {
+  align-items: center;
+  color: var(--muted);
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  min-height: 180px;
+  padding: 18px;
+  text-align: center;
+}
+
+.flashcard-finish-layer {
+  align-items: center;
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+  min-height: 420px;
+  padding: 32px;
+  text-align: center;
+}
+
+.flashcard-finish-layer svg {
+  color: var(--green);
+}
+
+.flashcard-finish-layer h2 {
+  font-size: clamp(2rem, 6vw, 4rem);
+  margin: 0;
+}
+
+.flashcard-finish-layer p {
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 520px;
+}
+
+.danger-zone {
+  justify-content: flex-start;
+}
+
+.flashcard-accent-teal {
+  --deck-accent: #0d9488;
+  --deck-accent-soft: rgba(13, 148, 136, 0.12);
+}
+
+.flashcard-accent-rose {
+  --deck-accent: #be4568;
+  --deck-accent-soft: rgba(190, 69, 104, 0.13);
+}
+
+.flashcard-accent-amber {
+  --deck-accent: #b7791f;
+  --deck-accent-soft: rgba(183, 121, 31, 0.14);
+}
+
+.flashcard-accent-indigo {
+  --deck-accent: #6366f1;
+  --deck-accent-soft: rgba(99, 102, 241, 0.13);
+}
+
+.flashcard-accent-emerald {
+  --deck-accent: #059669;
+  --deck-accent-soft: rgba(5, 150, 105, 0.13);
+}
+
+.flashcard-accent-slate {
+  --deck-accent: #64748b;
+  --deck-accent-soft: rgba(100, 116, 139, 0.14);
+}
+
+.flashcard-swatch-teal {
+  background: #0d9488 !important;
+}
+
+.flashcard-swatch-rose {
+  background: #be4568 !important;
+}
+
+.flashcard-swatch-amber {
+  background: #b7791f !important;
+}
+
+.flashcard-swatch-indigo {
+  background: #6366f1 !important;
+}
+
+.flashcard-swatch-emerald {
+  background: #059669 !important;
+}
+
+.flashcard-swatch-slate {
+  background: #64748b !important;
+}
+
 .profile-layout {
   align-items: start;
   grid-template-columns: 300px minmax(0, 1fr);
@@ -2592,9 +3033,14 @@ h3 {
   .admin-hero,
   .admin-two-column,
   .resource-feature-band,
+  .flashcard-card-builder,
   .flashcard-workspace,
   .profile-layout {
     grid-template-columns: 1fr;
+  }
+
+  .flashcard-library-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .profile-progress-grid {
@@ -2650,6 +3096,7 @@ h3 {
   .feature-grid,
   .foundation-grid,
   .flashcard-editor-flow,
+  .flashcard-two-fields,
   .profile-grid,
   .profile-progress-grid,
   .resource-library,
@@ -2659,6 +3106,19 @@ h3 {
   .mini-panel-grid,
   .analytics-grid {
     grid-template-columns: 1fr;
+  }
+
+  .flashcard-focused-heading {
+    grid-template-columns: 1fr;
+  }
+
+  .flashcard-mode-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .flashcard-mode-row .segmented-control {
+    min-width: 0;
   }
 
   .unit-rail {
@@ -2697,15 +3157,36 @@ h3 {
 
 @media (max-width: 520px) {
   .hero-actions,
-  .app-panel-header {
+  .app-panel-header,
+  .flashcard-library-heading,
+  .flashcard-layer-actions {
     align-items: stretch;
     flex-direction: column;
   }
 
   .hero-actions a,
   .primary-button,
-  .secondary-button {
+  .secondary-button,
+  .danger-button {
     width: 100%;
+  }
+
+  .flashcard-library-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .flashcard-add-button {
+    width: 42px;
+  }
+
+  .flashcard-focused-card {
+    min-height: 380px;
+    padding: 18px;
+  }
+
+  .flashcard-mini-card {
+    align-items: stretch;
+    grid-template-columns: 1fr;
   }
 
   .skill-node {

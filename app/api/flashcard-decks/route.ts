@@ -45,7 +45,16 @@ export async function POST(request: Request) {
   return NextResponse.json(
     {
       id: deck.id,
-      slug: deck.slug
+      slug: deck.slug,
+      title: deck.title,
+      description: deck.description,
+      levelLabel: deck.levelLabel,
+      category: deck.category,
+      iconKey: deck.iconKey,
+      colorKey: deck.colorKey,
+      ownerType: deck.ownerType,
+      publicationStatus: deck.publicationStatus,
+      unitId: deck.unitId
     },
     { status: 201 }
   );

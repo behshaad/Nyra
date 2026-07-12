@@ -160,6 +160,8 @@ export async function createFlashcardDeck(input: FlashcardDeckInput) {
       description: input.description,
       levelLabel: input.levelLabel,
       category: input.category,
+      iconKey: input.iconKey,
+      colorKey: input.colorKey,
       ownerType: input.ownerType,
       publicationStatus: input.publicationStatus,
       learnerProfileId,
