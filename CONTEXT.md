@@ -20,6 +20,10 @@ _Avoid_: Stage
 A learner-facing control for choosing which Level's Learning Path to view or continue, such as A1 or A2.
 _Avoid_: Language toggle, course switcher
 
+**Level World**:
+A learner-facing adventure map owned by a Level, where the learner sees that Level's Skills as nodes on a themed path.
+_Avoid_: Lesson world, module map
+
 **Curriculum Reference**:
 An external learning source used to understand topic progression, skill coverage, and proficiency expectations without copying its exact wording, exercises, or proprietary sequence as Nyra content.
 _Avoid_: Source content, imported textbook
