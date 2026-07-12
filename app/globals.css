@@ -5182,6 +5182,683 @@ h3 {
   width: 14px;
 }
 
+.journey-map-canvas.is-entering-world .journey-title,
+.journey-map-canvas.is-entering-world .journey-level-rail,
+.journey-map-canvas.is-entering-world .journey-world-markers,
+.journey-map-canvas.is-entering-world .journey-ambient-layer {
+  opacity: 0;
+  transition: opacity 420ms ease;
+}
+
+.level-node-position.is-entering {
+  z-index: 40;
+}
+
+.world-transition-overlay {
+  background:
+    radial-gradient(circle, rgba(255, 248, 224, 0.9) 0 8%, rgba(231, 143, 165, 0.68) 32%, rgba(18, 9, 18, 0.98) 72%);
+  border-radius: 999px;
+  filter: blur(2px);
+  height: 220px;
+  pointer-events: none;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 220px;
+  z-index: 36;
+}
+
+.level-world-stage {
+  background: #07131b;
+}
+
+.level-world-main {
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.level-world-background {
+  inset: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: 0;
+}
+
+.level-world-background-image {
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  width: 100%;
+}
+
+.level-world-vignette {
+  background:
+    linear-gradient(180deg, rgba(3, 10, 15, 0.52), transparent 22%, transparent 72%, rgba(3, 10, 15, 0.72)),
+    radial-gradient(circle at 52% 46%, transparent 0 44%, rgba(3, 10, 15, 0.42) 76%),
+    linear-gradient(90deg, rgba(3, 10, 15, 0.48), transparent 18%, transparent 82%, rgba(3, 10, 15, 0.56));
+  inset: 0;
+  position: absolute;
+}
+
+.level-world-topbar {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  left: 20px;
+  position: absolute;
+  right: 20px;
+  top: 18px;
+  z-index: 12;
+}
+
+.level-world-topbar h1,
+.level-world-topbar span,
+.world-progress-indicator strong {
+  margin: 0;
+}
+
+.level-world-topbar h1 {
+  color: #fffaff;
+  font-size: clamp(1.24rem, 2.6vw, 2.05rem);
+  line-height: 1;
+  text-shadow: 0 12px 28px rgba(0, 0, 0, 0.42);
+}
+
+.level-world-topbar span {
+  color: rgba(248, 243, 250, 0.68);
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.world-back-button,
+.practice-player-back,
+.practice-player-button {
+  align-items: center;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  font-weight: 850;
+  gap: 8px;
+  justify-content: center;
+  min-height: 42px;
+  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+}
+
+.world-back-button,
+.practice-player-back {
+  background: rgba(5, 18, 25, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #fffaff;
+  padding: 0 12px;
+}
+
+.world-back-button:hover,
+.practice-player-back:hover,
+.practice-player-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.world-progress-indicator {
+  background: rgba(5, 18, 25, 0.66);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  min-width: 118px;
+  padding: 9px 12px;
+  text-align: right;
+}
+
+.world-progress-indicator strong {
+  color: #fffaff;
+  display: block;
+  font-size: 1.08rem;
+}
+
+.level-world-path-layer {
+  height: 100%;
+  inset: 0;
+  min-height: 720px;
+  overflow: hidden;
+  position: absolute;
+  z-index: 8;
+}
+
+.level-world-path-svg {
+  height: 100%;
+  inset: 0;
+  overflow: visible;
+  position: absolute;
+  width: 100%;
+}
+
+.level-world-path-shadow,
+.level-world-path-line {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.level-world-path-shadow {
+  filter: drop-shadow(0 16px 18px rgba(0, 0, 0, 0.52));
+  stroke: rgba(6, 13, 18, 0.62);
+  stroke-width: 2.7;
+}
+
+.level-world-path-line {
+  stroke: rgba(255, 242, 209, 0.62);
+  stroke-dasharray: 1.2 2.8;
+  stroke-width: 0.72;
+}
+
+.level-skill-node-position {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+.level-skill-node-position > a,
+.level-skill-node-position > span {
+  display: block;
+}
+
+.level-skill-node {
+  align-items: center;
+  cursor: pointer;
+  display: grid;
+  gap: 7px;
+  justify-items: center;
+  max-width: 154px;
+  min-width: 108px;
+  position: relative;
+  text-align: center;
+  will-change: transform;
+}
+
+.level-skill-node.locked {
+  cursor: default;
+}
+
+.level-skill-gem {
+  align-items: center;
+  background:
+    radial-gradient(circle at 30% 18%, rgba(255, 255, 255, 0.82), transparent 18%),
+    linear-gradient(145deg, #fff2d1, #f0a6b7 48%, #5f3f61);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  box-shadow:
+    0 0 0 8px rgba(255, 242, 209, 0.1),
+    0 14px 26px rgba(0, 0, 0, 0.38),
+    inset 0 -10px 18px rgba(0, 0, 0, 0.18);
+  color: #301f32;
+  display: inline-flex;
+  height: 54px;
+  justify-content: center;
+  width: 54px;
+}
+
+.level-skill-node.completed .level-skill-gem {
+  background:
+    radial-gradient(circle at 30% 18%, rgba(255, 255, 255, 0.86), transparent 18%),
+    linear-gradient(145deg, #d7f3dd, #78c791 48%, #206645);
+}
+
+.level-skill-node.needs_review .level-skill-gem,
+.level-skill-node.assessment .level-skill-gem {
+  background:
+    radial-gradient(circle at 30% 18%, rgba(255, 255, 255, 0.82), transparent 18%),
+    linear-gradient(145deg, #ffe5b7, #f2b8ad 46%, #75556d);
+}
+
+.level-skill-node.locked .level-skill-gem {
+  background:
+    radial-gradient(circle at 30% 18%, rgba(255, 255, 255, 0.22), transparent 18%),
+    linear-gradient(145deg, rgba(133, 146, 158, 0.82), rgba(36, 49, 63, 0.96));
+  color: rgba(248, 243, 250, 0.82);
+  filter: saturate(0.72);
+}
+
+.level-skill-copy {
+  background: rgba(5, 18, 25, 0.74);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 8px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32);
+  display: grid;
+  gap: 2px;
+  padding: 7px 8px;
+}
+
+.level-skill-copy strong {
+  color: #fffaff;
+  font-size: 0.72rem;
+  line-height: 1.18;
+}
+
+.level-skill-copy small {
+  color: rgba(248, 243, 250, 0.68);
+  font-size: 0.55rem;
+  line-height: 1.2;
+}
+
+.level-skill-node.locked .level-skill-copy {
+  opacity: 0.72;
+}
+
+.current-skill-ring,
+.assessment-star {
+  align-items: center;
+  border-radius: 999px;
+  color: #301f32;
+  display: inline-flex;
+  justify-content: center;
+  position: absolute;
+}
+
+.current-skill-ring {
+  background: #fff2d1;
+  box-shadow: 0 0 18px rgba(255, 242, 209, 0.72);
+  height: 26px;
+  right: 22%;
+  top: -16px;
+  width: 26px;
+}
+
+.assessment-star {
+  background: #f2b8ad;
+  bottom: 44px;
+  height: 24px;
+  left: 24%;
+  width: 24px;
+}
+
+.skill-transition-fade {
+  background: rgba(4, 12, 18, 0.72);
+  inset: 0;
+  position: absolute;
+  z-index: 35;
+}
+
+.level-world-empty {
+  align-items: center;
+  background: rgba(5, 18, 25, 0.68);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  color: #fffaff;
+  display: inline-flex;
+  gap: 10px;
+  left: 50%;
+  padding: 14px 16px;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+.practice-skill-player-shell {
+  align-items: center;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 242, 209, 0.16), transparent 36%),
+    linear-gradient(135deg, #07131b, #160d14 55%, #301f32);
+  display: flex;
+  justify-content: center;
+  min-height: 100dvh;
+  overflow: hidden;
+  padding: 22px;
+  position: relative;
+}
+
+.practice-player-frame,
+.practice-player-card {
+  background: rgba(6, 18, 26, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 8px;
+  box-shadow:
+    0 28px 90px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  color: #fffaff;
+  max-width: 760px;
+  width: min(100%, 760px);
+}
+
+.practice-player-card {
+  display: grid;
+  gap: 12px;
+  padding: 20px;
+}
+
+.practice-player-frame {
+  display: grid;
+  gap: 16px;
+  padding: clamp(16px, 3vw, 24px);
+  position: relative;
+  z-index: 2;
+}
+
+.practice-player-topbar {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+}
+
+.practice-player-topbar > div {
+  display: grid;
+  gap: 3px;
+  text-align: right;
+}
+
+.practice-player-topbar span {
+  color: rgba(248, 243, 250, 0.64);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.practice-player-topbar strong {
+  font-size: 0.96rem;
+}
+
+.practice-player-progress {
+  background: rgba(255, 255, 255, 0.09);
+  border-radius: 999px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.practice-player-progress span {
+  background: linear-gradient(90deg, #d7f3dd, #fff2d1, #f0a6b7);
+  border-radius: inherit;
+  display: block;
+  height: 100%;
+}
+
+.practice-question-card {
+  display: grid;
+  gap: 14px;
+}
+
+.practice-question-card > span {
+  color: rgba(248, 243, 250, 0.62);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.practice-question-card h2 {
+  font-size: clamp(1.32rem, 3.4vw, 2rem);
+  line-height: 1.18;
+  margin: 0;
+}
+
+.practice-answer-grid,
+.practice-player-form {
+  display: grid;
+  gap: 10px;
+}
+
+.practice-answer-option,
+.practice-player-form input,
+.practice-word-answer,
+.practice-word-tile {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 8px;
+  color: #fffaff;
+}
+
+.practice-answer-option,
+.practice-word-tile {
+  cursor: pointer;
+  font-weight: 800;
+  transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.practice-answer-option {
+  min-height: 52px;
+  padding: 11px 13px;
+  text-align: right;
+}
+
+.practice-answer-option[dir="ltr"] {
+  text-align: left;
+}
+
+.practice-answer-option:hover:not(:disabled),
+.practice-word-tile:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.13);
+  border-color: rgba(255, 242, 209, 0.38);
+  transform: translateY(-1px);
+}
+
+.practice-answer-option.correct {
+  background: rgba(120, 199, 145, 0.24);
+  border-color: rgba(170, 234, 184, 0.46);
+}
+
+.practice-answer-option.wrong {
+  background: rgba(231, 143, 165, 0.2);
+  border-color: rgba(242, 184, 173, 0.46);
+}
+
+.practice-player-form input {
+  font-weight: 780;
+  min-height: 52px;
+  padding: 11px 13px;
+}
+
+.practice-word-answer,
+.practice-word-bank {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.practice-word-answer {
+  border-style: dashed;
+  min-height: 58px;
+  padding: 10px;
+}
+
+.practice-word-answer > span {
+  color: rgba(248, 243, 250, 0.52);
+  font-size: 0.82rem;
+}
+
+.practice-word-tile {
+  min-height: 38px;
+  padding: 8px 11px;
+}
+
+.practice-word-tile.selected {
+  background: rgba(255, 242, 209, 0.16);
+}
+
+.practice-player-button {
+  background: linear-gradient(135deg, #fff2d1, #f0a6b7);
+  color: #301f32;
+  justify-self: start;
+  min-width: 108px;
+  padding: 0 16px;
+}
+
+.practice-player-button.secondary {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  color: #fffaff;
+}
+
+.practice-player-button:disabled,
+.practice-answer-option:disabled,
+.practice-word-tile:disabled,
+.practice-player-form input:disabled {
+  cursor: not-allowed;
+  opacity: 0.68;
+}
+
+.practice-player-feedback {
+  border-radius: 8px;
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+}
+
+.practice-player-feedback.correct {
+  background: rgba(120, 199, 145, 0.16);
+  border: 1px solid rgba(170, 234, 184, 0.24);
+}
+
+.practice-player-feedback.wrong {
+  background: rgba(231, 143, 165, 0.16);
+  border: 1px solid rgba(242, 184, 173, 0.24);
+}
+
+.practice-player-feedback p {
+  color: rgba(248, 243, 250, 0.72);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.practice-completion-overlay {
+  align-items: center;
+  background: rgba(3, 10, 15, 0.82);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  position: absolute;
+  z-index: 20;
+}
+
+.practice-completion-overlay > div {
+  align-items: center;
+  background: rgba(255, 250, 242, 0.94);
+  border-radius: 8px;
+  color: #301f32;
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  min-width: 220px;
+  padding: 24px;
+}
+
+.practice-completion-overlay strong {
+  font-size: 1.2rem;
+}
+
+@media (max-width: 1180px) {
+  .level-world-stage {
+    height: 100dvh;
+    min-height: 100dvh;
+  }
+
+  .level-world-topbar {
+    left: 14px;
+    right: 14px;
+  }
+
+  .level-skill-node {
+    max-width: 136px;
+    min-width: 94px;
+  }
+
+  .level-skill-gem {
+    height: 48px;
+    width: 48px;
+  }
+
+  .level-skill-copy strong {
+    font-size: 0.66rem;
+  }
+
+  .level-skill-copy small {
+    font-size: 0.5rem;
+  }
+}
+
+@media (max-width: 840px) {
+  .level-world-stage {
+    grid-template-columns: 1fr;
+  }
+
+  .level-world-main {
+    min-height: 100dvh;
+  }
+
+  .level-world-topbar {
+    align-items: flex-start;
+    gap: 8px;
+    top: 12px;
+  }
+
+  .world-back-button span,
+  .practice-player-back span {
+    display: none;
+  }
+
+  .world-back-button,
+  .practice-player-back {
+    min-width: 42px;
+    padding: 0;
+  }
+
+  .world-progress-indicator {
+    min-width: 82px;
+    padding: 8px;
+  }
+
+  .world-progress-indicator span {
+    font-size: 0.58rem;
+  }
+
+  .level-world-path-layer {
+    min-height: 100dvh;
+  }
+
+  .level-skill-node {
+    max-width: 96px;
+    min-width: 72px;
+  }
+
+  .level-skill-gem {
+    height: 42px;
+    width: 42px;
+  }
+
+  .level-skill-copy {
+    padding: 5px 6px;
+  }
+
+  .level-skill-copy strong {
+    font-size: 0.54rem;
+  }
+
+  .level-skill-copy small {
+    font-size: 0.42rem;
+  }
+
+  .practice-skill-player-shell {
+    align-items: stretch;
+    padding: 12px;
+  }
+
+  .practice-player-frame,
+  .practice-player-card {
+    align-self: center;
+  }
+
+  .practice-player-topbar {
+    gap: 10px;
+  }
+
+  .practice-player-topbar > div {
+    min-width: 0;
+  }
+
+  .practice-player-topbar span,
+  .practice-player-topbar strong {
+    overflow-wrap: anywhere;
+  }
+}
+
 .world-region-label {
   background: linear-gradient(90deg, rgba(12, 24, 42, 0.9), rgba(13, 26, 42, 0.48));
   border: 1px solid rgba(246, 201, 214, 0.24);
