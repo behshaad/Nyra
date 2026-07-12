@@ -2429,6 +2429,326 @@ const a2PublishedUnitSpecs: UnitSpec[] = [
         miniAnswer: "دوستش به او توصیه می‌کند استراحت کند."
       }
     ]
+  },
+  {
+    slug: "a2-media-apps-and-free-time",
+    title: "رسانه، اپلیکیشن و وقت آزاد",
+    summary: "برنامه تلویزیونی، اپلیکیشن محبوب، روز مورد علاقه و فعالیت‌های آزاد را بیان کنید.",
+    resourceFocus: "رسانه، اپلیکیشن و وقت آزاد",
+    skills: [
+      {
+        slug: "a2-discuss-tv-programs",
+        title: "درباره برنامه تلویزیونی حرف بزن",
+        description: "نوع برنامه، زمان پخش و نظر شخصی را بیان کن.",
+        focus: "تلویزیون",
+        word: "die Sendung",
+        meaning: "برنامه تلویزیونی",
+        phrase: "Die Sendung laeuft jeden Freitag.",
+        phraseMeaning: "این برنامه هر جمعه پخش می‌شود",
+        blankSentence: "Die Sendung laeuft jeden ___.",
+        blankAnswer: "Freitag",
+        blankChoices: ["Freitag", "Fenster", "Fehler"],
+        orderedWords: ["Die", "Sendung", "laeuft", "jeden", "Freitag"],
+        grammarPoint: "برای برنامه‌ای که مرتب تکرار می‌شود، می‌توان از jeden + روز هفته استفاده کرد.",
+        situation: "برنامه تلویزیونی مورد علاقه‌تان را معرفی می‌کنید.",
+        miniText: "Omid sieht gern eine Reisesendung. Sie laeuft jeden Freitag um acht Uhr.",
+        miniAnswer: "برنامه هر جمعه پخش می‌شود."
+      },
+      {
+        slug: "a2-present-a-favorite-app",
+        title: "اپلیکیشن محبوبت را معرفی کن",
+        description: "کاربرد، مزیت و دلیل علاقه به یک اپ را توضیح بده.",
+        focus: "اپلیکیشن",
+        word: "die App",
+        meaning: "اپلیکیشن",
+        phrase: "Diese App hilft mir beim Deutschlernen.",
+        phraseMeaning: "این اپلیکیشن در یادگیری آلمانی به من کمک می‌کند",
+        blankSentence: "Diese App hilft mir beim ___.",
+        blankAnswer: "Deutschlernen",
+        blankChoices: ["Deutschlernen", "Abendessen", "Ausruhen"],
+        orderedWords: ["Diese", "App", "hilft", "mir", "beim", "Deutschlernen"],
+        grammarPoint: "فعل helfen با داتیو می‌آید: mir.",
+        situation: "به دوستتان می‌گویید چرا از یک اپ استفاده می‌کنید.",
+        miniText: "Mina benutzt eine Lernapp. Die App erinnert sie jeden Tag an neue Woerter.",
+        miniAnswer: "اپ هر روز واژه‌های جدید را یادآوری می‌کند."
+      },
+      {
+        slug: "a2-describe-a-favorite-day",
+        title: "روز مورد علاقه‌ات را توصیف کن",
+        description: "برنامه روز، فعالیت‌ها و حس شخصی را توضیح بده.",
+        focus: "روز محبوب",
+        word: "der Lieblingstag",
+        meaning: "روز مورد علاقه",
+        phrase: "Mein Lieblingstag ist Samstag, weil ich frei habe.",
+        phraseMeaning: "روز مورد علاقه من شنبه است چون آزاد هستم",
+        blankSentence: "Mein Lieblingstag ist Samstag, ___ ich frei habe.",
+        blankAnswer: "weil",
+        blankChoices: ["weil", "oder", "aber"],
+        orderedWords: ["Mein", "Lieblingstag", "ist", "Samstag"],
+        grammarPoint: "در جمله فرعی با weil، فعل صرف‌شده در پایان جمله می‌آید.",
+        situation: "درباره بهترین روز هفته و دلیل آن حرف می‌زنید.",
+        miniText: "Fuer Sara ist Samstag der Lieblingstag. Sie schlaeft lange und trifft Freunde.",
+        miniAnswer: "سارا شنبه را دوست دارد."
+      },
+      {
+        slug: "a2-plan-free-time",
+        title: "وقت آزاد را برنامه‌ریزی کن",
+        description: "پیشنهاد، زمان و ترجیح برای فعالیت آزاد را بیان کن.",
+        focus: "وقت آزاد",
+        word: "die Freizeit",
+        meaning: "وقت آزاد",
+        phrase: "Wollen wir am Wochenende ins Kino gehen?",
+        phraseMeaning: "می‌خواهیم آخر هفته به سینما برویم؟",
+        blankSentence: "Wollen wir am Wochenende ins ___ gehen?",
+        blankAnswer: "Kino",
+        blankChoices: ["Kino", "Konto", "Kissen"],
+        orderedWords: ["Wir", "gehen", "am", "Wochenende", "ins", "Kino"],
+        grammarPoint: "برای حرکت به سمت سینما از ins Kino استفاده می‌شود.",
+        situation: "برای آخر هفته با دوستتان برنامه می‌ریزید.",
+        miniText: "Ben hat am Samstag frei. Er moechte mit Amir ins Kino gehen.",
+        miniAnswer: "بن برای سینما برنامه دارد."
+      }
+    ]
+  },
+  {
+    slug: "a2-social-behavior-compliments-and-gifts",
+    title: "رفتار اجتماعی، تعریف و هدیه",
+    summary: "رفتار مودبانه، تعریف کردن، آشنایی و هدیه دادن را در موقعیت‌های اجتماعی تمرین کنید.",
+    resourceFocus: "رفتار اجتماعی، تعریف و هدیه",
+    skills: [
+      {
+        slug: "a2-sound-friendly-and-polite",
+        title: "دوستانه و مودبانه حرف بزن",
+        description: "لحن مناسب، خواهش و پاسخ محترمانه را تمرین کن.",
+        focus: "ادب اجتماعی",
+        word: "hoeflich",
+        meaning: "مودب",
+        phrase: "Koennten Sie mir bitte kurz helfen?",
+        phraseMeaning: "می‌توانید لطفاً کوتاه به من کمک کنید؟",
+        blankSentence: "Koennten Sie mir bitte kurz ___?",
+        blankAnswer: "helfen",
+        blankChoices: ["helfen", "hoeren", "holen"],
+        orderedWords: ["Koennten", "Sie", "mir", "bitte", "helfen"],
+        grammarPoint: "Koennten Sie یک شکل مودبانه‌تر برای درخواست است.",
+        situation: "در یک موقعیت رسمی کمک کوتاهی می‌خواهید.",
+        miniText: "Im Amt versteht Sara ein Formular nicht. Sie fragt hoeflich nach Hilfe.",
+        miniAnswer: "سارا مودبانه کمک می‌خواهد."
+      },
+      {
+        slug: "a2-make-and-respond-to-compliments",
+        title: "تعریف کن و پاسخ بده",
+        description: "تعریف کوتاه، تشکر و واکنش طبیعی را بساز.",
+        focus: "تعریف",
+        word: "das Kompliment",
+        meaning: "تعریف / تمجید",
+        phrase: "Danke fuer das nette Kompliment.",
+        phraseMeaning: "ممنون برای این تعریف خوب",
+        blankSentence: "Danke fuer das nette ___.",
+        blankAnswer: "Kompliment",
+        blankChoices: ["Kompliment", "Konto", "Kino"],
+        orderedWords: ["Danke", "fuer", "das", "nette", "Kompliment"],
+        grammarPoint: "بعد از fuer معمولاً آکوزاتیو می‌آید: das nette Kompliment.",
+        situation: "کسی از لباس یا کار شما تعریف می‌کند و پاسخ می‌دهید.",
+        miniText: "Nina sagt: Dein Vortrag war sehr gut. Reza bedankt sich fuer das Kompliment.",
+        miniAnswer: "رضا بابت تعریف تشکر می‌کند."
+      },
+      {
+        slug: "a2-describe-a-person-you-want-to-meet",
+        title: "فرد مناسب برای آشنایی را توصیف کن",
+        description: "ویژگی‌ها، علاقه‌ها و انتظارها را محترمانه بیان کن.",
+        focus: "آشنایی",
+        word: "kennenlernen",
+        meaning: "آشنا شدن",
+        phrase: "Ich moechte jemanden kennenlernen, der ehrlich ist.",
+        phraseMeaning: "می‌خواهم با کسی آشنا شوم که صادق است",
+        blankSentence: "Ich moechte jemanden kennenlernen, der ___ ist.",
+        blankAnswer: "ehrlich",
+        blankChoices: ["ehrlich", "eilig", "einzeln"],
+        orderedWords: ["Ich", "moechte", "jemanden", "kennenlernen"],
+        grammarPoint: "بعد از moechte، فعل اصلی به صورت مصدر در پایان عبارت می‌آید.",
+        situation: "درباره ویژگی‌های فردی که دوست دارید بشناسید حرف می‌زنید.",
+        miniText: "Ali moechte neue Leute kennenlernen. Wichtig sind fuer ihn Humor und Ehrlichkeit.",
+        miniAnswer: "برای علی صداقت مهم است."
+      },
+      {
+        slug: "a2-choose-a-gift",
+        title: "هدیه انتخاب کن",
+        description: "درباره مناسبت، سلیقه و دلیل انتخاب هدیه حرف بزن.",
+        focus: "هدیه",
+        word: "das Geschenk",
+        meaning: "هدیه",
+        phrase: "Ich schenke ihr ein Buch zum Geburtstag.",
+        phraseMeaning: "برای تولدش به او یک کتاب هدیه می‌دهم",
+        blankSentence: "Ich schenke ihr ein Buch zum ___.",
+        blankAnswer: "Geburtstag",
+        blankChoices: ["Geburtstag", "Gepaeck", "Geldautomat"],
+        orderedWords: ["Ich", "schenke", "ihr", "ein", "Buch"],
+        grammarPoint: "در جمله Ich schenke ihr... ضمیر ihr داتیو است.",
+        situation: "برای یک دوست هدیه مناسب انتخاب می‌کنید.",
+        miniText: "Mina liest gern Romane. Deshalb schenkt Sara ihr ein Buch.",
+        miniAnswer: "سارا یک کتاب هدیه می‌دهد."
+      }
+    ]
+  },
+  {
+    slug: "a2-money-banking-and-messages",
+    title: "پول، بانک و پیام‌ها",
+    summary: "درباره ارزش پول، بانک، حساب، پرداخت و پیام‌های روزمره صحبت کنید.",
+    resourceFocus: "پول، بانک و پیام",
+    skills: [
+      {
+        slug: "a2-talk-about-money-values",
+        title: "درباره پول و ارزش‌ها حرف بزن",
+        description: "اولویت‌های مالی و غیرمالی را با مقایسه ساده بیان کن.",
+        focus: "ارزش پول",
+        word: "sparen",
+        meaning: "پس‌انداز کردن",
+        phrase: "Ich spare Geld fuer eine Reise.",
+        phraseMeaning: "برای یک سفر پول پس‌انداز می‌کنم",
+        blankSentence: "Ich spare Geld fuer eine ___.",
+        blankAnswer: "Reise",
+        blankChoices: ["Reise", "Rede", "Rechnung"],
+        orderedWords: ["Ich", "spare", "Geld", "fuer", "eine", "Reise"],
+        grammarPoint: "بعد از fuer از آکوزاتیو استفاده می‌شود: eine Reise.",
+        situation: "درباره هدف مالی یا چیزی که برایتان مهم است حرف می‌زنید.",
+        miniText: "Reza kauft weniger Kaffee. Er spart Geld fuer eine Reise.",
+        miniAnswer: "رضا برای سفر پس‌انداز می‌کند."
+      },
+      {
+        slug: "a2-understand-a-bank-service",
+        title: "خدمات بانکی را بفهم",
+        description: "اطلاعات پایه درباره بانک، کارت و حساب را دنبال کن.",
+        focus: "بانک",
+        word: "das Konto",
+        meaning: "حساب بانکی",
+        phrase: "Ich moechte ein Konto eroeffnen.",
+        phraseMeaning: "می‌خواهم یک حساب باز کنم",
+        blankSentence: "Ich moechte ein Konto ___.",
+        blankAnswer: "eroeffnen",
+        blankChoices: ["eroeffnen", "erzaehlen", "erinnern"],
+        orderedWords: ["Ich", "moechte", "ein", "Konto", "eroeffnen"],
+        grammarPoint: "بعد از moechte، فعل اصلی به صورت مصدر در پایان جمله می‌آید.",
+        situation: "در بانک می‌گویید چه خدمتی می‌خواهید.",
+        miniText: "Mina geht zur Bank. Sie moechte ein Konto eroeffnen und eine Karte bekommen.",
+        miniAnswer: "مینا می‌خواهد حساب باز کند."
+      },
+      {
+        slug: "a2-discuss-shared-expenses",
+        title: "درباره هزینه مشترک حرف بزن",
+        description: "پرداخت، سهم و حساب مشترک را توضیح بده.",
+        focus: "هزینه مشترک",
+        word: "die Ausgabe",
+        meaning: "هزینه",
+        phrase: "Wir teilen die Ausgabe durch drei.",
+        phraseMeaning: "هزینه را بین سه نفر تقسیم می‌کنیم",
+        blankSentence: "Wir teilen die Ausgabe durch ___.",
+        blankAnswer: "drei",
+        blankChoices: ["drei", "frei", "breit"],
+        orderedWords: ["Wir", "teilen", "die", "Ausgabe", "durch", "drei"],
+        grammarPoint: "برای تقسیم هزینه می‌توان از teilen durch استفاده کرد.",
+        situation: "بعد از یک خرید گروهی درباره سهم هر نفر حرف می‌زنید.",
+        miniText: "Drei Freunde kaufen ein Geschenk. Sie teilen die Ausgabe durch drei.",
+        miniAnswer: "سه دوست هزینه را تقسیم می‌کنند."
+      },
+      {
+        slug: "a2-write-a-clear-message",
+        title: "پیام روشن بنویس",
+        description: "در پیام کوتاه درخواست، خبر و جزئیات لازم را بیان کن.",
+        focus: "پیام",
+        word: "die Ueberweisung",
+        meaning: "حواله / انتقال بانکی",
+        phrase: "Ich schicke dir morgen die Ueberweisung.",
+        phraseMeaning: "فردا حواله بانکی را برایت می‌فرستم",
+        blankSentence: "Ich schicke dir morgen die ___.",
+        blankAnswer: "Ueberweisung",
+        blankChoices: ["Ueberweisung", "Unterkunft", "Uebung"],
+        orderedWords: ["Ich", "schicke", "dir", "morgen", "die", "Ueberweisung"],
+        grammarPoint: "در جمله Ich schicke dir... ضمیر dir داتیو است.",
+        situation: "در پیام کوتاه درباره پرداخت به دوستتان خبر می‌دهید.",
+        miniText: "Ali bezahlt heute nicht bar. Er schickt morgen die Ueberweisung.",
+        miniAnswer: "علی فردا انتقال بانکی می‌فرستد."
+      }
+    ]
+  },
+  {
+    slug: "a2-travel-directions-and-holiday-experiences",
+    title: "سفر، مسیر و تجربه‌های تعطیلات",
+    summary: "سفر کوتاه، مسیر هتل، همسفر و تجربه‌های تعطیلات را توصیف کنید.",
+    resourceFocus: "سفر، مسیر، هتل و تجربه",
+    skills: [
+      {
+        slug: "a2-plan-a-short-trip",
+        title: "سفر کوتاه برنامه‌ریزی کن",
+        description: "مقصد، زمان، وسیله سفر و فعالیت‌ها را هماهنگ کن.",
+        focus: "سفر کوتاه",
+        word: "der Ausflug",
+        meaning: "سفر کوتاه / گردش",
+        phrase: "Wir machen am Sonntag einen Ausflug.",
+        phraseMeaning: "یکشنبه یک گردش می‌رویم",
+        blankSentence: "Wir machen am Sonntag einen ___.",
+        blankAnswer: "Ausflug",
+        blankChoices: ["Ausflug", "Ausweis", "Ausgang"],
+        orderedWords: ["Wir", "machen", "am", "Sonntag", "einen", "Ausflug"],
+        grammarPoint: "برای فعالیت در یک روز مشخص از am + روز هفته استفاده می‌شود.",
+        situation: "برای یک سفر کوتاه آخر هفته برنامه می‌ریزید.",
+        miniText: "Die Klasse macht am Sonntag einen Ausflug nach Potsdam.",
+        miniAnswer: "کلاس یکشنبه به پوتسدام می‌رود."
+      },
+      {
+        slug: "a2-ask-for-hotel-directions",
+        title: "مسیر هتل را بپرس",
+        description: "آدرس، مسیر و نشانه‌های شهری را دنبال کن.",
+        focus: "مسیر",
+        word: "die Wegbeschreibung",
+        meaning: "توضیح مسیر",
+        phrase: "Koennen Sie mir den Weg zum Hotel beschreiben?",
+        phraseMeaning: "می‌توانید مسیر هتل را برایم توضیح دهید؟",
+        blankSentence: "Koennen Sie mir den Weg zum Hotel ___?",
+        blankAnswer: "beschreiben",
+        blankChoices: ["beschreiben", "bestellen", "bezahlen"],
+        orderedWords: ["Koennen", "Sie", "mir", "den", "Weg", "beschreiben"],
+        grammarPoint: "در درخواست مودبانه با Koennen Sie، فعل اصلی در پایان جمله می‌آید.",
+        situation: "در شهر جدید مسیر هتل را می‌پرسید.",
+        miniText: "Am Bahnhof fragt Amir nach dem Weg zum Hotel. Eine Frau beschreibt den Weg.",
+        miniAnswer: "امیر مسیر هتل را می‌پرسد."
+      },
+      {
+        slug: "a2-find-a-travel-partner",
+        title: "همسفر پیدا کن",
+        description: "علاقه‌ها، برنامه و انتظار از همسفر را بیان کن.",
+        focus: "همسفر",
+        word: "der Reisepartner",
+        meaning: "همسفر",
+        phrase: "Ich suche einen Reisepartner fuer die Ferien.",
+        phraseMeaning: "برای تعطیلات دنبال یک همسفر هستم",
+        blankSentence: "Ich suche einen Reisepartner fuer die ___.",
+        blankAnswer: "Ferien",
+        blankChoices: ["Ferien", "Feier", "Farbe"],
+        orderedWords: ["Ich", "suche", "einen", "Reisepartner"],
+        grammarPoint: "بعد از suchen مفعول مستقیم با آکوزاتیو می‌آید: einen Reisepartner.",
+        situation: "در یک پیام کوتاه درباره همسفر مناسب می‌نویسید.",
+        miniText: "Sara reist nicht gern allein. Sie sucht einen Reisepartner fuer die Ferien.",
+        miniAnswer: "سارا دنبال همسفر است."
+      },
+      {
+        slug: "a2-describe-holiday-photos",
+        title: "عکس‌های سفر را توصیف کن",
+        description: "مکان، آدم‌ها و حس یک عکس سفر را توضیح بده.",
+        focus: "عکس سفر",
+        word: "das Urlaubsfoto",
+        meaning: "عکس تعطیلات",
+        phrase: "Auf dem Urlaubsfoto sieht man das Meer.",
+        phraseMeaning: "در عکس تعطیلات دریا دیده می‌شود",
+        blankSentence: "Auf dem Urlaubsfoto sieht man das ___.",
+        blankAnswer: "Meer",
+        blankChoices: ["Meer", "Mehr", "Messer"],
+        orderedWords: ["Auf", "dem", "Urlaubsfoto", "sieht", "man", "das", "Meer"],
+        grammarPoint: "برای گفتن چیزی که در عکس دیده می‌شود، ساختار Auf dem Foto sieht man... کاربردی است.",
+        situation: "برای دوستتان یک عکس سفر را توضیح می‌دهید.",
+        miniText: "Auf dem Foto sieht man das Meer und zwei Freunde. Das Wetter war warm.",
+        miniAnswer: "در عکس دریا و دو دوست دیده می‌شود."
+      }
+    ]
   }
 ];
 
@@ -2581,18 +2901,34 @@ function makeDraftSkill(spec: Pick<SkillSpec, "slug" | "title" | "description" |
   };
 }
 
-function makeA2FinalTest(): SampleSkill {
+function makeA2FinalTest(units: SampleUnit[]): SampleSkill {
+  const slug = "a2-final-test";
+  const publishedRegularQuestions = units
+    .flatMap((unit) => unit.skills)
+    .filter((skill) => skill.kind === "REGULAR" && skill.publicationStatus === "PUBLISHED")
+    .flatMap((skill) => skill.questions);
+  const questionsByType = {
+    multipleChoice: publishedRegularQuestions.filter((question) => question.type === "MULTIPLE_CHOICE"),
+    fillInBlank: publishedRegularQuestions.filter((question) => question.type === "FILL_IN_BLANK"),
+    wordOrdering: publishedRegularQuestions.filter((question) => question.type === "WORD_ORDERING")
+  };
+  const questions = [
+    ...questionsByType.multipleChoice.filter((_, index) => index % 5 === 0).slice(0, 10),
+    ...questionsByType.fillInBlank.filter((_, index) => index % 4 === 0).slice(0, 10),
+    ...questionsByType.wordOrdering.filter((_, index) => index % 3 === 0).slice(0, 10)
+  ].map((question, index) => cloneQuestion(question, slug, index + 1));
+
   return {
-    id: "a2-final-test",
-    slug: "a2-final-test",
+    id: slug,
+    slug,
     title: "آزمون نهایی A2",
-    description: "آمادگی خودت را در کل مسیر A2 بسنج.",
+    description: "آمادگی خودت را در کل مسیر A2 با سوال‌های ترکیبی و تجمعی بسنج.",
     kind: "FINAL_TEST",
     xp: 300,
     passingScore: 75,
     requeueIncorrect: false,
-    publicationStatus: "DRAFT",
-    questions: []
+    publicationStatus: "PUBLISHED",
+    questions
   };
 }
 
@@ -2611,7 +2947,7 @@ function buildA2Units(): SampleUnit[] {
   });
   const units: SampleUnit[] = [
     ...publishedUnits,
-    ...a2DraftUnits.slice(7).map((unit) => {
+    ...a2DraftUnits.slice(11).map((unit) => {
       const skills = unit.skills.map((skill) => makeDraftSkill(skill));
 
       return {
@@ -2626,7 +2962,7 @@ function buildA2Units(): SampleUnit[] {
     })
   ];
 
-  units[units.length - 1].skills.push(makeA2FinalTest());
+  units[units.length - 1].skills.push(makeA2FinalTest(units));
 
   return units;
 }
@@ -2965,6 +3301,82 @@ export const sampleResources: SampleResource[] = [
     publicationStatus: "PUBLISHED",
     unitSlug: "a2-health-happiness-and-satisfaction",
     skillSlug: "a2-explain-symptoms-to-a-doctor"
+  },
+  {
+    slug: "a2-media-apps-persian-guide",
+    title: "راهنمای A2: رسانه، اپلیکیشن و وقت آزاد",
+    description: "پشتیبانی فارسی برای برنامه تلویزیونی، اپلیکیشن‌ها، روز مورد علاقه و برنامه‌ریزی وقت آزاد.",
+    type: "LEARNING_GUIDE",
+    levelLabel: "A2",
+    language: "fa/de",
+    thumbnailIcon: "smartphone",
+    metadata: {
+      length: "22 min",
+      format: "Persian-first guide",
+      focus: "A2 Unit 9"
+    },
+    content:
+      "این راهنما کمک می‌کند درباره رسانه و وقت آزاد طبیعی‌تر حرف بزنید: معرفی Sendung، توضیح فایده یک App، دلیل آوردن با weil برای Lieblingstag، و برنامه‌ریزی آخر هفته با ins Kino. نکته‌ها فارسی هستند و جمله‌های نمونه آلمانی می‌مانند.",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "a2-media-apps-and-free-time",
+    skillSlug: "a2-discuss-tv-programs"
+  },
+  {
+    slug: "a2-social-gifts-persian-guide",
+    title: "راهنمای A2: رفتار اجتماعی، تعریف و هدیه",
+    description: "پشتیبانی فارسی برای درخواست مودبانه، پاسخ به تعریف، آشنایی و انتخاب هدیه.",
+    type: "LEARNING_GUIDE",
+    levelLabel: "A2",
+    language: "fa/de",
+    thumbnailIcon: "gift",
+    metadata: {
+      length: "22 min",
+      format: "Persian-first guide",
+      focus: "A2 Unit 10"
+    },
+    content:
+      "این راهنما زبان رفتار اجتماعی را تمرین می‌کند: Koennten Sie برای درخواست مودبانه، تشکر از Kompliment، گفتن ویژگی‌های فرد مناسب برای آشنایی، و توضیح هدیه با schenken + داتیو. پشتیبانی فارسی کمک می‌کند لحن و نقش‌های گرامری روشن بماند.",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "a2-social-behavior-compliments-and-gifts",
+    skillSlug: "a2-sound-friendly-and-polite"
+  },
+  {
+    slug: "a2-money-banking-persian-guide",
+    title: "راهنمای A2: پول، بانک و پیام‌ها",
+    description: "پشتیبانی فارسی برای پس‌انداز، حساب بانکی، هزینه مشترک و پیام پرداخت.",
+    type: "LEARNING_GUIDE",
+    levelLabel: "A2",
+    language: "fa/de",
+    thumbnailIcon: "landmark",
+    metadata: {
+      length: "22 min",
+      format: "Persian-first guide",
+      focus: "A2 Unit 11"
+    },
+    content:
+      "این راهنما موقعیت‌های مالی روزمره را به زبان A2 تبدیل می‌کند: sparen fuer eine Reise، Konto eroeffnen، teilen durch برای هزینه مشترک، و نوشتن پیام روشن درباره Ueberweisung. توضیح‌های فارسی روی آکوزاتیو با fuer و داتیو با dir تمرکز دارند.",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "a2-money-banking-and-messages",
+    skillSlug: "a2-talk-about-money-values"
+  },
+  {
+    slug: "a2-travel-directions-persian-guide",
+    title: "راهنمای A2: سفر، مسیر و تجربه‌های تعطیلات",
+    description: "پشتیبانی فارسی برای برنامه سفر کوتاه، پرسیدن مسیر هتل، پیدا کردن همسفر و توصیف عکس سفر.",
+    type: "LEARNING_GUIDE",
+    levelLabel: "A2",
+    language: "fa/de",
+    thumbnailIcon: "map",
+    metadata: {
+      length: "22 min",
+      format: "Persian-first guide",
+      focus: "A2 Unit 12"
+    },
+    content:
+      "این راهنما پایان مسیر A2 را با سفر جمع‌بندی می‌کند: برنامه‌ریزی Ausflug با am Sonntag، پرسیدن Wegbeschreibung، نوشتن درباره Reisepartner، و توصیف Urlaubsfoto با Auf dem Foto sieht man.... توضیح‌ها فارسی هستند و مثال‌ها برای گفتار و نوشتار آلمانی آماده‌اند.",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "a2-travel-directions-and-holiday-experiences",
+    skillSlug: "a2-plan-a-short-trip"
   }
 ];
 
