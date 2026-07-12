@@ -58,7 +58,6 @@ export default async function ResourcesPage({
     : preferences.interfaceLanguage;
   const copy = interfaceCopy[language];
   const resources = await getPublishedResourcesFromDb();
-  const featured = resources.slice(0, 3);
 
   return (
     <main className={`site-shell ${copy.dir === "rtl" ? "learner-rtl" : ""}`} dir={copy.dir}>
@@ -71,40 +70,6 @@ export default async function ResourcesPage({
           <h1>{text(resourceCopy.title, language)}</h1>
           <p>{text(resourceCopy.body, language)}</p>
         </div>
-
-        <section className="resource-feature-band" aria-label={text(resourceCopy.featuredTitle, language)}>
-          <div className="resource-feature-photo" aria-hidden="true">
-            <Image
-              alt=""
-              fill
-              priority
-              sizes="(max-width: 1040px) 100vw, 34vw"
-              src="/resources/resource-library-photo.jpg"
-            />
-          </div>
-          <div className="resource-feature-copy">
-            <span className="section-label">{text(resourceCopy.featuredTitle, language)}</span>
-            <p>{text(resourceCopy.featuredBody, language)}</p>
-          </div>
-          <div className="resource-feature-list">
-            {featured.map((resource) => {
-              const Icon =
-                thumbnailIcons[resource.thumbnailIcon as keyof typeof thumbnailIcons] ??
-                resourceIcons[resource.type];
-
-              return (
-                <Link
-                  className="resource-feature-item"
-                  href={withInterfaceLanguage(`/resources/${resource.slug}`, language)}
-                  key={resource.slug}
-                >
-                  <Icon size={18} />
-                  <span>{resource.title}</span>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
 
         <div className="resource-filter-strip" aria-label="Resource filters">
           {[...new Set(resources.map((resource) => resource.type))].map((type) => (
