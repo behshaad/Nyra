@@ -145,6 +145,13 @@ body {
   direction: ltr;
 }
 
+@media (min-width: 961px) {
+  .topbar.persian-nav .topbar-actions,
+  .topbar.persian-nav .desktop-controls {
+    flex-direction: row-reverse;
+  }
+}
+
 .site-shell[dir="rtl"] {
   text-align: right;
 }
