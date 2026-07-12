@@ -65,12 +65,6 @@ export default async function ResourcesPage({
       <AppHeader language={language} currentPath="/resources" />
 
       <section className="route-page">
-        <div className="route-hero">
-          <span className="section-label">{text(resourceCopy.label, language)}</span>
-          <h1>{text(resourceCopy.title, language)}</h1>
-          <p>{text(resourceCopy.body, language)}</p>
-        </div>
-
         <div className="resource-filter-strip" aria-label="Resource filters">
           {[...new Set(resources.map((resource) => resource.type))].map((type) => (
             <span className="status-pill" key={type}>
