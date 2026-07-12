@@ -85,7 +85,7 @@ A named group of Flashcards organized for review by Level, category, and optiona
 _Avoid_: Flashcard unit, card folder, collection
 
 **Flashcard**:
-A review card inside a Flashcard Deck that pairs a German prompt with Persian support, example usage, and study metadata such as difficulty or optional pronunciation support.
+A review card inside a Flashcard Deck that pairs a German prompt with Persian support. Admin-authored Flashcards usually include example usage and study metadata such as difficulty or optional pronunciation support, while learner-created Flashcards can be lighter-weight.
 _Avoid_: Vocabulary item, term card
 
 **Pronunciation Audio**:
