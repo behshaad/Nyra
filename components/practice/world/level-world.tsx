@@ -32,6 +32,34 @@ type SkillPoint = PracticeJourneyNode & {
   y: number;
 };
 
+type PathAnchor = {
+  x: number;
+  y: number;
+};
+
+const embeddedA1PathAnchors: PathAnchor[] = [
+  { x: 38, y: 96 },
+  { x: 39, y: 90 },
+  { x: 43, y: 84 },
+  { x: 55, y: 78 },
+  { x: 72, y: 71 },
+  { x: 72, y: 64 },
+  { x: 60, y: 58 },
+  { x: 57, y: 52 },
+  { x: 67, y: 45 },
+  { x: 70, y: 39 },
+  { x: 61, y: 35 },
+  { x: 42, y: 34 },
+  { x: 31, y: 30 },
+  { x: 43, y: 27 },
+  { x: 63, y: 30 },
+  { x: 82, y: 31 },
+  { x: 76, y: 24 },
+  { x: 66, y: 19 },
+  { x: 75, y: 15 },
+  { x: 70, y: 10 }
+];
+
 function statusLabel(skill: PracticeJourneyNode) {
   if (skill.state === "completed") {
     return "Complete";
@@ -64,12 +92,42 @@ function skillIcon(skill: PracticeJourneyNode) {
   return skill.kind === "REGULAR" ? Play : ShieldCheck;
 }
 
-function buildSkillPoints(level: PracticeJourneyLevel): SkillPoint[] {
+function interpolateAnchors(anchors: PathAnchor[], progress: number) {
+  const scaledProgress = progress * (anchors.length - 1);
+  const index = Math.min(anchors.length - 2, Math.floor(scaledProgress));
+  const localProgress = scaledProgress - index;
+  const start = anchors[index];
+  const end = anchors[index + 1];
+
+  return {
+    x: start.x + (end.x - start.x) * localProgress,
+    y: start.y + (end.y - start.y) * localProgress
+  };
+}
+
+function buildSkillPoints(
+  level: PracticeJourneyLevel,
+  world: LevelWorldConfig
+): SkillPoint[] {
   const nodes = level.units.flatMap((unit) => unit.nodes);
   const count = Math.max(nodes.length, 1);
 
   return nodes.map((node, index) => {
     const progress = count === 1 ? 0 : index / (count - 1);
+    const point =
+      world.nodeLayout === "embedded-path"
+        ? interpolateAnchors(embeddedA1PathAnchors, progress)
+        : null;
+
+    if (point) {
+      return {
+        ...node,
+        pathIndex: index,
+        x: point.x,
+        y: point.y
+      };
+    }
+
     const wave = Math.sin(progress * Math.PI * 3.35);
     const alternate = index % 2 === 0 ? -5 : 5;
 
@@ -116,14 +174,17 @@ export function WorldPage({
   const [leaving, setLeaving] = useState(false);
   const [enteringSkillSlug, setEnteringSkillSlug] = useState<string | null>(null);
   const level = initialJourney.levels.find((candidate) => candidate.label === levelLabel);
-  const skillPoints = useMemo(() => (level ? buildSkillPoints(level) : []), [level]);
+  const skillPoints = useMemo(() => (level ? buildSkillPoints(level, world) : []), [level, world]);
   const pathData = useMemo(() => pathDataFrom(skillPoints), [skillPoints]);
   const completedCount = level?.completedCount ?? 0;
   const totalCount = level?.totalCount ?? 0;
   const progressPercent = totalCount === 0 ? 0 : Math.round((completedCount / totalCount) * 100);
-  const canvasHeight = Math.max(920, 420 + skillPoints.length * 82);
+  const generatedCanvasHeight = Math.max(920, 420 + skillPoints.length * 82);
   const canvasStyle = {
-    "--level-world-canvas-height": `${canvasHeight}px`
+    "--level-world-aspect-ratio": world.artworkAspectRatio ?? "768 / 1376",
+    ...(world.nodeLayout === "embedded-path"
+      ? {}
+      : { "--level-world-canvas-height": `${generatedCanvasHeight}px` })
   } as CSSProperties;
 
   const returnToJourney = () => {
@@ -155,7 +216,12 @@ export function WorldPage({
     >
       <PracticeSidebar language={language} />
       <div className="practice-main level-world-main">
-        <div className="level-world-canvas" style={canvasStyle}>
+        <div
+          className={`level-world-canvas ${
+            world.nodeLayout === "embedded-path" ? "has-embedded-path" : ""
+          }`}
+          style={canvasStyle}
+        >
           <WorldBackground world={world} />
           <div className="level-world-topbar">
             <button className="world-back-button" type="button" onClick={returnToJourney}>
@@ -173,6 +239,7 @@ export function WorldPage({
           </div>
           {level && skillPoints.length > 0 ? (
             <SkillPath
+              embeddedPath={world.nodeLayout === "embedded-path"}
               enteringSkillSlug={enteringSkillSlug}
               language={language}
               levelLabel={levelLabel}
@@ -209,6 +276,7 @@ export function WorldBackground({ world }: { world: LevelWorldConfig }) {
 }
 
 export function SkillPath({
+  embeddedPath,
   enteringSkillSlug,
   language,
   levelLabel,
@@ -216,6 +284,7 @@ export function SkillPath({
   pathData,
   skillPoints
 }: {
+  embeddedPath: boolean;
   enteringSkillSlug: string | null;
   language: InterfaceLanguageCode;
   levelLabel: string;
@@ -224,7 +293,7 @@ export function SkillPath({
   skillPoints: SkillPoint[];
 }) {
   return (
-    <div className="level-world-path-layer">
+    <div className={`level-world-path-layer ${embeddedPath ? "has-embedded-path" : ""}`}>
       <svg className="level-world-path-svg" preserveAspectRatio="none" viewBox="0 0 100 100">
         <path className="level-world-path-shadow" d={pathData} />
         <path className="level-world-path-line" d={pathData} />

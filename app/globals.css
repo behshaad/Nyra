@@ -5212,6 +5212,9 @@ h3 {
 }
 
 .level-world-main {
+  align-items: flex-start;
+  display: flex;
+  justify-content: center;
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
@@ -5220,10 +5223,21 @@ h3 {
 }
 
 .level-world-canvas {
-  height: var(--level-world-canvas-height, 100dvh);
-  min-height: 100dvh;
+  aspect-ratio: var(--level-world-aspect-ratio, auto);
+  flex: 0 0 auto;
+  height: var(--level-world-canvas-height, auto);
+  max-width: min(100%, 860px);
+  min-height: min(100dvh, 920px);
   overflow: hidden;
   position: relative;
+  width: 100%;
+}
+
+.level-world-canvas.has-embedded-path {
+  box-shadow:
+    0 28px 90px rgba(0, 0, 0, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  min-height: 0;
 }
 
 .level-world-background {
@@ -5242,9 +5256,9 @@ h3 {
 
 .level-world-vignette {
   background:
-    linear-gradient(180deg, rgba(3, 10, 15, 0.52), transparent 22%, transparent 72%, rgba(3, 10, 15, 0.72)),
-    radial-gradient(circle at 52% 46%, transparent 0 44%, rgba(3, 10, 15, 0.42) 76%),
-    linear-gradient(90deg, rgba(3, 10, 15, 0.48), transparent 18%, transparent 82%, rgba(3, 10, 15, 0.56));
+    linear-gradient(180deg, rgba(3, 10, 15, 0.42), transparent 18%, transparent 76%, rgba(3, 10, 15, 0.48)),
+    radial-gradient(circle at 52% 46%, transparent 0 54%, rgba(3, 10, 15, 0.26) 82%),
+    linear-gradient(90deg, rgba(3, 10, 15, 0.26), transparent 20%, transparent 82%, rgba(3, 10, 15, 0.32));
   inset: 0;
   position: absolute;
 }
@@ -5334,6 +5348,15 @@ h3 {
   z-index: 8;
 }
 
+.level-world-path-layer.has-embedded-path .level-world-path-svg {
+  display: none;
+}
+
+.level-world-path-layer.has-embedded-path {
+  height: 100%;
+  min-height: 0;
+}
+
 .level-world-path-svg {
   height: 100%;
   inset: 0;
@@ -5407,6 +5430,18 @@ h3 {
   width: 42px;
 }
 
+.has-embedded-path .level-skill-gem {
+  background: rgba(255, 250, 239, 0.28);
+  border-color: rgba(255, 255, 255, 0.52);
+  box-shadow:
+    0 0 0 4px rgba(4, 16, 23, 0.16),
+    0 8px 18px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34);
+  color: rgba(255, 255, 255, 0.88);
+  height: 30px;
+  width: 30px;
+}
+
 .level-skill-node.completed .level-skill-gem {
   background:
     radial-gradient(circle at 30% 18%, rgba(255, 255, 255, 0.86), transparent 18%),
@@ -5431,6 +5466,22 @@ h3 {
   width: 34px;
 }
 
+.has-embedded-path .level-skill-node.locked .level-skill-gem {
+  background: rgba(12, 24, 31, 0.22);
+  border-color: rgba(255, 255, 255, 0.36);
+  height: 26px;
+  opacity: 0.9;
+  width: 26px;
+}
+
+.has-embedded-path .level-skill-node.current .level-skill-gem,
+.has-embedded-path .level-skill-node.needs_review .level-skill-gem {
+  background: linear-gradient(145deg, rgba(255, 238, 218, 0.94), rgba(240, 166, 183, 0.94));
+  color: #301f32;
+  height: 38px;
+  width: 38px;
+}
+
 .level-skill-copy {
   background: rgba(5, 18, 25, 0.74);
   border: 1px solid rgba(255, 255, 255, 0.13);
@@ -5443,6 +5494,10 @@ h3 {
   pointer-events: none;
   transform: translateY(-5px) scale(0.96);
   transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.has-embedded-path .level-skill-copy {
+  max-width: 150px;
 }
 
 .level-skill-copy strong {

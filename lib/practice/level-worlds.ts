@@ -6,6 +6,8 @@ export type LevelWorldConfig = {
   region: string;
   backgroundImage: string;
   tone: PracticeJourneyWorldTone;
+  artworkAspectRatio?: string;
+  nodeLayout?: "embedded-path" | "generated-path";
 };
 
 const levelWorlds: Record<string, LevelWorldConfig> = {
@@ -14,7 +16,9 @@ const levelWorlds: Record<string, LevelWorldConfig> = {
     title: "A1 World",
     region: "Dorfleben",
     backgroundImage: "/practice/worlds/a1-world.png",
-    tone: "village"
+    tone: "village",
+    artworkAspectRatio: "768 / 1376",
+    nodeLayout: "embedded-path"
   },
   A2: {
     label: "A2",
