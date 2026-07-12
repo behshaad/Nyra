@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
+import type { CSSProperties } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
@@ -120,6 +121,10 @@ export function WorldPage({
   const completedCount = level?.completedCount ?? 0;
   const totalCount = level?.totalCount ?? 0;
   const progressPercent = totalCount === 0 ? 0 : Math.round((completedCount / totalCount) * 100);
+  const canvasHeight = Math.max(920, 420 + skillPoints.length * 82);
+  const canvasStyle = {
+    "--level-world-canvas-height": `${canvasHeight}px`
+  } as CSSProperties;
 
   const returnToJourney = () => {
     setLeaving(true);
@@ -150,36 +155,38 @@ export function WorldPage({
     >
       <PracticeSidebar language={language} />
       <div className="practice-main level-world-main">
-        <WorldBackground world={world} />
-        <div className="level-world-topbar">
-          <button className="world-back-button" type="button" onClick={returnToJourney}>
-            <ArrowLeft size={18} />
-            <span>Journey</span>
-          </button>
-          <div>
-            <span>{world.region}</span>
-            <h1>{level?.title ?? world.title}</h1>
+        <div className="level-world-canvas" style={canvasStyle}>
+          <WorldBackground world={world} />
+          <div className="level-world-topbar">
+            <button className="world-back-button" type="button" onClick={returnToJourney}>
+              <ArrowLeft size={18} />
+              <span>Journey</span>
+            </button>
+            <div>
+              <span>{world.region}</span>
+              <h1>{level?.title ?? world.title}</h1>
+            </div>
+            <div className="world-progress-indicator">
+              <strong>{progressPercent}%</strong>
+              <span>{completedCount} / {totalCount} Skills</span>
+            </div>
           </div>
-          <div className="world-progress-indicator">
-            <strong>{progressPercent}%</strong>
-            <span>{completedCount} / {totalCount} Skills</span>
-          </div>
+          {level && skillPoints.length > 0 ? (
+            <SkillPath
+              enteringSkillSlug={enteringSkillSlug}
+              language={language}
+              levelLabel={levelLabel}
+              onEnterSkill={enterSkill}
+              pathData={pathData}
+              skillPoints={skillPoints}
+            />
+          ) : (
+            <div className="level-world-empty">
+              <Lock size={22} />
+              <strong>This Level World is not available yet.</strong>
+            </div>
+          )}
         </div>
-        {level && skillPoints.length > 0 ? (
-          <SkillPath
-            enteringSkillSlug={enteringSkillSlug}
-            language={language}
-            levelLabel={levelLabel}
-            onEnterSkill={enterSkill}
-            pathData={pathData}
-            skillPoints={skillPoints}
-          />
-        ) : (
-          <div className="level-world-empty">
-            <Lock size={22} />
-            <strong>This Level World is not available yet.</strong>
-          </div>
-        )}
       </div>
     </motion.section>
   );

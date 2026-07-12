@@ -5213,6 +5213,15 @@ h3 {
 
 .level-world-main {
   min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
+  scrollbar-color: rgba(255, 242, 209, 0.46) rgba(255, 255, 255, 0.08);
+}
+
+.level-world-canvas {
+  height: var(--level-world-canvas-height, 100dvh);
+  min-height: 100dvh;
   overflow: hidden;
   position: relative;
 }
@@ -5246,7 +5255,7 @@ h3 {
   gap: 16px;
   justify-content: space-between;
   left: 20px;
-  position: absolute;
+  position: sticky;
   right: 20px;
   top: 18px;
   z-index: 12;
@@ -5317,9 +5326,9 @@ h3 {
 }
 
 .level-world-path-layer {
-  height: 100%;
+  height: var(--level-world-canvas-height, 100%);
   inset: 0;
-  min-height: 720px;
+  min-height: 100dvh;
   overflow: hidden;
   position: absolute;
   z-index: 8;
@@ -5367,10 +5376,10 @@ h3 {
   align-items: center;
   cursor: pointer;
   display: grid;
-  gap: 7px;
+  gap: 5px;
   justify-items: center;
-  max-width: 154px;
-  min-width: 108px;
+  max-width: 138px;
+  min-width: 74px;
   position: relative;
   text-align: center;
   will-change: transform;
@@ -5393,9 +5402,9 @@ h3 {
     inset 0 -10px 18px rgba(0, 0, 0, 0.18);
   color: #301f32;
   display: inline-flex;
-  height: 54px;
+  height: 42px;
   justify-content: center;
-  width: 54px;
+  width: 42px;
 }
 
 .level-skill-node.completed .level-skill-gem {
@@ -5417,6 +5426,9 @@ h3 {
     linear-gradient(145deg, rgba(133, 146, 158, 0.82), rgba(36, 49, 63, 0.96));
   color: rgba(248, 243, 250, 0.82);
   filter: saturate(0.72);
+  height: 34px;
+  opacity: 0.74;
+  width: 34px;
 }
 
 .level-skill-copy {
@@ -5426,7 +5438,11 @@ h3 {
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32);
   display: grid;
   gap: 2px;
+  opacity: 0;
   padding: 7px 8px;
+  pointer-events: none;
+  transform: translateY(-5px) scale(0.96);
+  transition: opacity 180ms ease, transform 180ms ease;
 }
 
 .level-skill-copy strong {
@@ -5441,8 +5457,17 @@ h3 {
   line-height: 1.2;
 }
 
-.level-skill-node.locked .level-skill-copy {
-  opacity: 0.72;
+.level-skill-node.current .level-skill-copy,
+.level-skill-node.needs_review .level-skill-copy,
+.level-skill-node:hover .level-skill-copy,
+.level-skill-node-position:focus-within .level-skill-copy {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.level-skill-node.locked:hover .level-skill-copy,
+.level-skill-node-position:focus-within .level-skill-node.locked .level-skill-copy {
+  opacity: 0.92;
 }
 
 .current-skill-ring,
@@ -5466,7 +5491,7 @@ h3 {
 
 .assessment-star {
   background: #f2b8ad;
-  bottom: 44px;
+  bottom: 32px;
   height: 24px;
   left: 24%;
   width: 24px;
@@ -5756,13 +5781,18 @@ h3 {
   }
 
   .level-skill-node {
-    max-width: 136px;
-    min-width: 94px;
+    max-width: 118px;
+    min-width: 62px;
   }
 
   .level-skill-gem {
-    height: 48px;
-    width: 48px;
+    height: 38px;
+    width: 38px;
+  }
+
+  .level-skill-node.locked .level-skill-gem {
+    height: 30px;
+    width: 30px;
   }
 
   .level-skill-copy strong {
@@ -5810,17 +5840,22 @@ h3 {
   }
 
   .level-world-path-layer {
-    min-height: 100dvh;
+    min-height: var(--level-world-canvas-height, 100dvh);
   }
 
   .level-skill-node {
-    max-width: 96px;
-    min-width: 72px;
+    max-width: 108px;
+    min-width: 48px;
   }
 
   .level-skill-gem {
-    height: 42px;
-    width: 42px;
+    height: 36px;
+    width: 36px;
+  }
+
+  .level-skill-node.locked .level-skill-gem {
+    height: 28px;
+    width: 28px;
   }
 
   .level-skill-copy {
