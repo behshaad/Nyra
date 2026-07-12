@@ -292,14 +292,19 @@ export function SkillPath({
   pathData: string;
   skillPoints: SkillPoint[];
 }) {
+  const visibleSkillPoints = embeddedPath
+    ? skillPoints.filter((skill) => skill.state !== "locked")
+    : skillPoints;
+
   return (
     <div className={`level-world-path-layer ${embeddedPath ? "has-embedded-path" : ""}`}>
       <svg className="level-world-path-svg" preserveAspectRatio="none" viewBox="0 0 100 100">
         <path className="level-world-path-shadow" d={pathData} />
         <path className="level-world-path-line" d={pathData} />
       </svg>
-      {skillPoints.map((skill) => (
+      {visibleSkillPoints.map((skill) => (
         <SkillNode
+          embeddedPath={embeddedPath}
           entering={enteringSkillSlug === skill.slug}
           key={skill.slug}
           language={language}
@@ -322,12 +327,14 @@ export function SkillPath({
 }
 
 export function SkillNode({
+  embeddedPath,
   entering,
   language,
   levelLabel,
   onEnterSkill,
   skill
 }: {
+  embeddedPath: boolean;
   entering: boolean;
   language: InterfaceLanguageCode;
   levelLabel: string;
@@ -345,7 +352,7 @@ export function SkillNode({
             ? { scale: [1, 1.06, 1], y: [0, -4, 0] }
             : undefined
       }
-      className={`level-skill-node ${skill.state} ${
+      className={`level-skill-node ${skill.state} ${embeddedPath ? "embedded" : ""} ${
         skill.kind === "REGULAR" ? "regular" : "assessment"
       }`}
       transition={
@@ -395,7 +402,7 @@ export function SkillNode({
           <Sparkles size={14} />
         </span>
       ) : null}
-      {skill.kind !== "REGULAR" ? (
+      {skill.kind !== "REGULAR" && !locked ? (
         <span className="assessment-star" aria-hidden="true">
           <Star size={14} />
         </span>

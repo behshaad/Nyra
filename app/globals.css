@@ -5478,8 +5478,15 @@ h3 {
 .has-embedded-path .level-skill-node.needs_review .level-skill-gem {
   background: linear-gradient(145deg, rgba(255, 238, 218, 0.94), rgba(240, 166, 183, 0.94));
   color: #301f32;
-  height: 38px;
-  width: 38px;
+  height: 34px;
+  width: 34px;
+}
+
+.has-embedded-path .level-skill-node.current .level-skill-gem {
+  box-shadow:
+    0 0 0 7px rgba(240, 166, 183, 0.28),
+    0 0 26px rgba(255, 238, 218, 0.58),
+    0 10px 20px rgba(0, 0, 0, 0.24);
 }
 
 .level-skill-copy {
@@ -5550,6 +5557,10 @@ h3 {
   height: 24px;
   left: 24%;
   width: 24px;
+}
+
+.level-skill-node.embedded.assessment .assessment-star {
+  display: none;
 }
 
 .skill-transition-fade {
