@@ -81,7 +81,7 @@ A progress signal that marks a Unit or Level as needing review when the learner 
 _Avoid_: Locked gate, hard prerequisite
 
 **Flashcard Deck**:
-A named group of Flashcards organized for review by Level, category, and optionally a Unit. A Flashcard Deck can be admin-authored for learner study or learner-created for personal study; learners can study admin-authored decks but do not edit them.
+A named group of Flashcards organized for review by Level, category, and optionally a Unit. A learner-created Flashcard Deck can be empty while the learner is preparing it. A Flashcard Deck can be admin-authored for learner study or learner-created for personal study; learners can study admin-authored decks but do not edit them.
 _Avoid_: Flashcard unit, card folder, collection
 
 **Flashcard**:
