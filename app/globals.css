@@ -5881,8 +5881,40 @@ h3 {
 
   .level-world-topbar {
     align-items: flex-start;
+    display: grid;
     gap: 8px;
-    top: 12px;
+    grid-template-columns: 44px minmax(0, 1fr) 86px;
+    left: max(8px, env(safe-area-inset-left));
+    position: fixed;
+    right: max(8px, env(safe-area-inset-right));
+    top: max(8px, env(safe-area-inset-top));
+    z-index: 24;
+  }
+
+  .level-world-topbar::before {
+    background: linear-gradient(180deg, rgba(4, 16, 23, 0.54), transparent);
+    content: "";
+    height: 132px;
+    left: calc(-1 * max(8px, env(safe-area-inset-left)));
+    pointer-events: none;
+    position: fixed;
+    right: calc(-1 * max(8px, env(safe-area-inset-right)));
+    top: 0;
+    z-index: -1;
+  }
+
+  .level-world-topbar > div:nth-child(2) {
+    min-width: 0;
+    text-align: center;
+  }
+
+  .level-world-topbar h1 {
+    font-size: clamp(1.32rem, 6.2vw, 1.88rem);
+    overflow-wrap: anywhere;
+  }
+
+  .level-world-topbar span {
+    font-size: 0.72rem;
   }
 
   .world-back-button span,
@@ -5897,7 +5929,7 @@ h3 {
   }
 
   .world-progress-indicator {
-    min-width: 82px;
+    min-width: 0;
     padding: 8px;
   }
 
