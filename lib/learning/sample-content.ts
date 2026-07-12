@@ -2967,6 +2967,242 @@ function buildA2Units(): SampleUnit[] {
   return units;
 }
 
+const b1UnitOneSpec: UnitSpec = {
+  slug: "b1-travel-plans-and-holiday-stories",
+  title: "برنامه سفر و داستان تعطیلات",
+  summary: "سفر را برنامه‌ریزی کنید، ترجیح‌ها و دلیل‌ها را توضیح دهید، تجربه تعطیلات را روایت کنید و اطلاعیه‌های سفر را بفهمید.",
+  resourceFocus: "برنامه سفر، ترجیح‌ها، روایت تعطیلات و اطلاعیه‌های سفر",
+  skills: [
+    {
+      slug: "b1-plan-a-trip-and-explain-preferences",
+      title: "سفر را برنامه‌ریزی کن و ترجیح بده",
+      description: "درباره نوع سفر، علاقه یا بی‌علاقگی و دلیل انتخاب مقصد با جمله‌های دقیق‌تر صحبت کن.",
+      focus: "برنامه سفر و ترجیح",
+      word: "die Vorliebe",
+      meaning: "ترجیح / علاقه شخصی",
+      phrase: "Ich habe Lust, ans Meer zu fahren.",
+      phraseMeaning: "دلم می‌خواهد به دریا بروم",
+      blankSentence: "Ich habe Lust, ans Meer ___ fahren.",
+      blankAnswer: "zu",
+      blankChoices: ["zu", "weil", "obwohl"],
+      orderedWords: ["Ich", "habe", "Lust", "ans", "Meer", "zu", "fahren"],
+      grammarPoint: "بعد از Lust haben می‌توان از zu + مصدر استفاده کرد: Lust haben, etwas zu machen.",
+      situation: "دوستتان مقصدهای مختلف پیشنهاد می‌دهد و شما ترجیح خودتان را توضیح می‌دهید.",
+      miniText: "Neda moechte nicht in die Berge fahren. Sie hat Lust, ans Meer zu fahren, weil sie Ruhe braucht.",
+      miniAnswer: "ندا سفر کنار دریا را ترجیح می‌دهد."
+    },
+    {
+      slug: "b1-understand-and-discuss-travel-options",
+      title: "گزینه‌های سفر را بفهم و مقایسه کن",
+      description: "پیشنهادهای سفر، قیمت، مسیر و شرایط را بفهم و درباره مناسب بودن آن‌ها نظر بده.",
+      focus: "پیشنهاد سفر و دلیل",
+      word: "das Reiseangebot",
+      meaning: "پیشنهاد سفر / بسته سفر",
+      phrase: "Dieses Angebot passt zu meinem Budget.",
+      phraseMeaning: "این پیشنهاد با بودجه من جور است",
+      blankSentence: "Dieses Angebot passt zu meinem ___.",
+      blankAnswer: "Budget",
+      blankChoices: ["Budget", "Gepaeck", "Bahnhof"],
+      orderedWords: ["Dieses", "Angebot", "passt", "zu", "meinem", "Budget"],
+      grammarPoint: "فعل passen zu با داتیو می‌آید: zu meinem Budget.",
+      situation: "دو پیشنهاد سفر را از نظر قیمت و زمان حرکت مقایسه می‌کنید.",
+      miniText: "Das erste Angebot ist billig, aber der Zug faehrt sehr frueh. Das zweite Angebot passt besser zu Amirs Budget und Zeitplan.",
+      miniAnswer: "پیشنهاد دوم برای امیر مناسب‌تر است."
+    },
+    {
+      slug: "b1-tell-a-holiday-story-in-the-past",
+      title: "داستان تعطیلات را در گذشته تعریف کن",
+      description: "یک تجربه سفر را با زمان گذشته، ترتیب رویدادها و تضادهای ساده روایت کن.",
+      focus: "روایت تعطیلات",
+      word: "die Urlaubsgeschichte",
+      meaning: "داستان تعطیلات",
+      phrase: "Obwohl der Zug spaet war, sind wir ruhig geblieben.",
+      phraseMeaning: "با اینکه قطار دیر بود، ما آرام ماندیم",
+      blankSentence: "___ der Zug spaet war, sind wir ruhig geblieben.",
+      blankAnswer: "Obwohl",
+      blankChoices: ["Obwohl", "Deshalb", "Trotz"],
+      orderedWords: ["Obwohl", "der", "Zug", "spaet", "war", "sind", "wir", "ruhig", "geblieben"],
+      grammarPoint: "در جمله فرعی با obwohl فعل صرف‌شده به پایان بخش فرعی می‌رود.",
+      situation: "در کلاس درباره یک سفر سخت اما موفق صحبت می‌کنید.",
+      miniText: "Der Zug war spaet und das Hotelzimmer war klein. Trotzdem sagt Leila: Die Reise war schoen, weil wir viel gesehen haben.",
+      miniAnswer: "لیلا با وجود مشکل‌ها از سفر راضی است."
+    },
+    {
+      slug: "b1-understand-announcements-and-travel-updates",
+      title: "اطلاعیه‌ها و تغییرات سفر را بفهم",
+      description: "اطلاعیه‌های ایستگاه، تغییر مسیر، تاخیر و اطلاعات مهم سفر را دنبال کن.",
+      focus: "درک اطلاعیه سفر",
+      word: "die Durchsage",
+      meaning: "اعلام / اطلاعیه بلندگو",
+      phrase: "Die Durchsage informiert ueber eine Verspaetung.",
+      phraseMeaning: "اعلام بلندگو درباره یک تاخیر اطلاع می‌دهد",
+      blankSentence: "Die Durchsage informiert ueber eine ___.",
+      blankAnswer: "Verspaetung",
+      blankChoices: ["Verspaetung", "Vorliebe", "Bewerbung"],
+      orderedWords: ["Die", "Durchsage", "informiert", "ueber", "eine", "Verspaetung"],
+      grammarPoint: "بعد از ueber برای موضوع اطلاع‌رسانی، اسم با آکوزاتیو می‌آید: ueber eine Verspaetung.",
+      situation: "در ایستگاه باید بفهمید قطار از کدام سکو و با چه تاخیری حرکت می‌کند.",
+      miniText: "Die Durchsage sagt: Der Zug nach Hamburg faehrt heute von Gleis acht ab und hat zehn Minuten Verspaetung.",
+      miniAnswer: "قطار از سکوی هشت با ده دقیقه تاخیر حرکت می‌کند."
+    }
+  ]
+};
+
+const b1DraftUnits: Array<Omit<UnitSpec, "skills"> & { skills: Array<Pick<SkillSpec, "slug" | "title" | "description" | "focus">> }> = [
+  {
+    slug: "b1-everyday-services-technology-and-opinions",
+    title: "خدمات روزمره، تکنولوژی و نظر",
+    summary: "درباره خدمات، دستگاه‌ها، تبلیغات، شکایت و نظر شخصی با دلیل و نتیجه صحبت کنید.",
+    resourceFocus: "خدمات، تکنولوژی، تبلیغات و نظر",
+    skills: [
+      { slug: "b1-discuss-services-and-devices", title: "درباره خدمات و دستگاه‌ها حرف بزن", description: "نیاز، مشکل و کاربرد دستگاه‌ها یا خدمات روزمره را توضیح بده.", focus: "خدمات و دستگاه‌ها" },
+      { slug: "b1-make-a-complaint-politely", title: "مودبانه شکایت کن", description: "مشکل را روشن بگو، نتیجه بخواه و لحن مودبانه را حفظ کن.", focus: "شکایت" },
+      { slug: "b1-explain-consequences", title: "نتیجه و پیامد را بیان کن", description: "با deshalb، deswegen و sodass رابطه علت و نتیجه بساز.", focus: "پیامدها" },
+      { slug: "b1-respond-to-advertising", title: "به تبلیغات واکنش نشان بده", description: "تبلیغ را بفهم، مقایسه کن و نظر خودت را با دلیل بیان کن.", focus: "تبلیغات" }
+    ]
+  },
+  {
+    slug: "b1-life-changes-memories-and-manners",
+    title: "تغییرات زندگی، خاطره و رفتار مودبانه",
+    summary: "درباره تغییرات زندگی، گذشته، خوشبختی، زمان رویدادها و رفتار مناسب صحبت کنید.",
+    resourceFocus: "تغییرات، خاطره، خوشبختی و ادب",
+    skills: [
+      { slug: "b1-describe-life-changes", title: "تغییرات زندگی را توصیف کن", description: "رویدادهای مهم و تغییرات شخصی را با زمان گذشته بیان کن.", focus: "تغییرات زندگی" },
+      { slug: "b1-narrate-past-events", title: "رویدادهای گذشته را روایت کن", description: "ترتیب زمان، دلیل و نتیجه را در یک روایت کوتاه نگه دار.", focus: "روایت گذشته" },
+      { slug: "b1-talk-about-happiness-and-values", title: "درباره خوشبختی و ارزش‌ها حرف بزن", description: "تعریف شخصی از خوشبختی و چیزهای مهم زندگی را بیان کن.", focus: "خوشبختی" },
+      { slug: "b1-speak-politely-in-sensitive-moments", title: "در موقعیت حساس مودبانه حرف بزن", description: "درخواست، عذرخواهی و اصلاح اشتباه را با لحن مناسب انجام بده.", focus: "ادب" }
+    ]
+  },
+  {
+    slug: "b1-work-applications-and-workplace-conversations",
+    title: "کار، درخواست شغل و گفتگوی کاری",
+    summary: "گفتگوهای کاری، آگهی شغلی، درخواست کار، عذرخواهی و تماس تلفنی حرفه‌ای را تمرین کنید.",
+    resourceFocus: "کار، آگهی شغلی، درخواست و تماس کاری",
+    skills: [
+      { slug: "b1-understand-workplace-conversations", title: "گفتگوهای کاری را بفهم", description: "درخواست، مشکل و تصمیم را در محیط کار دنبال کن.", focus: "گفتگوی کاری" },
+      { slug: "b1-read-job-ads-and-apply", title: "آگهی شغلی را بخوان و درخواست بده", description: "نیازهای آگهی را بفهم و اطلاعات مهم درخواست را آماده کن.", focus: "درخواست شغل" },
+      { slug: "b1-apologize-and-respond-at-work", title: "در کار عذرخواهی و واکنش نشان بده", description: "اشتباه، تاخیر و راه‌حل را محترمانه بیان کن.", focus: "عذرخواهی کاری" },
+      { slug: "b1-structure-a-formal-text", title: "متن رسمی را ساختار بده", description: "ایمیل یا پیام کاری را با شروع، بدنه و پایان روشن بنویس.", focus: "ساختار متن" }
+    ]
+  },
+  {
+    slug: "b1-environment-weather-and-public-action",
+    title: "محیط زیست، آب‌وهوا و اقدام جمعی",
+    summary: "درباره محیط زیست، آب‌وهوا، مقایسه، هدف و ایده‌های عملی برای تغییر صحبت کنید.",
+    resourceFocus: "محیط زیست، آب‌وهوا، هدف و اقدام",
+    skills: [
+      { slug: "b1-compare-environmental-choices", title: "انتخاب‌های محیط‌زیستی را مقایسه کن", description: "گزینه‌ها را از نظر اثر، هزینه و امکان اجرا مقایسه کن.", focus: "مقایسه" },
+      { slug: "b1-explain-goals-with-damit", title: "هدف را با damit توضیح بده", description: "برای یک اقدام هدف روشن بساز و دلیلش را بگو.", focus: "هدف" },
+      { slug: "b1-discuss-weather-and-plans", title: "درباره آب‌وهوا و برنامه‌ها حرف بزن", description: "پیش‌بینی هوا را بفهم و برنامه مناسب پیشنهاد بده.", focus: "آب‌وهوا" },
+      { slug: "b1-present-a-public-action", title: "یک اقدام عمومی را معرفی کن", description: "ایده، هدف، زمان و نقش افراد را در یک کنش کوتاه توضیح بده.", focus: "اقدام جمعی" }
+    ]
+  },
+  {
+    slug: "b1-future-plans-expectations-and-advice",
+    title: "برنامه آینده، انتظارها و توصیه",
+    summary: "درباره برنامه‌ها، آینده، انتظارها، توصیه‌ها و متن‌های طولانی‌تر صحبت کنید.",
+    resourceFocus: "آینده، انتظار، توصیه و متن طولانی",
+    skills: [
+      { slug: "b1-talk-about-future-plans", title: "درباره برنامه آینده حرف بزن", description: "قصد، پیش‌بینی و برنامه شخصی را با Futur I بیان کن.", focus: "آینده" },
+      { slug: "b1-understand-longer-articles", title: "متن طولانی‌تر را بفهم", description: "ایده اصلی و جزئیات مهم یک متن خبری یا مجله‌ای را پیدا کن.", focus: "درک متن" },
+      { slug: "b1-give-practical-advice", title: "توصیه کاربردی بده", description: "مشکل را بفهم و چند توصیه روشن و محترمانه پیشنهاد کن.", focus: "توصیه" },
+      { slug: "b1-describe-expectations", title: "انتظارها را دقیق‌تر توصیف کن", description: "امید، نگرانی و انتظار از آینده را با جمله‌های وابسته بیان کن.", focus: "انتظارها" }
+    ]
+  },
+  {
+    slug: "b1-friendships-relationships-and-conflict",
+    title: "دوستی، رابطه و حل اختلاف",
+    summary: "دوستی‌ها، رابطه‌ها، ترتیب زمانی، اختلاف و گفتگوی حل مشکل را تمرین کنید.",
+    resourceFocus: "دوستی، رابطه، اختلاف و زمان",
+    skills: [
+      { slug: "b1-tell-a-friendship-story", title: "داستان یک دوستی را تعریف کن", description: "شروع، تغییر و لحظه‌های مهم یک دوستی را روایت کن.", focus: "داستان دوستی" },
+      { slug: "b1-order-events-in-time", title: "رویدادها را زمانی مرتب کن", description: "با nachdem، bevor، waehrend و seitdem ترتیب اتفاق‌ها را بساز.", focus: "ترتیب زمانی" },
+      { slug: "b1-talk-through-conflict", title: "درباره اختلاف گفتگو کن", description: "مشکل را بگو، احساس را بیان کن و پیشنهاد آشتی بده.", focus: "اختلاف" },
+      { slug: "b1-present-a-couple-or-friendship", title: "یک رابطه یا دوستی را معرفی کن", description: "ویژگی‌ها، تاریخچه و دلیل اهمیت یک رابطه را توضیح بده.", focus: "معرفی رابطه" }
+    ]
+  },
+  {
+    slug: "b1-health-habits-music-and-learning",
+    title: "سلامت، عادت‌ها، موسیقی و یادگیری",
+    summary: "کمک، هشدار، عادت‌ها، احساسات، یادگیری واژه و اطلاعات سلامت را دنبال کنید.",
+    resourceFocus: "سلامت، عادت، موسیقی و یادگیری",
+    skills: [
+      { slug: "b1-offer-and-refuse-help", title: "کمک پیشنهاد بده یا رد کن", description: "کمک را بپذیر، رد کن یا جایگزین محترمانه پیشنهاد بده.", focus: "کمک" },
+      { slug: "b1-warn-and-give-health-advice", title: "هشدار و توصیه سلامتی بده", description: "خطر، عادت و توصیه را با ساختارهای دقیق‌تر بیان کن.", focus: "سلامت" },
+      { slug: "b1-discuss-music-and-feelings", title: "درباره موسیقی و احساس حرف بزن", description: "تاثیر موسیقی و احساس شخصی را روشن توضیح بده.", focus: "موسیقی" },
+      { slug: "b1-share-learning-strategies", title: "راهبرد یادگیری را به اشتراک بگذار", description: "روش حفظ واژه، تمرین و پیشرفت را برای دیگران توضیح بده.", focus: "یادگیری" }
+    ]
+  },
+  {
+    slug: "b1-art-culture-and-description",
+    title: "هنر، فرهنگ و توصیف دقیق",
+    summary: "درباره هنر، موزه، تئاتر، آواز، توصیف دقیق و پرسیدن دوباره تمرین کنید.",
+    resourceFocus: "هنر، فرهنگ، توصیف و پرسش",
+    skills: [
+      { slug: "b1-talk-about-art-and-images", title: "درباره هنر و تصویر حرف بزن", description: "یک اثر یا تصویر را توصیف کن و برداشتت را بگو.", focus: "هنر" },
+      { slug: "b1-ask-follow-up-questions", title: "سوال پیگیری بپرس", description: "وقتی چیزی روشن نیست، دقیق‌تر و مودبانه‌تر بپرس.", focus: "پیگیری" },
+      { slug: "b1-describe-people-and-things-precisely", title: "آدم‌ها و چیزها را دقیق توصیف کن", description: "جزئیات، ویژگی‌ها و مقایسه‌های کوتاه را در توصیف نگه دار.", focus: "توصیف دقیق" },
+      { slug: "b1-understand-cultural-programs", title: "برنامه فرهنگی را بفهم", description: "زمان، مکان، موضوع و شرایط یک برنامه فرهنگی را دنبال کن.", focus: "برنامه فرهنگی" }
+    ]
+  },
+  {
+    slug: "b1-community-institutions-and-social-engagement",
+    title: "جامعه، نهادها و مشارکت اجتماعی",
+    summary: "درباره ارزش‌های اجتماعی، پروژه‌ها، نهادهای شهری، اروپا و ارائه کوتاه صحبت کنید.",
+    resourceFocus: "جامعه، نهادها، پروژه و ارائه",
+    skills: [
+      { slug: "b1-discuss-social-engagement", title: "درباره مشارکت اجتماعی حرف بزن", description: "یک فعالیت اجتماعی و دلیل اهمیت آن را توضیح بده.", focus: "مشارکت اجتماعی" },
+      { slug: "b1-describe-processes-with-passive", title: "فرایندها را با مجهول توصیف کن", description: "بگو چه کاری انجام می‌شود، بدون اینکه همیشه فاعل مهم باشد.", focus: "مجهول" },
+      { slug: "b1-understand-institutions", title: "نهادهای شهری را بفهم", description: "وظیفه، خدمات و نقش یک نهاد شهری یا عمومی را دنبال کن.", focus: "نهادها" },
+      { slug: "b1-give-a-short-presentation", title: "ارائه کوتاه بده", description: "موضوع، ساختار، مثال و پایان یک ارائه کوتاه را آماده کن.", focus: "ارائه" }
+    ]
+  },
+  {
+    slug: "b1-city-life-mobility-and-written-communication",
+    title: "زندگی شهری، رفت‌وآمد و نوشتار",
+    summary: "زندگی در شهر، حمل‌ونقل، شهرهای دوست‌داشتنی، ایمیل و برنامه بازدید را تمرین کنید.",
+    resourceFocus: "شهر، رفت‌وآمد، ایمیل و برنامه بازدید",
+    skills: [
+      { slug: "b1-discuss-city-life", title: "درباره زندگی شهری بحث کن", description: "مزیت‌ها، مشکل‌ها و تجربه زندگی در شهر را بیان کن.", focus: "زندگی شهری" },
+      { slug: "b1-understand-mobility-information", title: "اطلاعات رفت‌وآمد را بفهم", description: "مسیر، وسیله، تغییر و پیشنهاد حمل‌ونقل را دنبال کن.", focus: "رفت‌وآمد" },
+      { slug: "b1-write-to-different-recipients", title: "برای مخاطب‌های مختلف بنویس", description: "لحن و جزئیات پیام را برای دوست، اداره یا میزبان تنظیم کن.", focus: "نوشتار" },
+      { slug: "b1-plan-a-city-visit", title: "بازدید شهری را برنامه‌ریزی کن", description: "برنامه، زمان‌بندی و دلیل انتخاب مکان‌ها را آماده کن.", focus: "برنامه بازدید" }
+    ]
+  },
+  {
+    slug: "b1-money-banking-and-global-choices",
+    title: "پول، بانک و انتخاب‌های جهانی",
+    summary: "گفتگوهای بانکی، اطلاعات وب‌سایت، بحث درباره پول، جهانی‌شدن و موقعیت‌های دشوار را دنبال کنید.",
+    resourceFocus: "پول، بانک، جهانی‌شدن و بحث",
+    skills: [
+      { slug: "b1-handle-bank-conversations", title: "گفتگوی بانکی را مدیریت کن", description: "نیاز، سوال و اطلاعات حساب یا کارت را در بانک بیان کن.", focus: "بانک" },
+      { slug: "b1-understand-web-information", title: "اطلاعات وب‌سایت را بفهم", description: "جزئیات مهم، شرط‌ها و اقدام بعدی را از متن آنلاین بیرون بکش.", focus: "وب‌سایت" },
+      { slug: "b1-express-arguments-about-money", title: "درباره پول استدلال کن", description: "نظر، دلیل مخالف و مثال را در بحث مالی بیان کن.", focus: "استدلال" },
+      { slug: "b1-describe-difficult-situations", title: "موقعیت دشوار را توصیف کن", description: "مسئله، احساس، انتخاب‌ها و نتیجه احتمالی را توضیح بده.", focus: "موقعیت دشوار" }
+    ]
+  }
+];
+
+function buildB1Units(): SampleUnit[] {
+  const unitOneSkills = b1UnitOneSpec.skills.map((skill) =>
+    makeSkill(skill, "PUBLISHED", makeA2SkillQuestions)
+  );
+  const unitOne: SampleUnit = {
+    slug: b1UnitOneSpec.slug,
+    title: b1UnitOneSpec.title,
+    summary: b1UnitOneSpec.summary,
+    skills: [...unitOneSkills, makeA2Checkpoint(b1UnitOneSpec, unitOneSkills)]
+  };
+  const draftUnits = b1DraftUnits.map((unit) => ({
+    slug: unit.slug,
+    title: unit.title,
+    summary: unit.summary,
+    skills: unit.skills.map((skill) => makeDraftSkill(skill))
+  }));
+
+  return [unitOne, ...draftUnits];
+}
+
 export const devLearnerProfile = {
   id: "dev-learner",
   displayName: "Dev Learner",
@@ -2993,6 +3229,11 @@ export const sampleCourse: SampleCourse = {
       label: "A2",
       title: "گسترش A2",
       units: buildA2Units()
+    },
+    {
+      label: "B1",
+      title: "استقلال B1",
+      units: buildB1Units()
     }
   ]
 };
@@ -3377,6 +3618,25 @@ export const sampleResources: SampleResource[] = [
     publicationStatus: "PUBLISHED",
     unitSlug: "a2-travel-directions-and-holiday-experiences",
     skillSlug: "a2-plan-a-short-trip"
+  },
+  {
+    slug: "b1-travel-plans-persian-guide",
+    title: "راهنمای B1: برنامه سفر و داستان تعطیلات",
+    description: "پشتیبانی فارسی برای برنامه‌ریزی سفر، ترجیح‌ها، zu + مصدر، weil/da، obwohl و فهم اطلاعیه‌های سفر.",
+    type: "LEARNING_GUIDE",
+    levelLabel: "B1",
+    language: "fa/de",
+    thumbnailIcon: "plane",
+    metadata: {
+      length: "24 min",
+      format: "Persian-first guide",
+      focus: "B1 Unit 1"
+    },
+    content:
+      "این راهنما واحد اول B1 را به چهار موقعیت سفر وصل می‌کند: گفتن Vorliebe و دلیل انتخاب مقصد، مقایسه Reiseangebot، تعریف Urlaubsgeschichte با گذشته و obwohl، و فهم Durchsage در ایستگاه یا فرودگاه. توضیح‌ها فارسی هستند و مثال‌های اصلی آلمانی می‌مانند تا زبان‌آموز از A2 به تولید دقیق‌تر B1 برسد.",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "b1-travel-plans-and-holiday-stories",
+    skillSlug: "b1-plan-a-trip-and-explain-preferences"
   }
 ];
 

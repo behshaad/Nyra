@@ -440,6 +440,55 @@ const a2UnitFlashcardDecks: Array<{
   }
 ];
 
+const b1UnitFlashcardDecks: Array<{
+  slug: string;
+  title: string;
+  description: string;
+  category: string;
+  unitSlug: string;
+  cards: readonly SeedFlashcard[];
+}> = [
+  {
+    slug: "b1-unit-1-core-vocabulary",
+    title: "واژگان اصلی B1 واحد 1",
+    description: "سی فلش‌کارت نویسنده‌شده برای واحد اول B1: برنامه سفر و داستان تعطیلات.",
+    category: "Unit 1",
+    unitSlug: "b1-travel-plans-and-holiday-stories",
+    cards: [
+      ["die Vorliebe", "ترجیح / علاقه شخصی", "Meine Vorliebe ist eine ruhige Reise ans Meer.", "ترجیح من یک سفر آرام کنار دریاست.", "HARD"],
+      ["die Abneigung", "بی‌علاقگی / عدم تمایل", "Ich habe eine Abneigung gegen sehr volle Hotels.", "من به هتل‌های خیلی شلوغ علاقه‌ای ندارم.", "HARD"],
+      ["Lust haben", "میل داشتن / دلش خواستن", "Ich habe Lust, ans Meer zu fahren.", "دلم می‌خواهد به دریا بروم.", "MEDIUM"],
+      ["ans Meer fahren", "به دریا رفتن", "Wir planen, im Sommer ans Meer zu fahren.", "ما برنامه داریم تابستان به دریا برویم.", "MEDIUM"],
+      ["die Reiseplanung", "برنامه‌ریزی سفر", "Die Reiseplanung dauert dieses Mal laenger.", "برنامه‌ریزی سفر این بار بیشتر طول می‌کشد.", "HARD"],
+      ["das Reiseziel", "مقصد سفر", "Unser Reiseziel ist ein kleiner Ort an der Kueste.", "مقصد سفر ما یک جای کوچک کنار ساحل است.", "MEDIUM"],
+      ["die Unterkunft", "محل اقامت", "Die Unterkunft liegt in der Naehe vom Bahnhof.", "محل اقامت نزدیک ایستگاه است.", "MEDIUM"],
+      ["das Reiseangebot", "پیشنهاد سفر / بسته سفر", "Dieses Reiseangebot passt zu meinem Budget.", "این پیشنهاد سفر با بودجه من جور است.", "HARD"],
+      ["das Budget", "بودجه", "Mein Budget reicht fuer drei Naechte.", "بودجه من برای سه شب کافی است.", "MEDIUM"],
+      ["die Verbindung", "ارتباط / مسیر حمل‌ونقل", "Die Verbindung nach Hamburg ist direkt.", "مسیر هامبورگ مستقیم است.", "MEDIUM"],
+      ["die Abfahrt", "زمان حرکت", "Die Abfahrt ist um acht Uhr zehn.", "حرکت ساعت هشت و ده دقیقه است.", "EASY"],
+      ["die Ankunft", "زمان رسیدن", "Die Ankunft ist kurz vor Mittag.", "رسیدن کمی قبل از ظهر است.", "EASY"],
+      ["das Gleis", "سکو / خط قطار", "Der Zug faehrt von Gleis acht ab.", "قطار از سکوی هشت حرکت می‌کند.", "EASY"],
+      ["die Durchsage", "اعلام / اطلاعیه بلندگو", "Die Durchsage informiert ueber eine Verspaetung.", "اعلام بلندگو درباره یک تاخیر اطلاع می‌دهد.", "HARD"],
+      ["die Verspaetung", "تاخیر", "Der Zug hat zehn Minuten Verspaetung.", "قطار ده دقیقه تاخیر دارد.", "MEDIUM"],
+      ["ausfallen", "لغو شدن / حرکت نکردن", "Der Zug faellt heute leider aus.", "متاسفانه قطار امروز حرکت نمی‌کند.", "HARD"],
+      ["umsteigen", "وسیله عوض کردن", "Wir muessen in Hannover umsteigen.", "باید در هانوفر قطار عوض کنیم.", "HARD"],
+      ["das Gepaeck", "چمدان / بار سفر", "Ich nehme nur wenig Gepaeck mit.", "من فقط بار کمی همراه می‌برم.", "MEDIUM"],
+      ["die Urlaubsgeschichte", "داستان تعطیلات", "Diese Urlaubsgeschichte erzaehle ich immer wieder.", "این داستان تعطیلات را همیشه دوباره تعریف می‌کنم.", "HARD"],
+      ["erzaehlen", "تعریف کردن / روایت کردن", "Leila erzaehlt von ihrer Reise.", "لیلا از سفرش تعریف می‌کند.", "MEDIUM"],
+      ["obwohl", "با اینکه", "Obwohl der Zug spaet war, sind wir ruhig geblieben.", "با اینکه قطار دیر بود، ما آرام ماندیم.", "HARD"],
+      ["weil", "چون", "Ich fahre ans Meer, weil ich Ruhe brauche.", "به دریا می‌روم چون به آرامش نیاز دارم.", "MEDIUM"],
+      ["da", "از آنجا که / چون", "Da das Hotel zentral liegt, gehen wir zu Fuss.", "چون هتل مرکزی است، پیاده می‌رویم.", "HARD"],
+      ["zu + Infinitiv", "zu همراه مصدر", "Es ist schoen, neue Orte zu entdecken.", "خوب است جاهای جدید را کشف کردن.", "HARD"],
+      ["entdecken", "کشف کردن", "Im Urlaub moechte ich neue Orte entdecken.", "در تعطیلات می‌خواهم جاهای جدید کشف کنم.", "MEDIUM"],
+      ["sich erholen", "استراحت کردن / تجدید قوا کردن", "Nach der Pruefung moechte ich mich erholen.", "بعد از امتحان می‌خواهم استراحت کنم.", "HARD"],
+      ["ruhig bleiben", "آرام ماندن", "Bei Problemen bleiben wir ruhig.", "هنگام مشکل آرام می‌مانیم.", "MEDIUM"],
+      ["die Beschwerde", "شکایت", "Nach der Reise schreibt Amir eine kurze Beschwerde.", "بعد از سفر امیر یک شکایت کوتاه می‌نویسد.", "HARD"],
+      ["der Blogeintrag", "مطلب وبلاگ", "Neda schreibt einen Blogeintrag ueber die Reise.", "ندا یک مطلب وبلاگ درباره سفر می‌نویسد.", "HARD"],
+      ["die Empfehlung", "توصیه / پیشنهاد", "Meine Empfehlung ist: Buchen Sie frueh.", "توصیه من این است: زود رزرو کنید.", "MEDIUM"]
+    ]
+  }
+];
+
 const connectionString = process.env.DATABASE_URL;
 
 if (!connectionString) {
@@ -589,7 +638,12 @@ async function main() {
     });
   }
 
-  for (const deck of a2UnitFlashcardDecks) {
+  const adminFlashcardDecks = [
+    ...a2UnitFlashcardDecks.map((deck) => ({ ...deck, levelLabel: "A2" })),
+    ...b1UnitFlashcardDecks.map((deck) => ({ ...deck, levelLabel: "B1" }))
+  ];
+
+  for (const deck of adminFlashcardDecks) {
     const unit = await prisma.unit.findUnique({
       where: {
         slug: deck.unitSlug
@@ -622,7 +676,7 @@ async function main() {
         slug: deck.slug,
         title: deck.title,
         description: deck.description,
-        levelLabel: "A2",
+        levelLabel: deck.levelLabel,
         category: deck.category,
         ownerType: "ADMIN",
         publicationStatus: "PUBLISHED",
@@ -634,7 +688,7 @@ async function main() {
       update: {
         title: deck.title,
         description: deck.description,
-        levelLabel: "A2",
+        levelLabel: deck.levelLabel,
         category: deck.category,
         ownerType: "ADMIN",
         publicationStatus: "PUBLISHED",
