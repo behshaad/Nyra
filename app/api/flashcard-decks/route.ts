@@ -1,11 +1,19 @@
 import { NextResponse } from "next/server";
 import { getPrisma } from "@/lib/db/prisma";
+import { FlashcardDeckOwnerType } from "@/lib/generated/prisma/enums";
 import { createFlashcardDeck } from "@/lib/flashcards/flashcard-repository";
 import { parseFlashcardDeckInput } from "@/lib/flashcards/flashcard-validation";
 
+function clean(value: unknown) {
+  return typeof value === "string" ? value.trim() : "";
+}
+
 export async function POST(request: Request) {
   const body = (await request.json()) as Record<string, unknown>;
-  const parsed = parseFlashcardDeckInput(body);
+  const ownerType = clean(body.ownerType) || FlashcardDeckOwnerType.LEARNER;
+  const parsed = parseFlashcardDeckInput(body, {
+    requireDescription: ownerType === FlashcardDeckOwnerType.ADMIN
+  });
 
   if (!parsed.ok) {
     return NextResponse.json({ error: parsed.error }, { status: 400 });

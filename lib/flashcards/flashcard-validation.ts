@@ -115,7 +115,12 @@ function isSlug(value: string) {
   return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
 }
 
-export function parseFlashcardDeckInput(body: Record<string, unknown>):
+export function parseFlashcardDeckInput(
+  body: Record<string, unknown>,
+  options?: {
+    requireDescription?: boolean;
+  }
+):
   | { ok: true; input: FlashcardDeckInput }
   | { ok: false; error: string } {
   const title = clean(body.title);
@@ -130,10 +135,12 @@ export function parseFlashcardDeckInput(body: Record<string, unknown>):
     clean(body.publicationStatus) || PublicationStatus.PUBLISHED;
   const unitId = optionalString(body.unitId);
 
-  if (!title || !slug || !description) {
+  if (!title || !slug || (options?.requireDescription && !description)) {
     return {
       ok: false,
-      error: "Title, slug, and description are required."
+      error: options?.requireDescription
+        ? "Title, slug, and description are required."
+        : "Title and slug are required."
     };
   }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
@@ -73,7 +73,7 @@ type CardResponse = Omit<
 
 type CardStatus = "known" | "unknown";
 type Layer = "home" | "deck" | "create" | "edit";
-type CreateStep = "deck" | "cards" | "finish";
+type CreateStep = "deck" | "cards";
 type SessionMode = "study" | "review";
 
 const deckIconKeys = [
@@ -374,23 +374,21 @@ export function FlashcardLibrary({
     setHasMounted(true);
   }, []);
 
-  const currentUrl = useMemo(() => {
+  function currentUrl(updates: Record<string, string | null>) {
     const params = new globalThis.URLSearchParams(searchParams.toString());
 
-    return (updates: Record<string, string | null>) => {
-      Object.entries(updates).forEach(([key, value]) => {
-        if (value) {
-          params.set(key, value);
-        } else {
-          params.delete(key);
-        }
-      });
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value) {
+        params.set(key, value);
+      } else {
+        params.delete(key);
+      }
+    });
 
-      const query = params.toString();
+    const query = params.toString();
 
-      return query ? `${pathname}?${query}` : pathname;
-    };
-  }, [pathname, searchParams]);
+    return query ? `${pathname}?${query}` : pathname;
+  }
 
   function goHome() {
     setCreateStep("deck");
@@ -1128,27 +1126,11 @@ export function FlashcardLibrary({
               <>
                 {renderCardComposer()}
                 <div className="flashcard-layer-actions">
-                  <button className="secondary-button" type="button" onClick={() => setCreateStep("finish")}>
+                  <button className="secondary-button" type="button" onClick={goHome}>
                     {activeDeck.flashcards.length === 0 ? copy.finishEmpty : copy.finish}
                   </button>
                 </div>
               </>
-            ) : null}
-            {createStep === "finish" && activeDeck ? (
-              <section className="flashcard-finish-layer">
-                <Sparkles size={30} />
-                <span className="section-label">{copy.stepFinish}</span>
-                <h2>{activeDeck.title}</h2>
-                <p>{copy.finishBody}</p>
-                <div className="flashcard-layer-actions">
-                  <button className="secondary-button" type="button" onClick={goHome}>
-                    {copy.backHome}
-                  </button>
-                  <button className="primary-button" type="button" onClick={() => openDeck(activeDeck.id)}>
-                    {copy.studyNow}
-                  </button>
-                </div>
-              </section>
             ) : null}
           </motion.div>
         ) : null}
