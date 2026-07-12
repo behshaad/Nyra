@@ -5909,6 +5909,13 @@ h3 {
     min-height: var(--level-world-canvas-height, 100dvh);
   }
 
+  .level-world-canvas.has-embedded-path {
+    height: 100dvh;
+    max-width: none;
+    min-height: 100dvh;
+    width: calc(100dvh * 768 / 1376);
+  }
+
   .level-skill-node {
     max-width: 108px;
     min-width: 48px;
