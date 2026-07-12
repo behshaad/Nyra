@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   BookOpen,
   ExternalLink,
@@ -72,7 +73,16 @@ export default async function ResourcesPage({
         </div>
 
         <section className="resource-feature-band" aria-label={text(resourceCopy.featuredTitle, language)}>
-          <div>
+          <div className="resource-feature-photo" aria-hidden="true">
+            <Image
+              alt=""
+              fill
+              priority
+              sizes="(max-width: 1040px) 100vw, 34vw"
+              src="/resources/resource-library-photo.jpg"
+            />
+          </div>
+          <div className="resource-feature-copy">
             <span className="section-label">{text(resourceCopy.featuredTitle, language)}</span>
             <p>{text(resourceCopy.featuredBody, language)}</p>
           </div>
@@ -120,6 +130,17 @@ export default async function ResourcesPage({
                 href={withInterfaceLanguage(`/resources/${resource.slug}`, language)}
                 key={resource.slug}
               >
+                <div className="resource-card-media" aria-hidden="true">
+                  <Image
+                    alt=""
+                    fill
+                    sizes="(max-width: 1040px) 100vw, 33vw"
+                    src="/resources/resource-library-photo.jpg"
+                  />
+                  <span className="resource-card-media-icon">
+                    <Icon size={18} />
+                  </span>
+                </div>
                 <div className="resource-card-header">
                   <span className="node-icon">
                     <Icon size={18} />
