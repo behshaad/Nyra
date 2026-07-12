@@ -1910,7 +1910,7 @@ h3 {
 }
 
 .resource-library-card {
-  animation: resourceCardReveal 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: resourceCardReveal 1800ms cubic-bezier(0.16, 1, 0.3, 1) both;
   background:
     linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.58)),
     var(--surface);
@@ -1925,25 +1925,25 @@ h3 {
   overflow: hidden;
   padding: 10px 10px 14px;
   transition:
-    border-color 360ms ease,
-    box-shadow 360ms ease,
-    transform 360ms ease;
+    border-color 700ms ease,
+    box-shadow 700ms ease,
+    transform 700ms ease;
 }
 
 .resource-library-card:nth-child(2) {
-  animation-delay: 120ms;
+  animation-delay: 300ms;
 }
 
 .resource-library-card:nth-child(3) {
-  animation-delay: 240ms;
+  animation-delay: 600ms;
 }
 
 .resource-library-card:nth-child(4) {
-  animation-delay: 360ms;
+  animation-delay: 900ms;
 }
 
 .resource-library-card:nth-child(n + 5) {
-  animation-delay: 460ms;
+  animation-delay: 1200ms;
 }
 
 .resource-library-card:hover {
