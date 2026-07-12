@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
@@ -339,6 +339,7 @@ export function FlashcardLibrary({
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [hasMounted, setHasMounted] = useState(false);
 
   const flow = searchParams.get("flow");
   const deckId = searchParams.get("deck") ?? "";
@@ -367,6 +368,11 @@ export function FlashcardLibrary({
         center: { opacity: 1, x: 0, scale: 1 },
         exit: { opacity: 0, x: -slideDistance, scale: 0.985 }
       };
+  const initialLayerState = hasMounted ? "enter" : false;
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   const currentUrl = useMemo(() => {
     const params = new globalThis.URLSearchParams(searchParams.toString());
@@ -954,7 +960,7 @@ export function FlashcardLibrary({
             animate="center"
             className="flashcard-layer"
             exit="exit"
-            initial="enter"
+            initial={initialLayerState}
             key="home"
             transition={{ duration: 0.24, ease: "easeOut" }}
             variants={layerVariants}
@@ -999,7 +1005,7 @@ export function FlashcardLibrary({
             animate="center"
             className="flashcard-layer"
             exit="exit"
-            initial="enter"
+            initial={initialLayerState}
             key={`deck-${activeDeck.id}`}
             transition={{ duration: 0.24, ease: "easeOut" }}
             variants={layerVariants}
@@ -1112,7 +1118,7 @@ export function FlashcardLibrary({
             animate="center"
             className="flashcard-layer"
             exit="exit"
-            initial="enter"
+            initial={initialLayerState}
             key={`create-${createStep}-${activeDeck?.id ?? "new"}`}
             transition={{ duration: 0.24, ease: "easeOut" }}
             variants={layerVariants}
@@ -1152,7 +1158,7 @@ export function FlashcardLibrary({
             animate="center"
             className="flashcard-layer"
             exit="exit"
-            initial="enter"
+            initial={initialLayerState}
             key={`edit-${activeDeck.id}`}
             transition={{ duration: 0.24, ease: "easeOut" }}
             variants={layerVariants}
