@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Inter, Vazirmatn } from "next/font/google";
+import { AuthProvider } from "@/components/auth-provider";
+import { getAuthSession } from "@/lib/auth/server";
 import { interfaceCopy } from "@/lib/i18n/interface-language";
 import { getLearnerPreferences } from "@/lib/learner/preferences";
 import "./globals.css";
@@ -192,6 +194,7 @@ export default async function RootLayout({
       ? undefined
       : preferences.interfaceTheme.toLowerCase();
   const copy = interfaceCopy[preferences.interfaceLanguage];
+  const session = await getAuthSession();
 
   return (
     <html
@@ -208,7 +211,7 @@ export default async function RootLayout({
         />
       </head>
       <body className={`${inter.variable} ${vazirmatn.variable}`}>
-        {children}
+        <AuthProvider session={session}>{children}</AuthProvider>
       </body>
     </html>
   );

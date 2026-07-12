@@ -124,6 +124,10 @@ _Avoid_: Next lesson
 The learner-owned product identity that describes a person's learning goal, languages, current level, daily goal, preferences, and onboarding state.
 _Avoid_: Account, user metadata
 
+**Account**:
+The identity, access, contact, and subscription-facing settings around an authenticated person using Nyra. An Account is distinct from the Learner Profile, which owns learning goals and study preferences.
+_Avoid_: Learner Profile, learning identity
+
 **Admin Access**:
 Permission for a trusted operator to manage Nyra content and review operational surfaces. Admin Access belongs to Nyra-owned roles, while identity and sessions belong to the authentication provider.
 _Avoid_: Admin preview, shared admin password
