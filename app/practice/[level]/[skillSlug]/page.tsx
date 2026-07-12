@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { LessonPlayer } from "@/components/practice/world/skill-player";
+import { SkillPlayer } from "@/components/practice/world/skill-player";
 import { resolveInterfaceLanguage } from "@/lib/i18n/interface-language";
 import { getLearnerPreferences } from "@/lib/learner/preferences";
 import { getPracticeJourney } from "@/lib/practice/journey";
@@ -44,7 +44,7 @@ export default async function PracticeSkillPage({
 
   return (
     <main className={`practice-shell ${language === "fa" ? "learner-rtl" : ""}`} dir="ltr">
-      <LessonPlayer language={language} levelLabel={normalizedLevel} skillSlug={skillSlug} />
+      <SkillPlayer language={language} levelLabel={normalizedLevel} skillSlug={skillSlug} />
     </main>
   );
 }

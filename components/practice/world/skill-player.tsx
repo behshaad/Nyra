@@ -45,7 +45,7 @@ async function readJson<T>(response: Response): Promise<T> {
   return data as T;
 }
 
-export function LessonPlayer({
+export function SkillPlayer({
   language,
   levelLabel,
   skillSlug

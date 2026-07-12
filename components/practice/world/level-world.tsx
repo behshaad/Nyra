@@ -166,7 +166,7 @@ export function WorldPage({
           </div>
         </div>
         {level && skillPoints.length > 0 ? (
-          <LessonPath
+          <SkillPath
             enteringSkillSlug={enteringSkillSlug}
             language={language}
             levelLabel={levelLabel}
@@ -201,7 +201,7 @@ export function WorldBackground({ world }: { world: LevelWorldConfig }) {
   );
 }
 
-export function LessonPath({
+export function SkillPath({
   enteringSkillSlug,
   language,
   levelLabel,
@@ -223,7 +223,7 @@ export function LessonPath({
         <path className="level-world-path-line" d={pathData} />
       </svg>
       {skillPoints.map((skill) => (
-        <LessonNode
+        <SkillNode
           entering={enteringSkillSlug === skill.slug}
           key={skill.slug}
           language={language}
@@ -245,7 +245,7 @@ export function LessonPath({
   );
 }
 
-export function LessonNode({
+export function SkillNode({
   entering,
   language,
   levelLabel,
