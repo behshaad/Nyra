@@ -1,22 +1,24 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Inter, Vazirmatn } from "next/font/google";
+import localFont from "next/font/local";
 import { AuthProvider } from "@/components/auth-provider";
 import { getAuthSession } from "@/lib/auth/server";
 import { interfaceCopy } from "@/lib/i18n/interface-language";
 import { getLearnerPreferences } from "@/lib/learner/preferences";
 import "./globals.css";
 
-const inter = Inter({
-  subsets: ["latin"],
+const inter = localFont({
+  src: "../public/fonts/nyra-latin.woff2",
   variable: "--font-inter",
-  display: "swap"
+  display: "swap",
+  fallback: ["system-ui", "sans-serif"]
 });
 
-const vazirmatn = Vazirmatn({
-  subsets: ["arabic", "latin"],
+const vazirmatn = localFont({
+  src: "../public/fonts/far-baseet.ttf",
   variable: "--font-vazirmatn",
-  display: "swap"
+  display: "swap",
+  fallback: ["system-ui", "sans-serif"]
 });
 
 export const metadata: Metadata = {
