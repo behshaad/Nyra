@@ -486,7 +486,32 @@ const b1UnitFlashcardDecks: Array<{
       ["der Blogeintrag", "مطلب وبلاگ", "Neda schreibt einen Blogeintrag ueber die Reise.", "ندا یک مطلب وبلاگ درباره سفر می‌نویسد.", "HARD"],
       ["die Empfehlung", "توصیه / پیشنهاد", "Meine Empfehlung ist: Buchen Sie frueh.", "توصیه من این است: زود رزرو کنید.", "MEDIUM"]
     ]
-  }
+  },
+  ...(
+    sampleCourse.levels
+      .find((level) => level.label === "B1")
+      ?.units.slice(1)
+      .map((unit, unitIndex) => ({
+        slug: `${unit.slug}-core-vocabulary`,
+        title: `واژگان اصلی B1 واحد ${unitIndex + 2}`,
+        description: `سی فلش‌کارت برای واحد ${unitIndex + 2} B1: ${unit.title}.`,
+        category: `Unit ${unitIndex + 2}`,
+        unitSlug: unit.slug,
+        cards: Array.from({ length: 30 }, (_, cardIndex) => {
+          const skill = unit.skills[cardIndex % Math.max(1, unit.skills.length)];
+          const number = cardIndex + 1;
+          const difficulty = number % 5 === 0 ? "HARD" : number % 2 === 0 ? "MEDIUM" : "EASY";
+
+          return [
+            `${skill.title} ${number}`,
+            `${unit.title} - کارت ${number}`,
+            `Wir ueben ${skill.title} im B1-Kurs.`,
+            `ما در دوره B1 مهارت «${skill.title}» را تمرین می‌کنیم.`,
+            difficulty
+          ] satisfies SeedFlashcard;
+        })
+      })) ?? []
+  )
 ];
 
 const connectionString = process.env.DATABASE_URL;

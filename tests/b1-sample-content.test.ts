@@ -8,57 +8,39 @@ import {
 import { questionOptionsFrom } from "@/lib/question-engine/question-options";
 
 describe("B1 sample content", () => {
-  it("creates the B1 roadmap with only Unit 1 published", () => {
+  it("publishes the full B1 level with a cumulative final test", () => {
     const b1 = sampleCourse.levels.find((level) => level.label === "B1");
 
     expect(b1?.units).toHaveLength(12);
     expect(getLevelContentSummary("B1")).toMatchObject({
       unitCount: 12,
       regularSkillCount: 48,
-      checkpointCount: 1,
-      finalTestCount: 0,
-      questionCount: 44
+      checkpointCount: 12,
+      finalTestCount: 1,
+      questionCount: 558
     });
   });
 
-  it("publishes only the first B1 Unit as playable content", () => {
+  it("publishes every playable B1 skill in learner-facing helpers", () => {
     const publishedB1Skills = getPublishedSkills().filter(
       (skill) => skill.levelLabel === "B1"
     );
 
-    expect(publishedB1Skills).toHaveLength(5);
-    expect(publishedB1Skills.map((skill) => skill.slug)).toEqual([
+    expect(publishedB1Skills).toHaveLength(61);
+    expect(publishedB1Skills.slice(0, 5).map((skill) => skill.slug)).toEqual([
       "b1-plan-a-trip-and-explain-preferences",
       "b1-understand-and-discuss-travel-options",
       "b1-tell-a-holiday-story-in-the-past",
       "b1-understand-announcements-and-travel-updates",
       "b1-travel-plans-and-holiday-stories-checkpoint"
     ]);
-    expect(publishedB1Skills.map((skill) => skill.questions.length)).toEqual([
+    expect(publishedB1Skills.slice(0, 5).map((skill) => skill.questions.length)).toEqual([
       8,
       8,
       8,
       8,
       12
     ]);
-  });
-
-  it("keeps B1 Units 2-12 as Draft Skill scaffolding without Questions", () => {
-    const b1 = sampleCourse.levels.find((level) => level.label === "B1");
-    const draftUnits = b1?.units.slice(1) ?? [];
-
-    expect(draftUnits).toHaveLength(11);
-    for (const unit of draftUnits) {
-      expect(unit.skills).toHaveLength(4);
-      expect(
-        unit.skills.every(
-          (skill) =>
-            skill.kind === "REGULAR" &&
-            skill.publicationStatus === "DRAFT" &&
-            skill.questions.length === 0
-        )
-      ).toBe(true);
-    }
   });
 
   it("uses the current deterministic Question Types for published B1 regular Skills", () => {
@@ -97,13 +79,23 @@ describe("B1 sample content", () => {
       (resource) => resource.levelLabel === "B1" && resource.type === "LEARNING_GUIDE"
     );
 
-    expect(b1Guides.map((guide) => guide.slug)).toEqual([
-      "b1-travel-plans-persian-guide"
-    ]);
+    expect(b1Guides).toHaveLength(12);
     expect(b1Guides[0]).toMatchObject({
+      slug: "b1-travel-plans-persian-guide",
       unitSlug: "b1-travel-plans-and-holiday-stories",
       skillSlug: "b1-plan-a-trip-and-explain-preferences",
       publicationStatus: "PUBLISHED"
     });
+  });
+
+  it("uses a balanced mixed-question B1 final test", () => {
+    const finalTest = getPublishedSkills().find(
+      (skill) => skill.levelLabel === "B1" && skill.kind === "FINAL_TEST"
+    );
+
+    expect(finalTest?.questions).toHaveLength(30);
+    expect(finalTest?.questions.filter((question) => question.type === "MULTIPLE_CHOICE")).toHaveLength(10);
+    expect(finalTest?.questions.filter((question) => question.type === "FILL_IN_BLANK")).toHaveLength(10);
+    expect(finalTest?.questions.filter((question) => question.type === "WORD_ORDERING")).toHaveLength(10);
   });
 });

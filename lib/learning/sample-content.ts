@@ -2896,8 +2896,8 @@ function makeDraftSkill(spec: Pick<SkillSpec, "slug" | "title" | "description" |
   };
 }
 
-function makeA2FinalTest(units: SampleUnit[]): SampleSkill {
-  const slug = "a2-final-test";
+function makeFinalTestForLevel(levelLabel: "A2" | "B1", units: SampleUnit[]): SampleSkill {
+  const slug = `${levelLabel.toLowerCase()}-final-test`;
   const publishedRegularQuestions = units
     .flatMap((unit) => unit.skills)
     .filter((skill) => skill.kind === "REGULAR" && skill.publicationStatus === "PUBLISHED")
@@ -2916,8 +2916,8 @@ function makeA2FinalTest(units: SampleUnit[]): SampleSkill {
   return {
     id: slug,
     slug,
-    title: "آزمون نهایی A2",
-    description: "آمادگی خودت را در کل مسیر A2 با سوال‌های ترکیبی و تجمعی بسنج.",
+    title: `آزمون نهایی ${levelLabel}`,
+    description: `آمادگی خودت را در کل مسیر ${levelLabel} با سوال‌های ترکیبی و تجمعی بسنج.`,
     kind: "FINAL_TEST",
     xp: 300,
     passingScore: 75,
@@ -2925,6 +2925,10 @@ function makeA2FinalTest(units: SampleUnit[]): SampleSkill {
     publicationStatus: "PUBLISHED",
     questions
   };
+}
+
+function makeA2FinalTest(units: SampleUnit[]): SampleSkill {
+  return makeFinalTestForLevel("A2", units);
 }
 
 function buildA2Units(): SampleUnit[] {
@@ -3178,24 +3182,187 @@ const b1DraftUnits: Array<Omit<UnitSpec, "skills"> & { skills: Array<Pick<SkillS
   }
 ];
 
-function buildB1Units(): SampleUnit[] {
-  const unitOneSkills = b1UnitOneSpec.skills.map((skill) =>
-    makeSkill(skill, "PUBLISHED", makeA2SkillQuestions)
-  );
-  const unitOne: SampleUnit = {
-    slug: b1UnitOneSpec.slug,
-    title: b1UnitOneSpec.title,
-    summary: b1UnitOneSpec.summary,
-    skills: [...unitOneSkills, makeA2Checkpoint(b1UnitOneSpec, unitOneSkills)]
-  };
-  const draftUnits = b1DraftUnits.map((unit) => ({
-    slug: unit.slug,
-    title: unit.title,
-    summary: unit.summary,
-    skills: unit.skills.map((skill) => makeDraftSkill(skill))
-  }));
+const b1UnitLanguage = [
+  {
+    word: "die Vorliebe",
+    meaning: "ترجیح / علاقه شخصی",
+    phrase: "Ich habe Lust, ans Meer zu fahren.",
+    phraseMeaning: "دلم می‌خواهد به دریا بروم",
+    blankSentence: "Ich habe Lust, ans Meer ___ fahren.",
+    blankAnswer: "zu",
+    orderedWords: ["Ich", "habe", "Lust", "ans", "Meer", "zu", "fahren"],
+    grammarPoint: "بعد از Lust haben می‌توان از zu + مصدر استفاده کرد.",
+    miniAnswer: "گوینده سفر کنار دریا را ترجیح می‌دهد."
+  },
+  {
+    word: "die Reklamation",
+    meaning: "شکایت از کالا یا خدمت",
+    phrase: "Ich reklamiere das Geraet, weil es nicht funktioniert.",
+    phraseMeaning: "از دستگاه شکایت می‌کنم چون کار نمی‌کند",
+    blankSentence: "Ich reklamiere das Geraet, ___ es nicht funktioniert.",
+    blankAnswer: "weil",
+    orderedWords: ["Ich", "reklamiere", "das", "Geraet", "weil", "es", "nicht", "funktioniert"],
+    grammarPoint: "در جمله فرعی با weil فعل صرف‌شده در پایان جمله می‌آید.",
+    miniAnswer: "دستگاه کار نمی‌کند و باید پیگیری شود."
+  },
+  {
+    word: "die Veraenderung",
+    meaning: "تغییر",
+    phrase: "Frueher wohnte ich klein, heute wohne ich zentral.",
+    phraseMeaning: "قبلا در خانه کوچک زندگی می‌کردم، امروز مرکزی زندگی می‌کنم",
+    blankSentence: "___ wohnte ich klein, heute wohne ich zentral.",
+    blankAnswer: "Frueher",
+    orderedWords: ["Frueher", "wohnte", "ich", "in", "einer", "kleinen", "Wohnung"],
+    grammarPoint: "برای روایت گذشته در B1 از Präteritum فعل‌های رایج مثل wohnte استفاده می‌شود.",
+    miniAnswer: "زندگی گوینده نسبت به گذشته تغییر کرده است."
+  },
+  {
+    word: "die Bewerbung",
+    meaning: "درخواست شغل",
+    phrase: "Wenn ich mehr Erfahrung haette, wuerde ich mich bewerben.",
+    phraseMeaning: "اگر تجربه بیشتری داشتم، درخواست می‌دادم",
+    blankSentence: "Wenn ich mehr Erfahrung haette, ___ ich mich bewerben.",
+    blankAnswer: "wuerde",
+    orderedWords: ["Ich", "wuerde", "mich", "gern", "bei", "Ihnen", "bewerben"],
+    grammarPoint: "Konjunktiv II با würde برای موقعیت‌های فرضی و مودبانه کاربرد دارد.",
+    miniAnswer: "گوینده درباره درخواست شغل به شکل مودبانه صحبت می‌کند."
+  },
+  {
+    word: "der Umweltschutz",
+    meaning: "حفاظت از محیط زیست",
+    phrase: "Wir sparen Strom, damit die Umwelt geschuetzt wird.",
+    phraseMeaning: "برق صرفه‌جویی می‌کنیم تا محیط زیست حفظ شود",
+    blankSentence: "Wir sparen Strom, ___ die Umwelt geschuetzt wird.",
+    blankAnswer: "damit",
+    orderedWords: ["Wir", "sparen", "Strom", "damit", "die", "Umwelt", "geschuetzt", "wird"],
+    grammarPoint: "با damit هدف یک عمل را بیان می‌کنیم و فعل در پایان جمله فرعی می‌آید.",
+    miniAnswer: "هدف عمل، حفاظت از محیط زیست است."
+  },
+  {
+    word: "die Zukunftsprognose",
+    meaning: "پیش‌بینی آینده",
+    phrase: "In Zukunft werden viele Menschen flexibler arbeiten.",
+    phraseMeaning: "در آینده افراد زیادی انعطاف‌پذیرتر کار خواهند کرد",
+    blankSentence: "In Zukunft ___ viele Menschen flexibler arbeiten.",
+    blankAnswer: "werden",
+    orderedWords: ["In", "Zukunft", "werden", "viele", "Menschen", "flexibler", "arbeiten"],
+    grammarPoint: "Futur I با werden + مصدر برای پیش‌بینی یا برنامه آینده استفاده می‌شود.",
+    miniAnswer: "متن درباره یک تغییر احتمالی در آینده صحبت می‌کند."
+  },
+  {
+    word: "die Freundschaft",
+    meaning: "دوستی",
+    phrase: "Nachdem wir gestritten hatten, haben wir ruhig gesprochen.",
+    phraseMeaning: "بعد از اینکه بحث کرده بودیم، آرام صحبت کردیم",
+    blankSentence: "___ wir gestritten hatten, haben wir ruhig gesprochen.",
+    blankAnswer: "Nachdem",
+    orderedWords: ["Nachdem", "wir", "gestritten", "hatten", "haben", "wir", "ruhig", "gesprochen"],
+    grammarPoint: "برای ترتیب دو رویداد گذشته می‌توان از nachdem و Plusquamperfekt استفاده کرد.",
+    miniAnswer: "دو نفر بعد از اختلاف دوباره گفتگو کرده‌اند."
+  },
+  {
+    word: "die Gewohnheit",
+    meaning: "عادت",
+    phrase: "Du brauchst nicht jeden Tag zwei Stunden zu lernen.",
+    phraseMeaning: "لازم نیست هر روز دو ساعت درس بخوانی",
+    blankSentence: "Du brauchst nicht jeden Tag zwei Stunden ___ lernen.",
+    blankAnswer: "zu",
+    orderedWords: ["Du", "brauchst", "nicht", "jeden", "Tag", "zu", "lernen"],
+    grammarPoint: "ساختار nicht brauchen + zu + مصدر برای گفتن لازم نبودن کاری استفاده می‌شود.",
+    miniAnswer: "گوینده فشار یادگیری را کمتر می‌کند."
+  },
+  {
+    word: "die Beschreibung",
+    meaning: "توصیف",
+    phrase: "Das ist ein Bild, das mir sehr gut gefaellt.",
+    phraseMeaning: "این تصویری است که خیلی دوستش دارم",
+    blankSentence: "Das ist ein Bild, ___ mir sehr gut gefaellt.",
+    blankAnswer: "das",
+    orderedWords: ["Das", "ist", "ein", "Bild", "das", "mir", "gut", "gefaellt"],
+    grammarPoint: "جمله موصولی با das اطلاعات دقیق‌تری درباره اسم خنثی می‌دهد.",
+    miniAnswer: "گوینده یک تصویر را دقیق‌تر معرفی می‌کند."
+  },
+  {
+    word: "das Engagement",
+    meaning: "مشارکت اجتماعی",
+    phrase: "In unserem Projekt wird alten Menschen geholfen.",
+    phraseMeaning: "در پروژه ما به افراد مسن کمک می‌شود",
+    blankSentence: "In unserem Projekt ___ alten Menschen geholfen.",
+    blankAnswer: "wird",
+    orderedWords: ["In", "unserem", "Projekt", "wird", "alten", "Menschen", "geholfen"],
+    grammarPoint: "Passiv Präsens برای توصیف فرایند یا کار انجام‌شده استفاده می‌شود.",
+    miniAnswer: "پروژه برای کمک اجتماعی طراحی شده است."
+  },
+  {
+    word: "die Mobilitaet",
+    meaning: "رفت‌وآمد / جابه‌جایی",
+    phrase: "In der Stadt gibt es viele Wege, mit denen man schnell ankommt.",
+    phraseMeaning: "در شهر راه‌های زیادی هست که با آن‌ها سریع می‌رسیم",
+    blankSentence: "In der Stadt gibt es viele Wege, mit ___ man schnell ankommt.",
+    blankAnswer: "denen",
+    orderedWords: ["In", "der", "Stadt", "kommt", "man", "mit", "der", "Bahn", "schnell", "an"],
+    grammarPoint: "در جمله موصولی بعد از mit از ضمیر موصولی داتیو جمع denen استفاده می‌شود.",
+    miniAnswer: "متن درباره رفت‌وآمد در شهر صحبت می‌کند."
+  },
+  {
+    word: "die Globalisierung",
+    meaning: "جهانی‌شدن",
+    phrase: "Je mehr wir vergleichen, desto bewusster entscheiden wir.",
+    phraseMeaning: "هرچه بیشتر مقایسه کنیم، آگاهانه‌تر تصمیم می‌گیریم",
+    blankSentence: "Je mehr wir vergleichen, ___ bewusster entscheiden wir.",
+    blankAnswer: "desto",
+    orderedWords: ["Je", "mehr", "wir", "vergleichen", "desto", "bewusster", "entscheiden", "wir"],
+    grammarPoint: "ساختار je ... desto برای بیان رابطه دو تغییر استفاده می‌شود.",
+    miniAnswer: "مقایسه بیشتر به تصمیم آگاهانه‌تر کمک می‌کند."
+  }
+] satisfies Array<Pick<SkillSpec, "word" | "meaning" | "phrase" | "phraseMeaning" | "blankSentence" | "blankAnswer" | "orderedWords" | "grammarPoint" | "miniAnswer">>;
 
-  return [unitOne, ...draftUnits];
+function makeB1SkillSpec(
+  unit: Omit<UnitSpec, "skills">,
+  skill: Pick<SkillSpec, "slug" | "title" | "description" | "focus">,
+  unitIndex: number
+): SkillSpec {
+  const language = b1UnitLanguage[unitIndex];
+
+  return {
+    ...skill,
+    ...language,
+    blankChoices: [language.blankAnswer, "weil", "obwohl"],
+    situation: `در موضوع ${unit.resourceFocus} باید درباره «${skill.focus}» دقیق و روشن صحبت کنید.`,
+    miniText: `Mina arbeitet an ${skill.focus}. ${language.phrase} Sie notiert die wichtigsten Informationen fuer den Kurs.`,
+    miniAnswer: `${language.miniAnswer} این تمرین به «${skill.focus}» مربوط است.`
+  };
+}
+
+function buildB1Units(): SampleUnit[] {
+  const publishedUnitSpecs: UnitSpec[] = [
+    b1UnitOneSpec,
+    ...b1DraftUnits.map((unit, unitIndex) => ({
+      slug: unit.slug,
+      title: unit.title,
+      summary: unit.summary,
+      resourceFocus: unit.resourceFocus,
+      skills: unit.skills.map((skill) =>
+        makeB1SkillSpec(unit, skill, unitIndex + 1)
+      )
+    }))
+  ];
+  const units = publishedUnitSpecs.map((unit) => {
+    const skills = unit.skills.map((skill) =>
+    makeSkill(skill, "PUBLISHED", makeA2SkillQuestions)
+    );
+
+    return {
+      slug: unit.slug,
+      title: unit.title,
+      summary: unit.summary,
+      skills: [...skills, makeA2Checkpoint(unit, skills)]
+    };
+  });
+
+  units[units.length - 1].skills.push(makeFinalTestForLevel("B1", units));
+
+  return units;
 }
 
 export const devLearnerProfile = {
@@ -3232,6 +3399,27 @@ export const sampleCourse: SampleCourse = {
     }
   ]
 };
+
+const b1GuideUnits = [b1UnitOneSpec, ...b1DraftUnits];
+const b1AdditionalLearningGuides: SampleResource[] = b1GuideUnits.slice(1).map((unit, index) => ({
+  slug: `${unit.slug}-persian-guide`,
+  title: `راهنمای B1: ${unit.title}`,
+  description: `پشتیبانی فارسی برای ${unit.resourceFocus}.`,
+  type: "LEARNING_GUIDE",
+  levelLabel: "B1",
+  language: "fa/de",
+  thumbnailIcon: "route",
+  metadata: {
+    length: "24 min",
+    format: "Persian-first guide",
+    focus: `B1 Unit ${index + 2}`
+  },
+  content:
+    `این راهنما واحد ${index + 2} B1 را به موقعیت‌های اصلی «${unit.title}» وصل می‌کند. توضیح‌ها فارسی هستند و نمونه‌های تمرین آلمانی می‌مانند تا زبان‌آموز بتواند ${unit.resourceFocus} را با دقت B1 تمرین کند.`,
+  publicationStatus: "PUBLISHED",
+  unitSlug: unit.slug,
+  skillSlug: unit.skills[0]?.slug
+}));
 
 export const sampleResources: SampleResource[] = [
   {
@@ -3632,7 +3820,8 @@ export const sampleResources: SampleResource[] = [
     publicationStatus: "PUBLISHED",
     unitSlug: "b1-travel-plans-and-holiday-stories",
     skillSlug: "b1-plan-a-trip-and-explain-preferences"
-  }
+  },
+  ...b1AdditionalLearningGuides
 ];
 
 export function getPublishedSkills() {
