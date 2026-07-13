@@ -5668,6 +5668,16 @@ h3 {
   gap: 14px;
 }
 
+.practice-question-card[dir="rtl"],
+.practice-player-feedback[dir="rtl"] {
+  text-align: right;
+}
+
+.practice-question-card[dir="ltr"],
+.practice-player-feedback[dir="ltr"] {
+  text-align: left;
+}
+
 .practice-question-card > span {
   color: rgba(248, 243, 250, 0.62);
   font-size: 0.78rem;
@@ -5744,6 +5754,17 @@ h3 {
   gap: 8px;
 }
 
+.practice-word-answer[dir="rtl"] {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.practice-word-answer[dir="ltr"],
+.practice-word-bank[dir="ltr"] {
+  justify-content: flex-start;
+  text-align: left;
+}
+
 .practice-word-answer {
   border-style: dashed;
   min-height: 58px;
@@ -5770,6 +5791,11 @@ h3 {
   justify-self: start;
   min-width: 108px;
   padding: 0 16px;
+}
+
+.practice-question-card[dir="rtl"] .practice-player-button,
+.practice-player-feedback[dir="rtl"] .practice-player-button {
+  justify-self: end;
 }
 
 .practice-player-button.secondary {

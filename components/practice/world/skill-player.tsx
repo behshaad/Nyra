@@ -33,6 +33,10 @@ function getTextDirection(value: string): "rtl" | "ltr" {
   return hasLatin && !hasPersianOrArabic ? "ltr" : "rtl";
 }
 
+function interfaceDirection(language: InterfaceLanguageCode): "rtl" | "ltr" {
+  return language === "fa" ? "rtl" : "ltr";
+}
+
 async function readJson<T>(response: Response): Promise<T> {
   const data = (await response.json()) as T | { error?: string };
 
@@ -257,10 +261,10 @@ export function SkillPlayer({
             <ArrowLeft size={18} />
             <span>World</span>
           </button>
-          <div>
+          <div dir={interfaceDirection(language)}>
             <span>{session.skill.title}</span>
             <strong>
-              Question {currentQuestionNumber} / {initialQuestionCount}
+              {copy.question} {currentQuestionNumber} / {initialQuestionCount}
             </strong>
           </div>
         </div>
@@ -272,6 +276,7 @@ export function SkillPlayer({
             copy={copy}
             displayQuestion={displayQuestion}
             key={displayQuestion.id}
+            language={language}
             lastFeedback={lastFeedback}
             selectedTileIds={selectedTileIds}
             selectedTileLabels={selectedTileLabels}
@@ -287,6 +292,7 @@ export function SkillPlayer({
         {lastFeedback ? (
           <motion.div
             className={clsx("practice-player-feedback", lastFeedback.isCorrect ? "correct" : "wrong")}
+            dir={interfaceDirection(language)}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.22 }}
@@ -341,6 +347,7 @@ export function QuestionCard({
   builtWordOrderAnswer,
   copy,
   displayQuestion,
+  language,
   lastFeedback,
   selectedTileIds,
   selectedTileLabels,
@@ -356,6 +363,7 @@ export function QuestionCard({
   builtWordOrderAnswer: string;
   copy: SessionCopy;
   displayQuestion: LearningQuestionView;
+  language: InterfaceLanguageCode;
   lastFeedback: LastFeedback | null;
   selectedTileIds: string[];
   selectedTileLabels: string[];
@@ -367,9 +375,12 @@ export function QuestionCard({
   submittingAnswer: string | null;
   typedAnswer: string;
 }) {
+  const cardDirection = interfaceDirection(language);
+
   return (
     <motion.div
       className="practice-question-card"
+      dir={cardDirection}
       initial={{ opacity: 0, x: 22 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -22 }}
@@ -395,7 +406,7 @@ export function QuestionCard({
             }
             type="submit"
           >
-            {submittingAnswer === typedAnswer ? copy.checking : "Next"}
+            {submittingAnswer === typedAnswer ? copy.checking : copy.continue}
           </button>
         </form>
       ) : displayQuestion.type === "WORD_ORDERING" ? (
@@ -418,10 +429,10 @@ export function QuestionCard({
                 </button>
               ))
             ) : (
-              <span>{copy.hint}</span>
+              <span dir={cardDirection}>{copy.hint}</span>
             )}
           </div>
-          <div className="practice-word-bank">
+          <div className="practice-word-bank" dir="ltr">
             {availableTiles.map((tile) => (
               <button
                 className="practice-word-tile"
@@ -444,7 +455,7 @@ export function QuestionCard({
             }
             type="submit"
           >
-            {submittingAnswer === builtWordOrderAnswer ? copy.checking : "Next"}
+            {submittingAnswer === builtWordOrderAnswer ? copy.checking : copy.continue}
           </button>
         </form>
       ) : (
