@@ -13,6 +13,7 @@ import {
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
 import { ResourceSpotlightCard } from "@/components/resource-spotlight-card";
+import { SearchBar } from "@/components/ui/search-bar";
 import {
   interfaceCopy,
   resolveInterfaceLanguage,
@@ -46,14 +47,59 @@ const thumbnailIcons = {
 
 export const dynamic = "force-dynamic";
 
+type ResourceForSearch = Awaited<ReturnType<typeof getPublishedResourcesFromDb>>[number];
+
+function normalizeSearchText(value: string) {
+  return value
+    .toLocaleLowerCase()
+    .replace(/[\u064B-\u065F\u0670]/g, "")
+    .replace(/[أإآ]/g, "ا")
+    .replace(/ي/g, "ی")
+    .replace(/ك/g, "ک")
+    .replace(/ä/g, "a")
+    .replace(/ö/g, "o")
+    .replace(/ü/g, "u")
+    .replace(/ß/g, "ss")
+    .trim();
+}
+
+function searchableMetadata(metadata: unknown) {
+  if (!metadata || typeof metadata !== "object") {
+    return "";
+  }
+
+  return Object.entries(metadata as Record<string, unknown>)
+    .map(([key, value]) => `${key} ${String(value)}`)
+    .join(" ");
+}
+
+function resourceSearchText(resource: ResourceForSearch) {
+  return normalizeSearchText(
+    [
+      resource.title,
+      resource.description,
+      resource.content,
+      resource.levelLabel,
+      resource.language,
+      resource.type,
+      resource.unit?.title,
+      resource.skill?.title,
+      searchableMetadata(resource.metadata)
+    ]
+      .filter(Boolean)
+      .join(" ")
+  );
+}
+
 export default async function ResourcesPage({
   searchParams
 }: {
   searchParams: Promise<{
     ui?: string;
+    q?: string;
   }>;
 }) {
-  const { ui } = await searchParams;
+  const { q, ui } = await searchParams;
   const preferences = await getLearnerPreferences();
   const language = ui
     ? resolveInterfaceLanguage(ui)
@@ -62,6 +108,12 @@ export default async function ResourcesPage({
   const resources = (await getPublishedResourcesFromDb()).map((resource) =>
     localizeResourceForInterface(resource, language)
   );
+  const query = typeof q === "string" ? q.trim() : "";
+  const normalizedQuery = normalizeSearchText(query);
+  const visibleResources = normalizedQuery
+    ? resources.filter((resource) => resourceSearchText(resource).includes(normalizedQuery))
+    : resources;
+  const hasSearch = normalizedQuery.length > 0;
 
   return (
     <main className={`site-shell ${copy.dir === "rtl" ? "learner-rtl" : ""}`} dir={copy.dir}>
@@ -69,6 +121,30 @@ export default async function ResourcesPage({
       <AppHeader language={language} currentPath="/resources" />
 
       <section className="route-page">
+        <section className="resource-search-section" aria-labelledby="resource-search-title">
+          <div>
+            <p className="panel-kicker">{text(resourceCopy.label, language)}</p>
+            <h1 id="resource-search-title">{text(resourceCopy.title, language)}</h1>
+            <p>{text(resourceCopy.body, language)}</p>
+          </div>
+          <SearchBar
+            action="/resources"
+            defaultValue={query}
+            dir={copy.dir}
+            hiddenFields={{ ui }}
+            labels={{
+              clear: text(resourceCopy.searchClear, language),
+              placeholder: text(resourceCopy.searchPlaceholder, language),
+              submit: text(resourceCopy.searchAction, language)
+            }}
+          />
+          {hasSearch ? (
+            <p className="resource-search-count" aria-live="polite">
+              {visibleResources.length} {text(resourceCopy.searchResults, language)} "{query}"
+            </p>
+          ) : null}
+        </section>
+
         <div className="resource-filter-strip" aria-label="Resource filters">
           {[...new Set(resources.map((resource) => resource.type))].map((type) => (
             <span className="status-pill" key={type}>
@@ -77,10 +153,10 @@ export default async function ResourcesPage({
           ))}
         </div>
 
-        <ResourceSpotlightCard />
+        {hasSearch ? null : <ResourceSpotlightCard />}
 
         <section className="resource-library" aria-label="Published resources">
-          {resources.map((resource) => {
+          {visibleResources.map((resource) => {
             const Icon =
               thumbnailIcons[resource.thumbnailIcon as keyof typeof thumbnailIcons] ??
               resourceIcons[resource.type];
@@ -136,6 +212,16 @@ export default async function ResourcesPage({
             );
           })}
         </section>
+
+        {visibleResources.length === 0 ? (
+          <section className="resource-search-empty" aria-live="polite">
+            <h2>{text(resourceCopy.searchNoResultsTitle, language)}</h2>
+            <p>{text(resourceCopy.searchNoResultsBody, language)}</p>
+            <Link className="secondary-button" href={withInterfaceLanguage("/resources", language)}>
+              {text(resourceCopy.searchClear, language)}
+            </Link>
+          </section>
+        ) : null}
       </section>
     </main>
   );

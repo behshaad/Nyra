@@ -187,6 +187,36 @@ export const resourceCopy = {
     en: "A few curated starting points; the full library can be filtered by type, level, and language.",
     de: "Einige kuratierte Startpunkte; die Bibliothek laesst sich nach Typ, Niveau und Sprache filtern."
   },
+  searchPlaceholder: {
+    fa: "جست‌وجوی منبع، گرامر، واژه یا مهارت...",
+    en: "Search resources, grammar, vocabulary, or Skills...",
+    de: "Ressourcen, Grammatik, Wortschatz oder Skills suchen..."
+  },
+  searchAction: {
+    fa: "جست‌وجو",
+    en: "Search",
+    de: "Suchen"
+  },
+  searchClear: {
+    fa: "پاک کردن جست‌وجو",
+    en: "Clear search",
+    de: "Suche loeschen"
+  },
+  searchResults: {
+    fa: "نتیجه برای",
+    en: "results for",
+    de: "Ergebnisse fuer"
+  },
+  searchNoResultsTitle: {
+    fa: "منبعی پیدا نشد.",
+    en: "No resources matched.",
+    de: "Keine passenden Ressourcen gefunden."
+  },
+  searchNoResultsBody: {
+    fa: "نام مهارت، موضوع گرامر، سطح یا نوع منبع را امتحان کن.",
+    en: "Try a Skill name, grammar topic, level, or Resource Type.",
+    de: "Versuche einen Skill-Namen, ein Grammatikthema, ein Niveau oder einen Ressourcentyp."
+  },
   preview: {
     fa: "پیش‌نمایش",
     en: "Preview",
