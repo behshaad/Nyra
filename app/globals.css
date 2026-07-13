@@ -1588,6 +1588,279 @@ h3 {
   color: var(--green);
 }
 
+.pricing-glass-demo {
+  border-radius: var(--radius);
+  color: white;
+  margin-top: 30px;
+  min-height: 900px;
+  overflow: hidden;
+  position: relative;
+  transition: background 1000ms ease;
+  width: 100%;
+}
+
+.pricing-glass-bg-obsidian {
+  background: #050505;
+}
+
+.pricing-glass-bg-cosmos {
+  background: #0d0b14;
+}
+
+.pricing-glass-bg-mariana {
+  background: #06101e;
+}
+
+.pricing-glass-bg-moss {
+  background: #0a120d;
+}
+
+.pricing-glass-bg-ash {
+  background: #1a0b0b;
+}
+
+.pricing-glass-bg-selector {
+  align-items: center;
+  backdrop-filter: blur(18px);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.28);
+  display: flex;
+  gap: 12px;
+  padding: 8px;
+  position: absolute;
+  right: 24px;
+  top: 24px;
+  z-index: 4;
+}
+
+.pricing-glass-bg-selector span {
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  padding: 0 8px;
+  pointer-events: none;
+  text-transform: uppercase;
+}
+
+.pricing-glass-bg-selector div {
+  display: flex;
+  gap: 8px;
+}
+
+.pricing-glass-bg-selector button {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  height: 24px;
+  padding: 0;
+  transition:
+    box-shadow 180ms ease,
+    transform 180ms ease;
+  width: 24px;
+}
+
+.pricing-glass-bg-selector button:hover,
+.pricing-glass-bg-selector button.active {
+  transform: scale(1.1);
+}
+
+.pricing-glass-bg-selector button.active {
+  box-shadow:
+    0 0 0 2px white,
+    0 0 0 4px black,
+    inset 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.pricing-glass-swatch-obsidian {
+  background: #050505;
+}
+
+.pricing-glass-swatch-cosmos {
+  background: #0d0b14;
+}
+
+.pricing-glass-swatch-mariana {
+  background: #06101e;
+}
+
+.pricing-glass-swatch-moss {
+  background: #0a120d;
+}
+
+.pricing-glass-swatch-ash {
+  background: #1a0b0b;
+}
+
+.pricing-glass-demo-inner {
+  margin: 0 auto;
+  max-width: 1280px;
+  padding: 96px 22px;
+  position: relative;
+  z-index: 2;
+}
+
+.pricing-glass {
+  display: grid;
+  gap: 34px;
+}
+
+.pricing-glass-heading {
+  align-items: center;
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+}
+
+.pricing-glass-heading > span {
+  color: rgba(255, 255, 255, 0.64);
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.pricing-glass-heading h2 {
+  color: white;
+  font-size: clamp(2.4rem, 5vw, 4.8rem);
+  margin: 0;
+}
+
+.pricing-glass-toggle {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  display: inline-flex;
+  gap: 4px;
+  padding: 5px;
+}
+
+.pricing-glass-toggle button {
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.68);
+  cursor: pointer;
+  font-weight: 850;
+  min-height: 38px;
+  padding: 0 14px;
+}
+
+.pricing-glass-toggle button.active {
+  background: rgba(255, 255, 255, 0.9);
+  color: #0d0b14;
+}
+
+.pricing-glass-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.pricing-glass-card {
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.11);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius);
+  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.25);
+  color: white;
+  display: grid;
+  gap: 18px;
+  min-height: 520px;
+  padding: 24px;
+  position: relative;
+}
+
+.pricing-glass-card.popular {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.34);
+}
+
+.pricing-glass-badge {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  color: #0d0b14;
+  font-size: 0.72rem;
+  font-weight: 900;
+  padding: 7px 10px;
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  text-transform: uppercase;
+}
+
+.pricing-glass-card h3 {
+  color: white;
+  font-size: 1.75rem;
+  margin: 0;
+  padding-right: 86px;
+}
+
+.pricing-glass-card p {
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.pricing-glass-price {
+  align-items: baseline;
+  display: flex;
+  gap: 8px;
+}
+
+.pricing-glass-price span {
+  font-size: 4rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.pricing-glass-price small {
+  color: rgba(255, 255, 255, 0.62);
+  font-weight: 800;
+}
+
+.pricing-glass-card ul {
+  display: grid;
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pricing-glass-card li {
+  align-items: center;
+  color: rgba(255, 255, 255, 0.82);
+  display: flex;
+  gap: 10px;
+}
+
+.pricing-glass-card li svg {
+  color: #f0a6b7;
+  flex: 0 0 auto;
+}
+
+.pricing-glass-action {
+  align-self: end;
+  background: rgba(255, 255, 255, 0.9);
+  border: 0;
+  border-radius: 7px;
+  color: #0d0b14;
+  cursor: pointer;
+  font-weight: 900;
+  min-height: 48px;
+  transition:
+    background 180ms ease,
+    transform 180ms ease;
+}
+
+.pricing-glass-action:hover {
+  background: white;
+  transform: translateY(-1px);
+}
+
 .resource-rail,
 .mini-panel-grid,
 .analytics-grid,
@@ -3784,6 +4057,19 @@ h3 {
     padding: 28px 18px;
   }
 
+  .pricing-glass-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .pricing-glass-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pricing-glass-card {
+    min-height: 0;
+  }
+
   .home-globe-stage {
     justify-self: center;
     max-width: 440px;
@@ -3856,6 +4142,23 @@ h3 {
 
   .premium-section {
     padding: 18px;
+  }
+
+  .pricing-glass-demo {
+    min-height: 0;
+  }
+
+  .pricing-glass-bg-selector {
+    align-items: flex-start;
+    border-radius: var(--radius);
+    flex-direction: column;
+    left: 18px;
+    right: 18px;
+    top: 18px;
+  }
+
+  .pricing-glass-demo-inner {
+    padding: 124px 14px 28px;
   }
 }
 

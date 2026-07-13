@@ -1,6 +1,7 @@
 import { Check } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
+import { PricingGlassDemo } from "@/components/pricing-glass-demo";
 import {
   interfaceCopy,
   resolveInterfaceLanguage
@@ -59,6 +60,8 @@ export default async function PricingPage({
             </ul>
           </div>
         </section>
+
+        <PricingGlassDemo />
       </section>
     </main>
   );
