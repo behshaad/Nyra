@@ -584,11 +584,6 @@ function makeSkillQuestions(spec: SkillSpec): SampleQuestion[] {
 
 function makeA2SkillQuestions(spec: SkillSpec): SampleQuestion[] {
   const ordered = orderedSentence(spec.orderedWords);
-  const secondOrderWords =
-    spec.orderedWords.length > 4
-      ? [...spec.orderedWords.slice(0, 2), ...spec.orderedWords.slice(3), spec.orderedWords[2]]
-      : [...spec.orderedWords, "heute"];
-  const secondOrdered = orderedSentence(secondOrderWords);
 
   return [
     makeQuestion(
@@ -657,8 +652,8 @@ function makeA2SkillQuestions(spec: SkillSpec): SampleQuestion[] {
       "WORD_ORDERING",
       "یک جمله دوم با همین الگوی ساختاری بسازید.",
       "ساخت جمله",
-      wordOrderingOptions(secondOrderWords),
-      secondOrdered,
+      wordOrderingOptions(spec.orderedWords),
+      ordered,
       "در تمرین ترتیب واژه، همه کاشی‌ها باید در یک جمله کامل استفاده شوند."
     ),
     makeQuestion(

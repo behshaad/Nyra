@@ -78,6 +78,20 @@ describe("B1 sample content", () => {
     }
   });
 
+  it("accepts the authored natural order for B1 word-ordering prompts", () => {
+    const firstSkill = getPublishedSkills().find(
+      (skill) => skill.slug === "b1-plan-a-trip-and-explain-preferences"
+    );
+    const wordOrderingQuestions =
+      firstSkill?.questions.filter((question) => question.type === "WORD_ORDERING") ?? [];
+
+    expect(wordOrderingQuestions).toHaveLength(2);
+    expect(wordOrderingQuestions.map((question) => question.correctAnswer)).toEqual([
+      "Ich habe Lust ans Meer zu fahren",
+      "Ich habe Lust ans Meer zu fahren"
+    ]);
+  });
+
   it("publishes one Persian-first B1 Unit 1 Learning Guide", () => {
     const b1Guides = sampleResources.filter(
       (resource) => resource.levelLabel === "B1" && resource.type === "LEARNING_GUIDE"
