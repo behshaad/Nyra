@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import type { PointerEvent as ReactPointerEvent } from "react";
 import { motion } from "framer-motion";
 import { Check, Lock, Play, RotateCcw, ShieldCheck } from "lucide-react";
 import { PracticeSidebar } from "@/components/practice/learning-journey";
@@ -15,6 +16,12 @@ import type {
 import type { LevelWorldConfig } from "@/lib/practice/level-worlds";
 import type { InterfaceLanguageCode } from "@/lib/i18n/interface-language";
 import { withInterfaceLanguage } from "@/lib/i18n/interface-language";
+import {
+  DEBUG_WORLD_LAYOUT,
+  UNIT_WORLD_LAYOUT,
+  type UnitWorldLabel,
+  type UnitWorldPoint
+} from "@/components/practice/world/unitWorldLayout";
 
 type UnitWorldState = "completed" | "needs_review" | "current" | "locked";
 
@@ -27,22 +34,8 @@ type UnitPoint = {
   y: number;
   labelX: number;
   labelY: number;
+  layoutLabel: UnitWorldLabel;
 };
-
-const unitLayout: Array<{ x: number; y: number; labelX: number; labelY: number }> = [
-  { x: 57, y: 94, labelX: 68, labelY: 92 },
-  { x: 38, y: 84, labelX: 50, labelY: 83 },
-  { x: 62, y: 76, labelX: 73, labelY: 74 },
-  { x: 42, y: 68, labelX: 54, labelY: 67 },
-  { x: 67, y: 60, labelX: 78, labelY: 59 },
-  { x: 48, y: 53, labelX: 60, labelY: 52 },
-  { x: 72, y: 46, labelX: 83, labelY: 45 },
-  { x: 50, y: 39, labelX: 62, labelY: 38 },
-  { x: 69, y: 32, labelX: 80, labelY: 31 },
-  { x: 44, y: 25, labelX: 56, labelY: 24 },
-  { x: 63, y: 18, labelX: 74, labelY: 17 },
-  { x: 78, y: 12, labelX: 85, labelY: 13 }
-];
 
 function localizedNumber(value: number, language: InterfaceLanguageCode) {
   if (language !== "fa") {
@@ -113,18 +106,43 @@ function resolveStartSkill(unit: PracticeJourneyUnit, isAdmin: boolean) {
   );
 }
 
-function buildUnitPoints(level: PracticeJourneyLevel, isAdmin: boolean): UnitPoint[] {
+function unitWorldLabel(order: number): UnitWorldLabel {
+  return `Lesson${Math.min(12, Math.max(1, order))}` as UnitWorldLabel;
+}
+
+function unitRegionPosition(point: UnitWorldPoint) {
+  return {
+    labelX: Math.min(86, point.x + 11),
+    labelY: Math.max(10, point.y - 2)
+  };
+}
+
+function formatUnitLayoutForCopy(layout: Record<UnitWorldLabel, UnitWorldPoint>) {
+  return Object.entries(layout)
+    .map(([label, point]) => `${label}: { x: ${point.x.toFixed(1)}, y: ${point.y.toFixed(1)} }`)
+    .join("\n");
+}
+
+function buildUnitPoints(
+  level: PracticeJourneyLevel,
+  isAdmin: boolean,
+  layout: Record<UnitWorldLabel, UnitWorldPoint>
+): UnitPoint[] {
   return level.units.map((unit, index) => {
     const state = resolveUnitState(unit);
     const startSkill = resolveStartSkill(unit, isAdmin);
-    const position = unitLayout[index] ?? unitLayout[unitLayout.length - 1];
+    const layoutLabel = unitWorldLabel(index + 1);
+    const position = layout[layoutLabel] ?? UNIT_WORLD_LAYOUT.Lesson12;
+    const labelPosition = unitRegionPosition(position);
 
     return {
       unit,
       state,
       startSkill,
       canEnter: Boolean(startSkill && (isAdmin || state !== "locked")),
-      ...position
+      layoutLabel,
+      ...position,
+      ...labelPosition
     };
   });
 }
@@ -145,10 +163,16 @@ export function WorldPage({
   const router = useRouter();
   const [focusedUnitSlug, setFocusedUnitSlug] = useState<string | null>(null);
   const [enteringUnitSlug, setEnteringUnitSlug] = useState<string | null>(null);
+  const [debugLayout, setDebugLayout] = useState<Record<UnitWorldLabel, UnitWorldPoint>>(
+    () => ({ ...UNIT_WORLD_LAYOUT })
+  );
+  const [draggingUnit, setDraggingUnit] = useState<UnitWorldLabel | null>(null);
+  const [layoutPrintRequest, setLayoutPrintRequest] = useState(0);
   const level = initialJourney.levels.find((candidate) => candidate.label === levelLabel);
+  const activeLayout = DEBUG_WORLD_LAYOUT ? debugLayout : UNIT_WORLD_LAYOUT;
   const unitPoints = useMemo(
-    () => (level ? buildUnitPoints(level, isAdmin) : []),
-    [isAdmin, level]
+    () => (level ? buildUnitPoints(level, isAdmin, activeLayout) : []),
+    [activeLayout, isAdmin, level]
   );
   const activeUnit =
     unitPoints.find((point) => point.unit.slug === focusedUnitSlug) ??
@@ -159,10 +183,77 @@ export function WorldPage({
     ? unitPoints.find((point) => point.unit.slug === enteringUnitSlug)
     : null;
 
+  useEffect(() => {
+    if (!DEBUG_WORLD_LAYOUT || draggingUnit === null) {
+      return;
+    }
+
+    const updateDraggedPoint = (clientX: number, clientY: number) => {
+      const canvas = globalThis.document?.querySelector(".unit-world-canvas");
+
+      if (!(canvas instanceof globalThis.HTMLElement)) {
+        return;
+      }
+
+      const rect = canvas.getBoundingClientRect();
+      const x = Math.min(100, Math.max(0, ((clientX - rect.left) / rect.width) * 100));
+      const y = Math.min(100, Math.max(0, ((clientY - rect.top) / rect.height) * 100));
+
+      setDebugLayout((current) => ({
+        ...current,
+        [draggingUnit]: {
+          x: Number(x.toFixed(1)),
+          y: Number(y.toFixed(1))
+        }
+      }));
+    };
+
+    const handlePointerMove = (event: globalThis.PointerEvent) => {
+      event.preventDefault();
+      updateDraggedPoint(event.clientX, event.clientY);
+    };
+
+    const handlePointerUp = (event: globalThis.PointerEvent) => {
+      event.preventDefault();
+      updateDraggedPoint(event.clientX, event.clientY);
+      setDraggingUnit(null);
+      setLayoutPrintRequest((current) => current + 1);
+    };
+
+    globalThis.addEventListener("pointermove", handlePointerMove);
+    globalThis.addEventListener("pointerup", handlePointerUp, { once: true });
+
+    return () => {
+      globalThis.removeEventListener("pointermove", handlePointerMove);
+      globalThis.removeEventListener("pointerup", handlePointerUp);
+    };
+  }, [draggingUnit]);
+
+  useEffect(() => {
+    if (!DEBUG_WORLD_LAYOUT || draggingUnit !== null || layoutPrintRequest === 0) {
+      return;
+    }
+
+    console.log(formatUnitLayoutForCopy(debugLayout));
+  }, [debugLayout, draggingUnit, layoutPrintRequest]);
+
+  const startDebugDrag = (unit: UnitWorldLabel, event: ReactPointerEvent) => {
+    if (!DEBUG_WORLD_LAYOUT) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    setDraggingUnit(unit);
+    setFocusedUnitSlug(
+      unitPoints.find((point) => point.layoutLabel === unit)?.unit.slug ?? focusedUnitSlug
+    );
+  };
+
   const enterUnit = (point: UnitPoint) => {
     const startSkill = point.startSkill;
 
-    if (!point.canEnter || !startSkill || enteringUnitSlug) {
+    if (DEBUG_WORLD_LAYOUT || !point.canEnter || !startSkill || enteringUnitSlug) {
       return;
     }
 
@@ -192,6 +283,8 @@ export function WorldPage({
           <section className="journey-camera world-map unit-world-map" aria-label={`${levelLabel} unit world`}>
             <div
               className={`journey-map-canvas world-map-canvas unit-world-canvas${
+                DEBUG_WORLD_LAYOUT ? " is-debugging-world-layout" : ""
+              }${
                 enteringUnitSlug ? " is-entering-world" : ""
               }`}
             >
@@ -215,6 +308,7 @@ export function WorldPage({
                 <span className="water-shimmer shimmer-one" />
               </div>
               <div className={`journey-background world-${world.tone}`} aria-hidden="true" />
+              {DEBUG_WORLD_LAYOUT ? <div className="world-layout-debug-grid" aria-hidden="true" /> : null}
               <div className="journey-title">
                 <h1>Dein Weg.<br /><span>Deine Sprache.</span></h1>
                 <p>Lerne Deutsch Schritt fuer Schritt und entdecke neue Welten.</p>
@@ -236,6 +330,7 @@ export function WorldPage({
                         language={language}
                         onEnterUnit={enterUnit}
                         onFocus={() => setFocusedUnitSlug(point.unit.slug)}
+                        onStartDebugDrag={startDebugDrag}
                         point={point}
                       />
                     ))}
@@ -301,6 +396,7 @@ function UnitNode({
   language,
   onEnterUnit,
   onFocus,
+  onStartDebugDrag,
   point
 }: {
   entering: boolean;
@@ -308,6 +404,7 @@ function UnitNode({
   language: InterfaceLanguageCode;
   onEnterUnit: (point: UnitPoint) => void;
   onFocus: () => void;
+  onStartDebugDrag: (unit: UnitWorldLabel, event: ReactPointerEvent) => void;
   point: UnitPoint;
 }) {
   const status = stateLabel(point.state, isAdminPreview);
@@ -329,12 +426,13 @@ function UnitNode({
         entering ? "is-entering" : ""
       }`}
       onMouseEnter={onFocus}
+      onPointerDown={(event) => onStartDebugDrag(point.layoutLabel, event)}
       style={{ left: `${point.x}%`, top: `${point.y}%` }}
     >
       <button
         aria-label={`${lessonLabel(point.unit.order, language)}: ${point.unit.title}. ${status}`}
         className={`unit-world-node ${point.state}${isAdminPreview ? " admin-preview" : ""}`}
-        disabled={disabled}
+        disabled={DEBUG_WORLD_LAYOUT ? false : disabled}
         onClick={() => onEnterUnit(point)}
         type="button"
       >
@@ -368,6 +466,11 @@ function UnitNode({
         </span>
         {isAdminPreview ? <span className="unit-admin-badge">Admin preview</span> : null}
       </button>
+      {DEBUG_WORLD_LAYOUT ? (
+        <span className="world-layout-coordinate">
+          {point.layoutLabel}: {point.x.toFixed(1)}, {point.y.toFixed(1)}
+        </span>
+      ) : null}
     </div>
   );
 }
