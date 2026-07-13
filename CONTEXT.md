@@ -172,6 +172,10 @@ _Avoid_: Level selector, learning language switcher
 The learner-facing display preference for Nyra's visual mode, such as light, dark, or system.
 _Avoid_: Color palette, skin
 
+**Deployment Target**:
+The external platform that serves Nyra to learners and runs the production web application. Nyra's current Deployment Target is Vercel.
+_Avoid_: Hosting account, server, environment
+
 **Draft**:
 Content that is being created or edited and is not visible to learners.
 _Avoid_: Unpublished
