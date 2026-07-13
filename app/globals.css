@@ -1360,6 +1360,49 @@ h3 {
   margin: 0;
 }
 
+.home-globe-showcase {
+  align-items: center;
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(0, 0.78fr) minmax(190px, 0.82fr);
+  margin-top: 16px;
+  padding-top: 16px;
+}
+
+.home-globe-copy {
+  display: grid;
+  gap: 10px;
+}
+
+.home-globe-copy p {
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.globe-kicker {
+  align-items: center;
+  color: var(--green-dark);
+  display: inline-flex;
+  font-size: 0.78rem;
+  font-weight: 850;
+  gap: 8px;
+}
+
+.home-globe-stage {
+  justify-self: center;
+  max-width: 280px;
+  width: min(100%, 280px);
+}
+
+.globe-labels {
+  aspect-ratio: 1;
+  position: relative;
+  user-select: none;
+  width: 100%;
+}
+
 .premium-section {
   align-items: center;
   background: var(--hero-panel);
@@ -3584,6 +3627,15 @@ h3 {
   .mini-panel-grid,
   .analytics-grid {
     grid-template-columns: 1fr;
+  }
+
+  .home-globe-showcase {
+    grid-template-columns: 1fr;
+  }
+
+  .home-globe-stage {
+    max-width: 320px;
+    width: min(100%, 320px);
   }
 
   .profile-hero-facts {

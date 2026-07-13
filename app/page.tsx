@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, BookOpen, ChartNoAxesCombined, Crown, Sparkles } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
+import { HomeGlobeShowcase } from "@/components/home-globe-showcase";
 import {
   interfaceCopy,
   resolveInterfaceLanguage,
@@ -82,6 +83,7 @@ export default async function Home({
               );
             })}
           </div>
+          <HomeGlobeShowcase />
         </section>
       </section>
     </main>
