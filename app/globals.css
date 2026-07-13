@@ -2420,6 +2420,159 @@ h3 {
   --profile-card-accent-soft: rgba(95, 141, 78, 0.14);
 }
 
+.streak-card {
+  --streak-accent: #ff6b35;
+  --streak-soft: rgba(255, 107, 53, 0.16);
+  align-items: center;
+  background:
+    radial-gradient(circle at 12% 0%, var(--streak-soft), transparent 44%),
+    var(--control);
+  border: 1px solid color-mix(in srgb, var(--streak-accent), transparent 56%);
+  border-radius: 8px;
+  display: grid;
+  gap: 14px;
+  grid-column: span 2;
+  grid-template-columns: minmax(0, 1fr) auto;
+  min-height: 150px;
+  padding: 18px;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.streak-card:hover {
+  border-color: color-mix(in srgb, var(--streak-accent), transparent 24%);
+  box-shadow: var(--hover-shadow);
+  transform: translateY(-2px);
+}
+
+.streak-card-main {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+  min-width: 0;
+}
+
+.streak-card-icon {
+  align-items: center;
+  background: var(--streak-soft);
+  border: 1px solid color-mix(in srgb, var(--streak-accent), transparent 58%);
+  border-radius: 999px;
+  color: var(--streak-accent);
+  display: inline-flex;
+  flex: 0 0 48px;
+  height: 48px;
+  justify-content: center;
+  width: 48px;
+}
+
+.streak-card-copy {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.streak-card-copy span,
+.streak-card-copy small,
+.streak-card-metrics {
+  color: var(--muted);
+}
+
+.streak-card-copy span {
+  font-size: 0.82rem;
+  font-weight: 780;
+}
+
+.streak-card-copy strong {
+  color: var(--text);
+  font-size: clamp(1.9rem, 4vw, 2.55rem);
+  line-height: 0.95;
+}
+
+.streak-card-copy small {
+  font-size: 0.78rem;
+  font-weight: 720;
+}
+
+.streak-card-ring {
+  height: 96px;
+  width: 96px;
+}
+
+.streak-card-ring svg {
+  display: block;
+  height: 100%;
+  overflow: visible;
+  transform: rotate(-90deg);
+  width: 100%;
+}
+
+.streak-card-ring-track,
+.streak-card-ring-value {
+  fill: none;
+  stroke-width: 9;
+}
+
+.streak-card-ring-track {
+  stroke: color-mix(in srgb, var(--text), transparent 82%);
+}
+
+.streak-card-ring-value {
+  animation: streakRingIn 820ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  stroke: var(--streak-accent);
+  stroke-linecap: round;
+}
+
+.streak-card-days {
+  display: grid;
+  gap: 6px;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.streak-card-days span {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid color-mix(in srgb, var(--streak-accent), transparent 68%);
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 760;
+  padding: 6px 4px;
+  text-align: center;
+}
+
+.streak-card-days span.active {
+  background: var(--streak-soft);
+  color: var(--text);
+}
+
+.streak-card-metrics {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.74rem;
+  font-weight: 720;
+  gap: 10px;
+  grid-column: 1 / -1;
+}
+
+.streak-card-metrics span {
+  align-items: center;
+  display: inline-flex;
+  gap: 4px;
+}
+
+.streak-card-metrics strong {
+  color: var(--text);
+}
+
+@keyframes streakRingIn {
+  from {
+    stroke-dashoffset: 100;
+  }
+}
+
 .profile-progress-card-visual {
   align-items: center;
   display: flex;
@@ -2550,6 +2703,7 @@ h3 {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .streak-card-ring-value,
   .profile-linear-progress-striped span {
     animation: none;
   }
@@ -4516,6 +4670,10 @@ h3 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .streak-card {
+    grid-column: auto;
+  }
+
   .profile-hero-facts {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
@@ -4789,6 +4947,14 @@ h3 {
   .profile-hero-avatar {
     height: 92px;
     width: 92px;
+  }
+
+  .streak-card {
+    grid-template-columns: 1fr;
+  }
+
+  .streak-card-ring {
+    justify-self: start;
   }
 
   .auth-form-row,

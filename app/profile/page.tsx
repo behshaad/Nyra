@@ -2,6 +2,7 @@ import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
 import { ProfileAccountSection } from "@/components/profile-account-section";
 import { CircleProgress } from "@/components/ui/circle-progress";
+import { StreakCard, type StreakPeriod } from "@/components/ui/streak-card";
 import { getAuthSession } from "@/lib/auth/server";
 import {
   BarChart3,
@@ -13,7 +14,8 @@ import {
   ShieldCheck,
   Target,
   Trophy,
-  UserRound
+  UserRound,
+  type LucideIcon
 } from "lucide-react";
 import {
   interfaceCopy,
@@ -40,6 +42,8 @@ const progressCopy = {
     overall: "پیشرفت کلی",
     days: "روز",
     minutes: "دقیقه",
+    longestStreak: "بهترین",
+    totalStreak: "مجموع",
     heroLabel: "Profile",
     learnerProfile: "Learner Profile",
     sourceLanguage: "زبان مبدا",
@@ -61,6 +65,8 @@ const progressCopy = {
     overall: "Overall Progress",
     days: "days",
     minutes: "min",
+    longestStreak: "Best",
+    totalStreak: "Total",
     heroLabel: "Profile",
     learnerProfile: "Learner Profile",
     sourceLanguage: "Source Language",
@@ -82,6 +88,8 @@ const progressCopy = {
     overall: "Gesamtfortschritt",
     days: "Tage",
     minutes: "Min.",
+    longestStreak: "Bestwert",
+    totalStreak: "Gesamt",
     heroLabel: "Profile",
     learnerProfile: "Lernprofil",
     sourceLanguage: "Ausgangssprache",
@@ -94,6 +102,29 @@ const progressCopy = {
 function formatPercent(done: number, total: number) {
   return total === 0 ? 0 : Math.round((done / total) * 100);
 }
+
+type ProfileStat =
+  | {
+      label: string;
+      value: string;
+      detail: string;
+      icon: LucideIcon;
+      accent: string;
+      ringValue?: number;
+      barValue?: number;
+      barLabel?: string;
+    }
+  | {
+      label: string;
+      value: string;
+      detail: string;
+      icon: LucideIcon;
+      accent: "streak";
+      streak: StreakPeriod[];
+      currentStreak: number;
+      longestStreak: number;
+      total: number;
+    };
 
 export default async function ProfilePage({
   searchParams
@@ -124,6 +155,13 @@ export default async function ProfilePage({
     : Math.max(0, 100 - Math.round((journey.needsReviewCount / journey.totalCount) * 100));
   const xpGoal = 20000;
   const xpProgressPercent = Math.min(100, Math.round((journey.totalXp / xpGoal) * 100));
+  const streak = [
+    { periodStart: "2026-05-24", periodEnd: "2026-05-24" },
+    { periodStart: "2026-05-25", periodEnd: "2026-05-25" },
+    { periodStart: "2026-05-26", periodEnd: "2026-05-26" },
+    { periodStart: "2026-05-27", periodEnd: "2026-05-27" },
+    { periodStart: "2026-05-28", periodEnd: "2026-05-28" }
+  ];
   const displayName = session?.fullName ?? devLearnerProfile.displayName;
   const initials = displayName
     .split(/\s+/)
@@ -175,7 +213,7 @@ export default async function ProfilePage({
       icon: ShieldCheck
     }
   ];
-  const profileStats = [
+  const profileStats: ProfileStat[] = [
     {
       label: progress.currentLevel,
       value: currentLevelLabel,
@@ -214,7 +252,10 @@ export default async function ProfilePage({
       detail: progress.days,
       icon: Flame,
       accent: "streak",
-      ringValue: formatPercent(dailyStreak, 30)
+      streak,
+      currentStreak: dailyStreak,
+      longestStreak: 100,
+      total: 131
     },
     {
       label: progress.completion,
@@ -296,6 +337,24 @@ export default async function ProfilePage({
           <div className="profile-progress-grid">
             {profileStats.map((stat) => {
               const Icon = stat.icon;
+
+              if ("streak" in stat) {
+                return (
+                  <StreakCard
+                    currentStreak={stat.currentStreak}
+                    key={stat.label}
+                    labels={{
+                      title: stat.label,
+                      days: stat.detail,
+                      longest: progress.longestStreak,
+                      total: progress.totalStreak
+                    }}
+                    longestStreak={stat.longestStreak}
+                    streak={stat.streak}
+                    total={stat.total}
+                  />
+                );
+              }
 
               return (
                 <article className={`profile-progress-card profile-progress-card-${stat.accent}`} key={stat.label}>
