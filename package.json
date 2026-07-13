@@ -11,6 +11,8 @@
     "lint": "eslint .",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
+    "auth:check-env": "tsx scripts/check-auth-env.ts",
+    "auth:seed-users": "tsx scripts/seed-auth-users.ts",
     "prisma:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts"

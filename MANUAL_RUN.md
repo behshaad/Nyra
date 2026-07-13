@@ -18,9 +18,18 @@ Local development:
 DATABASE_URL=...
 NEXT_PUBLIC_SUPABASE_URL=...
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...
 ```
 
-Vercel Preview and Production need the same auth variables configured in the matching Vercel environment. `DATABASE_URL` must point to a database reachable from Vercel. If a server-side service key is introduced later, keep `SUPABASE_SERVICE_ROLE_KEY` server-only and never expose it with a `NEXT_PUBLIC_` prefix.
+`SUPABASE_SERVICE_ROLE_KEY` is required only for the local seed-user script. It must stay server-only and must never be exposed with a `NEXT_PUBLIC_` prefix.
+
+Check local auth configuration without printing secret values:
+
+```bash
+npm run auth:check-env
+```
+
+Vercel Preview and Production need the same public auth variables configured in the matching Vercel environment. `DATABASE_URL` must point to a database reachable from Vercel. Keep `SUPABASE_SERVICE_ROLE_KEY` out of browser-exposed environments.
 
 ## Supabase Auth Setup
 
@@ -93,6 +102,40 @@ npm run db:seed
 
 Admin Access is Nyra-owned and stored in the application database. Do not use Supabase roles, JWT claims, email prefixes, or production administrator credentials.
 
+## Seed Authentication Users
+
+The seed script creates or updates two Supabase Auth users through the Supabase Admin API and reconciles Nyra-owned records in the application database. It is idempotent and can be run repeatedly without creating duplicate Learner Profiles or AdminAccess records.
+
+```bash
+npm run auth:seed-users
+```
+
+Seeded admin:
+
+```text
+Email: admin@nyra.local
+Password: Admin123!
+```
+
+Expected records:
+
+- Supabase Auth user exists and is email-confirmed.
+- Learner Profile exists.
+- AdminAccess exists and has `revokedAt = null`.
+
+Seeded student:
+
+```text
+Email: student@nyra.local
+Password: Student123!
+```
+
+Expected records:
+
+- Supabase Auth user exists and is email-confirmed.
+- Learner Profile exists.
+- No AdminAccess record exists.
+
 Grant Admin Access manually for a real authenticated Supabase user id:
 
 ```sql
@@ -121,16 +164,66 @@ npm run build
 
 ## Authentication QA Checklist
 
-- Email sign up provisions a new Learner Profile when Supabase returns a session.
-- Email sign up shows a check-email success state when email verification is required.
-- Email sign in restores the session on refresh.
-- Google Sign-In completes through Supabase and provisions the same kind of Learner Profile.
-- Password reset email opens `/auth/update-password` through `/auth/callback`.
-- Sign out clears the session and returns to `/login`.
-- Logged-out `/profile` redirects to `/login?returnTo=/profile`.
-- Logged-out `/admin` redirects to login or Basic Auth challenge depending on admin env vars.
-- Normal users cannot access admin pages or admin APIs.
-- Users with active `AdminAccess` can access admin pages and admin APIs.
+1. Create seed users:
+
+```bash
+npm run auth:seed-users
+```
+
+2. Login as admin:
+
+- Open `/login?ui=en`.
+- Sign in with `admin@nyra.local` and `Admin123!`.
+- Confirm the app redirects to `/profile` or the requested `returnTo` URL.
+- Refresh the page and confirm the session is restored.
+
+3. Login as student:
+
+- Logout.
+- Open `/login?ui=en`.
+- Sign in with `student@nyra.local` and `Student123!`.
+- Confirm the app redirects to `/profile` or the requested `returnTo` URL.
+- Refresh the page and confirm the session is restored.
+
+4. Verify admin page:
+
+- As the admin user, open `/admin?ui=en`.
+- Confirm the admin dashboard loads.
+- Confirm an admin API route does not return `401` or `403`.
+
+5. Verify student admin denial:
+
+- As the student user, open `/admin?ui=en`.
+- Confirm the app shows `/admin-access-denied`.
+- Confirm an admin API route returns `403` with `Admin Access is required.`
+
+6. Verify learner profile provisioning:
+
+- Delete the seeded user's Learner Profile row only.
+- Login again as that user.
+- Confirm exactly one Learner Profile row is recreated for that `authUserId`.
+- Login/refresh again and confirm no duplicate Learner Profile is created.
+
+7. Verify logout:
+
+- Use the logout control.
+- Confirm the app redirects to `/login`.
+- Open `/profile` and confirm it redirects to `/login?returnTo=/profile`.
+
+8. Verify Google login:
+
+- Enable Google Sign-In in Supabase Auth.
+- Ensure `/auth/callback` is on the Supabase redirect allow-list for local and deployed domains.
+- Open `/login?ui=en`.
+- Click Continue with Google.
+- Complete the provider flow.
+- Confirm the app returns through `/auth/callback`, lands on `/profile` or the requested `returnTo`, creates exactly one Learner Profile, and restores the session after refresh.
+
+9. Verify error handling:
+
+- Submit login with an invalid password and confirm a form error appears.
+- Open `/auth/callback` without a `code` and confirm it redirects to `/login` with an invalid-link error.
+- Temporarily remove `NEXT_PUBLIC_SUPABASE_URL` or `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, restart the dev server, and confirm login actions show a normal error instead of the Next.js runtime overlay.
 
 ## Deferred Account Features
 

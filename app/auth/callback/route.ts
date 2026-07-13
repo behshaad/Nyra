@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isAuthConfigurationError } from "@/lib/auth/config";
 import { buildAuthSessionView } from "@/lib/auth/nyra-identity";
 import { createSupabaseServerClient } from "@/lib/auth/supabase-server";
 import { safeReturnTo } from "@/lib/learner/preferences";
@@ -27,7 +28,20 @@ export async function GET(request: Request) {
     );
   }
 
-  const supabase = await createSupabaseServerClient();
+  let supabase;
+
+  try {
+    supabase = await createSupabaseServerClient();
+  } catch (error) {
+    if (isAuthConfigurationError(error)) {
+      return NextResponse.redirect(
+        `${origin}/login?error=${encodeURIComponent(error.message)}`
+      );
+    }
+
+    throw error;
+  }
+
   const { error } = await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {

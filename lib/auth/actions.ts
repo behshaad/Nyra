@@ -335,8 +335,15 @@ export async function updatePasswordAction(
 }
 
 export async function logoutAction() {
-  const supabase = await createSupabaseServerClient();
+  try {
+    const supabase = await createSupabaseServerClient();
 
-  await supabase.auth.signOut();
+    await supabase.auth.signOut();
+  } catch (error) {
+    if (!isAuthConfigurationError(error)) {
+      throw error;
+    }
+  }
+
   redirect("/login");
 }
