@@ -5,6 +5,7 @@ import {
   getFlashcardUnitOptions,
   getLearnerFlashcardDecks
 } from "@/lib/flashcards/flashcard-repository";
+import { localizeFlashcardDeckForInterface } from "@/lib/flashcards/flashcard-display";
 import {
   interfaceCopy,
   resolveInterfaceLanguage
@@ -36,7 +37,7 @@ export default async function FlashcardsPage({
 
       <section className="route-page">
         <FlashcardLibrary
-          decks={decks.map((deck) => ({
+          decks={decks.map((deck) => localizeFlashcardDeckForInterface({
             id: deck.id,
             slug: deck.slug,
             title: deck.title,
@@ -63,7 +64,7 @@ export default async function FlashcardsPage({
               dueAt: card.reviewState?.dueAt.toISOString() ?? null,
               intervalStep: card.reviewState?.intervalStep ?? null
             }))
-          }))}
+          }, language))}
           units={units.map((unit) => ({
             id: unit.id,
             title: unit.title,
