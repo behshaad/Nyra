@@ -212,20 +212,28 @@ export async function signupAction(
 
 export async function googleSignInAction(formData: globalThis.FormData) {
   const returnTo = safeReturnTo(formString(formData, "returnTo") || "/profile");
-  const origin = await requestOrigin();
-  const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(returnTo)}`
-    }
-  });
+  let redirectUrl: string | null = null;
 
-  if (error || !data.url) {
-    redirect(`/login?error=${encodeURIComponent(error?.message ?? "Google sign-in failed.")}`);
+  try {
+    const origin = await requestOrigin();
+    const supabase = await createSupabaseServerClient();
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(returnTo)}`
+      }
+    });
+
+    if (error || !data.url) {
+      redirectUrl = `/login?error=${encodeURIComponent(error?.message ?? "Google sign-in failed.")}`;
+    } else {
+      redirectUrl = data.url;
+    }
+  } catch (error) {
+    redirectUrl = `/login?error=${encodeURIComponent(authErrorMessage(error))}`;
   }
 
-  redirect(data.url);
+  redirect(redirectUrl);
 }
 
 export async function requestPasswordResetAction(
