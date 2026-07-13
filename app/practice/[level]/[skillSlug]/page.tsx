@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { SkillPlayer } from "@/components/practice/world/skill-player";
 import { getAuthSession } from "@/lib/auth/server";
 import { resolveInterfaceLanguage } from "@/lib/i18n/interface-language";
-import { getLearnerPreferences } from "@/lib/learner/preferences";
+import { getLearnerPreferencesForAuthUser } from "@/lib/learner/preferences";
 import { getPracticeJourney } from "@/lib/practice/journey";
 
 export const dynamic = "force-dynamic";
@@ -19,7 +19,8 @@ export default async function PracticeSkillPage({
   const { level, skillSlug } = await params;
   const { ui } = await searchParams;
   const normalizedLevel = level.toUpperCase();
-  const preferences = await getLearnerPreferences();
+  const session = await getAuthSession();
+  const preferences = await getLearnerPreferencesForAuthUser(session?.id);
   const language = ui ? resolveInterfaceLanguage(ui) : preferences.interfaceLanguage;
   const practiceHref = language === "fa" ? "/practice" : `/practice?ui=${language}`;
   const worldHref =
@@ -31,12 +32,10 @@ export default async function PracticeSkillPage({
     redirect(practiceHref);
   }
 
-  const [journey, session] = await Promise.all([
-    getPracticeJourney({
-      interfaceLanguage: language
-    }),
-    getAuthSession()
-  ]);
+  const journey = await getPracticeJourney({
+    authUserId: session?.id,
+    interfaceLanguage: language
+  });
   const isAdmin = session?.role === "ADMIN";
   const journeyLevel = journey.levels.find((candidate) => candidate.label === normalizedLevel);
   const skill = journeyLevel?.units

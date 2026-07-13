@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { WorldPage } from "@/components/practice/world/level-world";
 import { getAuthSession } from "@/lib/auth/server";
 import { resolveInterfaceLanguage } from "@/lib/i18n/interface-language";
-import { getLearnerPreferences } from "@/lib/learner/preferences";
+import { getLearnerPreferencesForAuthUser } from "@/lib/learner/preferences";
 import { getLevelWorldConfig } from "@/lib/practice/level-worlds";
 import { getPracticeJourney } from "@/lib/practice/journey";
 
@@ -20,7 +20,8 @@ export default async function PracticeLevelPage({
   const { level } = await params;
   const { ui } = await searchParams;
   const normalizedLevel = level.toUpperCase();
-  const preferences = await getLearnerPreferences();
+  const session = await getAuthSession();
+  const preferences = await getLearnerPreferencesForAuthUser(session?.id);
   const language = ui ? resolveInterfaceLanguage(ui) : preferences.interfaceLanguage;
   const returnToPractice = language === "fa" ? "/practice" : `/practice?ui=${language}`;
 
@@ -28,12 +29,12 @@ export default async function PracticeLevelPage({
     redirect(returnToPractice);
   }
 
-  const [journey, world, session] = await Promise.all([
+  const [journey, world] = await Promise.all([
     getPracticeJourney({
+      authUserId: session?.id,
       interfaceLanguage: language
     }),
-    Promise.resolve(getLevelWorldConfig(normalizedLevel)),
-    getAuthSession()
+    Promise.resolve(getLevelWorldConfig(normalizedLevel))
   ]);
   const journeyLevel = journey.levels.find((candidate) => candidate.label === normalizedLevel);
 

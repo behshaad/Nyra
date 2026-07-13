@@ -36,7 +36,7 @@ function isDatabaseUnavailableError(error: unknown) {
   );
 }
 
-function defaultLearnerPreferences(): LearnerPreferences {
+export function defaultLearnerPreferences(): LearnerPreferences {
   return {
     interfaceLanguage: defaultInterfaceLanguage,
     interfaceTheme: defaultInterfaceTheme,
@@ -44,7 +44,9 @@ function defaultLearnerPreferences(): LearnerPreferences {
   };
 }
 
-export async function getLearnerPreferences(): Promise<LearnerPreferences> {
+export async function getLearnerPreferencesForAuthUser(
+  authUserId = devAuthUserId
+): Promise<LearnerPreferences> {
   let learnerProfile:
     | {
         interfaceLanguage: string;
@@ -58,7 +60,7 @@ export async function getLearnerPreferences(): Promise<LearnerPreferences> {
 
     learnerProfile = await db.learnerProfile.findUnique({
       where: {
-        authUserId: devAuthUserId
+        authUserId
       },
       select: {
         interfaceLanguage: true,
@@ -79,7 +81,7 @@ export async function getLearnerPreferences(): Promise<LearnerPreferences> {
 
     learnerProfile = await db.learnerProfile.findUnique({
       where: {
-        authUserId: devAuthUserId
+        authUserId
       },
       select: {
         interfaceLanguage: true,
@@ -97,6 +99,10 @@ export async function getLearnerPreferences(): Promise<LearnerPreferences> {
     ),
     currentLevel: learnerProfile?.currentLevel ?? defaultLevelLabel
   };
+}
+
+export async function getLearnerPreferences(): Promise<LearnerPreferences> {
+  return getLearnerPreferencesForAuthUser(devAuthUserId);
 }
 
 export function safeReturnTo(value: string | null) {

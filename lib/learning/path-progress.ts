@@ -213,7 +213,8 @@ export async function getNextSkillSlug(skillSlug: string, levelLabel = defaultLe
 
 export async function getLearningPathProgress(
   levelLabel = defaultLevelLabel,
-  interfaceLanguage: LearningContentDisplayLanguage = "fa"
+  interfaceLanguage: LearningContentDisplayLanguage = "fa",
+  authUserId = devAuthUserId
 ): Promise<LearningPathProgressView> {
   const db = getPrisma();
   const units = await getUnitsForPath(levelLabel);
@@ -228,7 +229,7 @@ export async function getLearningPathProgress(
   );
   const learnerProfile = await db.learnerProfile.findUnique({
     where: {
-      authUserId: devAuthUserId
+      authUserId
     },
     select: {
       id: true

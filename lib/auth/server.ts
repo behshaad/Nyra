@@ -1,42 +1,43 @@
-import "server-only";
+import { isAuthConfigurationError } from "@/lib/auth/config";
+import { buildAuthSessionView } from "@/lib/auth/nyra-identity";
+import type { AuthSession } from "@/lib/auth/session";
+import { createSupabaseServerClient } from "@/lib/auth/supabase-server";
 
-import { cookies } from "next/headers";
-import {
-  decodeAuthSession,
-  encodeAuthSession,
-  isSessionExpired,
-  mockAuthCookieName,
-  type AuthSession
-} from "@/lib/auth/mock-session";
+function metadataString(value: unknown) {
+  return typeof value === "string" ? value : "";
+}
 
-export async function getAuthSession() {
-  const cookieStore = await cookies();
-  const session = decodeAuthSession(cookieStore.get(mockAuthCookieName)?.value);
+export async function getAuthSession(): Promise<AuthSession | null> {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user },
+      error
+    } = await supabase.auth.getUser();
 
-  if (!session || isSessionExpired(session)) {
-    return null;
+    if (error || !user) {
+      return null;
+    }
+
+    const {
+      data: { session }
+    } = await supabase.auth.getSession();
+
+    return buildAuthSessionView({
+      id: user.id,
+      email: user.email ?? "",
+      fullName:
+        metadataString(user.user_metadata?.full_name) ||
+        metadataString(user.user_metadata?.name),
+      expiresAt: session?.expires_at
+        ? new Date(session.expires_at * 1000).toISOString()
+        : null
+    });
+  } catch (error) {
+    if (isAuthConfigurationError(error)) {
+      return null;
+    }
+
+    throw error;
   }
-
-  return session;
-}
-
-export async function setAuthSession(session: AuthSession) {
-  const cookieStore = await cookies();
-  const maxAge = session.remember
-    ? Math.max(0, Math.floor((Date.parse(session.expiresAt) - Date.now()) / 1000))
-    : undefined;
-
-  cookieStore.set(mockAuthCookieName, encodeAuthSession(session), {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    maxAge
-  });
-}
-
-export async function clearAuthSession() {
-  const cookieStore = await cookies();
-
-  cookieStore.delete(mockAuthCookieName);
 }

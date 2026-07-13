@@ -1,15 +1,19 @@
 import { NextResponse } from "next/server";
+import { requireAdminApiAccess } from "@/lib/auth/admin-access";
 import { PublicationStatus } from "@/lib/generated/prisma/enums";
 import { getPrisma } from "@/lib/db/prisma";
 
 export async function PATCH(
-  _request: Request,
+  request: Request,
   context: {
     params: Promise<{
       resourceSlug: string;
     }>;
   }
 ) {
+  const denied = await requireAdminApiAccess(request);
+  if (denied) return denied;
+
   const { resourceSlug } = await context.params;
   const db = getPrisma();
   const current = await db.resource.findUnique({

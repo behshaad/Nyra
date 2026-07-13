@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requireAdminApiAccess } from "@/lib/auth/admin-access";
 import { getPrisma } from "@/lib/db/prisma";
 
 type MoveDirection = "up" | "down";
@@ -15,6 +16,9 @@ export async function PATCH(
     }>;
   }
 ) {
+  const denied = await requireAdminApiAccess(request);
+  if (denied) return denied;
+
   const { questionId } = await context.params;
   const body = (await request.json()) as Record<string, unknown>;
   const direction = parseDirection(body.direction);
