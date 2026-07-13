@@ -14,14 +14,6 @@ import { getFlatPublishedSkills, getNextSkillSlug } from "@/lib/learning/path-pr
 
 export const dynamic = "force-dynamic";
 
-export async function generateStaticParams() {
-  const skills = await getFlatPublishedSkills();
-
-  return skills.map((skill) => ({
-    skillId: skill.slug
-  }));
-}
-
 export default async function SkillPage({
   params,
   searchParams
