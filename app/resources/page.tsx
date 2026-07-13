@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
+import { ResourceSpotlightCard } from "@/components/resource-spotlight-card";
 import {
   interfaceCopy,
   resolveInterfaceLanguage,
@@ -75,6 +76,8 @@ export default async function ResourcesPage({
             </span>
           ))}
         </div>
+
+        <ResourceSpotlightCard />
 
         <section className="resource-library" aria-label="Published resources">
           {resources.map((resource) => {
