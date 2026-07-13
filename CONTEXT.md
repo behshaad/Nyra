@@ -21,8 +21,12 @@ A learner-facing control for choosing which Level's Learning Path to view or con
 _Avoid_: Language toggle, course switcher
 
 **Level World**:
-A learner-facing adventure map owned by a Level, where the learner sees that Level's Skills as nodes on a themed path.
+A learner-facing adventure map owned by a Level, where the learner sees that Level's Units as nodes on a themed path.
 _Avoid_: Lesson world, module map
+
+**Unit Node**:
+A learner-facing node inside a Level World that represents one Unit and leads the learner into that Unit's Skills.
+_Avoid_: Skill node, lesson node
 
 **Curriculum Reference**:
 An external learning source used to understand topic progression, skill coverage, and proficiency expectations without copying its exact wording, exercises, or proprietary sequence as Nyra content.
