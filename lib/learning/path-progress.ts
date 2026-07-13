@@ -5,6 +5,11 @@ import {
 } from "@/lib/generated/prisma/enums";
 import { getPrisma } from "@/lib/db/prisma";
 import { defaultLevelLabel, devAuthUserId } from "@/lib/learner/preferences";
+import {
+  getLearningPathDisplayCopy,
+  sampleCourse,
+  type LearningContentDisplayLanguage
+} from "@/lib/learning/sample-content";
 
 type CompletionMetadata = {
   scorePercent?: unknown;
@@ -132,8 +137,39 @@ async function getUnitsFromDb(levelLabel: string): Promise<DbUnitForPath[]> {
     .filter((unit) => unit.skills.length > 0);
 }
 
+function getUnitsFromSampleCourse(levelLabel: string): DbUnitForPath[] {
+  const level = sampleCourse.levels.find((candidate) => candidate.label === levelLabel);
+
+  return (
+    level?.units.map((unit, unitIndex) => ({
+      slug: unit.slug,
+      order: unitIndex + 1,
+      title: unit.title,
+      summary: unit.summary,
+      levelLabel: level.label,
+      skills: unit.skills
+        .filter((skill) => skill.publicationStatus === "PUBLISHED")
+        .map((skill) => ({
+          slug: skill.slug,
+          title: skill.title,
+          description: skill.description,
+          kind: skill.kind,
+          xp: skill.xp,
+          passingScore: skill.passingScore ?? null,
+          questions: skill.questions.filter((question) => question.required)
+        }))
+    })) ?? []
+  ).filter((unit) => unit.skills.length > 0);
+}
+
+async function getUnitsForPath(levelLabel: string): Promise<DbUnitForPath[]> {
+  const unitsFromDb = await getUnitsFromDb(levelLabel);
+
+  return unitsFromDb.length > 0 ? unitsFromDb : getUnitsFromSampleCourse(levelLabel);
+}
+
 export async function getFlatSkills(levelLabel = defaultLevelLabel) {
-  const units = await getUnitsFromDb(levelLabel);
+  const units = await getUnitsForPath(levelLabel);
 
   return units.flatMap((unit) =>
     unit.skills.map((skill) => ({
@@ -155,8 +191,10 @@ export async function getFlatPublishedSkills() {
       order: "asc"
     }
   });
+  const levelLabels =
+    levels.length > 0 ? levels.map((level) => level.label) : sampleCourse.levels.map((level) => level.label);
   const skillsByLevel = await Promise.all(
-    levels.map((level) => getFlatSkills(level.label))
+    levelLabels.map((levelLabel) => getFlatSkills(levelLabel))
   );
 
   return skillsByLevel.flat();
@@ -174,11 +212,13 @@ export async function getNextSkillSlug(skillSlug: string, levelLabel = defaultLe
 }
 
 export async function getLearningPathProgress(
-  levelLabel = defaultLevelLabel
+  levelLabel = defaultLevelLabel,
+  interfaceLanguage: LearningContentDisplayLanguage = "fa"
 ): Promise<LearningPathProgressView> {
   const db = getPrisma();
-  const unitsFromDb = await getUnitsFromDb(levelLabel);
-  const flatSkills = unitsFromDb.flatMap((unit) =>
+  const units = await getUnitsForPath(levelLabel);
+  const displayCopy = getLearningPathDisplayCopy(levelLabel, interfaceLanguage);
+  const flatSkills = units.flatMap((unit) =>
     unit.skills.map((skill) => ({
       ...skillToFlatView(skill),
       unitSlug: unit.slug,
@@ -238,9 +278,11 @@ export async function getLearningPathProgress(
   )?.slug;
   let nextSkill: PathSkillView | null = null;
 
-  const units = unitsFromDb.map((unit) => {
+  const unitsWithProgress = units.map((unit) => {
+    const displayUnit = displayCopy.units[unit.slug];
     const skills = unit.skills.map((skill) => {
       const completion = completionBySkillSlug.get(skill.slug);
+      const displaySkill = displayUnit?.skills[skill.slug];
       const needsReview = completion?.passed === false;
       const state: SkillProgressState = completion
         ? needsReview
@@ -251,6 +293,8 @@ export async function getLearningPathProgress(
           : "upcoming";
       const view: PathSkillView = {
         ...skillToFlatView(skill),
+        title: displaySkill?.title ?? skill.title,
+        description: displaySkill?.description ?? skill.description,
         state,
         scorePercent: completion?.scorePercent ?? null,
         passed: completion?.passed ?? null
@@ -270,8 +314,8 @@ export async function getLearningPathProgress(
     return {
       slug: unit.slug,
       order: unit.order,
-      title: unit.title,
-      summary: unit.summary,
+      title: displayUnit?.title ?? unit.title,
+      summary: displayUnit?.summary ?? unit.summary,
       skills,
       completedCount,
       needsReviewCount,
@@ -283,15 +327,15 @@ export async function getLearningPathProgress(
   });
 
   const selectedUnitSlug =
-    units.find((unit) => unit.skills.some((skill) => skill.state === "current"))?.slug ??
-    units.find((unit) => unit.progressPercent < 100)?.slug ??
-    units[0]?.slug ??
+    unitsWithProgress.find((unit) => unit.skills.some((skill) => skill.state === "current"))?.slug ??
+    unitsWithProgress.find((unit) => unit.progressPercent < 100)?.slug ??
+    unitsWithProgress[0]?.slug ??
     null;
-  const completedCount = units.reduce((total, unit) => total + unit.completedCount, 0);
-  const totalCount = units.reduce((total, unit) => total + unit.skills.length, 0);
+  const completedCount = unitsWithProgress.reduce((total, unit) => total + unit.completedCount, 0);
+  const totalCount = unitsWithProgress.reduce((total, unit) => total + unit.skills.length, 0);
 
   return {
-    units,
+    units: unitsWithProgress,
     nextSkill,
     selectedUnitSlug,
     completedCount,

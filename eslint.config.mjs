@@ -26,11 +26,18 @@ export default [
         sourceType: "module"
       },
       globals: {
+        cancelAnimationFrame: "readonly",
         console: "readonly",
         fetch: "readonly",
+        HTMLCanvasElement: "readonly",
+        PointerEvent: "readonly",
         process: "readonly",
         Request: "readonly",
-        Response: "readonly"
+        Response: "readonly",
+        requestAnimationFrame: "readonly",
+        ResizeObserver: "readonly",
+        setTimeout: "readonly",
+        window: "readonly"
       }
     },
     plugins: {

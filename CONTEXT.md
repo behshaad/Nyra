@@ -20,6 +20,14 @@ _Avoid_: Stage
 A learner-facing control for choosing which Level's Learning Path to view or continue, such as A1 or A2.
 _Avoid_: Language toggle, course switcher
 
+**Level World**:
+A learner-facing adventure map owned by a Level, where the learner sees that Level's Units as nodes on a themed path.
+_Avoid_: Lesson world, module map
+
+**Unit Node**:
+A learner-facing node inside a Level World that represents one Unit and leads the learner into that Unit's Skills. A Unit Node can use localized map-label language such as Lesson, درس, or Lektion without changing the canonical domain term Unit.
+_Avoid_: Skill node, lesson node
+
 **Curriculum Reference**:
 An external learning source used to understand topic progression, skill coverage, and proficiency expectations without copying its exact wording, exercises, or proprietary sequence as Nyra content.
 _Avoid_: Source content, imported textbook
@@ -43,6 +51,10 @@ _Avoid_: UI widget, answer mode
 **Question Attempt**:
 A learner's submitted response to a Question at a specific moment.
 _Avoid_: Answer, response record
+
+**Question Review**:
+A learner-facing review of a previously answered Question, showing the submitted response and feedback without changing the original Question Attempt.
+_Avoid_: Edit answer, retake question
 
 **Accepted Answer**:
 An authored answer variant that should be treated as correct for a Question, alongside the Question's canonical correct answer. Accepted Answers are used for deterministic tolerance such as spelling variants, umlaut alternatives, or harmless punctuation differences, not for broad subjective equivalence.
@@ -124,6 +136,10 @@ _Avoid_: Next lesson
 The learner-owned product identity that describes a person's learning goal, languages, current level, daily goal, preferences, and onboarding state.
 _Avoid_: Account, user metadata
 
+**Account**:
+The identity, access, contact, and subscription-facing settings around an authenticated person using Nyra. An Account is distinct from the Learner Profile, which owns learning goals and study preferences.
+_Avoid_: Learner Profile, learning identity
+
 **Admin Access**:
 Permission for a trusted operator to manage Nyra content and review operational surfaces. Admin Access belongs to Nyra-owned roles, while identity and sessions belong to the authentication provider.
 _Avoid_: Admin preview, shared admin password
@@ -155,6 +171,10 @@ _Avoid_: Level selector, learning language switcher
 **Interface Theme**:
 The learner-facing display preference for Nyra's visual mode, such as light, dark, or system.
 _Avoid_: Color palette, skin
+
+**Deployment Target**:
+The external platform that serves Nyra to learners and runs the production web application. Nyra's current Deployment Target is Vercel.
+_Avoid_: Hosting account, server, environment
 
 **Draft**:
 Content that is being created or edited and is not visible to learners.

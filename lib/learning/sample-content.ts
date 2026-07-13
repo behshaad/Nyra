@@ -77,6 +77,8 @@ export type SampleCourse = {
   }>;
 };
 
+export type LearningContentDisplayLanguage = "fa" | "en" | "de";
+
 type SkillSpec = {
   slug: string;
   title: string;
@@ -584,11 +586,6 @@ function makeSkillQuestions(spec: SkillSpec): SampleQuestion[] {
 
 function makeA2SkillQuestions(spec: SkillSpec): SampleQuestion[] {
   const ordered = orderedSentence(spec.orderedWords);
-  const secondOrderWords =
-    spec.orderedWords.length > 4
-      ? [...spec.orderedWords.slice(0, 2), ...spec.orderedWords.slice(3), spec.orderedWords[2]]
-      : [...spec.orderedWords, "heute"];
-  const secondOrdered = orderedSentence(secondOrderWords);
 
   return [
     makeQuestion(
@@ -657,8 +654,8 @@ function makeA2SkillQuestions(spec: SkillSpec): SampleQuestion[] {
       "WORD_ORDERING",
       "یک جمله دوم با همین الگوی ساختاری بسازید.",
       "ساخت جمله",
-      wordOrderingOptions(secondOrderWords),
-      secondOrdered,
+      wordOrderingOptions(spec.orderedWords),
+      ordered,
       "در تمرین ترتیب واژه، همه کاشی‌ها باید در یک جمله کامل استفاده شوند."
     ),
     makeQuestion(
@@ -735,7 +732,8 @@ function makeCheckpoint(
 function makeA2Checkpoint(
   unit: UnitSpec,
   skills: SampleSkill[],
-  publicationStatus: SampleSkill["publicationStatus"] = "PUBLISHED"
+  publicationStatus: SampleSkill["publicationStatus"] = "PUBLISHED",
+  levelLabel = "A2"
 ): SampleSkill {
   const slug = `${unit.slug}-checkpoint`;
   const questionsByType = {
@@ -760,7 +758,7 @@ function makeA2Checkpoint(
     id: slug,
     slug,
     title: `${unit.title}: آزمونک`,
-    description: `کنترل A2 خودت را در موضوع ${unit.resourceFocus} بسنج.`,
+    description: `کنترل ${levelLabel} خودت را در موضوع ${unit.resourceFocus} بسنج.`,
     kind: "UNIT_CHECKPOINT",
     xp: 120,
     passingScore: 70,
@@ -1787,6 +1785,182 @@ function buildUnits() {
   return units;
 }
 
+type LearningPathDisplaySkill = {
+  title: string;
+  description: string;
+};
+
+type LearningPathDisplayUnit = {
+  title: string;
+  summary: string;
+  skills: Record<string, LearningPathDisplaySkill>;
+};
+
+export type LearningPathDisplayCopy = {
+  levelTitle: string;
+  units: Record<string, LearningPathDisplayUnit>;
+};
+
+const persianTextPattern = /[\u0600-\u06FF]/;
+
+function titleCase(value: string) {
+  return value.replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function humanizeSlug(slug: string) {
+  return titleCase(
+    slug
+      .replace(/^(a\d|b\d|c\d)-/, "")
+      .replace(/-checkpoint$/, " checkpoint")
+      .replace(/-/g, " ")
+  );
+}
+
+function nonPersianOrFallback(value: string, fallback: string) {
+  return persianTextPattern.test(value) ? fallback : value;
+}
+
+function fallbackSkillDescription(title: string) {
+  return `Practice ${title.toLowerCase()}.`;
+}
+
+function levelDisplayTitle(levelLabel: string, title: string, language: LearningContentDisplayLanguage) {
+  if (language === "fa") {
+    return title;
+  }
+
+  if (language === "de") {
+    return `${levelLabel}-Lernpfad`;
+  }
+
+  return `${levelLabel} Learning Path`;
+}
+
+function a1EnglishDisplayUnits() {
+  return Object.fromEntries(
+    unitSpecs.map((unit) => {
+      const skills = Object.fromEntries(
+        unit.skills.map((skill) => [
+          skill.slug,
+          {
+            title: skill.title,
+            description: skill.description
+          }
+        ])
+      );
+      const checkpointTitle = `${unit.title}: Unit Checkpoint`;
+
+      skills[`${unit.slug}-checkpoint`] = {
+        title: checkpointTitle,
+        description: `Check your A1 control for ${unit.resourceFocus}.`
+      };
+
+      return [
+        unit.slug,
+        {
+          title: unit.title,
+          summary: unit.summary,
+          skills
+        }
+      ];
+    })
+  );
+}
+
+export function getLearningPathDisplayCopy(
+  levelLabel: string,
+  language: LearningContentDisplayLanguage = "fa"
+): LearningPathDisplayCopy {
+  const level = sampleCourse.levels.find((candidate) => candidate.label === levelLabel);
+
+  if (!level) {
+    return {
+      levelTitle:
+        language === "de" ? `${levelLabel}-Lernpfad` : `${levelLabel} Learning Path`,
+      units: {}
+    };
+  }
+
+  if (language === "fa") {
+    return {
+      levelTitle: level.title,
+      units: Object.fromEntries(
+        level.units.map((unit) => [
+          unit.slug,
+          {
+            title: unit.title,
+            summary: unit.summary,
+            skills: Object.fromEntries(
+              unit.skills.map((skill) => [
+                skill.slug,
+                {
+                  title: skill.title,
+                  description: skill.description
+                }
+              ])
+            )
+          }
+        ])
+      )
+    };
+  }
+
+  const a1Units = levelLabel === "A1" ? a1EnglishDisplayUnits() : {};
+
+  return {
+    levelTitle: levelDisplayTitle(level.label, level.title, language),
+    units: Object.fromEntries(
+      level.units.map((unit) => {
+        const unitFallback = a1Units[unit.slug];
+        const unitTitle = nonPersianOrFallback(
+          unitFallback?.title ?? unit.title,
+          humanizeSlug(unit.slug)
+        );
+        const summary = nonPersianOrFallback(
+          unitFallback?.summary ?? unit.summary,
+          `Practice ${unitTitle.toLowerCase()} topics.`
+        );
+
+        return [
+          unit.slug,
+          {
+            title: unitTitle,
+            summary,
+            skills: Object.fromEntries(
+              unit.skills.map((skill) => {
+                const skillFallback = unitFallback?.skills[skill.slug];
+                const skillTitle = nonPersianOrFallback(
+                  skillFallback?.title ?? skill.title,
+                  skill.kind === "FINAL_TEST"
+                    ? `Final ${level.label} Test`
+                    : skill.kind === "UNIT_CHECKPOINT"
+                      ? `${unitTitle}: Unit Checkpoint`
+                      : humanizeSlug(skill.slug)
+                );
+
+                return [
+                  skill.slug,
+                  {
+                    title: skillTitle,
+                    description: nonPersianOrFallback(
+                      skillFallback?.description ?? skill.description,
+                      skill.kind === "FINAL_TEST"
+                        ? `Review and check your ${level.label} progress.`
+                        : skill.kind === "UNIT_CHECKPOINT"
+                          ? `Check your ${level.label} control for this unit.`
+                          : fallbackSkillDescription(skillTitle)
+                    )
+                  }
+                ];
+              })
+            )
+          }
+        ];
+      })
+    )
+  };
+}
+
 const a2UnitOneSpec: UnitSpec = {
   slug: "a2-german-in-global-life",
   title: "آلمانی در زندگی جهانی",
@@ -2429,6 +2603,326 @@ const a2PublishedUnitSpecs: UnitSpec[] = [
         miniAnswer: "دوستش به او توصیه می‌کند استراحت کند."
       }
     ]
+  },
+  {
+    slug: "a2-media-apps-and-free-time",
+    title: "رسانه، اپلیکیشن و وقت آزاد",
+    summary: "برنامه تلویزیونی، اپلیکیشن محبوب، روز مورد علاقه و فعالیت‌های آزاد را بیان کنید.",
+    resourceFocus: "رسانه، اپلیکیشن و وقت آزاد",
+    skills: [
+      {
+        slug: "a2-discuss-tv-programs",
+        title: "درباره برنامه تلویزیونی حرف بزن",
+        description: "نوع برنامه، زمان پخش و نظر شخصی را بیان کن.",
+        focus: "تلویزیون",
+        word: "die Sendung",
+        meaning: "برنامه تلویزیونی",
+        phrase: "Die Sendung laeuft jeden Freitag.",
+        phraseMeaning: "این برنامه هر جمعه پخش می‌شود",
+        blankSentence: "Die Sendung laeuft jeden ___.",
+        blankAnswer: "Freitag",
+        blankChoices: ["Freitag", "Fenster", "Fehler"],
+        orderedWords: ["Die", "Sendung", "laeuft", "jeden", "Freitag"],
+        grammarPoint: "برای برنامه‌ای که مرتب تکرار می‌شود، می‌توان از jeden + روز هفته استفاده کرد.",
+        situation: "برنامه تلویزیونی مورد علاقه‌تان را معرفی می‌کنید.",
+        miniText: "Omid sieht gern eine Reisesendung. Sie laeuft jeden Freitag um acht Uhr.",
+        miniAnswer: "برنامه هر جمعه پخش می‌شود."
+      },
+      {
+        slug: "a2-present-a-favorite-app",
+        title: "اپلیکیشن محبوبت را معرفی کن",
+        description: "کاربرد، مزیت و دلیل علاقه به یک اپ را توضیح بده.",
+        focus: "اپلیکیشن",
+        word: "die App",
+        meaning: "اپلیکیشن",
+        phrase: "Diese App hilft mir beim Deutschlernen.",
+        phraseMeaning: "این اپلیکیشن در یادگیری آلمانی به من کمک می‌کند",
+        blankSentence: "Diese App hilft mir beim ___.",
+        blankAnswer: "Deutschlernen",
+        blankChoices: ["Deutschlernen", "Abendessen", "Ausruhen"],
+        orderedWords: ["Diese", "App", "hilft", "mir", "beim", "Deutschlernen"],
+        grammarPoint: "فعل helfen با داتیو می‌آید: mir.",
+        situation: "به دوستتان می‌گویید چرا از یک اپ استفاده می‌کنید.",
+        miniText: "Mina benutzt eine Lernapp. Die App erinnert sie jeden Tag an neue Woerter.",
+        miniAnswer: "اپ هر روز واژه‌های جدید را یادآوری می‌کند."
+      },
+      {
+        slug: "a2-describe-a-favorite-day",
+        title: "روز مورد علاقه‌ات را توصیف کن",
+        description: "برنامه روز، فعالیت‌ها و حس شخصی را توضیح بده.",
+        focus: "روز محبوب",
+        word: "der Lieblingstag",
+        meaning: "روز مورد علاقه",
+        phrase: "Mein Lieblingstag ist Samstag, weil ich frei habe.",
+        phraseMeaning: "روز مورد علاقه من شنبه است چون آزاد هستم",
+        blankSentence: "Mein Lieblingstag ist Samstag, ___ ich frei habe.",
+        blankAnswer: "weil",
+        blankChoices: ["weil", "oder", "aber"],
+        orderedWords: ["Mein", "Lieblingstag", "ist", "Samstag"],
+        grammarPoint: "در جمله فرعی با weil، فعل صرف‌شده در پایان جمله می‌آید.",
+        situation: "درباره بهترین روز هفته و دلیل آن حرف می‌زنید.",
+        miniText: "Fuer Sara ist Samstag der Lieblingstag. Sie schlaeft lange und trifft Freunde.",
+        miniAnswer: "سارا شنبه را دوست دارد."
+      },
+      {
+        slug: "a2-plan-free-time",
+        title: "وقت آزاد را برنامه‌ریزی کن",
+        description: "پیشنهاد، زمان و ترجیح برای فعالیت آزاد را بیان کن.",
+        focus: "وقت آزاد",
+        word: "die Freizeit",
+        meaning: "وقت آزاد",
+        phrase: "Wollen wir am Wochenende ins Kino gehen?",
+        phraseMeaning: "می‌خواهیم آخر هفته به سینما برویم؟",
+        blankSentence: "Wollen wir am Wochenende ins ___ gehen?",
+        blankAnswer: "Kino",
+        blankChoices: ["Kino", "Konto", "Kissen"],
+        orderedWords: ["Wir", "gehen", "am", "Wochenende", "ins", "Kino"],
+        grammarPoint: "برای حرکت به سمت سینما از ins Kino استفاده می‌شود.",
+        situation: "برای آخر هفته با دوستتان برنامه می‌ریزید.",
+        miniText: "Ben hat am Samstag frei. Er moechte mit Amir ins Kino gehen.",
+        miniAnswer: "بن برای سینما برنامه دارد."
+      }
+    ]
+  },
+  {
+    slug: "a2-social-behavior-compliments-and-gifts",
+    title: "رفتار اجتماعی، تعریف و هدیه",
+    summary: "رفتار مودبانه، تعریف کردن، آشنایی و هدیه دادن را در موقعیت‌های اجتماعی تمرین کنید.",
+    resourceFocus: "رفتار اجتماعی، تعریف و هدیه",
+    skills: [
+      {
+        slug: "a2-sound-friendly-and-polite",
+        title: "دوستانه و مودبانه حرف بزن",
+        description: "لحن مناسب، خواهش و پاسخ محترمانه را تمرین کن.",
+        focus: "ادب اجتماعی",
+        word: "hoeflich",
+        meaning: "مودب",
+        phrase: "Koennten Sie mir bitte kurz helfen?",
+        phraseMeaning: "می‌توانید لطفاً کوتاه به من کمک کنید؟",
+        blankSentence: "Koennten Sie mir bitte kurz ___?",
+        blankAnswer: "helfen",
+        blankChoices: ["helfen", "hoeren", "holen"],
+        orderedWords: ["Koennten", "Sie", "mir", "bitte", "helfen"],
+        grammarPoint: "Koennten Sie یک شکل مودبانه‌تر برای درخواست است.",
+        situation: "در یک موقعیت رسمی کمک کوتاهی می‌خواهید.",
+        miniText: "Im Amt versteht Sara ein Formular nicht. Sie fragt hoeflich nach Hilfe.",
+        miniAnswer: "سارا مودبانه کمک می‌خواهد."
+      },
+      {
+        slug: "a2-make-and-respond-to-compliments",
+        title: "تعریف کن و پاسخ بده",
+        description: "تعریف کوتاه، تشکر و واکنش طبیعی را بساز.",
+        focus: "تعریف",
+        word: "das Kompliment",
+        meaning: "تعریف / تمجید",
+        phrase: "Danke fuer das nette Kompliment.",
+        phraseMeaning: "ممنون برای این تعریف خوب",
+        blankSentence: "Danke fuer das nette ___.",
+        blankAnswer: "Kompliment",
+        blankChoices: ["Kompliment", "Konto", "Kino"],
+        orderedWords: ["Danke", "fuer", "das", "nette", "Kompliment"],
+        grammarPoint: "بعد از fuer معمولاً آکوزاتیو می‌آید: das nette Kompliment.",
+        situation: "کسی از لباس یا کار شما تعریف می‌کند و پاسخ می‌دهید.",
+        miniText: "Nina sagt: Dein Vortrag war sehr gut. Reza bedankt sich fuer das Kompliment.",
+        miniAnswer: "رضا بابت تعریف تشکر می‌کند."
+      },
+      {
+        slug: "a2-describe-a-person-you-want-to-meet",
+        title: "فرد مناسب برای آشنایی را توصیف کن",
+        description: "ویژگی‌ها، علاقه‌ها و انتظارها را محترمانه بیان کن.",
+        focus: "آشنایی",
+        word: "kennenlernen",
+        meaning: "آشنا شدن",
+        phrase: "Ich moechte jemanden kennenlernen, der ehrlich ist.",
+        phraseMeaning: "می‌خواهم با کسی آشنا شوم که صادق است",
+        blankSentence: "Ich moechte jemanden kennenlernen, der ___ ist.",
+        blankAnswer: "ehrlich",
+        blankChoices: ["ehrlich", "eilig", "einzeln"],
+        orderedWords: ["Ich", "moechte", "jemanden", "kennenlernen"],
+        grammarPoint: "بعد از moechte، فعل اصلی به صورت مصدر در پایان عبارت می‌آید.",
+        situation: "درباره ویژگی‌های فردی که دوست دارید بشناسید حرف می‌زنید.",
+        miniText: "Ali moechte neue Leute kennenlernen. Wichtig sind fuer ihn Humor und Ehrlichkeit.",
+        miniAnswer: "برای علی صداقت مهم است."
+      },
+      {
+        slug: "a2-choose-a-gift",
+        title: "هدیه انتخاب کن",
+        description: "درباره مناسبت، سلیقه و دلیل انتخاب هدیه حرف بزن.",
+        focus: "هدیه",
+        word: "das Geschenk",
+        meaning: "هدیه",
+        phrase: "Ich schenke ihr ein Buch zum Geburtstag.",
+        phraseMeaning: "برای تولدش به او یک کتاب هدیه می‌دهم",
+        blankSentence: "Ich schenke ihr ein Buch zum ___.",
+        blankAnswer: "Geburtstag",
+        blankChoices: ["Geburtstag", "Gepaeck", "Geldautomat"],
+        orderedWords: ["Ich", "schenke", "ihr", "ein", "Buch"],
+        grammarPoint: "در جمله Ich schenke ihr... ضمیر ihr داتیو است.",
+        situation: "برای یک دوست هدیه مناسب انتخاب می‌کنید.",
+        miniText: "Mina liest gern Romane. Deshalb schenkt Sara ihr ein Buch.",
+        miniAnswer: "سارا یک کتاب هدیه می‌دهد."
+      }
+    ]
+  },
+  {
+    slug: "a2-money-banking-and-messages",
+    title: "پول، بانک و پیام‌ها",
+    summary: "درباره ارزش پول، بانک، حساب، پرداخت و پیام‌های روزمره صحبت کنید.",
+    resourceFocus: "پول، بانک و پیام",
+    skills: [
+      {
+        slug: "a2-talk-about-money-values",
+        title: "درباره پول و ارزش‌ها حرف بزن",
+        description: "اولویت‌های مالی و غیرمالی را با مقایسه ساده بیان کن.",
+        focus: "ارزش پول",
+        word: "sparen",
+        meaning: "پس‌انداز کردن",
+        phrase: "Ich spare Geld fuer eine Reise.",
+        phraseMeaning: "برای یک سفر پول پس‌انداز می‌کنم",
+        blankSentence: "Ich spare Geld fuer eine ___.",
+        blankAnswer: "Reise",
+        blankChoices: ["Reise", "Rede", "Rechnung"],
+        orderedWords: ["Ich", "spare", "Geld", "fuer", "eine", "Reise"],
+        grammarPoint: "بعد از fuer از آکوزاتیو استفاده می‌شود: eine Reise.",
+        situation: "درباره هدف مالی یا چیزی که برایتان مهم است حرف می‌زنید.",
+        miniText: "Reza kauft weniger Kaffee. Er spart Geld fuer eine Reise.",
+        miniAnswer: "رضا برای سفر پس‌انداز می‌کند."
+      },
+      {
+        slug: "a2-understand-a-bank-service",
+        title: "خدمات بانکی را بفهم",
+        description: "اطلاعات پایه درباره بانک، کارت و حساب را دنبال کن.",
+        focus: "بانک",
+        word: "das Konto",
+        meaning: "حساب بانکی",
+        phrase: "Ich moechte ein Konto eroeffnen.",
+        phraseMeaning: "می‌خواهم یک حساب باز کنم",
+        blankSentence: "Ich moechte ein Konto ___.",
+        blankAnswer: "eroeffnen",
+        blankChoices: ["eroeffnen", "erzaehlen", "erinnern"],
+        orderedWords: ["Ich", "moechte", "ein", "Konto", "eroeffnen"],
+        grammarPoint: "بعد از moechte، فعل اصلی به صورت مصدر در پایان جمله می‌آید.",
+        situation: "در بانک می‌گویید چه خدمتی می‌خواهید.",
+        miniText: "Mina geht zur Bank. Sie moechte ein Konto eroeffnen und eine Karte bekommen.",
+        miniAnswer: "مینا می‌خواهد حساب باز کند."
+      },
+      {
+        slug: "a2-discuss-shared-expenses",
+        title: "درباره هزینه مشترک حرف بزن",
+        description: "پرداخت، سهم و حساب مشترک را توضیح بده.",
+        focus: "هزینه مشترک",
+        word: "die Ausgabe",
+        meaning: "هزینه",
+        phrase: "Wir teilen die Ausgabe durch drei.",
+        phraseMeaning: "هزینه را بین سه نفر تقسیم می‌کنیم",
+        blankSentence: "Wir teilen die Ausgabe durch ___.",
+        blankAnswer: "drei",
+        blankChoices: ["drei", "frei", "breit"],
+        orderedWords: ["Wir", "teilen", "die", "Ausgabe", "durch", "drei"],
+        grammarPoint: "برای تقسیم هزینه می‌توان از teilen durch استفاده کرد.",
+        situation: "بعد از یک خرید گروهی درباره سهم هر نفر حرف می‌زنید.",
+        miniText: "Drei Freunde kaufen ein Geschenk. Sie teilen die Ausgabe durch drei.",
+        miniAnswer: "سه دوست هزینه را تقسیم می‌کنند."
+      },
+      {
+        slug: "a2-write-a-clear-message",
+        title: "پیام روشن بنویس",
+        description: "در پیام کوتاه درخواست، خبر و جزئیات لازم را بیان کن.",
+        focus: "پیام",
+        word: "die Ueberweisung",
+        meaning: "حواله / انتقال بانکی",
+        phrase: "Ich schicke dir morgen die Ueberweisung.",
+        phraseMeaning: "فردا حواله بانکی را برایت می‌فرستم",
+        blankSentence: "Ich schicke dir morgen die ___.",
+        blankAnswer: "Ueberweisung",
+        blankChoices: ["Ueberweisung", "Unterkunft", "Uebung"],
+        orderedWords: ["Ich", "schicke", "dir", "morgen", "die", "Ueberweisung"],
+        grammarPoint: "در جمله Ich schicke dir... ضمیر dir داتیو است.",
+        situation: "در پیام کوتاه درباره پرداخت به دوستتان خبر می‌دهید.",
+        miniText: "Ali bezahlt heute nicht bar. Er schickt morgen die Ueberweisung.",
+        miniAnswer: "علی فردا انتقال بانکی می‌فرستد."
+      }
+    ]
+  },
+  {
+    slug: "a2-travel-directions-and-holiday-experiences",
+    title: "سفر، مسیر و تجربه‌های تعطیلات",
+    summary: "سفر کوتاه، مسیر هتل، همسفر و تجربه‌های تعطیلات را توصیف کنید.",
+    resourceFocus: "سفر، مسیر، هتل و تجربه",
+    skills: [
+      {
+        slug: "a2-plan-a-short-trip",
+        title: "سفر کوتاه برنامه‌ریزی کن",
+        description: "مقصد، زمان، وسیله سفر و فعالیت‌ها را هماهنگ کن.",
+        focus: "سفر کوتاه",
+        word: "der Ausflug",
+        meaning: "سفر کوتاه / گردش",
+        phrase: "Wir machen am Sonntag einen Ausflug.",
+        phraseMeaning: "یکشنبه یک گردش می‌رویم",
+        blankSentence: "Wir machen am Sonntag einen ___.",
+        blankAnswer: "Ausflug",
+        blankChoices: ["Ausflug", "Ausweis", "Ausgang"],
+        orderedWords: ["Wir", "machen", "am", "Sonntag", "einen", "Ausflug"],
+        grammarPoint: "برای فعالیت در یک روز مشخص از am + روز هفته استفاده می‌شود.",
+        situation: "برای یک سفر کوتاه آخر هفته برنامه می‌ریزید.",
+        miniText: "Die Klasse macht am Sonntag einen Ausflug nach Potsdam.",
+        miniAnswer: "کلاس یکشنبه به پوتسدام می‌رود."
+      },
+      {
+        slug: "a2-ask-for-hotel-directions",
+        title: "مسیر هتل را بپرس",
+        description: "آدرس، مسیر و نشانه‌های شهری را دنبال کن.",
+        focus: "مسیر",
+        word: "die Wegbeschreibung",
+        meaning: "توضیح مسیر",
+        phrase: "Koennen Sie mir den Weg zum Hotel beschreiben?",
+        phraseMeaning: "می‌توانید مسیر هتل را برایم توضیح دهید؟",
+        blankSentence: "Koennen Sie mir den Weg zum Hotel ___?",
+        blankAnswer: "beschreiben",
+        blankChoices: ["beschreiben", "bestellen", "bezahlen"],
+        orderedWords: ["Koennen", "Sie", "mir", "den", "Weg", "beschreiben"],
+        grammarPoint: "در درخواست مودبانه با Koennen Sie، فعل اصلی در پایان جمله می‌آید.",
+        situation: "در شهر جدید مسیر هتل را می‌پرسید.",
+        miniText: "Am Bahnhof fragt Amir nach dem Weg zum Hotel. Eine Frau beschreibt den Weg.",
+        miniAnswer: "امیر مسیر هتل را می‌پرسد."
+      },
+      {
+        slug: "a2-find-a-travel-partner",
+        title: "همسفر پیدا کن",
+        description: "علاقه‌ها، برنامه و انتظار از همسفر را بیان کن.",
+        focus: "همسفر",
+        word: "der Reisepartner",
+        meaning: "همسفر",
+        phrase: "Ich suche einen Reisepartner fuer die Ferien.",
+        phraseMeaning: "برای تعطیلات دنبال یک همسفر هستم",
+        blankSentence: "Ich suche einen Reisepartner fuer die ___.",
+        blankAnswer: "Ferien",
+        blankChoices: ["Ferien", "Feier", "Farbe"],
+        orderedWords: ["Ich", "suche", "einen", "Reisepartner"],
+        grammarPoint: "بعد از suchen مفعول مستقیم با آکوزاتیو می‌آید: einen Reisepartner.",
+        situation: "در یک پیام کوتاه درباره همسفر مناسب می‌نویسید.",
+        miniText: "Sara reist nicht gern allein. Sie sucht einen Reisepartner fuer die Ferien.",
+        miniAnswer: "سارا دنبال همسفر است."
+      },
+      {
+        slug: "a2-describe-holiday-photos",
+        title: "عکس‌های سفر را توصیف کن",
+        description: "مکان، آدم‌ها و حس یک عکس سفر را توضیح بده.",
+        focus: "عکس سفر",
+        word: "das Urlaubsfoto",
+        meaning: "عکس تعطیلات",
+        phrase: "Auf dem Urlaubsfoto sieht man das Meer.",
+        phraseMeaning: "در عکس تعطیلات دریا دیده می‌شود",
+        blankSentence: "Auf dem Urlaubsfoto sieht man das ___.",
+        blankAnswer: "Meer",
+        blankChoices: ["Meer", "Mehr", "Messer"],
+        orderedWords: ["Auf", "dem", "Urlaubsfoto", "sieht", "man", "das", "Meer"],
+        grammarPoint: "برای گفتن چیزی که در عکس دیده می‌شود، ساختار Auf dem Foto sieht man... کاربردی است.",
+        situation: "برای دوستتان یک عکس سفر را توضیح می‌دهید.",
+        miniText: "Auf dem Foto sieht man das Meer und zwei Freunde. Das Wetter war warm.",
+        miniAnswer: "در عکس دریا و دو دوست دیده می‌شود."
+      }
+    ]
   }
 ];
 
@@ -2581,19 +3075,39 @@ function makeDraftSkill(spec: Pick<SkillSpec, "slug" | "title" | "description" |
   };
 }
 
-function makeA2FinalTest(): SampleSkill {
+function makeFinalTestForLevel(levelLabel: "A2" | "B1" | "B2", units: SampleUnit[]): SampleSkill {
+  const slug = `${levelLabel.toLowerCase()}-final-test`;
+  const publishedRegularQuestions = units
+    .flatMap((unit) => unit.skills)
+    .filter((skill) => skill.kind === "REGULAR" && skill.publicationStatus === "PUBLISHED")
+    .flatMap((skill) => skill.questions);
+  const questionsByType = {
+    multipleChoice: publishedRegularQuestions.filter((question) => question.type === "MULTIPLE_CHOICE"),
+    fillInBlank: publishedRegularQuestions.filter((question) => question.type === "FILL_IN_BLANK"),
+    wordOrdering: publishedRegularQuestions.filter((question) => question.type === "WORD_ORDERING")
+  };
+  const questions = [
+    ...questionsByType.multipleChoice.filter((_, index) => index % 5 === 0).slice(0, 10),
+    ...questionsByType.fillInBlank.filter((_, index) => index % 4 === 0).slice(0, 10),
+    ...questionsByType.wordOrdering.filter((_, index) => index % 3 === 0).slice(0, 10)
+  ].map((question, index) => cloneQuestion(question, slug, index + 1));
+
   return {
-    id: "a2-final-test",
-    slug: "a2-final-test",
-    title: "آزمون نهایی A2",
-    description: "آمادگی خودت را در کل مسیر A2 بسنج.",
+    id: slug,
+    slug,
+    title: `آزمون نهایی ${levelLabel}`,
+    description: `آمادگی خودت را در کل مسیر ${levelLabel} با سوال‌های ترکیبی و تجمعی بسنج.`,
     kind: "FINAL_TEST",
     xp: 300,
     passingScore: 75,
     requeueIncorrect: false,
-    publicationStatus: "DRAFT",
-    questions: []
+    publicationStatus: "PUBLISHED",
+    questions
   };
+}
+
+function makeA2FinalTest(units: SampleUnit[]): SampleSkill {
+  return makeFinalTestForLevel("A2", units);
 }
 
 function buildA2Units(): SampleUnit[] {
@@ -2611,7 +3125,7 @@ function buildA2Units(): SampleUnit[] {
   });
   const units: SampleUnit[] = [
     ...publishedUnits,
-    ...a2DraftUnits.slice(7).map((unit) => {
+    ...a2DraftUnits.slice(11).map((unit) => {
       const skills = unit.skills.map((skill) => makeDraftSkill(skill));
 
       return {
@@ -2626,7 +3140,736 @@ function buildA2Units(): SampleUnit[] {
     })
   ];
 
-  units[units.length - 1].skills.push(makeA2FinalTest());
+  units[units.length - 1].skills.push(makeA2FinalTest(units));
+
+  return units;
+}
+
+const b1UnitOneSpec: UnitSpec = {
+  slug: "b1-travel-plans-and-holiday-stories",
+  title: "برنامه سفر و داستان تعطیلات",
+  summary: "سفر را برنامه‌ریزی کنید، ترجیح‌ها و دلیل‌ها را توضیح دهید، تجربه تعطیلات را روایت کنید و اطلاعیه‌های سفر را بفهمید.",
+  resourceFocus: "برنامه سفر، ترجیح‌ها، روایت تعطیلات و اطلاعیه‌های سفر",
+  skills: [
+    {
+      slug: "b1-plan-a-trip-and-explain-preferences",
+      title: "سفر را برنامه‌ریزی کن و ترجیح بده",
+      description: "درباره نوع سفر، علاقه یا بی‌علاقگی و دلیل انتخاب مقصد با جمله‌های دقیق‌تر صحبت کن.",
+      focus: "برنامه سفر و ترجیح",
+      word: "die Vorliebe",
+      meaning: "ترجیح / علاقه شخصی",
+      phrase: "Ich habe Lust, ans Meer zu fahren.",
+      phraseMeaning: "دلم می‌خواهد به دریا بروم",
+      blankSentence: "Ich habe Lust, ans Meer ___ fahren.",
+      blankAnswer: "zu",
+      blankChoices: ["zu", "weil", "obwohl"],
+      orderedWords: ["Ich", "habe", "Lust", "ans", "Meer", "zu", "fahren"],
+      grammarPoint: "بعد از Lust haben می‌توان از zu + مصدر استفاده کرد: Lust haben, etwas zu machen.",
+      situation: "دوستتان مقصدهای مختلف پیشنهاد می‌دهد و شما ترجیح خودتان را توضیح می‌دهید.",
+      miniText: "Neda moechte nicht in die Berge fahren. Sie hat Lust, ans Meer zu fahren, weil sie Ruhe braucht.",
+      miniAnswer: "ندا سفر کنار دریا را ترجیح می‌دهد."
+    },
+    {
+      slug: "b1-understand-and-discuss-travel-options",
+      title: "گزینه‌های سفر را بفهم و مقایسه کن",
+      description: "پیشنهادهای سفر، قیمت، مسیر و شرایط را بفهم و درباره مناسب بودن آن‌ها نظر بده.",
+      focus: "پیشنهاد سفر و دلیل",
+      word: "das Reiseangebot",
+      meaning: "پیشنهاد سفر / بسته سفر",
+      phrase: "Dieses Angebot passt zu meinem Budget.",
+      phraseMeaning: "این پیشنهاد با بودجه من جور است",
+      blankSentence: "Dieses Angebot passt zu meinem ___.",
+      blankAnswer: "Budget",
+      blankChoices: ["Budget", "Gepaeck", "Bahnhof"],
+      orderedWords: ["Dieses", "Angebot", "passt", "zu", "meinem", "Budget"],
+      grammarPoint: "فعل passen zu با داتیو می‌آید: zu meinem Budget.",
+      situation: "دو پیشنهاد سفر را از نظر قیمت و زمان حرکت مقایسه می‌کنید.",
+      miniText: "Das erste Angebot ist billig, aber der Zug faehrt sehr frueh. Das zweite Angebot passt besser zu Amirs Budget und Zeitplan.",
+      miniAnswer: "پیشنهاد دوم برای امیر مناسب‌تر است."
+    },
+    {
+      slug: "b1-tell-a-holiday-story-in-the-past",
+      title: "داستان تعطیلات را در گذشته تعریف کن",
+      description: "یک تجربه سفر را با زمان گذشته، ترتیب رویدادها و تضادهای ساده روایت کن.",
+      focus: "روایت تعطیلات",
+      word: "die Urlaubsgeschichte",
+      meaning: "داستان تعطیلات",
+      phrase: "Obwohl der Zug spaet war, sind wir ruhig geblieben.",
+      phraseMeaning: "با اینکه قطار دیر بود، ما آرام ماندیم",
+      blankSentence: "___ der Zug spaet war, sind wir ruhig geblieben.",
+      blankAnswer: "Obwohl",
+      blankChoices: ["Obwohl", "Deshalb", "Trotz"],
+      orderedWords: ["Obwohl", "der", "Zug", "spaet", "war", "sind", "wir", "ruhig", "geblieben"],
+      grammarPoint: "در جمله فرعی با obwohl فعل صرف‌شده به پایان بخش فرعی می‌رود.",
+      situation: "در کلاس درباره یک سفر سخت اما موفق صحبت می‌کنید.",
+      miniText: "Der Zug war spaet und das Hotelzimmer war klein. Trotzdem sagt Leila: Die Reise war schoen, weil wir viel gesehen haben.",
+      miniAnswer: "لیلا با وجود مشکل‌ها از سفر راضی است."
+    },
+    {
+      slug: "b1-understand-announcements-and-travel-updates",
+      title: "اطلاعیه‌ها و تغییرات سفر را بفهم",
+      description: "اطلاعیه‌های ایستگاه، تغییر مسیر، تاخیر و اطلاعات مهم سفر را دنبال کن.",
+      focus: "درک اطلاعیه سفر",
+      word: "die Durchsage",
+      meaning: "اعلام / اطلاعیه بلندگو",
+      phrase: "Die Durchsage informiert ueber eine Verspaetung.",
+      phraseMeaning: "اعلام بلندگو درباره یک تاخیر اطلاع می‌دهد",
+      blankSentence: "Die Durchsage informiert ueber eine ___.",
+      blankAnswer: "Verspaetung",
+      blankChoices: ["Verspaetung", "Vorliebe", "Bewerbung"],
+      orderedWords: ["Die", "Durchsage", "informiert", "ueber", "eine", "Verspaetung"],
+      grammarPoint: "بعد از ueber برای موضوع اطلاع‌رسانی، اسم با آکوزاتیو می‌آید: ueber eine Verspaetung.",
+      situation: "در ایستگاه باید بفهمید قطار از کدام سکو و با چه تاخیری حرکت می‌کند.",
+      miniText: "Die Durchsage sagt: Der Zug nach Hamburg faehrt heute von Gleis acht ab und hat zehn Minuten Verspaetung.",
+      miniAnswer: "قطار از سکوی هشت با ده دقیقه تاخیر حرکت می‌کند."
+    }
+  ]
+};
+
+const b1DraftUnits: Array<Omit<UnitSpec, "skills"> & { skills: Array<Pick<SkillSpec, "slug" | "title" | "description" | "focus">> }> = [
+  {
+    slug: "b1-everyday-services-technology-and-opinions",
+    title: "خدمات روزمره، تکنولوژی و نظر",
+    summary: "درباره خدمات، دستگاه‌ها، تبلیغات، شکایت و نظر شخصی با دلیل و نتیجه صحبت کنید.",
+    resourceFocus: "خدمات، تکنولوژی، تبلیغات و نظر",
+    skills: [
+      { slug: "b1-discuss-services-and-devices", title: "درباره خدمات و دستگاه‌ها حرف بزن", description: "نیاز، مشکل و کاربرد دستگاه‌ها یا خدمات روزمره را توضیح بده.", focus: "خدمات و دستگاه‌ها" },
+      { slug: "b1-make-a-complaint-politely", title: "مودبانه شکایت کن", description: "مشکل را روشن بگو، نتیجه بخواه و لحن مودبانه را حفظ کن.", focus: "شکایت" },
+      { slug: "b1-explain-consequences", title: "نتیجه و پیامد را بیان کن", description: "با deshalb، deswegen و sodass رابطه علت و نتیجه بساز.", focus: "پیامدها" },
+      { slug: "b1-respond-to-advertising", title: "به تبلیغات واکنش نشان بده", description: "تبلیغ را بفهم، مقایسه کن و نظر خودت را با دلیل بیان کن.", focus: "تبلیغات" }
+    ]
+  },
+  {
+    slug: "b1-life-changes-memories-and-manners",
+    title: "تغییرات زندگی، خاطره و رفتار مودبانه",
+    summary: "درباره تغییرات زندگی، گذشته، خوشبختی، زمان رویدادها و رفتار مناسب صحبت کنید.",
+    resourceFocus: "تغییرات، خاطره، خوشبختی و ادب",
+    skills: [
+      { slug: "b1-describe-life-changes", title: "تغییرات زندگی را توصیف کن", description: "رویدادهای مهم و تغییرات شخصی را با زمان گذشته بیان کن.", focus: "تغییرات زندگی" },
+      { slug: "b1-narrate-past-events", title: "رویدادهای گذشته را روایت کن", description: "ترتیب زمان، دلیل و نتیجه را در یک روایت کوتاه نگه دار.", focus: "روایت گذشته" },
+      { slug: "b1-talk-about-happiness-and-values", title: "درباره خوشبختی و ارزش‌ها حرف بزن", description: "تعریف شخصی از خوشبختی و چیزهای مهم زندگی را بیان کن.", focus: "خوشبختی" },
+      { slug: "b1-speak-politely-in-sensitive-moments", title: "در موقعیت حساس مودبانه حرف بزن", description: "درخواست، عذرخواهی و اصلاح اشتباه را با لحن مناسب انجام بده.", focus: "ادب" }
+    ]
+  },
+  {
+    slug: "b1-work-applications-and-workplace-conversations",
+    title: "کار، درخواست شغل و گفتگوی کاری",
+    summary: "گفتگوهای کاری، آگهی شغلی، درخواست کار، عذرخواهی و تماس تلفنی حرفه‌ای را تمرین کنید.",
+    resourceFocus: "کار، آگهی شغلی، درخواست و تماس کاری",
+    skills: [
+      { slug: "b1-understand-workplace-conversations", title: "گفتگوهای کاری را بفهم", description: "درخواست، مشکل و تصمیم را در محیط کار دنبال کن.", focus: "گفتگوی کاری" },
+      { slug: "b1-read-job-ads-and-apply", title: "آگهی شغلی را بخوان و درخواست بده", description: "نیازهای آگهی را بفهم و اطلاعات مهم درخواست را آماده کن.", focus: "درخواست شغل" },
+      { slug: "b1-apologize-and-respond-at-work", title: "در کار عذرخواهی و واکنش نشان بده", description: "اشتباه، تاخیر و راه‌حل را محترمانه بیان کن.", focus: "عذرخواهی کاری" },
+      { slug: "b1-structure-a-formal-text", title: "متن رسمی را ساختار بده", description: "ایمیل یا پیام کاری را با شروع، بدنه و پایان روشن بنویس.", focus: "ساختار متن" }
+    ]
+  },
+  {
+    slug: "b1-environment-weather-and-public-action",
+    title: "محیط زیست، آب‌وهوا و اقدام جمعی",
+    summary: "درباره محیط زیست، آب‌وهوا، مقایسه، هدف و ایده‌های عملی برای تغییر صحبت کنید.",
+    resourceFocus: "محیط زیست، آب‌وهوا، هدف و اقدام",
+    skills: [
+      { slug: "b1-compare-environmental-choices", title: "انتخاب‌های محیط‌زیستی را مقایسه کن", description: "گزینه‌ها را از نظر اثر، هزینه و امکان اجرا مقایسه کن.", focus: "مقایسه" },
+      { slug: "b1-explain-goals-with-damit", title: "هدف را با damit توضیح بده", description: "برای یک اقدام هدف روشن بساز و دلیلش را بگو.", focus: "هدف" },
+      { slug: "b1-discuss-weather-and-plans", title: "درباره آب‌وهوا و برنامه‌ها حرف بزن", description: "پیش‌بینی هوا را بفهم و برنامه مناسب پیشنهاد بده.", focus: "آب‌وهوا" },
+      { slug: "b1-present-a-public-action", title: "یک اقدام عمومی را معرفی کن", description: "ایده، هدف، زمان و نقش افراد را در یک کنش کوتاه توضیح بده.", focus: "اقدام جمعی" }
+    ]
+  },
+  {
+    slug: "b1-future-plans-expectations-and-advice",
+    title: "برنامه آینده، انتظارها و توصیه",
+    summary: "درباره برنامه‌ها، آینده، انتظارها، توصیه‌ها و متن‌های طولانی‌تر صحبت کنید.",
+    resourceFocus: "آینده، انتظار، توصیه و متن طولانی",
+    skills: [
+      { slug: "b1-talk-about-future-plans", title: "درباره برنامه آینده حرف بزن", description: "قصد، پیش‌بینی و برنامه شخصی را با Futur I بیان کن.", focus: "آینده" },
+      { slug: "b1-understand-longer-articles", title: "متن طولانی‌تر را بفهم", description: "ایده اصلی و جزئیات مهم یک متن خبری یا مجله‌ای را پیدا کن.", focus: "درک متن" },
+      { slug: "b1-give-practical-advice", title: "توصیه کاربردی بده", description: "مشکل را بفهم و چند توصیه روشن و محترمانه پیشنهاد کن.", focus: "توصیه" },
+      { slug: "b1-describe-expectations", title: "انتظارها را دقیق‌تر توصیف کن", description: "امید، نگرانی و انتظار از آینده را با جمله‌های وابسته بیان کن.", focus: "انتظارها" }
+    ]
+  },
+  {
+    slug: "b1-friendships-relationships-and-conflict",
+    title: "دوستی، رابطه و حل اختلاف",
+    summary: "دوستی‌ها، رابطه‌ها، ترتیب زمانی، اختلاف و گفتگوی حل مشکل را تمرین کنید.",
+    resourceFocus: "دوستی، رابطه، اختلاف و زمان",
+    skills: [
+      { slug: "b1-tell-a-friendship-story", title: "داستان یک دوستی را تعریف کن", description: "شروع، تغییر و لحظه‌های مهم یک دوستی را روایت کن.", focus: "داستان دوستی" },
+      { slug: "b1-order-events-in-time", title: "رویدادها را زمانی مرتب کن", description: "با nachdem، bevor، waehrend و seitdem ترتیب اتفاق‌ها را بساز.", focus: "ترتیب زمانی" },
+      { slug: "b1-talk-through-conflict", title: "درباره اختلاف گفتگو کن", description: "مشکل را بگو، احساس را بیان کن و پیشنهاد آشتی بده.", focus: "اختلاف" },
+      { slug: "b1-present-a-couple-or-friendship", title: "یک رابطه یا دوستی را معرفی کن", description: "ویژگی‌ها، تاریخچه و دلیل اهمیت یک رابطه را توضیح بده.", focus: "معرفی رابطه" }
+    ]
+  },
+  {
+    slug: "b1-health-habits-music-and-learning",
+    title: "سلامت، عادت‌ها، موسیقی و یادگیری",
+    summary: "کمک، هشدار، عادت‌ها، احساسات، یادگیری واژه و اطلاعات سلامت را دنبال کنید.",
+    resourceFocus: "سلامت، عادت، موسیقی و یادگیری",
+    skills: [
+      { slug: "b1-offer-and-refuse-help", title: "کمک پیشنهاد بده یا رد کن", description: "کمک را بپذیر، رد کن یا جایگزین محترمانه پیشنهاد بده.", focus: "کمک" },
+      { slug: "b1-warn-and-give-health-advice", title: "هشدار و توصیه سلامتی بده", description: "خطر، عادت و توصیه را با ساختارهای دقیق‌تر بیان کن.", focus: "سلامت" },
+      { slug: "b1-discuss-music-and-feelings", title: "درباره موسیقی و احساس حرف بزن", description: "تاثیر موسیقی و احساس شخصی را روشن توضیح بده.", focus: "موسیقی" },
+      { slug: "b1-share-learning-strategies", title: "راهبرد یادگیری را به اشتراک بگذار", description: "روش حفظ واژه، تمرین و پیشرفت را برای دیگران توضیح بده.", focus: "یادگیری" }
+    ]
+  },
+  {
+    slug: "b1-art-culture-and-description",
+    title: "هنر، فرهنگ و توصیف دقیق",
+    summary: "درباره هنر، موزه، تئاتر، آواز، توصیف دقیق و پرسیدن دوباره تمرین کنید.",
+    resourceFocus: "هنر، فرهنگ، توصیف و پرسش",
+    skills: [
+      { slug: "b1-talk-about-art-and-images", title: "درباره هنر و تصویر حرف بزن", description: "یک اثر یا تصویر را توصیف کن و برداشتت را بگو.", focus: "هنر" },
+      { slug: "b1-ask-follow-up-questions", title: "سوال پیگیری بپرس", description: "وقتی چیزی روشن نیست، دقیق‌تر و مودبانه‌تر بپرس.", focus: "پیگیری" },
+      { slug: "b1-describe-people-and-things-precisely", title: "آدم‌ها و چیزها را دقیق توصیف کن", description: "جزئیات، ویژگی‌ها و مقایسه‌های کوتاه را در توصیف نگه دار.", focus: "توصیف دقیق" },
+      { slug: "b1-understand-cultural-programs", title: "برنامه فرهنگی را بفهم", description: "زمان، مکان، موضوع و شرایط یک برنامه فرهنگی را دنبال کن.", focus: "برنامه فرهنگی" }
+    ]
+  },
+  {
+    slug: "b1-community-institutions-and-social-engagement",
+    title: "جامعه، نهادها و مشارکت اجتماعی",
+    summary: "درباره ارزش‌های اجتماعی، پروژه‌ها، نهادهای شهری، اروپا و ارائه کوتاه صحبت کنید.",
+    resourceFocus: "جامعه، نهادها، پروژه و ارائه",
+    skills: [
+      { slug: "b1-discuss-social-engagement", title: "درباره مشارکت اجتماعی حرف بزن", description: "یک فعالیت اجتماعی و دلیل اهمیت آن را توضیح بده.", focus: "مشارکت اجتماعی" },
+      { slug: "b1-describe-processes-with-passive", title: "فرایندها را با مجهول توصیف کن", description: "بگو چه کاری انجام می‌شود، بدون اینکه همیشه فاعل مهم باشد.", focus: "مجهول" },
+      { slug: "b1-understand-institutions", title: "نهادهای شهری را بفهم", description: "وظیفه، خدمات و نقش یک نهاد شهری یا عمومی را دنبال کن.", focus: "نهادها" },
+      { slug: "b1-give-a-short-presentation", title: "ارائه کوتاه بده", description: "موضوع، ساختار، مثال و پایان یک ارائه کوتاه را آماده کن.", focus: "ارائه" }
+    ]
+  },
+  {
+    slug: "b1-city-life-mobility-and-written-communication",
+    title: "زندگی شهری، رفت‌وآمد و نوشتار",
+    summary: "زندگی در شهر، حمل‌ونقل، شهرهای دوست‌داشتنی، ایمیل و برنامه بازدید را تمرین کنید.",
+    resourceFocus: "شهر، رفت‌وآمد، ایمیل و برنامه بازدید",
+    skills: [
+      { slug: "b1-discuss-city-life", title: "درباره زندگی شهری بحث کن", description: "مزیت‌ها، مشکل‌ها و تجربه زندگی در شهر را بیان کن.", focus: "زندگی شهری" },
+      { slug: "b1-understand-mobility-information", title: "اطلاعات رفت‌وآمد را بفهم", description: "مسیر، وسیله، تغییر و پیشنهاد حمل‌ونقل را دنبال کن.", focus: "رفت‌وآمد" },
+      { slug: "b1-write-to-different-recipients", title: "برای مخاطب‌های مختلف بنویس", description: "لحن و جزئیات پیام را برای دوست، اداره یا میزبان تنظیم کن.", focus: "نوشتار" },
+      { slug: "b1-plan-a-city-visit", title: "بازدید شهری را برنامه‌ریزی کن", description: "برنامه، زمان‌بندی و دلیل انتخاب مکان‌ها را آماده کن.", focus: "برنامه بازدید" }
+    ]
+  },
+  {
+    slug: "b1-money-banking-and-global-choices",
+    title: "پول، بانک و انتخاب‌های جهانی",
+    summary: "گفتگوهای بانکی، اطلاعات وب‌سایت، بحث درباره پول، جهانی‌شدن و موقعیت‌های دشوار را دنبال کنید.",
+    resourceFocus: "پول، بانک، جهانی‌شدن و بحث",
+    skills: [
+      { slug: "b1-handle-bank-conversations", title: "گفتگوی بانکی را مدیریت کن", description: "نیاز، سوال و اطلاعات حساب یا کارت را در بانک بیان کن.", focus: "بانک" },
+      { slug: "b1-understand-web-information", title: "اطلاعات وب‌سایت را بفهم", description: "جزئیات مهم، شرط‌ها و اقدام بعدی را از متن آنلاین بیرون بکش.", focus: "وب‌سایت" },
+      { slug: "b1-express-arguments-about-money", title: "درباره پول استدلال کن", description: "نظر، دلیل مخالف و مثال را در بحث مالی بیان کن.", focus: "استدلال" },
+      { slug: "b1-describe-difficult-situations", title: "موقعیت دشوار را توصیف کن", description: "مسئله، احساس، انتخاب‌ها و نتیجه احتمالی را توضیح بده.", focus: "موقعیت دشوار" }
+    ]
+  }
+];
+
+const b1UnitLanguage = [
+  {
+    word: "die Vorliebe",
+    meaning: "ترجیح / علاقه شخصی",
+    phrase: "Ich habe Lust, ans Meer zu fahren.",
+    phraseMeaning: "دلم می‌خواهد به دریا بروم",
+    blankSentence: "Ich habe Lust, ans Meer ___ fahren.",
+    blankAnswer: "zu",
+    orderedWords: ["Ich", "habe", "Lust", "ans", "Meer", "zu", "fahren"],
+    grammarPoint: "بعد از Lust haben می‌توان از zu + مصدر استفاده کرد.",
+    miniAnswer: "گوینده سفر کنار دریا را ترجیح می‌دهد."
+  },
+  {
+    word: "die Reklamation",
+    meaning: "شکایت از کالا یا خدمت",
+    phrase: "Ich reklamiere das Geraet, weil es nicht funktioniert.",
+    phraseMeaning: "از دستگاه شکایت می‌کنم چون کار نمی‌کند",
+    blankSentence: "Ich reklamiere das Geraet, ___ es nicht funktioniert.",
+    blankAnswer: "weil",
+    orderedWords: ["Ich", "reklamiere", "das", "Geraet", "weil", "es", "nicht", "funktioniert"],
+    grammarPoint: "در جمله فرعی با weil فعل صرف‌شده در پایان جمله می‌آید.",
+    miniAnswer: "دستگاه کار نمی‌کند و باید پیگیری شود."
+  },
+  {
+    word: "die Veraenderung",
+    meaning: "تغییر",
+    phrase: "Frueher wohnte ich klein, heute wohne ich zentral.",
+    phraseMeaning: "قبلا در خانه کوچک زندگی می‌کردم، امروز مرکزی زندگی می‌کنم",
+    blankSentence: "___ wohnte ich klein, heute wohne ich zentral.",
+    blankAnswer: "Frueher",
+    orderedWords: ["Frueher", "wohnte", "ich", "in", "einer", "kleinen", "Wohnung"],
+    grammarPoint: "برای روایت گذشته در B1 از Präteritum فعل‌های رایج مثل wohnte استفاده می‌شود.",
+    miniAnswer: "زندگی گوینده نسبت به گذشته تغییر کرده است."
+  },
+  {
+    word: "die Bewerbung",
+    meaning: "درخواست شغل",
+    phrase: "Wenn ich mehr Erfahrung haette, wuerde ich mich bewerben.",
+    phraseMeaning: "اگر تجربه بیشتری داشتم، درخواست می‌دادم",
+    blankSentence: "Wenn ich mehr Erfahrung haette, ___ ich mich bewerben.",
+    blankAnswer: "wuerde",
+    orderedWords: ["Ich", "wuerde", "mich", "gern", "bei", "Ihnen", "bewerben"],
+    grammarPoint: "Konjunktiv II با würde برای موقعیت‌های فرضی و مودبانه کاربرد دارد.",
+    miniAnswer: "گوینده درباره درخواست شغل به شکل مودبانه صحبت می‌کند."
+  },
+  {
+    word: "der Umweltschutz",
+    meaning: "حفاظت از محیط زیست",
+    phrase: "Wir sparen Strom, damit die Umwelt geschuetzt wird.",
+    phraseMeaning: "برق صرفه‌جویی می‌کنیم تا محیط زیست حفظ شود",
+    blankSentence: "Wir sparen Strom, ___ die Umwelt geschuetzt wird.",
+    blankAnswer: "damit",
+    orderedWords: ["Wir", "sparen", "Strom", "damit", "die", "Umwelt", "geschuetzt", "wird"],
+    grammarPoint: "با damit هدف یک عمل را بیان می‌کنیم و فعل در پایان جمله فرعی می‌آید.",
+    miniAnswer: "هدف عمل، حفاظت از محیط زیست است."
+  },
+  {
+    word: "die Zukunftsprognose",
+    meaning: "پیش‌بینی آینده",
+    phrase: "In Zukunft werden viele Menschen flexibler arbeiten.",
+    phraseMeaning: "در آینده افراد زیادی انعطاف‌پذیرتر کار خواهند کرد",
+    blankSentence: "In Zukunft ___ viele Menschen flexibler arbeiten.",
+    blankAnswer: "werden",
+    orderedWords: ["In", "Zukunft", "werden", "viele", "Menschen", "flexibler", "arbeiten"],
+    grammarPoint: "Futur I با werden + مصدر برای پیش‌بینی یا برنامه آینده استفاده می‌شود.",
+    miniAnswer: "متن درباره یک تغییر احتمالی در آینده صحبت می‌کند."
+  },
+  {
+    word: "die Freundschaft",
+    meaning: "دوستی",
+    phrase: "Nachdem wir gestritten hatten, haben wir ruhig gesprochen.",
+    phraseMeaning: "بعد از اینکه بحث کرده بودیم، آرام صحبت کردیم",
+    blankSentence: "___ wir gestritten hatten, haben wir ruhig gesprochen.",
+    blankAnswer: "Nachdem",
+    orderedWords: ["Nachdem", "wir", "gestritten", "hatten", "haben", "wir", "ruhig", "gesprochen"],
+    grammarPoint: "برای ترتیب دو رویداد گذشته می‌توان از nachdem و Plusquamperfekt استفاده کرد.",
+    miniAnswer: "دو نفر بعد از اختلاف دوباره گفتگو کرده‌اند."
+  },
+  {
+    word: "die Gewohnheit",
+    meaning: "عادت",
+    phrase: "Du brauchst nicht jeden Tag zwei Stunden zu lernen.",
+    phraseMeaning: "لازم نیست هر روز دو ساعت درس بخوانی",
+    blankSentence: "Du brauchst nicht jeden Tag zwei Stunden ___ lernen.",
+    blankAnswer: "zu",
+    orderedWords: ["Du", "brauchst", "nicht", "jeden", "Tag", "zu", "lernen"],
+    grammarPoint: "ساختار nicht brauchen + zu + مصدر برای گفتن لازم نبودن کاری استفاده می‌شود.",
+    miniAnswer: "گوینده فشار یادگیری را کمتر می‌کند."
+  },
+  {
+    word: "die Beschreibung",
+    meaning: "توصیف",
+    phrase: "Das ist ein Bild, das mir sehr gut gefaellt.",
+    phraseMeaning: "این تصویری است که خیلی دوستش دارم",
+    blankSentence: "Das ist ein Bild, ___ mir sehr gut gefaellt.",
+    blankAnswer: "das",
+    orderedWords: ["Das", "ist", "ein", "Bild", "das", "mir", "gut", "gefaellt"],
+    grammarPoint: "جمله موصولی با das اطلاعات دقیق‌تری درباره اسم خنثی می‌دهد.",
+    miniAnswer: "گوینده یک تصویر را دقیق‌تر معرفی می‌کند."
+  },
+  {
+    word: "das Engagement",
+    meaning: "مشارکت اجتماعی",
+    phrase: "In unserem Projekt wird alten Menschen geholfen.",
+    phraseMeaning: "در پروژه ما به افراد مسن کمک می‌شود",
+    blankSentence: "In unserem Projekt ___ alten Menschen geholfen.",
+    blankAnswer: "wird",
+    orderedWords: ["In", "unserem", "Projekt", "wird", "alten", "Menschen", "geholfen"],
+    grammarPoint: "Passiv Präsens برای توصیف فرایند یا کار انجام‌شده استفاده می‌شود.",
+    miniAnswer: "پروژه برای کمک اجتماعی طراحی شده است."
+  },
+  {
+    word: "die Mobilitaet",
+    meaning: "رفت‌وآمد / جابه‌جایی",
+    phrase: "In der Stadt gibt es viele Wege, mit denen man schnell ankommt.",
+    phraseMeaning: "در شهر راه‌های زیادی هست که با آن‌ها سریع می‌رسیم",
+    blankSentence: "In der Stadt gibt es viele Wege, mit ___ man schnell ankommt.",
+    blankAnswer: "denen",
+    orderedWords: ["In", "der", "Stadt", "kommt", "man", "mit", "der", "Bahn", "schnell", "an"],
+    grammarPoint: "در جمله موصولی بعد از mit از ضمیر موصولی داتیو جمع denen استفاده می‌شود.",
+    miniAnswer: "متن درباره رفت‌وآمد در شهر صحبت می‌کند."
+  },
+  {
+    word: "die Globalisierung",
+    meaning: "جهانی‌شدن",
+    phrase: "Je mehr wir vergleichen, desto bewusster entscheiden wir.",
+    phraseMeaning: "هرچه بیشتر مقایسه کنیم، آگاهانه‌تر تصمیم می‌گیریم",
+    blankSentence: "Je mehr wir vergleichen, ___ bewusster entscheiden wir.",
+    blankAnswer: "desto",
+    orderedWords: ["Je", "mehr", "wir", "vergleichen", "desto", "bewusster", "entscheiden", "wir"],
+    grammarPoint: "ساختار je ... desto برای بیان رابطه دو تغییر استفاده می‌شود.",
+    miniAnswer: "مقایسه بیشتر به تصمیم آگاهانه‌تر کمک می‌کند."
+  }
+] satisfies Array<Pick<SkillSpec, "word" | "meaning" | "phrase" | "phraseMeaning" | "blankSentence" | "blankAnswer" | "orderedWords" | "grammarPoint" | "miniAnswer">>;
+
+function makeB1SkillSpec(
+  unit: Omit<UnitSpec, "skills">,
+  skill: Pick<SkillSpec, "slug" | "title" | "description" | "focus">,
+  unitIndex: number
+): SkillSpec {
+  const language = b1UnitLanguage[unitIndex];
+
+  return {
+    ...skill,
+    ...language,
+    blankChoices: [language.blankAnswer, "weil", "obwohl"],
+    situation: `در موضوع ${unit.resourceFocus} باید درباره «${skill.focus}» دقیق و روشن صحبت کنید.`,
+    miniText: `Mina arbeitet an ${skill.focus}. ${language.phrase} Sie notiert die wichtigsten Informationen fuer den Kurs.`,
+    miniAnswer: `${language.miniAnswer} این تمرین به «${skill.focus}» مربوط است.`
+  };
+}
+
+function buildB1Units(): SampleUnit[] {
+  const publishedUnitSpecs: UnitSpec[] = [
+    b1UnitOneSpec,
+    ...b1DraftUnits.map((unit, unitIndex) => ({
+      slug: unit.slug,
+      title: unit.title,
+      summary: unit.summary,
+      resourceFocus: unit.resourceFocus,
+      skills: unit.skills.map((skill) =>
+        makeB1SkillSpec(unit, skill, unitIndex + 1)
+      )
+    }))
+  ];
+  const units = publishedUnitSpecs.map((unit) => {
+    const skills = unit.skills.map((skill) =>
+    makeSkill(skill, "PUBLISHED", makeA2SkillQuestions)
+    );
+
+    return {
+      slug: unit.slug,
+      title: unit.title,
+      summary: unit.summary,
+      skills: [...skills, makeA2Checkpoint(unit, skills, "PUBLISHED", "B1")]
+    };
+  });
+
+  units[units.length - 1].skills.push(makeFinalTestForLevel("B1", units));
+
+  return units;
+}
+
+const b2UnitScaffolds: Array<Omit<UnitSpec, "skills"> & { skills: Array<Pick<SkillSpec, "slug" | "title" | "description" | "focus">> }> = [
+  {
+    slug: "b2-work-careers-and-professional-communication",
+    title: "کار، مسیر شغلی و ارتباط حرفه‌ای",
+    summary: "درباره مسیر شغلی، مسئولیت‌ها، همکاری، درخواست رسمی و بازخورد حرفه‌ای با دقت B2 صحبت کنید.",
+    resourceFocus: "کار، مسیر شغلی، همکاری و نوشتار رسمی",
+    skills: [
+      { slug: "b2-discuss-career-paths", title: "مسیر شغلی را تحلیل کن", description: "تجربه، هدف، تغییر شغل و اولویت‌های کاری را با دلیل و مقایسه توضیح بده.", focus: "مسیر شغلی" },
+      { slug: "b2-negotiate-workplace-responsibilities", title: "مسئولیت کاری را مذاکره کن", description: "وظیفه، زمان‌بندی، محدودیت و راه‌حل را در گفتگوی کاری روشن بیان کن.", focus: "مسئولیت کاری" },
+      { slug: "b2-write-a-formal-request", title: "درخواست رسمی بنویس", description: "درخواست، زمینه، دلیل و انتظار پاسخ را در متن رسمی منسجم کن.", focus: "درخواست رسمی" },
+      { slug: "b2-give-and-receive-feedback", title: "بازخورد حرفه‌ای بده و بگیر", description: "نقد سازنده، پیشنهاد بهبود و واکنش محترمانه را تمرین کن.", focus: "بازخورد" }
+    ]
+  },
+  {
+    slug: "b2-media-digital-life-and-public-opinion",
+    title: "رسانه، زندگی دیجیتال و افکار عمومی",
+    summary: "خبر، شبکه اجتماعی، حریم خصوصی، تبلیغات و اثر رسانه بر نظر عمومی را بررسی کنید.",
+    resourceFocus: "رسانه، خبر، حریم خصوصی و افکار عمومی",
+    skills: [
+      { slug: "b2-evaluate-news-sources", title: "منبع خبری را ارزیابی کن", description: "اعتبار، زاویه دید و جزئیات مهم خبر را تشخیص بده.", focus: "منبع خبری" },
+      { slug: "b2-discuss-social-media-habits", title: "عادت‌های شبکه اجتماعی را بحث کن", description: "فایده، خطر، عادت و مرزهای سالم استفاده دیجیتال را توضیح بده.", focus: "شبکه اجتماعی" },
+      { slug: "b2-argue-about-data-privacy", title: "درباره حریم داده استدلال کن", description: "نگرانی، حق کاربر و مسئولیت شرکت‌ها را با ساختار استدلالی بیان کن.", focus: "حریم داده" },
+      { slug: "b2-analyze-advertising-effects", title: "اثر تبلیغات را تحلیل کن", description: "پیام پنهان، گروه هدف و واکنش شخصی به تبلیغ را دقیق‌تر توضیح بده.", focus: "اثر تبلیغات" }
+    ]
+  },
+  {
+    slug: "b2-society-politics-and-civic-participation",
+    title: "جامعه، سیاست و مشارکت شهروندی",
+    summary: "درباره قانون، حقوق، مشارکت، بحث عمومی و تصمیم‌های اجتماعی موضع دقیق بگیرید.",
+    resourceFocus: "جامعه، حقوق، سیاست و مشارکت",
+    skills: [
+      { slug: "b2-explain-civic-rights", title: "حقوق شهروندی را توضیح بده", description: "حق، مسئولیت و مثال اجتماعی را با زبان روشن B2 بیان کن.", focus: "حقوق شهروندی" },
+      { slug: "b2-discuss-public-decisions", title: "تصمیم عمومی را بحث کن", description: "مزیت، عیب، ذی‌نفع و پیامد یک تصمیم عمومی را بررسی کن.", focus: "تصمیم عمومی" },
+      { slug: "b2-present-a-social-initiative", title: "یک ابتکار اجتماعی را معرفی کن", description: "هدف، مشکل، گروه مخاطب و اثر احتمالی یک پروژه اجتماعی را ارائه بده.", focus: "ابتکار اجتماعی" },
+      { slug: "b2-take-a-position-in-a-debate", title: "در بحث موضع بگیر", description: "نظر، دلیل، مثال و پاسخ به مخالفت را منظم بیان کن.", focus: "موضع‌گیری" }
+    ]
+  },
+  {
+    slug: "b2-environment-consumption-and-sustainability",
+    title: "محیط زیست، مصرف و پایداری",
+    summary: "مصرف، انرژی، آب‌وهوا، حمل‌ونقل و مسئولیت فردی یا جمعی را تحلیل کنید.",
+    resourceFocus: "محیط زیست، مصرف، انرژی و پایداری",
+    skills: [
+      { slug: "b2-compare-sustainable-choices", title: "انتخاب‌های پایدار را مقایسه کن", description: "گزینه‌های مصرفی را از نظر اثر، هزینه و واقع‌بینی مقایسه کن.", focus: "انتخاب پایدار" },
+      { slug: "b2-discuss-climate-responsibility", title: "مسئولیت اقلیمی را بحث کن", description: "نقش فرد، دولت و شرکت‌ها را در مسئله اقلیم توضیح بده.", focus: "مسئولیت اقلیمی" },
+      { slug: "b2-explain-energy-saving-measures", title: "راهکار صرفه‌جویی انرژی را توضیح بده", description: "اقدام، دلیل، شرط و نتیجه صرفه‌جویی را به هم وصل کن.", focus: "صرفه‌جویی انرژی" },
+      { slug: "b2-write-an-opinion-on-consumption", title: "نظر درباره مصرف بنویس", description: "متن کوتاه استدلالی درباره خرید، نیاز و عادت مصرفی آماده کن.", focus: "نظر درباره مصرف" }
+    ]
+  },
+  {
+    slug: "b2-health-psychology-and-wellbeing",
+    title: "سلامت، روان‌شناسی و کیفیت زندگی",
+    summary: "درباره سلامت جسم و روان، استرس، عادت‌ها، توصیه تخصصی و تعادل زندگی صحبت کنید.",
+    resourceFocus: "سلامت، استرس، عادت و کیفیت زندگی",
+    skills: [
+      { slug: "b2-describe-stress-and-causes", title: "استرس و علت‌ها را توصیف کن", description: "نشانه، علت، پیامد و راه‌حل استرس را دقیق بیان کن.", focus: "استرس" },
+      { slug: "b2-discuss-healthy-routines", title: "عادت سالم را بحث کن", description: "خواب، ورزش، تغذیه و مانع‌های تغییر عادت را توضیح بده.", focus: "عادت سالم" },
+      { slug: "b2-understand-medical-advice", title: "توصیه پزشکی را بفهم", description: "توصیه، هشدار، شرط و اقدام بعدی در متن سلامت را دنبال کن.", focus: "توصیه پزشکی" },
+      { slug: "b2-argue-for-work-life-balance", title: "برای تعادل زندگی استدلال کن", description: "نیاز، محدودیت، اولویت و پیشنهاد عملی برای تعادل کار و زندگی بساز.", focus: "تعادل زندگی" }
+    ]
+  },
+  {
+    slug: "b2-education-research-and-lifelong-learning",
+    title: "آموزش، پژوهش و یادگیری مادام‌العمر",
+    summary: "درباره آموزش، دانشگاه، پژوهش، روش یادگیری و ارزیابی منابع علمی صحبت کنید.",
+    resourceFocus: "آموزش، پژوهش، دانشگاه و روش یادگیری",
+    skills: [
+      { slug: "b2-discuss-study-programs", title: "رشته و برنامه تحصیلی را بحث کن", description: "هدف، شرط پذیرش، مزیت و چالش یک مسیر تحصیلی را توضیح بده.", focus: "برنامه تحصیلی" },
+      { slug: "b2-summarize-research-findings", title: "یافته پژوهشی را خلاصه کن", description: "موضوع، روش، نتیجه و محدودیت یک پژوهش ساده را بیان کن.", focus: "یافته پژوهشی" },
+      { slug: "b2-evaluate-learning-strategies", title: "راهبرد یادگیری را ارزیابی کن", description: "روش‌ها را از نظر اثر، زمان و تناسب با هدف مقایسه کن.", focus: "راهبرد یادگیری" },
+      { slug: "b2-participate-in-a-seminar", title: "در سمینار مشارکت کن", description: "سوال، موافقت، مخالفت و جمع‌بندی کوتاه در بحث آموزشی را تمرین کن.", focus: "مشارکت در سمینار" }
+    ]
+  },
+  {
+    slug: "b2-culture-literature-and-identity",
+    title: "فرهنگ، ادبیات و هویت",
+    summary: "اثر فرهنگی، داستان، هویت، مهاجرت و برداشت شخصی از متن یا هنر را تحلیل کنید.",
+    resourceFocus: "فرهنگ، ادبیات، هویت و مهاجرت",
+    skills: [
+      { slug: "b2-interpret-a-literary-excerpt", title: "بخشی از متن ادبی را تفسیر کن", description: "فضا، شخصیت، پیام و برداشت خودت از یک متن کوتاه را بیان کن.", focus: "تفسیر ادبی" },
+      { slug: "b2-discuss-cultural-identity", title: "هویت فرهنگی را بحث کن", description: "تجربه، زبان، تعلق و تغییر هویت را با مثال توضیح بده.", focus: "هویت فرهنگی" },
+      { slug: "b2-describe-artistic-impressions", title: "برداشت هنری را توصیف کن", description: "اثر هنری، احساس، جزئیات و نظر شخصی را منظم بیان کن.", focus: "برداشت هنری" },
+      { slug: "b2-present-a-book-or-film", title: "کتاب یا فیلمی را معرفی کن", description: "موضوع، ساختار، شخصیت‌ها و توصیه خودت را در ارائه کوتاه بیاور.", focus: "معرفی اثر" }
+    ]
+  },
+  {
+    slug: "b2-economy-money-and-consumer-rights",
+    title: "اقتصاد، پول و حقوق مصرف‌کننده",
+    summary: "بودجه، قرارداد، خرید، شکایت، خدمات مالی و تصمیم‌های اقتصادی را دقیق‌تر تمرین کنید.",
+    resourceFocus: "اقتصاد، قرارداد، مصرف‌کننده و خدمات مالی",
+    skills: [
+      { slug: "b2-discuss-personal-budgeting", title: "بودجه شخصی را بحث کن", description: "درآمد، هزینه، اولویت و برنامه مالی را واقع‌بینانه توضیح بده.", focus: "بودجه شخصی" },
+      { slug: "b2-understand-contract-conditions", title: "شرایط قرارداد را بفهم", description: "مدت، هزینه، حق فسخ و بندهای مهم قرارداد را تشخیص بده.", focus: "شرایط قرارداد" },
+      { slug: "b2-make-a-consumer-complaint", title: "شکایت مصرف‌کننده بنویس", description: "مشکل، مدرک، انتظار و مهلت پاسخ را در متن رسمی بیان کن.", focus: "شکایت مصرف‌کننده" },
+      { slug: "b2-compare-financial-services", title: "خدمات مالی را مقایسه کن", description: "کارمزد، خطر، فایده و نیاز شخصی را برای انتخاب مالی بسنج.", focus: "خدمات مالی" }
+    ]
+  },
+  {
+    slug: "b2-science-technology-and-innovation",
+    title: "علم، فناوری و نوآوری",
+    summary: "درباره نوآوری، هوش مصنوعی، پژوهش، اخلاق فناوری و تغییرهای آینده استدلال کنید.",
+    resourceFocus: "علم، فناوری، نوآوری و اخلاق",
+    skills: [
+      { slug: "b2-explain-a-technical-process", title: "فرایند فنی را توضیح بده", description: "مراحل، هدف و نتیجه یک فرایند فنی را با ترتیب منطقی بیان کن.", focus: "فرایند فنی" },
+      { slug: "b2-discuss-ai-and-society", title: "هوش مصنوعی و جامعه را بحث کن", description: "فرصت، خطر، مسئولیت و مثال روزمره فناوری هوشمند را بررسی کن.", focus: "هوش مصنوعی" },
+      { slug: "b2-evaluate-an-innovation", title: "یک نوآوری را ارزیابی کن", description: "فایده، محدودیت، هزینه و اثر اجتماعی یک ایده نو را بسنج.", focus: "نوآوری" },
+      { slug: "b2-write-about-digital-ethics", title: "درباره اخلاق دیجیتال بنویس", description: "حریم، عدالت، شفافیت و مسئولیت را در متن استدلالی کوتاه بیاور.", focus: "اخلاق دیجیتال" }
+    ]
+  },
+  {
+    slug: "b2-migration-housing-and-bureaucracy",
+    title: "مهاجرت، مسکن و اداره‌ها",
+    summary: "موقعیت‌های مهاجرت، قرارداد اجاره، نامه اداری، وقت گرفتن و حل مشکل رسمی را تمرین کنید.",
+    resourceFocus: "مهاجرت، مسکن، اداره و نامه رسمی",
+    skills: [
+      { slug: "b2-describe-migration-experiences", title: "تجربه مهاجرت را توصیف کن", description: "دلیل، چالش، سازگاری و احساس شخصی را دقیق و محترمانه بیان کن.", focus: "تجربه مهاجرت" },
+      { slug: "b2-understand-rental-ads", title: "آگهی اجاره را بفهم", description: "شرط‌ها، هزینه‌ها، موقعیت و نکته‌های مهم آگهی مسکن را تشخیص بده.", focus: "آگهی اجاره" },
+      { slug: "b2-handle-an-office-appointment", title: "وقت اداری را مدیریت کن", description: "درخواست وقت، توضیح مشکل و پرسیدن مدارک لازم را تمرین کن.", focus: "وقت اداری" },
+      { slug: "b2-write-an-official-email", title: "ایمیل اداری بنویس", description: "موضوع، شرح مسئله، درخواست و پیوست‌ها را در لحن رسمی مرتب کن.", focus: "ایمیل اداری" }
+    ]
+  },
+  {
+    slug: "b2-travel-globalization-and-intercultural-communication",
+    title: "سفر، جهانی‌شدن و ارتباط بین‌فرهنگی",
+    summary: "سفر پیچیده‌تر، فرهنگ کاری، سوءتفاهم، جهانی‌شدن و ارتباط بین‌فرهنگی را تحلیل کنید.",
+    resourceFocus: "سفر، جهانی‌شدن، فرهنگ و ارتباط",
+    skills: [
+      { slug: "b2-plan-complex-travel", title: "سفر پیچیده را برنامه‌ریزی کن", description: "مسیر، محدودیت، جایگزین و اولویت‌های چند نفر را هماهنگ کن.", focus: "برنامه سفر پیچیده" },
+      { slug: "b2-discuss-global-connections", title: "پیوندهای جهانی را بحث کن", description: "زنجیره تولید، ارتباط کشورها و اثر انتخاب‌های جهانی را توضیح بده.", focus: "پیوند جهانی" },
+      { slug: "b2-manage-intercultural-misunderstandings", title: "سوءتفاهم بین‌فرهنگی را مدیریت کن", description: "برداشت متفاوت، توضیح محترمانه و راه‌حل ارتباطی بساز.", focus: "سوءتفاهم بین‌فرهنگی" },
+      { slug: "b2-present-cultural-comparisons", title: "مقایسه فرهنگی ارائه بده", description: "شباهت، تفاوت، مثال و احتیاط در تعمیم را در ارائه کوتاه رعایت کن.", focus: "مقایسه فرهنگی" }
+    ]
+  },
+  {
+    slug: "b2-exam-strategies-argumentation-and-final-review",
+    title: "راهبرد آزمون، استدلال و مرور نهایی",
+    summary: "خلاصه‌نویسی، استدلال شفاهی و نوشتاری، مدیریت زمان و مرور تجمعی B2 را کامل کنید.",
+    resourceFocus: "آزمون، استدلال، خلاصه و مرور نهایی",
+    skills: [
+      { slug: "b2-summarize-complex-texts", title: "متن پیچیده را خلاصه کن", description: "ایده اصلی، جزئیات ضروری و حذف اطلاعات فرعی را تمرین کن.", focus: "خلاصه متن" },
+      { slug: "b2-structure-written-arguments", title: "استدلال نوشتاری را ساختار بده", description: "مقدمه، دلیل، مثال، ضدنظر و نتیجه را منسجم بنویس.", focus: "استدلال نوشتاری" },
+      { slug: "b2-manage-speaking-exam-tasks", title: "وظیفه گفتاری آزمون را مدیریت کن", description: "زمان، ساختار پاسخ، تعامل و جمع‌بندی در گفتار آزمونی را تمرین کن.", focus: "گفتار آزمونی" },
+      { slug: "b2-review-recurring-grammar-patterns", title: "الگوهای گرامری پرتکرار را مرور کن", description: "ساختارهای وابسته، مجهول، Konjunktiv و Nominalisierung را در کاربرد مرور کن.", focus: "مرور گرامر" }
+    ]
+  }
+];
+
+const b2UnitLanguage = [
+  {
+    word: "die Berufserfahrung",
+    meaning: "تجربه شغلی",
+    phrase: "Je mehr Berufserfahrung ich sammle, desto klarer werden meine Ziele.",
+    phraseMeaning: "هرچه تجربه شغلی بیشتری جمع کنم، هدف‌هایم روشن‌تر می‌شوند",
+    blankSentence: "Je mehr Berufserfahrung ich sammle, ___ klarer werden meine Ziele.",
+    blankAnswer: "desto",
+    orderedWords: ["Je", "mehr", "Berufserfahrung", "ich", "sammle", "desto", "klarer", "werden", "meine", "Ziele"],
+    grammarPoint: "ساختار je ... desto برای بیان رابطه دو تغییر در استدلال B2 کاربرد دارد.",
+    miniAnswer: "گوینده رابطه بین تجربه شغلی و هدف‌های روشن‌تر را توضیح می‌دهد."
+  },
+  {
+    word: "die Glaubwuerdigkeit",
+    meaning: "اعتبار / قابل اعتماد بودن",
+    phrase: "Bevor ich einen Artikel teile, pruefe ich seine Glaubwuerdigkeit.",
+    phraseMeaning: "قبل از اینکه مقاله‌ای را به اشتراک بگذارم، اعتبارش را بررسی می‌کنم",
+    blankSentence: "Bevor ich einen Artikel teile, ___ ich seine Glaubwuerdigkeit.",
+    blankAnswer: "pruefe",
+    orderedWords: ["Bevor", "ich", "einen", "Artikel", "teile", "pruefe", "ich", "seine", "Glaubwuerdigkeit"],
+    grammarPoint: "در جمله فرعی با bevor فعل صرف‌شده در پایان بخش فرعی می‌آید.",
+    miniAnswer: "متن درباره ارزیابی منبع پیش از انتشار آن است."
+  },
+  {
+    word: "die Beteiligung",
+    meaning: "مشارکت",
+    phrase: "Anstatt nur zu kritisieren, beteiligen sich viele Menschen an lokalen Projekten.",
+    phraseMeaning: "به جای فقط انتقاد کردن، افراد زیادی در پروژه‌های محلی مشارکت می‌کنند",
+    blankSentence: "Anstatt nur zu kritisieren, ___ sich viele Menschen an lokalen Projekten.",
+    blankAnswer: "beteiligen",
+    orderedWords: ["Anstatt", "nur", "zu", "kritisieren", "beteiligen", "sich", "viele", "Menschen"],
+    grammarPoint: "Anstatt ... zu + Infinitiv برای بیان جایگزین یک رفتار به کار می‌رود.",
+    miniAnswer: "تمرکز جمله روی مشارکت فعال به جای انتقاد صرف است."
+  },
+  {
+    word: "die Nachhaltigkeit",
+    meaning: "پایداری",
+    phrase: "Indem wir weniger verschwenden, handeln wir nachhaltiger.",
+    phraseMeaning: "با کمتر هدر دادن، پایدارتر عمل می‌کنیم",
+    blankSentence: "___ wir weniger verschwenden, handeln wir nachhaltiger.",
+    blankAnswer: "Indem",
+    orderedWords: ["Indem", "wir", "weniger", "verschwenden", "handeln", "wir", "nachhaltiger"],
+    grammarPoint: "Indem روش یا وسیله رسیدن به نتیجه را معرفی می‌کند.",
+    miniAnswer: "جمله راه رسیدن به رفتار پایدارتر را نشان می‌دهد."
+  },
+  {
+    word: "die Belastung",
+    meaning: "فشار / بار روانی یا جسمی",
+    phrase: "Wer dauerhaft unter Belastung steht, sollte rechtzeitig Unterstuetzung suchen.",
+    phraseMeaning: "کسی که دائماً تحت فشار است، باید به‌موقع دنبال حمایت باشد",
+    blankSentence: "Wer dauerhaft unter Belastung steht, ___ rechtzeitig Unterstuetzung suchen.",
+    blankAnswer: "sollte",
+    orderedWords: ["Wer", "dauerhaft", "unter", "Belastung", "steht", "sollte", "Unterstuetzung", "suchen"],
+    grammarPoint: "جمله با wer می‌تواند نقش فاعل جمله اصلی را داشته باشد.",
+    miniAnswer: "متن درباره فشار طولانی و نیاز به حمایت به‌موقع است."
+  },
+  {
+    word: "die Erkenntnis",
+    meaning: "یافته / بینش",
+    phrase: "Die Studie zeigt, dass regelmaessige Wiederholung langfristig wirksam ist.",
+    phraseMeaning: "پژوهش نشان می‌دهد که مرور منظم در بلندمدت موثر است",
+    blankSentence: "Die Studie zeigt, ___ regelmaessige Wiederholung langfristig wirksam ist.",
+    blankAnswer: "dass",
+    orderedWords: ["Die", "Studie", "zeigt", "dass", "regelmaessige", "Wiederholung", "wirksam", "ist"],
+    grammarPoint: "در گزارش یافته‌ها، dass جمله وابسته محتوای نتیجه را معرفی می‌کند.",
+    miniAnswer: "متن یک یافته درباره اثر مرور منظم گزارش می‌کند."
+  },
+  {
+    word: "die Zugehoerigkeit",
+    meaning: "تعلق",
+    phrase: "Obwohl ich zwischen zwei Kulturen lebe, empfinde ich Zugehoerigkeit.",
+    phraseMeaning: "با اینکه بین دو فرهنگ زندگی می‌کنم، احساس تعلق دارم",
+    blankSentence: "___ ich zwischen zwei Kulturen lebe, empfinde ich Zugehoerigkeit.",
+    blankAnswer: "Obwohl",
+    orderedWords: ["Obwohl", "ich", "zwischen", "zwei", "Kulturen", "lebe", "empfinde", "ich", "Zugehoerigkeit"],
+    grammarPoint: "Obwohl تضاد بین انتظار و واقعیت را در جمله وابسته نشان می‌دهد.",
+    miniAnswer: "گوینده با وجود زندگی بین دو فرهنگ احساس تعلق دارد."
+  },
+  {
+    word: "die Vertragsbedingung",
+    meaning: "شرط قرارداد",
+    phrase: "Falls die Vertragsbedingungen unklar sind, frage ich schriftlich nach.",
+    phraseMeaning: "اگر شرایط قرارداد نامشخص باشد، کتبی سوال می‌کنم",
+    blankSentence: "Falls die Vertragsbedingungen unklar sind, ___ ich schriftlich nach.",
+    blankAnswer: "frage",
+    orderedWords: ["Falls", "die", "Vertragsbedingungen", "unklar", "sind", "frage", "ich", "schriftlich", "nach"],
+    grammarPoint: "Falls شرط احتمالی را معرفی می‌کند و فعل بخش فرعی در پایان می‌آید.",
+    miniAnswer: "گوینده در برابر ابهام قرارداد پیگیری کتبی انجام می‌دهد."
+  },
+  {
+    word: "die Innovation",
+    meaning: "نوآوری",
+    phrase: "Die Innovation wird nur akzeptiert, wenn sie transparent erklaert wird.",
+    phraseMeaning: "نوآوری فقط وقتی پذیرفته می‌شود که شفاف توضیح داده شود",
+    blankSentence: "Die Innovation wird nur akzeptiert, wenn sie transparent ___ wird.",
+    blankAnswer: "erklaert",
+    orderedWords: ["Die", "Innovation", "wird", "akzeptiert", "wenn", "sie", "transparent", "erklaert", "wird"],
+    grammarPoint: "Passiv با wird + Partizip II برای تمرکز روی عمل یا نتیجه استفاده می‌شود.",
+    miniAnswer: "پذیرش نوآوری به توضیح شفاف آن وابسته است."
+  },
+  {
+    word: "die Aufenthaltsgenehmigung",
+    meaning: "مجوز اقامت",
+    phrase: "Sobald die Unterlagen vollstaendig sind, beantrage ich die Aufenthaltsgenehmigung.",
+    phraseMeaning: "به محض کامل شدن مدارک، مجوز اقامت را درخواست می‌دهم",
+    blankSentence: "Sobald die Unterlagen vollstaendig sind, ___ ich die Aufenthaltsgenehmigung.",
+    blankAnswer: "beantrage",
+    orderedWords: ["Sobald", "die", "Unterlagen", "vollstaendig", "sind", "beantrage", "ich", "die", "Aufenthaltsgenehmigung"],
+    grammarPoint: "Sobald زمان شروع عمل اصلی پس از کامل شدن شرط زمانی را نشان می‌دهد.",
+    miniAnswer: "اقدام اداری پس از کامل شدن مدارک انجام می‌شود."
+  },
+  {
+    word: "die interkulturelle Kommunikation",
+    meaning: "ارتباط بین‌فرهنگی",
+    phrase: "Missverstaendnisse lassen sich vermeiden, indem man Erwartungen offen anspricht.",
+    phraseMeaning: "سوءتفاهم‌ها را می‌توان با بیان روشن انتظارها کاهش داد",
+    blankSentence: "Missverstaendnisse lassen sich vermeiden, ___ man Erwartungen offen anspricht.",
+    blankAnswer: "indem",
+    orderedWords: ["Missverstaendnisse", "lassen", "sich", "vermeiden", "indem", "man", "Erwartungen", "offen", "anspricht"],
+    grammarPoint: "Sich lassen + Infinitiv راهی برای بیان امکان انجام کاری است.",
+    miniAnswer: "بیان روشن انتظارها به کاهش سوءتفاهم کمک می‌کند."
+  },
+  {
+    word: "die Schlussfolgerung",
+    meaning: "نتیجه‌گیری",
+    phrase: "Nachdem ich beide Positionen verglichen habe, formuliere ich eine Schlussfolgerung.",
+    phraseMeaning: "بعد از مقایسه هر دو موضع، یک نتیجه‌گیری بیان می‌کنم",
+    blankSentence: "Nachdem ich beide Positionen verglichen habe, ___ ich eine Schlussfolgerung.",
+    blankAnswer: "formuliere",
+    orderedWords: ["Nachdem", "ich", "beide", "Positionen", "verglichen", "habe", "formuliere", "ich", "eine", "Schlussfolgerung"],
+    grammarPoint: "Nachdem ترتیب زمانی دو مرحله در استدلال یا خلاصه‌نویسی را نشان می‌دهد.",
+    miniAnswer: "نتیجه‌گیری پس از مقایسه دو موضع نوشته می‌شود."
+  }
+] satisfies Array<Pick<SkillSpec, "word" | "meaning" | "phrase" | "phraseMeaning" | "blankSentence" | "blankAnswer" | "orderedWords" | "grammarPoint" | "miniAnswer">>;
+
+function makeB2SkillSpec(
+  unit: Omit<UnitSpec, "skills">,
+  skill: Pick<SkillSpec, "slug" | "title" | "description" | "focus">,
+  unitIndex: number
+): SkillSpec {
+  const language = b2UnitLanguage[unitIndex];
+
+  return {
+    ...skill,
+    ...language,
+    blankChoices: [language.blankAnswer, "weil", "obwohl"],
+    situation: `در موضوع ${unit.resourceFocus} باید درباره «${skill.focus}» با دقت، دلیل و ساختار B2 صحبت کنید.`,
+    miniText: `Sara bereitet eine B2-Aufgabe zu ${skill.focus} vor. ${language.phrase} Danach sammelt sie Argumente und Beispiele.`,
+    miniAnswer: `${language.miniAnswer} این تمرین به «${skill.focus}» مربوط است.`
+  };
+}
+
+function buildB2UnitSpecs(): UnitSpec[] {
+  return b2UnitScaffolds.map((unit, unitIndex) => ({
+    slug: unit.slug,
+    title: unit.title,
+    summary: unit.summary,
+    resourceFocus: unit.resourceFocus,
+    skills: unit.skills.map((skill) =>
+      makeB2SkillSpec(unit, skill, unitIndex)
+    )
+  }));
+}
+
+function buildB2Units(): SampleUnit[] {
+  const units = buildB2UnitSpecs().map((unit) => {
+    const skills = unit.skills.map((skill) =>
+      makeSkill(skill, "PUBLISHED", makeA2SkillQuestions)
+    );
+
+    return {
+      slug: unit.slug,
+      title: unit.title,
+      summary: unit.summary,
+      skills: [...skills, makeA2Checkpoint(unit, skills, "PUBLISHED", "B2")]
+    };
+  });
+
+  units[units.length - 1].skills.push(makeFinalTestForLevel("B2", units));
 
   return units;
 }
@@ -2657,9 +3900,60 @@ export const sampleCourse: SampleCourse = {
       label: "A2",
       title: "گسترش A2",
       units: buildA2Units()
+    },
+    {
+      label: "B1",
+      title: "استقلال B1",
+      units: buildB1Units()
+    },
+    {
+      label: "B2",
+      title: "پیشرفته B2",
+      units: buildB2Units()
     }
   ]
 };
+
+const b1GuideUnits = [b1UnitOneSpec, ...b1DraftUnits];
+const b1AdditionalLearningGuides: SampleResource[] = b1GuideUnits.slice(1).map((unit, index) => ({
+  slug: `${unit.slug}-persian-guide`,
+  title: `راهنمای B1: ${unit.title}`,
+  description: `پشتیبانی فارسی برای ${unit.resourceFocus}.`,
+  type: "LEARNING_GUIDE",
+  levelLabel: "B1",
+  language: "fa/de",
+  thumbnailIcon: "route",
+  metadata: {
+    length: "24 min",
+    format: "Persian-first guide",
+    focus: `B1 Unit ${index + 2}`
+  },
+  content:
+    `این راهنما واحد ${index + 2} B1 را به موقعیت‌های اصلی «${unit.title}» وصل می‌کند. توضیح‌ها فارسی هستند و نمونه‌های تمرین آلمانی می‌مانند تا زبان‌آموز بتواند ${unit.resourceFocus} را با دقت B1 تمرین کند.`,
+  publicationStatus: "PUBLISHED",
+  unitSlug: unit.slug,
+  skillSlug: unit.skills[0]?.slug
+}));
+const b2GuideUnits = buildB2UnitSpecs();
+const b2LearningGuides: SampleResource[] = b2GuideUnits.map((unit, index) => ({
+  slug: `${unit.slug}-persian-guide`,
+  title: `راهنمای B2: ${unit.title}`,
+  description: `پشتیبانی فارسی برای ${unit.resourceFocus}.`,
+  type: "LEARNING_GUIDE",
+  levelLabel: "B2",
+  language: "fa/de",
+  thumbnailIcon: "landmark",
+  metadata: {
+    length: "28 min",
+    format: "Persian-first guide",
+    focus: `B2 Unit ${index + 1}`
+  },
+  content:
+    `این راهنما واحد ${index + 1} B2 را به موقعیت‌های اصلی «${unit.title}» وصل می‌کند. توضیح‌ها فارسی هستند و نمونه‌های آلمانی در سطح B2 باقی می‌مانند تا زبان‌آموز بتواند ${unit.resourceFocus} را با استدلال، دقت گرامری و واژگان پیشرفته‌تر تمرین کند.`,
+  publicationStatus: "PUBLISHED",
+  unitSlug: unit.slug,
+  skillSlug: unit.skills[0]?.slug
+}));
 
 export const sampleResources: SampleResource[] = [
   {
@@ -2965,7 +4259,104 @@ export const sampleResources: SampleResource[] = [
     publicationStatus: "PUBLISHED",
     unitSlug: "a2-health-happiness-and-satisfaction",
     skillSlug: "a2-explain-symptoms-to-a-doctor"
-  }
+  },
+  {
+    slug: "a2-media-apps-persian-guide",
+    title: "راهنمای A2: رسانه، اپلیکیشن و وقت آزاد",
+    description: "پشتیبانی فارسی برای برنامه تلویزیونی، اپلیکیشن‌ها، روز مورد علاقه و برنامه‌ریزی وقت آزاد.",
+    type: "LEARNING_GUIDE",
+    levelLabel: "A2",
+    language: "fa/de",
+    thumbnailIcon: "smartphone",
+    metadata: {
+      length: "22 min",
+      format: "Persian-first guide",
+      focus: "A2 Unit 9"
+    },
+    content:
+      "این راهنما کمک می‌کند درباره رسانه و وقت آزاد طبیعی‌تر حرف بزنید: معرفی Sendung، توضیح فایده یک App، دلیل آوردن با weil برای Lieblingstag، و برنامه‌ریزی آخر هفته با ins Kino. نکته‌ها فارسی هستند و جمله‌های نمونه آلمانی می‌مانند.",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "a2-media-apps-and-free-time",
+    skillSlug: "a2-discuss-tv-programs"
+  },
+  {
+    slug: "a2-social-gifts-persian-guide",
+    title: "راهنمای A2: رفتار اجتماعی، تعریف و هدیه",
+    description: "پشتیبانی فارسی برای درخواست مودبانه، پاسخ به تعریف، آشنایی و انتخاب هدیه.",
+    type: "LEARNING_GUIDE",
+    levelLabel: "A2",
+    language: "fa/de",
+    thumbnailIcon: "gift",
+    metadata: {
+      length: "22 min",
+      format: "Persian-first guide",
+      focus: "A2 Unit 10"
+    },
+    content:
+      "این راهنما زبان رفتار اجتماعی را تمرین می‌کند: Koennten Sie برای درخواست مودبانه، تشکر از Kompliment، گفتن ویژگی‌های فرد مناسب برای آشنایی، و توضیح هدیه با schenken + داتیو. پشتیبانی فارسی کمک می‌کند لحن و نقش‌های گرامری روشن بماند.",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "a2-social-behavior-compliments-and-gifts",
+    skillSlug: "a2-sound-friendly-and-polite"
+  },
+  {
+    slug: "a2-money-banking-persian-guide",
+    title: "راهنمای A2: پول، بانک و پیام‌ها",
+    description: "پشتیبانی فارسی برای پس‌انداز، حساب بانکی، هزینه مشترک و پیام پرداخت.",
+    type: "LEARNING_GUIDE",
+    levelLabel: "A2",
+    language: "fa/de",
+    thumbnailIcon: "landmark",
+    metadata: {
+      length: "22 min",
+      format: "Persian-first guide",
+      focus: "A2 Unit 11"
+    },
+    content:
+      "این راهنما موقعیت‌های مالی روزمره را به زبان A2 تبدیل می‌کند: sparen fuer eine Reise، Konto eroeffnen، teilen durch برای هزینه مشترک، و نوشتن پیام روشن درباره Ueberweisung. توضیح‌های فارسی روی آکوزاتیو با fuer و داتیو با dir تمرکز دارند.",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "a2-money-banking-and-messages",
+    skillSlug: "a2-talk-about-money-values"
+  },
+  {
+    slug: "a2-travel-directions-persian-guide",
+    title: "راهنمای A2: سفر، مسیر و تجربه‌های تعطیلات",
+    description: "پشتیبانی فارسی برای برنامه سفر کوتاه، پرسیدن مسیر هتل، پیدا کردن همسفر و توصیف عکس سفر.",
+    type: "LEARNING_GUIDE",
+    levelLabel: "A2",
+    language: "fa/de",
+    thumbnailIcon: "map",
+    metadata: {
+      length: "22 min",
+      format: "Persian-first guide",
+      focus: "A2 Unit 12"
+    },
+    content:
+      "این راهنما پایان مسیر A2 را با سفر جمع‌بندی می‌کند: برنامه‌ریزی Ausflug با am Sonntag، پرسیدن Wegbeschreibung، نوشتن درباره Reisepartner، و توصیف Urlaubsfoto با Auf dem Foto sieht man.... توضیح‌ها فارسی هستند و مثال‌ها برای گفتار و نوشتار آلمانی آماده‌اند.",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "a2-travel-directions-and-holiday-experiences",
+    skillSlug: "a2-plan-a-short-trip"
+  },
+  {
+    slug: "b1-travel-plans-persian-guide",
+    title: "راهنمای B1: برنامه سفر و داستان تعطیلات",
+    description: "پشتیبانی فارسی برای برنامه‌ریزی سفر، ترجیح‌ها، zu + مصدر، weil/da، obwohl و فهم اطلاعیه‌های سفر.",
+    type: "LEARNING_GUIDE",
+    levelLabel: "B1",
+    language: "fa/de",
+    thumbnailIcon: "plane",
+    metadata: {
+      length: "24 min",
+      format: "Persian-first guide",
+      focus: "B1 Unit 1"
+    },
+    content:
+      "این راهنما واحد اول B1 را به چهار موقعیت سفر وصل می‌کند: گفتن Vorliebe و دلیل انتخاب مقصد، مقایسه Reiseangebot، تعریف Urlaubsgeschichte با گذشته و obwohl، و فهم Durchsage در ایستگاه یا فرودگاه. توضیح‌ها فارسی هستند و مثال‌های اصلی آلمانی می‌مانند تا زبان‌آموز از A2 به تولید دقیق‌تر B1 برسد.",
+    publicationStatus: "PUBLISHED",
+    unitSlug: "b1-travel-plans-and-holiday-stories",
+    skillSlug: "b1-plan-a-trip-and-explain-preferences"
+  },
+  ...b1AdditionalLearningGuides,
+  ...b2LearningGuides
 ];
 
 export function getPublishedSkills() {

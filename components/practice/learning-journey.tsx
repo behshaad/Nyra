@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { PointerEvent as ReactPointerEvent, ReactNode } from "react";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
@@ -41,6 +42,7 @@ type WorldLevel = {
   totalCount: number;
   xp: number;
   state: WorldLevelState;
+  canEnter: boolean;
 };
 
 type JourneyStore = {
@@ -171,7 +173,8 @@ function buildWorldLevels(
           (total, unit) => total + unit.nodes.reduce((sum, node) => sum + node.xp, 0),
           0
         ) ?? 0,
-      state
+      state,
+      canEnter: totalCount > 0
     };
   });
 }
@@ -238,7 +241,7 @@ function PracticeWorld({
   );
 }
 
-function PracticeSidebar({
+export function PracticeSidebar({
   language
 }: {
   language: InterfaceLanguageCode;
@@ -279,13 +282,16 @@ function WorldMap({
   levels: WorldLevel[];
   onFocusLevel: (label: string) => void;
 }) {
+  const router = useRouter();
   const [debugLayout, setDebugLayout] = useState<Record<WorldLevelLabel, WorldMapPoint>>(
     () => ({ ...WORLD_LAYOUT })
   );
   const [draggingLevel, setDraggingLevel] = useState<WorldLevelLabel | null>(null);
+  const [enteringLevelLabel, setEnteringLevelLabel] = useState<WorldLevelLabel | null>(null);
   const [layoutPrintRequest, setLayoutPrintRequest] = useState(0);
   const activeLayout = DEBUG_WORLD_LAYOUT ? debugLayout : WORLD_LAYOUT;
   const debugClassName = DEBUG_WORLD_LAYOUT ? " is-debugging-world-layout" : "";
+  const enteringPoint = enteringLevelLabel ? activeLayout[enteringLevelLabel] : null;
 
   useEffect(() => {
     if (!DEBUG_WORLD_LAYOUT || draggingLevel === null) {
@@ -351,9 +357,26 @@ function WorldMap({
     setDraggingLevel(level);
   };
 
+  const enterWorld = (level: WorldLevel) => {
+    if (!level.canEnter || DEBUG_WORLD_LAYOUT || enteringLevelLabel) {
+      return;
+    }
+
+    setEnteringLevelLabel(level.label);
+    onFocusLevel(level.label);
+
+    globalThis.setTimeout(() => {
+      router.push(level.href);
+    }, 620);
+  };
+
   return (
     <section className="journey-camera world-map" aria-label="Germany world map">
-      <div className={`journey-map-canvas world-map-canvas${debugClassName}`}>
+      <div
+        className={`journey-map-canvas world-map-canvas${debugClassName}${
+          enteringLevelLabel ? " is-entering-world" : ""
+        }`}
+      >
         <Image
           alt=""
           aria-hidden="true"
@@ -388,11 +411,23 @@ function WorldMap({
               layout={activeLayout}
               level={level}
               onFocus={() => onFocusLevel(level.label)}
+              onEnterWorld={enterWorld}
               onStartDebugDrag={startDebugDrag}
+              entering={enteringLevelLabel === level.label}
             />
           ))}
         </div>
         <WorldMarkers layout={activeLayout} levels={levels} />
+        {enteringPoint ? (
+          <motion.div
+            aria-hidden="true"
+            className="world-transition-overlay"
+            initial={{ opacity: 0, scale: 0.24 }}
+            animate={{ opacity: [0, 0.84, 1], scale: [0.24, 1.6, 4.8] }}
+            transition={{ duration: 0.64, ease: [0.22, 1, 0.36, 1] }}
+            style={{ left: `${enteringPoint.x}%`, top: `${enteringPoint.y}%` }}
+          />
+        ) : null}
       </div>
     </section>
   );
@@ -434,13 +469,17 @@ function LevelNode({
   index,
   layout,
   onFocus,
-  onStartDebugDrag
+  onEnterWorld,
+  onStartDebugDrag,
+  entering
 }: {
   level: WorldLevel;
   index: number;
   layout: Record<WorldLevelLabel, WorldMapPoint>;
   onFocus: () => void;
+  onEnterWorld: (level: WorldLevel) => void;
   onStartDebugDrag: (level: WorldLevelLabel, event: ReactPointerEvent) => void;
+  entering: boolean;
 }) {
   const position = layout[level.label];
   const locked = level.state === "locked" || level.state === "future";
@@ -449,7 +488,12 @@ function LevelNode({
   const content = (
     <motion.span
       animate={
-        current
+        entering
+          ? {
+              scale: 1.22,
+              filter: "drop-shadow(0 0 56px rgba(255, 243, 205, 0.96))"
+            }
+          : current
           ? {
               scale: [1, 1.055, 1],
               filter: [
@@ -464,12 +508,15 @@ function LevelNode({
       }
       className={`journey-node level-world-node ${level.state} world-${level.tone}`}
       transition={
-        current || locked
+        entering
+          ? { duration: 0.62, ease: [0.22, 1, 0.36, 1] }
+          : current || locked
           ? { duration: current ? 2.4 : 5.4, repeat: Infinity, ease: "easeInOut", delay: index * 0.08 }
           : undefined
       }
       whileHover={{ scale: 1.08, y: -5 }}
       whileTap={{ scale: 0.96 }}
+      data-entering={entering ? "true" : undefined}
     >
       <span className="journey-node-aura" aria-hidden="true" />
       <span className="journey-node-hex">
@@ -493,7 +540,9 @@ function LevelNode({
 
   return (
     <div
-      className={`journey-node-position level-node-position ${current ? "is-current" : ""}`}
+      className={`journey-node-position level-node-position ${current ? "is-current" : ""}${
+        entering ? " is-entering" : ""
+      }`}
       onMouseEnter={onFocus}
       onPointerDown={(event) => onStartDebugDrag(level.label, event)}
       style={{ left: `${position.x}%`, top: `${position.y}%` }}
@@ -506,9 +555,22 @@ function LevelNode({
           </span>
         </>
       ) : (
-        <Link href={level.href} aria-label={`Open ${level.label} world`}>
-          {content}
-        </Link>
+        level.canEnter ? (
+          <Link
+            href={level.href}
+            aria-label={`Open ${level.label} world`}
+            onClick={(event) => {
+              event.preventDefault();
+              onEnterWorld(level);
+            }}
+          >
+            {content}
+          </Link>
+        ) : (
+          <span aria-label={`${level.label} world is not available yet`}>
+            {content}
+          </span>
+        )
       )}
     </div>
   );

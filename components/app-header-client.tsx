@@ -10,6 +10,7 @@ import {
   LogOut,
   Menu,
   Moon,
+  ShieldCheck,
   Settings,
   Sun,
   UserRound,
@@ -18,6 +19,8 @@ import {
 } from "lucide-react";
 import type { ElementRef, ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
+import { useAuth } from "@/components/auth-provider";
+import { logoutAction } from "@/lib/auth/actions";
 import {
   interfaceLanguagePreferenceHref,
   type InterfaceLanguageCode,
@@ -54,7 +57,9 @@ const labels = {
     account: "حساب",
     settings: "تنظیمات",
     logout: "خروج",
-    logoutUnavailable: "خروج بعد از فعال شدن Auth آماده می‌شود.",
+    login: "ورود",
+    signup: "ثبت‌نام",
+    adminDashboard: "داشبورد ادمین",
     light: "حالت روشن",
     dark: "حالت تیره"
   },
@@ -68,7 +73,9 @@ const labels = {
     account: "Account",
     settings: "Settings",
     logout: "Logout",
-    logoutUnavailable: "Logout will be available after Auth is connected.",
+    login: "Login",
+    signup: "Sign Up",
+    adminDashboard: "Admin Dashboard",
     light: "Light mode",
     dark: "Dark mode"
   },
@@ -82,7 +89,9 @@ const labels = {
     account: "Konto",
     settings: "Einstellungen",
     logout: "Abmelden",
-    logoutUnavailable: "Abmelden ist verfuegbar, sobald Auth verbunden ist.",
+    login: "Anmelden",
+    signup: "Registrieren",
+    adminDashboard: "Admin Dashboard",
     light: "Heller Modus",
     dark: "Dunkler Modus"
   }
@@ -107,6 +116,7 @@ export function AppHeaderClient({
       resources: string;
       flashcards: string;
     };
+    adminDashboard: string;
     continueLearning: string;
     languageLabel: string;
   };
@@ -114,6 +124,7 @@ export function AppHeaderClient({
   language: InterfaceLanguageCode;
   theme: InterfaceThemeCode;
 }) {
+  const session = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
@@ -124,6 +135,11 @@ export function AppHeaderClient({
   const nextTheme = nextNavbarTheme(activeTheme);
   const localLabels = labels[language];
   const themeLabel = activeTheme === "DARK" ? localLabels.dark : localLabels.light;
+  const loginHref = withInterfaceLanguage(
+    `/login?returnTo=${encodeURIComponent(currentPath)}`,
+    language
+  );
+  const signupHref = withInterfaceLanguage("/signup", language);
 
   useEffect(() => {
     const media = globalThis.matchMedia("(prefers-color-scheme: dark)");
@@ -174,7 +190,13 @@ export function AppHeaderClient({
     };
   }, []);
 
-  const navLinks = navItems.map((item) => {
+  const visibleNavItems = session?.role === "ADMIN"
+    ? [
+        ...navItems,
+        { href: "/admin", key: "admin", icon: ShieldCheck }
+      ] as const
+    : navItems;
+  const navLinks = visibleNavItems.map((item) => {
     const Icon = item.icon;
 
     return (
@@ -188,6 +210,8 @@ export function AppHeaderClient({
         <span>
           {item.key === "learn"
             ? headerLabels.continueLearning
+            : item.key === "admin"
+              ? localLabels.adminDashboard
             : headerLabels.nav[item.key]}
         </span>
       </Link>
@@ -240,69 +264,90 @@ export function AppHeaderClient({
           {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
 
-        <div className="profile-menu-wrap">
-          <button
-            className="profile-avatar-button"
-            type="button"
-            aria-expanded={isProfileOpen}
-            aria-label={localLabels.profile}
-            aria-controls="profile-menu"
-            onClick={() => {
-              setIsProfileOpen((open) => !open);
-              setIsMobileMenuOpen(false);
-              setIsLanguageOpen(false);
-            }}
-          >
-            <span className="profile-avatar" aria-hidden="true">
-              <UserRound size={20} />
-            </span>
-          </button>
+        {session ? (
+          <div className="profile-menu-wrap">
+            <button
+              className="profile-avatar-button"
+              type="button"
+              aria-expanded={isProfileOpen}
+              aria-label={localLabels.profile}
+              aria-controls="profile-menu"
+              onClick={() => {
+                setIsProfileOpen((open) => !open);
+                setIsMobileMenuOpen(false);
+                setIsLanguageOpen(false);
+              }}
+            >
+              <span className="profile-avatar" aria-hidden="true">
+                <UserRound size={20} />
+              </span>
+            </button>
 
-          <AnimatePresence>
-            {isProfileOpen ? (
-              <motion.div
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="profile-dropdown"
-                exit={{ opacity: 0, scale: 0.98, y: -6 }}
-                id="profile-menu"
-                initial={{ opacity: 0, scale: 0.98, y: -6 }}
-                role="menu"
-                transition={{ duration: 0.18, ease: "easeOut" }}
-              >
-                <ProfileMenuLink
-                  href="/pricing"
-                  icon={<CreditCard size={17} />}
-                  label={localLabels.pricing}
-                  language={language}
-                  onClick={() => setIsProfileOpen(false)}
-                />
-                <ProfileMenuLink
-                  href="/profile"
-                  icon={<UserRound size={17} />}
-                  label={localLabels.account}
-                  language={language}
-                  onClick={() => setIsProfileOpen(false)}
-                />
-                <ProfileMenuLink
-                  href="/profile#settings"
-                  icon={<Settings size={17} />}
-                  label={localLabels.settings}
-                  language={language}
-                  onClick={() => setIsProfileOpen(false)}
-                />
-                <button
-                  className="profile-menu-item disabled"
-                  disabled
-                  title={localLabels.logoutUnavailable}
-                  type="button"
+            <AnimatePresence>
+              {isProfileOpen ? (
+                <motion.div
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  className="profile-dropdown"
+                  exit={{ opacity: 0, scale: 0.98, y: -6 }}
+                  id="profile-menu"
+                  initial={{ opacity: 0, scale: 0.98, y: -6 }}
+                  role="menu"
+                  transition={{ duration: 0.18, ease: "easeOut" }}
                 >
-                  <LogOut size={17} />
-                  <span>{localLabels.logout}</span>
-                </button>
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
-        </div>
+                  <div className="profile-menu-user" role="none">
+                    <strong>{session.fullName}</strong>
+                    <span>{session.email}</span>
+                  </div>
+                  {session.role === "ADMIN" ? (
+                    <ProfileMenuLink
+                      href="/admin"
+                      icon={<ShieldCheck size={17} />}
+                      label={localLabels.adminDashboard}
+                      language={language}
+                      onClick={() => setIsProfileOpen(false)}
+                    />
+                  ) : null}
+                  <ProfileMenuLink
+                    href="/pricing"
+                    icon={<CreditCard size={17} />}
+                    label={localLabels.pricing}
+                    language={language}
+                    onClick={() => setIsProfileOpen(false)}
+                  />
+                  <ProfileMenuLink
+                    href="/profile"
+                    icon={<UserRound size={17} />}
+                    label={localLabels.account}
+                    language={language}
+                    onClick={() => setIsProfileOpen(false)}
+                  />
+                  <ProfileMenuLink
+                    href="/profile#settings"
+                    icon={<Settings size={17} />}
+                    label={localLabels.settings}
+                    language={language}
+                    onClick={() => setIsProfileOpen(false)}
+                  />
+                  <form action={logoutAction}>
+                    <button className="profile-menu-item" type="submit">
+                      <LogOut size={17} />
+                      <span>{localLabels.logout}</span>
+                    </button>
+                  </form>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
+          </div>
+        ) : (
+          <div className="auth-nav-actions">
+            <Link className="ghost-button compact-link" href={loginHref}>
+              {localLabels.login}
+            </Link>
+            <Link className="primary-button compact" href={signupHref}>
+              {localLabels.signup}
+            </Link>
+          </div>
+        )}
       </div>
 
       <AnimatePresence>
@@ -316,7 +361,21 @@ export function AppHeaderClient({
             transition={{ duration: 0.2, ease: "easeOut" }}
             aria-label="Mobile navigation"
           >
-            <div className="mobile-menu-links">{navLinks}</div>
+            <div className="mobile-menu-links">
+              {navLinks}
+              {!session ? (
+                <>
+                  <Link href={loginHref} onClick={() => setIsMobileMenuOpen(false)}>
+                    <UserRound size={17} aria-hidden="true" />
+                    <span>{localLabels.login}</span>
+                  </Link>
+                  <Link href={signupHref} onClick={() => setIsMobileMenuOpen(false)}>
+                    <ShieldCheck size={17} aria-hidden="true" />
+                    <span>{localLabels.signup}</span>
+                  </Link>
+                </>
+              ) : null}
+            </div>
             <div className="mobile-menu-controls">
               <LanguageSwitcher
                 currentPath={currentPath}

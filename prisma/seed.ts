@@ -301,8 +301,249 @@ const a2UnitFlashcardDecks: Array<{
       ["die Empfehlung", "توصیه", "Die Empfehlung der Aerztin ist klar.", "توصیه پزشک زن روشن است.", "HARD"],
       ["besser", "بهتر", "Heute geht es mir besser.", "امروز حالم بهتر است.", "EASY"]
     ]
+  },
+  {
+    slug: "a2-unit-9-core-vocabulary",
+    title: "واژگان اصلی A2 واحد 9",
+    description: "فلش‌کارت‌های واحد نهم A2 برای رسانه، اپلیکیشن و وقت آزاد.",
+    category: "Unit 9",
+    unitSlug: "a2-media-apps-and-free-time",
+    cards: [
+      ["die Sendung", "برنامه تلویزیونی", "Die Sendung laeuft jeden Freitag.", "برنامه هر جمعه پخش می‌شود.", "MEDIUM"],
+      ["laufen", "پخش شدن / جریان داشتن", "Die Sendung laeuft um acht Uhr.", "برنامه ساعت هشت پخش می‌شود.", "MEDIUM"],
+      ["jeden Freitag", "هر جمعه", "Ich sehe die Sendung jeden Freitag.", "من هر جمعه برنامه را می‌بینم.", "MEDIUM"],
+      ["die Reisesendung", "برنامه سفر", "Omid sieht gern eine Reisesendung.", "امید برنامه سفر را دوست دارد.", "HARD"],
+      ["ansehen", "تماشا کردن", "Wir sehen den Film am Abend an.", "ما عصر فیلم را تماشا می‌کنیم.", "HARD"],
+      ["die App", "اپلیکیشن", "Diese App hilft mir beim Deutschlernen.", "این اپلیکیشن در یادگیری آلمانی کمکم می‌کند.", "EASY"],
+      ["die Lernapp", "اپلیکیشن آموزشی", "Mina benutzt eine Lernapp.", "مینا از یک اپلیکیشن آموزشی استفاده می‌کند.", "MEDIUM"],
+      ["benutzen", "استفاده کردن", "Ich benutze die App jeden Tag.", "من هر روز از اپ استفاده می‌کنم.", "MEDIUM"],
+      ["erinnern", "یادآوری کردن", "Die App erinnert mich an neue Woerter.", "اپ واژه‌های جدید را یادآوری می‌کند.", "HARD"],
+      ["beim Deutschlernen", "هنگام یادگیری آلمانی", "Die App hilft beim Deutschlernen.", "اپ در یادگیری آلمانی کمک می‌کند.", "HARD"],
+      ["der Lieblingstag", "روز مورد علاقه", "Mein Lieblingstag ist Samstag.", "روز مورد علاقه من شنبه است.", "MEDIUM"],
+      ["frei haben", "آزاد بودن / وقت آزاد داشتن", "Ich habe am Samstag frei.", "شنبه آزاد هستم.", "MEDIUM"],
+      ["lange schlafen", "تا دیر وقت خوابیدن", "Sara schlaeft am Samstag lange.", "سارا شنبه تا دیر وقت می‌خوابد.", "MEDIUM"],
+      ["Freunde treffen", "دوستان را دیدن", "Ich treffe am Abend Freunde.", "عصر دوستانم را می‌بینم.", "MEDIUM"],
+      ["weil", "چون", "Ich bleibe zu Hause, weil ich muede bin.", "خانه می‌مانم چون خسته‌ام.", "EASY"],
+      ["die Freizeit", "وقت آزاد", "In meiner Freizeit lese ich gern.", "در وقت آزادم دوست دارم بخوانم.", "EASY"],
+      ["das Kino", "سینما", "Wir gehen ins Kino.", "ما به سینما می‌رویم.", "EASY"],
+      ["ins Kino", "به سینما", "Wollen wir ins Kino gehen?", "می‌خواهیم به سینما برویم؟", "MEDIUM"],
+      ["das Wochenende", "آخر هفته", "Am Wochenende habe ich Zeit.", "آخر هفته وقت دارم.", "EASY"],
+      ["planen", "برنامه‌ریزی کردن", "Wir planen unsere Freizeit.", "ما وقت آزادمان را برنامه‌ریزی می‌کنیم.", "MEDIUM"],
+      ["vorschlagen", "پیشنهاد دادن", "Ich schlage einen Film vor.", "من یک فیلم پیشنهاد می‌دهم.", "HARD"],
+      ["die Serie", "سریال", "Die Serie ist spannend.", "سریال هیجان‌انگیز است.", "EASY"],
+      ["spannend", "هیجان‌انگیز", "Der Film ist spannend.", "فیلم هیجان‌انگیز است.", "EASY"],
+      ["langweilig", "خسته‌کننده", "Die Sendung ist langweilig.", "برنامه خسته‌کننده است.", "EASY"],
+      ["online", "آنلاین", "Ich sehe die Serie online.", "سریال را آنلاین می‌بینم.", "EASY"]
+    ]
+  },
+  {
+    slug: "a2-unit-10-core-vocabulary",
+    title: "واژگان اصلی A2 واحد 10",
+    description: "فلش‌کارت‌های واحد دهم A2 برای رفتار اجتماعی، تعریف و هدیه.",
+    category: "Unit 10",
+    unitSlug: "a2-social-behavior-compliments-and-gifts",
+    cards: [
+      ["hoeflich", "مودب", "Sara fragt hoeflich nach Hilfe.", "سارا مودبانه درخواست کمک می‌کند.", "MEDIUM"],
+      ["freundlich", "دوستانه", "Der Mitarbeiter ist freundlich.", "کارمند دوستانه برخورد می‌کند.", "EASY"],
+      ["Koennten Sie", "می‌توانید؟ / شکل مودبانه", "Koennten Sie mir bitte helfen?", "می‌توانید لطفاً به من کمک کنید؟", "HARD"],
+      ["kurz", "کوتاه / مختصر", "Koennten Sie mir kurz helfen?", "می‌توانید کوتاه کمکم کنید؟", "EASY"],
+      ["das Formular", "فرم", "Ich verstehe das Formular nicht.", "فرم را نمی‌فهمم.", "MEDIUM"],
+      ["das Kompliment", "تعریف / تمجید", "Danke fuer das nette Kompliment.", "ممنون برای این تعریف خوب.", "MEDIUM"],
+      ["nett", "خوب / مهربان", "Das ist ein nettes Kompliment.", "این یک تعریف خوب است.", "EASY"],
+      ["sich bedanken", "تشکر کردن", "Reza bedankt sich fuer das Kompliment.", "رضا بابت تعریف تشکر می‌کند.", "HARD"],
+      ["der Vortrag", "ارائه / سخنرانی", "Dein Vortrag war sehr gut.", "ارائه‌ات خیلی خوب بود.", "MEDIUM"],
+      ["antworten", "پاسخ دادن", "Sie antwortet freundlich.", "او دوستانه پاسخ می‌دهد.", "EASY"],
+      ["kennenlernen", "آشنا شدن", "Ich moechte neue Leute kennenlernen.", "می‌خواهم با آدم‌های جدید آشنا شوم.", "HARD"],
+      ["jemanden", "کسی را", "Ich moechte jemanden kennenlernen.", "می‌خواهم با کسی آشنا شوم.", "MEDIUM"],
+      ["ehrlich", "صادق", "Ehrliche Freunde sind wichtig.", "دوستان صادق مهم‌اند.", "MEDIUM"],
+      ["der Humor", "شوخ‌طبعی", "Humor ist fuer Ali wichtig.", "شوخ‌طبعی برای علی مهم است.", "MEDIUM"],
+      ["die Ehrlichkeit", "صداقت", "Ehrlichkeit ist wichtig.", "صداقت مهم است.", "HARD"],
+      ["das Geschenk", "هدیه", "Ich suche ein Geschenk.", "دنبال یک هدیه هستم.", "EASY"],
+      ["schenken", "هدیه دادن", "Ich schenke ihr ein Buch.", "به او یک کتاب هدیه می‌دهم.", "MEDIUM"],
+      ["der Geburtstag", "تولد", "Ich schenke ihr ein Buch zum Geburtstag.", "برای تولدش به او یک کتاب هدیه می‌دهم.", "EASY"],
+      ["der Roman", "رمان", "Mina liest gern Romane.", "مینا دوست دارد رمان بخواند.", "MEDIUM"],
+      ["passen zu", "مناسب بودن برای", "Das Geschenk passt zu ihr.", "هدیه مناسب اوست.", "HARD"],
+      ["die Aufmerksamkeit", "توجه / لطف کوچک", "Danke fuer die Aufmerksamkeit.", "ممنون بابت توجه.", "HARD"],
+      ["die Einladung", "دعوت", "Danke fuer die Einladung.", "ممنون بابت دعوت.", "MEDIUM"],
+      ["gratulieren", "تبریک گفتن", "Ich gratuliere dir zum Geburtstag.", "تولدت را تبریک می‌گویم.", "HARD"],
+      ["wuenschen", "آرزو کردن", "Ich wuensche dir alles Gute.", "برای تو بهترین‌ها را آرزو می‌کنم.", "MEDIUM"],
+      ["alles Gute", "بهترین‌ها", "Alles Gute zum Geburtstag!", "تولدت مبارک!", "EASY"]
+    ]
+  },
+  {
+    slug: "a2-unit-11-core-vocabulary",
+    title: "واژگان اصلی A2 واحد 11",
+    description: "فلش‌کارت‌های واحد یازدهم A2 برای پول، بانک و پیام‌ها.",
+    category: "Unit 11",
+    unitSlug: "a2-money-banking-and-messages",
+    cards: [
+      ["sparen", "پس‌انداز کردن", "Ich spare Geld fuer eine Reise.", "برای یک سفر پول پس‌انداز می‌کنم.", "MEDIUM"],
+      ["das Geld", "پول", "Geld ist nicht alles.", "پول همه چیز نیست.", "EASY"],
+      ["weniger", "کمتر", "Reza kauft weniger Kaffee.", "رضا قهوه کمتری می‌خرد.", "MEDIUM"],
+      ["die Reise", "سفر", "Ich spare fuer eine Reise.", "برای سفر پس‌انداز می‌کنم.", "EASY"],
+      ["der Wert", "ارزش", "Zeit hat fuer mich einen grossen Wert.", "زمان برای من ارزش زیادی دارد.", "MEDIUM"],
+      ["das Konto", "حساب بانکی", "Ich moechte ein Konto eroeffnen.", "می‌خواهم یک حساب باز کنم.", "MEDIUM"],
+      ["eroeffnen", "باز کردن", "Mina moechte ein Konto eroeffnen.", "مینا می‌خواهد حساب باز کند.", "HARD"],
+      ["die Bank", "بانک", "Mina geht zur Bank.", "مینا به بانک می‌رود.", "EASY"],
+      ["die Karte", "کارت", "Ich bekomme eine neue Karte.", "یک کارت جدید می‌گیرم.", "EASY"],
+      ["bekommen", "گرفتن / دریافت کردن", "Sie bekommt eine Karte.", "او یک کارت دریافت می‌کند.", "MEDIUM"],
+      ["die Ausgabe", "هزینه", "Wir teilen die Ausgabe durch drei.", "هزینه را بین سه نفر تقسیم می‌کنیم.", "MEDIUM"],
+      ["teilen", "تقسیم کردن", "Wir teilen die Rechnung.", "صورت‌حساب را تقسیم می‌کنیم.", "EASY"],
+      ["durch drei", "تقسیم بر سه", "Wir teilen die Ausgabe durch drei.", "هزینه را بین سه نفر تقسیم می‌کنیم.", "MEDIUM"],
+      ["der Anteil", "سهم", "Mein Anteil ist zehn Euro.", "سهم من ده یورو است.", "MEDIUM"],
+      ["gemeinsam", "مشترک / با هم", "Wir bezahlen gemeinsam.", "با هم پرداخت می‌کنیم.", "MEDIUM"],
+      ["die Ueberweisung", "حواله / انتقال بانکی", "Ich schicke dir die Ueberweisung.", "حواله بانکی را برایت می‌فرستم.", "HARD"],
+      ["ueberweisen", "انتقال بانکی دادن", "Ich ueberweise das Geld morgen.", "فردا پول را انتقال می‌دهم.", "HARD"],
+      ["bar", "نقدی", "Ali bezahlt nicht bar.", "علی نقدی پرداخت نمی‌کند.", "EASY"],
+      ["bezahlen", "پرداخت کردن", "Ich bezahle mit Karte.", "با کارت پرداخت می‌کنم.", "MEDIUM"],
+      ["die Rechnung", "صورت‌حساب", "Die Rechnung ist bezahlt.", "صورت‌حساب پرداخت شده است.", "EASY"],
+      ["die Nachricht", "پیام", "Ich schreibe dir eine Nachricht.", "برای تو پیام می‌نویسم.", "EASY"],
+      ["klar", "روشن / واضح", "Die Nachricht ist klar.", "پیام روشن است.", "EASY"],
+      ["morgen", "فردا", "Ich schicke es dir morgen.", "فردا برایت می‌فرستم.", "EASY"],
+      ["der Geldautomat", "خودپرداز", "Der Geldautomat ist neben der Bank.", "خودپرداز کنار بانک است.", "MEDIUM"],
+      ["abheben", "برداشت کردن", "Ich hebe Geld ab.", "پول برداشت می‌کنم.", "HARD"]
+    ]
+  },
+  {
+    slug: "a2-unit-12-core-vocabulary",
+    title: "واژگان اصلی A2 واحد 12",
+    description: "فلش‌کارت‌های واحد دوازدهم A2 برای سفر، مسیر و تجربه‌های تعطیلات.",
+    category: "Unit 12",
+    unitSlug: "a2-travel-directions-and-holiday-experiences",
+    cards: [
+      ["der Ausflug", "سفر کوتاه / گردش", "Wir machen am Sonntag einen Ausflug.", "یکشنبه یک گردش می‌رویم.", "MEDIUM"],
+      ["am Sonntag", "روز یکشنبه", "Die Klasse faehrt am Sonntag.", "کلاس یکشنبه می‌رود.", "EASY"],
+      ["die Klasse", "کلاس", "Die Klasse macht einen Ausflug.", "کلاس یک گردش می‌رود.", "EASY"],
+      ["das Ziel", "مقصد / هدف", "Unser Ziel ist Potsdam.", "مقصد ما پوتسدام است.", "EASY"],
+      ["der Zug", "قطار", "Wir fahren mit dem Zug.", "با قطار می‌رویم.", "EASY"],
+      ["die Wegbeschreibung", "توضیح مسیر", "Ich brauche eine Wegbeschreibung.", "به توضیح مسیر نیاز دارم.", "HARD"],
+      ["beschreiben", "توضیح دادن / توصیف کردن", "Koennen Sie den Weg beschreiben?", "می‌توانید مسیر را توضیح دهید؟", "HARD"],
+      ["der Weg", "راه / مسیر", "Der Weg zum Hotel ist kurz.", "مسیر هتل کوتاه است.", "EASY"],
+      ["das Hotel", "هتل", "Das Hotel ist in der Naehe.", "هتل در نزدیکی است.", "EASY"],
+      ["der Bahnhof", "ایستگاه قطار", "Am Bahnhof fragt Amir nach dem Weg.", "امیر در ایستگاه مسیر را می‌پرسد.", "EASY"],
+      ["in der Naehe", "در نزدیکی", "Das Hotel ist in der Naehe.", "هتل نزدیک است.", "MEDIUM"],
+      ["geradeaus", "مستقیم", "Gehen Sie geradeaus.", "مستقیم بروید.", "EASY"],
+      ["links", "چپ", "Dann gehen Sie links.", "بعد به چپ بروید.", "EASY"],
+      ["rechts", "راست", "Das Hotel ist rechts.", "هتل سمت راست است.", "EASY"],
+      ["der Reisepartner", "همسفر", "Ich suche einen Reisepartner.", "دنبال یک همسفر هستم.", "MEDIUM"],
+      ["allein", "تنها", "Sara reist nicht gern allein.", "سارا دوست ندارد تنها سفر کند.", "EASY"],
+      ["die Ferien", "تعطیلات", "Ich suche einen Reisepartner fuer die Ferien.", "برای تعطیلات دنبال همسفر هستم.", "EASY"],
+      ["die Erwartung", "انتظار", "Meine Erwartung ist klar.", "انتظار من روشن است.", "HARD"],
+      ["zuverlaessig", "قابل اعتماد", "Ein Reisepartner soll zuverlaessig sein.", "همسفر باید قابل اعتماد باشد.", "MEDIUM"],
+      ["das Urlaubsfoto", "عکس تعطیلات", "Auf dem Urlaubsfoto sieht man das Meer.", "در عکس تعطیلات دریا دیده می‌شود.", "HARD"],
+      ["das Meer", "دریا", "Man sieht das Meer.", "دریا دیده می‌شود.", "EASY"],
+      ["auf dem Foto", "در عکس", "Auf dem Foto sieht man zwei Freunde.", "در عکس دو دوست دیده می‌شوند.", "MEDIUM"],
+      ["das Wetter", "هوا", "Das Wetter war warm.", "هوا گرم بود.", "EASY"],
+      ["warm", "گرم", "Es war warm.", "هوا گرم بود.", "EASY"],
+      ["die Erinnerung", "خاطره", "Das Foto ist eine schoene Erinnerung.", "عکس یک خاطره زیباست.", "MEDIUM"]
+    ]
   }
 ];
+
+const b1UnitFlashcardDecks: Array<{
+  slug: string;
+  title: string;
+  description: string;
+  category: string;
+  unitSlug: string;
+  cards: readonly SeedFlashcard[];
+}> = [
+  {
+    slug: "b1-unit-1-core-vocabulary",
+    title: "واژگان اصلی B1 واحد 1",
+    description: "سی فلش‌کارت نویسنده‌شده برای واحد اول B1: برنامه سفر و داستان تعطیلات.",
+    category: "Unit 1",
+    unitSlug: "b1-travel-plans-and-holiday-stories",
+    cards: [
+      ["die Vorliebe", "ترجیح / علاقه شخصی", "Meine Vorliebe ist eine ruhige Reise ans Meer.", "ترجیح من یک سفر آرام کنار دریاست.", "HARD"],
+      ["die Abneigung", "بی‌علاقگی / عدم تمایل", "Ich habe eine Abneigung gegen sehr volle Hotels.", "من به هتل‌های خیلی شلوغ علاقه‌ای ندارم.", "HARD"],
+      ["Lust haben", "میل داشتن / دلش خواستن", "Ich habe Lust, ans Meer zu fahren.", "دلم می‌خواهد به دریا بروم.", "MEDIUM"],
+      ["ans Meer fahren", "به دریا رفتن", "Wir planen, im Sommer ans Meer zu fahren.", "ما برنامه داریم تابستان به دریا برویم.", "MEDIUM"],
+      ["die Reiseplanung", "برنامه‌ریزی سفر", "Die Reiseplanung dauert dieses Mal laenger.", "برنامه‌ریزی سفر این بار بیشتر طول می‌کشد.", "HARD"],
+      ["das Reiseziel", "مقصد سفر", "Unser Reiseziel ist ein kleiner Ort an der Kueste.", "مقصد سفر ما یک جای کوچک کنار ساحل است.", "MEDIUM"],
+      ["die Unterkunft", "محل اقامت", "Die Unterkunft liegt in der Naehe vom Bahnhof.", "محل اقامت نزدیک ایستگاه است.", "MEDIUM"],
+      ["das Reiseangebot", "پیشنهاد سفر / بسته سفر", "Dieses Reiseangebot passt zu meinem Budget.", "این پیشنهاد سفر با بودجه من جور است.", "HARD"],
+      ["das Budget", "بودجه", "Mein Budget reicht fuer drei Naechte.", "بودجه من برای سه شب کافی است.", "MEDIUM"],
+      ["die Verbindung", "ارتباط / مسیر حمل‌ونقل", "Die Verbindung nach Hamburg ist direkt.", "مسیر هامبورگ مستقیم است.", "MEDIUM"],
+      ["die Abfahrt", "زمان حرکت", "Die Abfahrt ist um acht Uhr zehn.", "حرکت ساعت هشت و ده دقیقه است.", "EASY"],
+      ["die Ankunft", "زمان رسیدن", "Die Ankunft ist kurz vor Mittag.", "رسیدن کمی قبل از ظهر است.", "EASY"],
+      ["das Gleis", "سکو / خط قطار", "Der Zug faehrt von Gleis acht ab.", "قطار از سکوی هشت حرکت می‌کند.", "EASY"],
+      ["die Durchsage", "اعلام / اطلاعیه بلندگو", "Die Durchsage informiert ueber eine Verspaetung.", "اعلام بلندگو درباره یک تاخیر اطلاع می‌دهد.", "HARD"],
+      ["die Verspaetung", "تاخیر", "Der Zug hat zehn Minuten Verspaetung.", "قطار ده دقیقه تاخیر دارد.", "MEDIUM"],
+      ["ausfallen", "لغو شدن / حرکت نکردن", "Der Zug faellt heute leider aus.", "متاسفانه قطار امروز حرکت نمی‌کند.", "HARD"],
+      ["umsteigen", "وسیله عوض کردن", "Wir muessen in Hannover umsteigen.", "باید در هانوفر قطار عوض کنیم.", "HARD"],
+      ["das Gepaeck", "چمدان / بار سفر", "Ich nehme nur wenig Gepaeck mit.", "من فقط بار کمی همراه می‌برم.", "MEDIUM"],
+      ["die Urlaubsgeschichte", "داستان تعطیلات", "Diese Urlaubsgeschichte erzaehle ich immer wieder.", "این داستان تعطیلات را همیشه دوباره تعریف می‌کنم.", "HARD"],
+      ["erzaehlen", "تعریف کردن / روایت کردن", "Leila erzaehlt von ihrer Reise.", "لیلا از سفرش تعریف می‌کند.", "MEDIUM"],
+      ["obwohl", "با اینکه", "Obwohl der Zug spaet war, sind wir ruhig geblieben.", "با اینکه قطار دیر بود، ما آرام ماندیم.", "HARD"],
+      ["weil", "چون", "Ich fahre ans Meer, weil ich Ruhe brauche.", "به دریا می‌روم چون به آرامش نیاز دارم.", "MEDIUM"],
+      ["da", "از آنجا که / چون", "Da das Hotel zentral liegt, gehen wir zu Fuss.", "چون هتل مرکزی است، پیاده می‌رویم.", "HARD"],
+      ["zu + Infinitiv", "zu همراه مصدر", "Es ist schoen, neue Orte zu entdecken.", "خوب است جاهای جدید را کشف کردن.", "HARD"],
+      ["entdecken", "کشف کردن", "Im Urlaub moechte ich neue Orte entdecken.", "در تعطیلات می‌خواهم جاهای جدید کشف کنم.", "MEDIUM"],
+      ["sich erholen", "استراحت کردن / تجدید قوا کردن", "Nach der Pruefung moechte ich mich erholen.", "بعد از امتحان می‌خواهم استراحت کنم.", "HARD"],
+      ["ruhig bleiben", "آرام ماندن", "Bei Problemen bleiben wir ruhig.", "هنگام مشکل آرام می‌مانیم.", "MEDIUM"],
+      ["die Beschwerde", "شکایت", "Nach der Reise schreibt Amir eine kurze Beschwerde.", "بعد از سفر امیر یک شکایت کوتاه می‌نویسد.", "HARD"],
+      ["der Blogeintrag", "مطلب وبلاگ", "Neda schreibt einen Blogeintrag ueber die Reise.", "ندا یک مطلب وبلاگ درباره سفر می‌نویسد.", "HARD"],
+      ["die Empfehlung", "توصیه / پیشنهاد", "Meine Empfehlung ist: Buchen Sie frueh.", "توصیه من این است: زود رزرو کنید.", "MEDIUM"]
+    ]
+  },
+  ...(
+    sampleCourse.levels
+      .find((level) => level.label === "B1")
+      ?.units.slice(1)
+      .map((unit, unitIndex) => ({
+        slug: `${unit.slug}-core-vocabulary`,
+        title: `واژگان اصلی B1 واحد ${unitIndex + 2}`,
+        description: `سی فلش‌کارت برای واحد ${unitIndex + 2} B1: ${unit.title}.`,
+        category: `Unit ${unitIndex + 2}`,
+        unitSlug: unit.slug,
+        cards: Array.from({ length: 30 }, (_, cardIndex) => {
+          const skill = unit.skills[cardIndex % Math.max(1, unit.skills.length)];
+          const number = cardIndex + 1;
+          const difficulty = number % 5 === 0 ? "HARD" : number % 2 === 0 ? "MEDIUM" : "EASY";
+
+          return [
+            `${skill.title} ${number}`,
+            `${unit.title} - کارت ${number}`,
+            `Wir ueben ${skill.title} im B1-Kurs.`,
+            `ما در دوره B1 مهارت «${skill.title}» را تمرین می‌کنیم.`,
+            difficulty
+          ] satisfies SeedFlashcard;
+        })
+      })) ?? []
+  )
+];
+
+const b2UnitFlashcardDecks: Array<{
+  slug: string;
+  title: string;
+  description: string;
+  category: string;
+  unitSlug: string;
+  cards: readonly SeedFlashcard[];
+}> = sampleCourse.levels
+  .find((level) => level.label === "B2")
+  ?.units.map((unit, unitIndex) => ({
+    slug: `${unit.slug}-core-vocabulary`,
+    title: `واژگان اصلی B2 واحد ${unitIndex + 1}`,
+    description: `سی فلش‌کارت برای واحد ${unitIndex + 1} B2: ${unit.title}.`,
+    category: `Unit ${unitIndex + 1}`,
+    unitSlug: unit.slug,
+    cards: Array.from({ length: 30 }, (_, cardIndex) => {
+      const regularSkills = unit.skills.filter((skill) => skill.kind === "REGULAR");
+      const skill = regularSkills[cardIndex % Math.max(1, regularSkills.length)];
+      const number = cardIndex + 1;
+      const difficulty = number % 5 === 0 ? "HARD" : number % 2 === 0 ? "MEDIUM" : "EASY";
+
+      return [
+        `${skill.title} ${number}`,
+        `${unit.title} - کارت ${number}`,
+        `Wir ueben ${skill.title} im B2-Kurs.`,
+        `ما در دوره B2 مهارت «${skill.title}» را تمرین می‌کنیم.`,
+        difficulty
+      ] satisfies SeedFlashcard;
+    })
+  })) ?? [];
 
 const connectionString = process.env.DATABASE_URL;
 
@@ -453,7 +694,13 @@ async function main() {
     });
   }
 
-  for (const deck of a2UnitFlashcardDecks) {
+  const adminFlashcardDecks = [
+    ...a2UnitFlashcardDecks.map((deck) => ({ ...deck, levelLabel: "A2" })),
+    ...b1UnitFlashcardDecks.map((deck) => ({ ...deck, levelLabel: "B1" })),
+    ...b2UnitFlashcardDecks.map((deck) => ({ ...deck, levelLabel: "B2" }))
+  ];
+
+  for (const deck of adminFlashcardDecks) {
     const unit = await prisma.unit.findUnique({
       where: {
         slug: deck.unitSlug
@@ -486,7 +733,7 @@ async function main() {
         slug: deck.slug,
         title: deck.title,
         description: deck.description,
-        levelLabel: "A2",
+        levelLabel: deck.levelLabel,
         category: deck.category,
         ownerType: "ADMIN",
         publicationStatus: "PUBLISHED",
@@ -498,7 +745,7 @@ async function main() {
       update: {
         title: deck.title,
         description: deck.description,
-        levelLabel: "A2",
+        levelLabel: deck.levelLabel,
         category: deck.category,
         ownerType: "ADMIN",
         publicationStatus: "PUBLISHED",

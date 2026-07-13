@@ -1,0 +1,3 @@
+# B1 unit theme map
+
+Nyra's B1 Learning Path will map the twelve chapters of `Netzwerk-Neu-B1-Kursbuch-1.pdf` to twelve original Nyra Unit themes: travel plans and holiday stories; everyday services, technology, and opinions; life changes, memories, and manners; work, applications, and workplace conversations; environment, weather, and public action; future plans, expectations, and advice; friendships, relationships, and conflict; health, habits, music, and learning; art, culture, and description; community, institutions, and social engagement; city life, mobility, and written communication; and money, banking, and global choices. This preserves the primary B1 reference's broad progression while keeping Nyra's learner-facing structure original.

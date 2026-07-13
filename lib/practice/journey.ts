@@ -2,6 +2,7 @@ import { PublicationStatus, ProgressEventType, SkillKind } from "@/lib/generated
 import { getPrisma } from "@/lib/db/prisma";
 import { devAuthUserId } from "@/lib/learner/preferences";
 import { withInterfaceLanguage, type InterfaceLanguageCode } from "@/lib/i18n/interface-language";
+import { getLearningPathDisplayCopy } from "@/lib/learning/sample-content";
 
 type CompletionMetadata = {
   scorePercent?: unknown;
@@ -172,6 +173,12 @@ export async function getPracticeJourney(
       }))
     )
   );
+  const displayCopyByLevelLabel = new Map(
+    course.levels.map((level) => [
+      level.label,
+      getLearningPathDisplayCopy(level.label, input.interfaceLanguage ?? "fa")
+    ])
+  );
   const learnerProfile = await db.learnerProfile.findUnique({
     where: {
       authUserId: devAuthUserId
@@ -225,35 +232,51 @@ export async function getPracticeJourney(
   const currentSkillSlug = flatSkills.find(
     ({ skill }) => !completionBySkillSlug.has(skill.slug)
   )?.skill.slug;
+  const currentSkillSlugByLevel = new Map<string, string>();
+
+  for (const level of course.levels) {
+    const currentLevelSkill = level.units
+      .flatMap((unit) => unit.skills)
+      .find((skill) => !completionBySkillSlug.has(skill.slug));
+
+    if (currentLevelSkill) {
+      currentSkillSlugByLevel.set(level.id, currentLevelSkill.slug);
+    }
+  }
+
   let currentNode: PracticeJourneyNode | null = null;
 
   const levels = course.levels.map((level) => {
+    const displayLevel = displayCopyByLevelLabel.get(level.label);
+    const currentLevelSkillSlug = currentSkillSlugByLevel.get(level.id);
     const units = level.units
       .map((unit) => {
+        const displayUnit = displayLevel?.units[unit.slug];
         const nodes = unit.skills.map((skill) => {
           const completion = completionBySkillSlug.get(skill.slug);
+          const displaySkill = displayUnit?.skills[skill.slug];
           const needsReview = completion?.passed === false;
           const state: PracticeJourneyNodeState = completion
             ? needsReview
               ? "needs_review"
               : "completed"
-            : skill.slug === currentSkillSlug
+            : skill.slug === currentLevelSkillSlug
               ? "current"
               : "locked";
           const node: PracticeJourneyNode = {
             id: skill.id,
             slug: skill.slug,
-            title: skill.title,
-            description: skill.description,
+            title: displaySkill?.title ?? skill.title,
+            description: displaySkill?.description ?? skill.description,
             kind: skill.kind,
             order: skill.order,
             unitOrder: unit.order,
             levelOrder: level.order,
             levelLabel: level.label,
-            levelTitle: level.title,
+            levelTitle: displayLevel?.levelTitle ?? level.title,
             unitSlug: unit.slug,
-            unitTitle: unit.title,
-            unitSummary: unit.summary,
+            unitTitle: displayUnit?.title ?? unit.title,
+            unitSummary: displayUnit?.summary ?? unit.summary,
             xp: skill.xp,
             passingScore: skill.passingScore,
             questionCount: skill.questions.length,
@@ -263,7 +286,7 @@ export async function getPracticeJourney(
             href: withInterfaceLanguage(`/learn/${skill.slug}`, input.interfaceLanguage ?? "fa")
           };
 
-          if (state === "current") {
+          if (state === "current" && skill.slug === currentSkillSlug) {
             currentNode = node;
           }
 
@@ -278,8 +301,8 @@ export async function getPracticeJourney(
           id: unit.id,
           slug: unit.slug,
           order: unit.order,
-          title: unit.title,
-          summary: unit.summary,
+          title: displayUnit?.title ?? unit.title,
+          summary: displayUnit?.summary ?? unit.summary,
           completedCount,
           needsReviewCount,
           totalCount: nodes.length,
@@ -295,7 +318,7 @@ export async function getPracticeJourney(
       id: level.id,
       label: level.label,
       order: level.order,
-      title: level.title,
+      title: displayLevel?.levelTitle ?? level.title,
       worldTone: worldToneForOrder(level.order),
       completedCount,
       needsReviewCount,

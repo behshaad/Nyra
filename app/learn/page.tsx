@@ -9,18 +9,14 @@ import {
   withInterfaceLanguage
 } from "@/lib/i18n/interface-language";
 import { getLearnerPreferences } from "@/lib/learner/preferences";
-import {
-  getLevelContentSummary,
-  sampleCourse
-} from "@/lib/learning/sample-content";
+import { sampleCourse } from "@/lib/learning/sample-content";
 import { getLearningPathProgress } from "@/lib/learning/path-progress";
 
-const levelOptions = [
-  { label: "A1", active: true },
-  { label: "A2", active: true },
-  { label: "B1", active: false },
-  { label: "B2", active: false }
-];
+const publishedLevelLabels = new Set(sampleCourse.levels.map((level) => level.label));
+const levelOptions = ["A1", "A2", "B1", "B2"].map((label) => ({
+  label,
+  active: publishedLevelLabels.has(label)
+}));
 
 export default async function LearnPage({
   searchParams
@@ -41,22 +37,25 @@ export default async function LearnPage({
   )
     ? preferences.currentLevel
     : "A1";
-  const summary = getLevelContentSummary(selectedLevelLabel);
   const selectedLevel =
     sampleCourse.levels.find((level) => level.label === selectedLevelLabel) ??
     sampleCourse.levels[0];
-  const progress = await getLearningPathProgress(selectedLevelLabel);
+  const progress = await getLearningPathProgress(selectedLevelLabel, language);
   const levelText = {
     label: copy.learn.label.replaceAll("A1", selectedLevelLabel),
-    body: copy.learn.body(summary).replaceAll("A1", selectedLevelLabel),
     progress: copy.learn.progress.replaceAll("A1", selectedLevelLabel),
-    completeLabel: copy.learn.completeLabel.replaceAll("A1", selectedLevelLabel)
+    completeLabel: copy.learn.completeLabel.replaceAll("A1", selectedLevelLabel),
+    finalTest: copy.learn.finalTest.replaceAll("A1", selectedLevelLabel)
   };
   const selectedUnit =
     progress.units.find((unit) => unit.slug === selectedUnitParam) ??
     progress.units.find((unit) => unit.slug === progress.selectedUnitSlug) ??
     progress.units[0];
   const nextSkill = progress.nextSkill ?? selectedUnit?.skills[0] ?? null;
+  const learnReturnTo = withInterfaceLanguage("/learn", language);
+  const firstUnitHref = progress.units[0]
+    ? `/learn?unit=${progress.units[0].slug}`
+    : "/learn";
 
   return (
     <main
@@ -70,20 +69,17 @@ export default async function LearnPage({
       />
 
       <section className="route-page">
-        <div className="route-hero compact">
-          <span className="section-label">{levelText.label}</span>
-          <h1>{copy.learn.title}</h1>
-          <p>{levelText.body}</p>
+        <div className="learn-level-switcher">
           <div className="level-selector" aria-label={copy.learn.levelLabel}>
             {levelOptions.map((level) =>
               level.active ? (
                 <Link
                   className={`level-pill ${
-                    preferences.currentLevel === level.label ? "active" : ""
+                    selectedLevelLabel === level.label ? "active" : ""
                   }`}
                   href={levelPreferenceHref({
                     level: level.label,
-                    returnTo: selectedUnitParam ? `/learn?unit=${selectedUnitParam}` : "/learn"
+                    returnTo: learnReturnTo
                   })}
                   key={level.label}
                 >
@@ -164,7 +160,7 @@ export default async function LearnPage({
                 </div>
                 <Link
                   className="secondary-button"
-                  href={withInterfaceLanguage("/learn?unit=a1-first-contacts", language)}
+                  href={withInterfaceLanguage(firstUnitHref, language)}
                 >
                   {copy.learn.reviewFromStart}
                   <RotateCcw size={18} />
@@ -217,7 +213,7 @@ export default async function LearnPage({
                     <div>
                       <small>
                         {skill.kind === "FINAL_TEST"
-                          ? copy.learn.finalTest
+                          ? levelText.finalTest
                           : skill.kind === "UNIT_CHECKPOINT"
                             ? copy.learn.checkpoint
                             : isAssessment

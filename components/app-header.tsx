@@ -31,6 +31,7 @@ export async function AppHeader({
             flashcards: copy.nav.flashcards,
             resources: copy.nav.resources
           },
+          adminDashboard: copy.nav.admin,
           continueLearning: copy.header.startLearning,
           languageLabel: copy.header.languageLabel
         }}

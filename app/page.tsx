@@ -2,6 +2,8 @@ import Link from "next/link";
 import { ArrowRight, BookOpen, ChartNoAxesCombined, Crown, Sparkles } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
+import { HomeGlobeShowcase } from "@/components/home-globe-showcase";
+import { SparklesPreview } from "@/components/sparkles-preview";
 import {
   interfaceCopy,
   resolveInterfaceLanguage,
@@ -84,6 +86,9 @@ export default async function Home({
           </div>
         </section>
       </section>
+
+      <SparklesPreview href={withInterfaceLanguage("/practice", language)} />
+      <HomeGlobeShowcase />
     </main>
   );
 }

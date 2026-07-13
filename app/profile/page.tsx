@@ -1,7 +1,19 @@
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
-import { ProfileSettings } from "@/components/profile-settings";
-import { BarChart3, Crown, Flame, Gem, ShieldCheck, Star, Target, Trophy } from "lucide-react";
+import { ProfileAccountSection } from "@/components/profile-account-section";
+import { getAuthSession } from "@/lib/auth/server";
+import {
+  BarChart3,
+  BookOpenCheck,
+  Flame,
+  Gem,
+  GraduationCap,
+  Languages,
+  ShieldCheck,
+  Target,
+  Trophy,
+  UserRound
+} from "lucide-react";
 import {
   interfaceCopy,
   resolveInterfaceLanguage
@@ -14,51 +26,66 @@ import { getPracticeJourney } from "@/lib/practice/journey";
 const progressCopy = {
   fa: {
     label: "پیشرفت",
-    title: "آمار پیشرفت",
+    title: "My Progress",
     body: "پیشرفت شخصی، سطح فعلی و وضعیت یادگیری شما در یک نگاه.",
     currentLevel: "سطح فعلی",
     xp: "XP",
     dailyStreak: "روند روزانه",
-    membership: "عضویت",
-    completed: "مهارت‌های تکمیل‌شده",
+    lessons: "Lessons",
+    completion: "Completion",
     review: "نیازمند مرور",
     dailyGoal: "هدف روزانه",
     overall: "پیشرفت کلی",
-    standard: "Standard",
     days: "روز",
-    minutes: "دقیقه"
+    minutes: "دقیقه",
+    heroLabel: "Profile",
+    learnerProfile: "Learner Profile",
+    sourceLanguage: "زبان مبدا",
+    targetLanguage: "زبان هدف",
+    nextSkill: "قدم بعدی",
+    role: "Role"
   },
   en: {
     label: "Progress",
-    title: "Progress Stats",
+    title: "My Progress",
     body: "Your personal progress, current level, and learning status at a glance.",
     currentLevel: "Current Level",
     xp: "XP",
     dailyStreak: "Daily Streak",
-    membership: "Membership",
-    completed: "Completed Skills",
+    lessons: "Lessons",
+    completion: "Completion",
     review: "Needs Review",
     dailyGoal: "Daily Goal",
     overall: "Overall Progress",
-    standard: "Standard",
     days: "days",
-    minutes: "min"
+    minutes: "min",
+    heroLabel: "Profile",
+    learnerProfile: "Learner Profile",
+    sourceLanguage: "Source Language",
+    targetLanguage: "Target Language",
+    nextSkill: "Next Skill",
+    role: "Role"
   },
   de: {
     label: "Fortschritt",
-    title: "Fortschrittsstatistiken",
+    title: "My Progress",
     body: "Dein persoenlicher Fortschritt, aktuelles Niveau und Lernstatus auf einen Blick.",
     currentLevel: "Aktuelles Level",
     xp: "XP",
     dailyStreak: "Daily Streak",
-    membership: "Mitgliedschaft",
-    completed: "Abgeschlossene Skills",
+    lessons: "Lessons",
+    completion: "Completion",
     review: "Wiederholen",
     dailyGoal: "Tagesziel",
     overall: "Gesamtfortschritt",
-    standard: "Standard",
     days: "Tage",
-    minutes: "Min."
+    minutes: "Min.",
+    heroLabel: "Profile",
+    learnerProfile: "Lernprofil",
+    sourceLanguage: "Ausgangssprache",
+    targetLanguage: "Zielsprache",
+    nextSkill: "Naechster Skill",
+    role: "Role"
   }
 };
 
@@ -75,6 +102,7 @@ export default async function ProfilePage({
 }) {
   const { ui } = await searchParams;
   const preferences = await getLearnerPreferences();
+  const session = await getAuthSession();
   const language = ui
     ? resolveInterfaceLanguage(ui)
     : preferences.interfaceLanguage;
@@ -86,12 +114,75 @@ export default async function ProfilePage({
   const currentLevelLabel = journey.currentNode?.levelLabel ?? preferences.currentLevel;
   const currentLevel = journey.levels.find((level) => level.label === currentLevelLabel);
   const progressPercent = formatPercent(journey.completedCount, journey.totalCount);
+  const displayName = session?.fullName ?? devLearnerProfile.displayName;
+  const initials = displayName
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("") || "N";
+  const heroFacts = [
+    {
+      label: progress.learnerProfile,
+      value: journey.course?.title ?? "German Course",
+      icon: GraduationCap
+    },
+    {
+      label: progress.currentLevel,
+      value: currentLevelLabel,
+      icon: Trophy
+    },
+    {
+      label: progress.xp,
+      value: journey.totalXp.toLocaleString("en-US"),
+      icon: Gem
+    },
+    {
+      label: progress.dailyGoal,
+      value: `${devLearnerProfile.dailyGoalMinutes} ${progress.minutes}`,
+      icon: Target
+    }
+  ];
+  const profileDetails = [
+    {
+      label: progress.sourceLanguage,
+      value: devLearnerProfile.sourceLanguage,
+      icon: Languages
+    },
+    {
+      label: progress.targetLanguage,
+      value: devLearnerProfile.targetLanguage,
+      icon: Languages
+    },
+    {
+      label: progress.nextSkill,
+      value: journey.currentNode?.title ?? currentLevel?.title ?? currentLevelLabel,
+      icon: BookOpenCheck
+    },
+    {
+      label: progress.role,
+      value: session?.role ?? "USER",
+      icon: ShieldCheck
+    }
+  ];
   const profileStats = [
     {
       label: progress.currentLevel,
       value: currentLevelLabel,
       detail: currentLevel?.title ?? devLearnerProfile.currentLevel,
-      icon: Crown
+      icon: Trophy
+    },
+    {
+      label: progress.dailyGoal,
+      value: String(devLearnerProfile.dailyGoalMinutes),
+      detail: progress.minutes,
+      icon: Target
+    },
+    {
+      label: progress.lessons,
+      value: `${journey.completedCount} / ${journey.totalCount}`,
+      detail: progress.overall,
+      icon: BookOpenCheck
     },
     {
       label: progress.xp,
@@ -106,14 +197,8 @@ export default async function ProfilePage({
       icon: Flame
     },
     {
-      label: progress.membership,
-      value: progress.standard,
-      detail: "Lingoix",
-      icon: Star
-    },
-    {
-      label: progress.completed,
-      value: `${journey.completedCount} / ${journey.totalCount}`,
+      label: progress.completion,
+      value: `${progressPercent}%`,
       detail: `${progressPercent}% ${progress.overall}`,
       icon: ShieldCheck
     },
@@ -122,12 +207,6 @@ export default async function ProfilePage({
       value: String(journey.needsReviewCount),
       detail: progress.review,
       icon: Trophy
-    },
-    {
-      label: progress.dailyGoal,
-      value: String(devLearnerProfile.dailyGoalMinutes),
-      detail: progress.minutes,
-      icon: Target
     }
   ];
 
@@ -137,11 +216,45 @@ export default async function ProfilePage({
       <AppHeader language={language} currentPath="/profile" />
 
       <section className="route-page">
-        <div className="route-hero">
-          <span className="section-label">{text(profileCopy.label, language)}</span>
-          <h1>{text(profileCopy.title, language)}</h1>
-          <p>{text(profileCopy.body, language)}</p>
-        </div>
+        <section className="profile-hero" aria-labelledby="profile-hero-title">
+          <div className="profile-hero-main">
+            <div className="profile-hero-avatar" aria-hidden="true">
+              {initials ? <span>{initials}</span> : <UserRound size={40} />}
+            </div>
+            <div className="profile-hero-copy">
+              <span className="section-label">{progress.heroLabel}</span>
+              <h1 id="profile-hero-title">{displayName}</h1>
+              <p>{text(profileCopy.body, language)}</p>
+              <div className="profile-detail-grid">
+                {profileDetails.map((detail) => {
+                  const Icon = detail.icon;
+
+                  return (
+                    <span className="profile-detail-pill" key={detail.label}>
+                      <Icon size={16} aria-hidden="true" />
+                      <span>{detail.label}</span>
+                      <strong>{detail.value}</strong>
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          <div className="profile-hero-facts">
+            {heroFacts.map((fact) => {
+              const Icon = fact.icon;
+
+              return (
+                <article className="profile-hero-fact" key={fact.label}>
+                  <Icon size={18} aria-hidden="true" />
+                  <span>{fact.label}</span>
+                  <strong>{fact.value}</strong>
+                </article>
+              );
+            })}
+          </div>
+        </section>
 
         <section className="app-panel profile-progress-section" aria-labelledby="profile-progress-title">
           <div className="app-panel-header">
@@ -172,16 +285,7 @@ export default async function ProfilePage({
           </div>
         </section>
 
-        <ProfileSettings
-          language={language}
-          initialValues={{
-            displayName: devLearnerProfile.displayName,
-            sourceLanguage: devLearnerProfile.sourceLanguage,
-            targetLanguage: devLearnerProfile.targetLanguage,
-            currentLevel: preferences.currentLevel,
-            dailyGoalMinutes: devLearnerProfile.dailyGoalMinutes
-          }}
-        />
+        <ProfileAccountSection language={language} session={session} />
       </section>
     </main>
   );

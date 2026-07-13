@@ -20,6 +20,7 @@ import {
 import { resourceCopy, resourceTypeCopy, text } from "@/lib/i18n/page-copy";
 import { getLearnerPreferences } from "@/lib/learner/preferences";
 import { getPublishedResourcesFromDb } from "@/lib/resources/resource-repository";
+import { localizeResourceForInterface } from "@/lib/resources/resource-display";
 
 const resourceIcons = {
   BOOK: BookOpen,
@@ -57,7 +58,9 @@ export default async function ResourcesPage({
     ? resolveInterfaceLanguage(ui)
     : preferences.interfaceLanguage;
   const copy = interfaceCopy[language];
-  const resources = await getPublishedResourcesFromDb();
+  const resources = (await getPublishedResourcesFromDb()).map((resource) =>
+    localizeResourceForInterface(resource, language)
+  );
 
   return (
     <main className={`site-shell ${copy.dir === "rtl" ? "learner-rtl" : ""}`} dir={copy.dir}>
