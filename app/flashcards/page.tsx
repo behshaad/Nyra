@@ -9,7 +9,6 @@ import {
   interfaceCopy,
   resolveInterfaceLanguage
 } from "@/lib/i18n/interface-language";
-import { flashcardCopy, text } from "@/lib/i18n/page-copy";
 import { getLearnerPreferences } from "@/lib/learner/preferences";
 
 export default async function FlashcardsPage({
@@ -36,12 +35,6 @@ export default async function FlashcardsPage({
       <AppHeader language={language} currentPath="/flashcards" />
 
       <section className="route-page">
-        <div className="route-hero">
-          <span className="section-label">{text(flashcardCopy.label, language)}</span>
-          <h1>{text(flashcardCopy.title, language)}</h1>
-          <p>{text(flashcardCopy.body, language)}</p>
-        </div>
-
         <FlashcardLibrary
           decks={decks.map((deck) => ({
             id: deck.id,
