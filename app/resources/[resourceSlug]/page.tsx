@@ -28,6 +28,7 @@ import {
 } from "@/lib/i18n/page-copy";
 import { getLearnerPreferences } from "@/lib/learner/preferences";
 import { getResourceBySlug } from "@/lib/resources/resource-repository";
+import { localizeResourceForInterface } from "@/lib/resources/resource-display";
 
 const resourceIcons = {
   BOOK: BookOpen,
@@ -59,12 +60,13 @@ export default async function ResourceDetailPage({
     ? resolveInterfaceLanguage(ui)
     : preferences.interfaceLanguage;
   const copy = interfaceCopy[language];
-  const resource = await getResourceBySlug(resourceSlug);
+  const rawResource = await getResourceBySlug(resourceSlug);
 
-  if (!resource || resource.publicationStatus !== PublicationStatus.PUBLISHED) {
+  if (!rawResource || rawResource.publicationStatus !== PublicationStatus.PUBLISHED) {
     notFound();
   }
 
+  const resource = localizeResourceForInterface(rawResource, language);
   const Icon = resourceIcons[resource.type];
   const metadata =
     resource.metadata && typeof resource.metadata === "object"
