@@ -83,9 +83,10 @@ export default async function Home({
               );
             })}
           </div>
-          <HomeGlobeShowcase />
         </section>
       </section>
+
+      <HomeGlobeShowcase />
     </main>
   );
 }

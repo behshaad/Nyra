@@ -1362,38 +1362,54 @@ h3 {
 
 .home-globe-showcase {
   align-items: center;
-  border-top: 1px solid var(--line);
+  animation: floatIn 850ms 180ms ease both;
+  background: var(--panel);
+  backdrop-filter: blur(28px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  direction: ltr;
   display: grid;
-  gap: 14px;
-  grid-template-columns: minmax(0, 0.78fr) minmax(190px, 0.82fr);
-  margin-top: 16px;
-  padding-top: 16px;
+  gap: 44px;
+  grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1fr);
+  margin: 30px auto 72px;
+  max-width: 1402px;
+  min-height: 420px;
+  overflow: hidden;
+  padding: 44px 32px;
 }
 
 .home-globe-copy {
+  align-content: center;
   display: grid;
-  gap: 10px;
+  gap: 24px;
+  justify-items: end;
+  text-align: right;
 }
 
 .home-globe-copy p {
   color: var(--muted);
-  line-height: 1.55;
+  font-size: clamp(1.6rem, 2.25vw, 2.1rem);
+  font-weight: 800;
+  line-height: 1.38;
   margin: 0;
+  max-width: 620px;
 }
 
 .globe-kicker {
   align-items: center;
   color: var(--green-dark);
   display: inline-flex;
-  font-size: 0.78rem;
+  flex-direction: row;
+  font-size: 1.05rem;
   font-weight: 850;
   gap: 8px;
 }
 
 .home-globe-stage {
-  justify-self: center;
-  max-width: 280px;
-  width: min(100%, 280px);
+  justify-self: start;
+  max-width: 520px;
+  width: min(100%, 520px);
 }
 
 .globe-labels {
@@ -3630,12 +3646,21 @@ h3 {
   }
 
   .home-globe-showcase {
+    gap: 28px;
     grid-template-columns: 1fr;
+    min-height: 0;
+    padding: 28px 18px;
   }
 
   .home-globe-stage {
-    max-width: 320px;
-    width: min(100%, 320px);
+    justify-self: center;
+    max-width: 440px;
+    width: min(100%, 440px);
+  }
+
+  .home-globe-copy {
+    justify-items: center;
+    text-align: center;
   }
 
   .profile-hero-facts {
