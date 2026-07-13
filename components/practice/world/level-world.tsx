@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import { motion } from "framer-motion";
 import { Check, Lock, Play, RotateCcw, ShieldCheck } from "lucide-react";
@@ -57,6 +57,17 @@ function lessonLabel(order: number, language: InterfaceLanguageCode) {
   }
 
   return `Lesson ${number}`;
+}
+
+function progressLabel(completedCount: number, totalCount: number, language: InterfaceLanguageCode) {
+  const completed = localizedNumber(completedCount, language);
+  const total = localizedNumber(totalCount, language);
+
+  if (language === "fa") {
+    return `${completed} از ${total}`;
+  }
+
+  return `${completed} / ${total}`;
 }
 
 function stateLabel(state: UnitWorldState, isAdminPreview: boolean) {
@@ -168,7 +179,8 @@ export function WorldPage({
   );
   const [draggingUnit, setDraggingUnit] = useState<UnitWorldLabel | null>(null);
   const [layoutPrintRequest, setLayoutPrintRequest] = useState(0);
-  const level = initialJourney.levels.find((candidate) => candidate.label === levelLabel);
+  const [journey, setJourney] = useState(initialJourney);
+  const level = journey.levels.find((candidate) => candidate.label === levelLabel);
   const activeLayout = DEBUG_WORLD_LAYOUT ? debugLayout : UNIT_WORLD_LAYOUT;
   const unitPoints = useMemo(
     () => (level ? buildUnitPoints(level, isAdmin, activeLayout) : []),
@@ -182,6 +194,39 @@ export function WorldPage({
   const enteringPoint = enteringUnitSlug
     ? unitPoints.find((point) => point.unit.slug === enteringUnitSlug)
     : null;
+  const refreshJourney = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/practice-journey?ui=${language}`, {
+        cache: "no-store"
+      });
+
+      if (response.ok) {
+        setJourney((await response.json()) as PracticeJourneyView);
+      }
+    } catch {
+      // Keep the server-rendered journey when a background refresh fails.
+    }
+  }, [language]);
+
+  useEffect(() => {
+    void refreshJourney();
+  }, [refreshJourney]);
+
+  useEffect(() => {
+    const refreshOnFocus = () => {
+      if (globalThis.document.visibilityState === "visible") {
+        void refreshJourney();
+      }
+    };
+
+    globalThis.addEventListener("focus", refreshJourney);
+    globalThis.document.addEventListener("visibilitychange", refreshOnFocus);
+
+    return () => {
+      globalThis.removeEventListener("focus", refreshJourney);
+      globalThis.document.removeEventListener("visibilitychange", refreshOnFocus);
+    };
+  }, [refreshJourney]);
 
   useEffect(() => {
     if (!DEBUG_WORLD_LAYOUT || draggingUnit === null) {
@@ -462,7 +507,7 @@ function UnitNode({
         </motion.span>
         <span className="unit-lesson-plate">{lessonLabel(point.unit.order, language)}</span>
         <span className="unit-node-progress">
-          {point.unit.completedCount} / {point.unit.totalCount}
+          {progressLabel(point.unit.completedCount, point.unit.totalCount, language)}
         </span>
         {isAdminPreview ? <span className="unit-admin-badge">Admin preview</span> : null}
       </button>
