@@ -1,6 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useRef, type PointerEvent as ReactPointerEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
 import createGlobe from "cobe";
 
 interface LabelMarker {
@@ -18,22 +23,82 @@ interface GlobeLabelsProps {
 }
 
 const defaultMarkers: LabelMarker[] = [
-  { id: "label-1", location: [48.86, 2.35], text: "visit soon!", color: "#e84855", rotate: -8 },
-  { id: "label-2", location: [35.68, 139.65], text: "amazing food", color: "#2a9d8f", rotate: 5 },
-  { id: "label-3", location: [40.71, -74.01], text: "home ♥", color: "#e76f51", rotate: -3 },
-  { id: "label-4", location: [-33.87, 151.21], text: "bucket list", color: "#264653", rotate: 7 },
-  { id: "label-5", location: [51.51, -0.13], text: "rainy but fun", color: "#7b2cbf", rotate: -5 },
-  { id: "label-6", location: [-22.91, -43.17], text: "samba time!", color: "#f4a261", rotate: 4 },
-  { id: "label-7", location: [55.75, 37.62], text: "cold but cozy", color: "#457b9d", rotate: -6 },
-  { id: "label-8", location: [25.2, 55.27], text: "so luxurious", color: "#d4a373", rotate: 3 },
-  { id: "label-9", location: [1.35, 103.82], text: "foodie heaven", color: "#e63946", rotate: -4 },
-  { id: "label-10", location: [-34.6, -58.38], text: "tango nights", color: "#9d4edd", rotate: 6 }
+  {
+    id: "label-1",
+    location: [48.86, 2.35],
+    text: "Guten Tag,",
+    color: "#e84855",
+    rotate: -8,
+  },
+  {
+    id: "label-2",
+    location: [35.68, 139.65],
+    text: "Hallo",
+    color: "#2a9d8f",
+    rotate: 5,
+  },
+  {
+    id: "label-3",
+    location: [40.71, -74.01],
+    text: "Moin, Moin.♥",
+    color: "#e76f51",
+    rotate: -3,
+  },
+  {
+    id: "label-4",
+    location: [-33.87, 151.21],
+    text: "Servus.",
+    color: "#264653",
+    rotate: 7,
+  },
+  {
+    id: "label-5",
+    location: [51.51, -0.13],
+    text: "Mahlzeit",
+    color: "#7b2cbf",
+    rotate: -5,
+  },
+  {
+    id: "label-6",
+    location: [-22.91, -43.17],
+    text: "Guten Morgen",
+    color: "#f4a261",
+    rotate: 4,
+  },
+  {
+    id: "label-7",
+    location: [55.75, 37.62],
+    text: "Lange nicht gesehen",
+    color: "#457b9d",
+    rotate: -6,
+  },
+  {
+    id: "label-8",
+    location: [25.2, 55.27],
+    text: "Grüezi.",
+    color: "#d4a373",
+    rotate: 3,
+  },
+  {
+    id: "label-9",
+    location: [1.35, 103.82],
+    text: "Salü.",
+    color: "#e63946",
+    rotate: -4,
+  },
+  {
+    id: "label-10",
+    location: [-34.6, -58.38],
+    text: "Grüß Gott.",
+    color: "#9d4edd",
+    rotate: 6,
+  },
 ];
 
 export function GlobeLabels({
   markers = defaultMarkers,
   className = "",
-  speed = 0.003
+  speed = 0.003,
 }: GlobeLabelsProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pointerInteracting = useRef<{ x: number; y: number } | null>(null);
@@ -42,11 +107,14 @@ export function GlobeLabels({
   const thetaOffsetRef = useRef(0);
   const isPausedRef = useRef(false);
 
-  const handlePointerDown = useCallback((e: ReactPointerEvent<HTMLCanvasElement>) => {
-    pointerInteracting.current = { x: e.clientX, y: e.clientY };
-    if (canvasRef.current) canvasRef.current.style.cursor = "grabbing";
-    isPausedRef.current = true;
-  }, []);
+  const handlePointerDown = useCallback(
+    (e: ReactPointerEvent<HTMLCanvasElement>) => {
+      pointerInteracting.current = { x: e.clientX, y: e.clientY };
+      if (canvasRef.current) canvasRef.current.style.cursor = "grabbing";
+      isPausedRef.current = true;
+    },
+    [],
+  );
 
   const handlePointerUp = useCallback(() => {
     if (pointerInteracting.current !== null) {
@@ -64,11 +132,13 @@ export function GlobeLabels({
       if (pointerInteracting.current !== null) {
         dragOffset.current = {
           phi: (e.clientX - pointerInteracting.current.x) / 300,
-          theta: (e.clientY - pointerInteracting.current.y) / 1000
+          theta: (e.clientY - pointerInteracting.current.y) / 1000,
         };
       }
     };
-    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("pointermove", handlePointerMove, {
+      passive: true,
+    });
     window.addEventListener("pointerup", handlePointerUp, { passive: true });
     return () => {
       window.removeEventListener("pointermove", handlePointerMove);
@@ -79,7 +149,9 @@ export function GlobeLabels({
   useEffect(() => {
     if (!canvasRef.current) return;
     const canvas = canvasRef.current;
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     let globe: ReturnType<typeof createGlobe> | null = null;
     let animationId: number;
     let phi = 0;
@@ -103,19 +175,23 @@ export function GlobeLabels({
         markerColor: [0.79, 0.39, 0.26],
         glowColor: [0.94, 0.9, 0.84],
         markerElevation: 0,
-        markers: markers.map((m) => ({ location: m.location, size: 0.025, id: m.id })),
+        markers: markers.map((m) => ({
+          location: m.location,
+          size: 0.025,
+          id: m.id,
+        })),
         arcs: [],
         arcColor: [0.6, 0.4, 0.8],
         arcWidth: 0.5,
         arcHeight: 0.25,
-        opacity: 0.96
+        opacity: 0.96,
       });
 
       function animate() {
         if (!isPausedRef.current && !reduceMotion) phi += speed;
         globe?.update({
           phi: phi + phiOffsetRef.current + dragOffset.current.phi,
-          theta: 0.2 + thetaOffsetRef.current + dragOffset.current.theta
+          theta: 0.2 + thetaOffsetRef.current + dragOffset.current.theta,
         });
         animationId = requestAnimationFrame(animate);
       }
@@ -147,7 +223,9 @@ export function GlobeLabels({
   }, [markers, speed]);
 
   return (
-    <div className={`globe-labels relative aspect-square select-none ${className}`}>
+    <div
+      className={`globe-labels relative aspect-square select-none ${className}`}
+    >
       <canvas
         ref={canvasRef}
         onPointerDown={handlePointerDown}
@@ -158,7 +236,7 @@ export function GlobeLabels({
           opacity: 0,
           transition: "opacity 1.2s ease",
           borderRadius: "50%",
-          touchAction: "none"
+          touchAction: "none",
         }}
       />
       {markers.map((m) => (
@@ -188,7 +266,7 @@ export function GlobeLabels({
             overflow: "hidden",
             opacity: `var(--cobe-visible-${m.id}, 0)`,
             filter: `blur(calc((1 - var(--cobe-visible-${m.id}, 0)) * 8px))`,
-            transition: "opacity 0.3s, filter 0.3s"
+            transition: "opacity 0.3s, filter 0.3s",
           }}
         >
           <span
@@ -201,7 +279,7 @@ export function GlobeLabels({
               background:
                 "linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.1) 60%, transparent 100%)",
               borderRadius: "4px 4px 50% 50%",
-              pointerEvents: "none" as const
+              pointerEvents: "none" as const,
             }}
           />
           {m.text}
