@@ -2356,21 +2356,24 @@ h3 {
 
 .profile-progress-grid {
   display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .profile-progress-card {
+  --profile-card-accent: var(--green);
+  --profile-card-accent-soft: rgba(201, 100, 66, 0.14);
   background:
-    radial-gradient(circle at 18% 0%, rgba(231, 143, 165, 0.16), transparent 38%),
+    radial-gradient(circle at 12% 0%, var(--profile-card-accent-soft), transparent 42%),
     var(--control);
   border: 1px solid var(--line);
   border-radius: 8px;
-  display: grid;
-  gap: 7px;
-  min-height: 132px;
-  padding: 14px;
+  display: flex;
+  gap: 14px;
+  min-height: 128px;
+  padding: 16px;
   transition:
+    background 180ms ease,
     border-color 180ms ease,
     box-shadow 180ms ease,
     transform 180ms ease;
@@ -2382,8 +2385,66 @@ h3 {
   transform: translateY(-2px);
 }
 
-.profile-progress-card svg {
-  color: var(--green);
+.profile-progress-card-level {
+  --profile-card-accent: #df6035;
+  --profile-card-accent-soft: rgba(223, 96, 53, 0.16);
+}
+
+.profile-progress-card-goal {
+  --profile-card-accent: #2f80ed;
+  --profile-card-accent-soft: rgba(47, 128, 237, 0.14);
+}
+
+.profile-progress-card-lessons {
+  --profile-card-accent: #16a085;
+  --profile-card-accent-soft: rgba(22, 160, 133, 0.14);
+}
+
+.profile-progress-card-xp {
+  --profile-card-accent: #d09b2c;
+  --profile-card-accent-soft: rgba(208, 155, 44, 0.16);
+}
+
+.profile-progress-card-streak {
+  --profile-card-accent: #ef6a3a;
+  --profile-card-accent-soft: rgba(239, 106, 58, 0.16);
+}
+
+.profile-progress-card-completion {
+  --profile-card-accent: #7c5cff;
+  --profile-card-accent-soft: rgba(124, 92, 255, 0.14);
+}
+
+.profile-progress-card-review {
+  --profile-card-accent: #5f8d4e;
+  --profile-card-accent-soft: rgba(95, 141, 78, 0.14);
+}
+
+.profile-progress-card-visual {
+  align-items: center;
+  display: flex;
+  flex: 0 0 62px;
+  height: 62px;
+  justify-content: center;
+}
+
+.profile-progress-icon {
+  align-items: center;
+  background: var(--profile-card-accent-soft);
+  border: 1px solid color-mix(in srgb, var(--profile-card-accent), transparent 62%);
+  border-radius: 999px;
+  color: var(--profile-card-accent);
+  display: inline-flex;
+  height: 56px;
+  justify-content: center;
+  width: 56px;
+}
+
+.profile-progress-card-copy {
+  align-content: center;
+  display: grid;
+  gap: 7px;
+  min-width: 0;
 }
 
 .profile-progress-card span,
@@ -2397,13 +2458,45 @@ h3 {
 }
 
 .profile-progress-card strong {
-  font-size: 1.65rem;
+  color: var(--text);
+  font-size: clamp(1.3rem, 2.2vw, 1.72rem);
   line-height: 1;
 }
 
 .profile-progress-card small {
   font-size: 0.78rem;
   line-height: 1.4;
+}
+
+.circle-progress {
+  display: block;
+  height: var(--circle-progress-size);
+  overflow: visible;
+  transform: rotate(-90deg) var(--circle-progress-direction);
+  width: var(--circle-progress-size);
+}
+
+.circle-progress-track {
+  stroke: color-mix(in srgb, var(--text), transparent 88%);
+}
+
+.circle-progress-value {
+  stroke: var(--profile-card-accent, var(--green));
+  stroke-dashoffset: var(--circle-progress-stroke-offset);
+  transform-origin: center;
+  transition: stroke-dashoffset 680ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.circle-progress-value[data-disable-animation="true"] {
+  transition: none;
+}
+
+.circle-progress.dark .circle-progress-track {
+  stroke: rgba(255, 255, 255, 0.18);
+}
+
+.circle-progress.dark .circle-progress-value {
+  stroke: #f8f4f1;
 }
 
 .profile-hero {
