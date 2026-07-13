@@ -2,6 +2,7 @@ import {
   FlashcardDeckOwnerType,
   PublicationStatus
 } from "@/lib/generated/prisma/enums";
+import { getAuthSession } from "@/lib/auth/server";
 import { getPrisma } from "@/lib/db/prisma";
 import { devAuthUserId } from "@/lib/learner/preferences";
 import type {
@@ -16,9 +17,10 @@ type FlashcardReviewStateSummary = {
 
 export async function getDevLearnerProfileId() {
   const db = getPrisma();
+  const session = await getAuthSession();
   const learnerProfile = await db.learnerProfile.findUnique({
     where: {
-      authUserId: devAuthUserId
+      authUserId: session?.id ?? devAuthUserId
     },
     select: {
       id: true

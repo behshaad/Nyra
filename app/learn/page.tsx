@@ -2,13 +2,14 @@ import Link from "next/link";
 import { ArrowLeft, CheckCircle2, Circle, FileCheck2, RotateCcw, Trophy } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
+import { getAuthSession } from "@/lib/auth/server";
 import {
   interfaceCopy,
   levelPreferenceHref,
   resolveInterfaceLanguage,
   withInterfaceLanguage
 } from "@/lib/i18n/interface-language";
-import { getLearnerPreferences } from "@/lib/learner/preferences";
+import { getLearnerPreferencesForAuthUser } from "@/lib/learner/preferences";
 import { sampleCourse } from "@/lib/learning/sample-content";
 import { getLearningPathProgress } from "@/lib/learning/path-progress";
 
@@ -27,7 +28,8 @@ export default async function LearnPage({
   }>;
 }) {
   const { unit: selectedUnitParam, ui } = await searchParams;
-  const preferences = await getLearnerPreferences();
+  const session = await getAuthSession();
+  const preferences = await getLearnerPreferencesForAuthUser(session?.id);
   const language = ui
     ? resolveInterfaceLanguage(ui)
     : preferences.interfaceLanguage;
@@ -40,7 +42,11 @@ export default async function LearnPage({
   const selectedLevel =
     sampleCourse.levels.find((level) => level.label === selectedLevelLabel) ??
     sampleCourse.levels[0];
-  const progress = await getLearningPathProgress(selectedLevelLabel, language);
+  const progress = await getLearningPathProgress(
+    selectedLevelLabel,
+    language,
+    session?.id
+  );
   const levelText = {
     label: copy.learn.label.replaceAll("A1", selectedLevelLabel),
     progress: copy.learn.progress.replaceAll("A1", selectedLevelLabel),

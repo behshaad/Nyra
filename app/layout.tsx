@@ -4,7 +4,7 @@ import localFont from "next/font/local";
 import { AuthProvider } from "@/components/auth-provider";
 import { getAuthSession } from "@/lib/auth/server";
 import { interfaceCopy } from "@/lib/i18n/interface-language";
-import { getLearnerPreferences } from "@/lib/learner/preferences";
+import { getLearnerPreferencesForAuthUser } from "@/lib/learner/preferences";
 import "./globals.css";
 
 const inter = localFont({
@@ -32,13 +32,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  const preferences = await getLearnerPreferences();
+  const session = await getAuthSession();
+  const preferences = await getLearnerPreferencesForAuthUser(session?.id);
   const themeAttribute =
     preferences.interfaceTheme === "SYSTEM"
       ? undefined
       : preferences.interfaceTheme.toLowerCase();
   const copy = interfaceCopy[preferences.interfaceLanguage];
-  const session = await getAuthSession();
 
   return (
     <html

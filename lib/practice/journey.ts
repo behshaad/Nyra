@@ -81,6 +81,7 @@ export type PracticeJourneyView = {
 };
 
 export type GetPracticeJourneyInput = {
+  authUserId?: string;
   courseSlug?: string;
   interfaceLanguage?: InterfaceLanguageCode;
 };
@@ -181,7 +182,7 @@ export async function getPracticeJourney(
   );
   const learnerProfile = await db.learnerProfile.findUnique({
     where: {
-      authUserId: devAuthUserId
+      authUserId: input.authUserId ?? devAuthUserId
     },
     select: {
       id: true

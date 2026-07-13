@@ -14,9 +14,11 @@ export default async function LoginPage({
   searchParams: Promise<{
     returnTo?: string;
     ui?: string;
+    error?: string;
+    message?: string;
   }>;
 }) {
-  const { returnTo, ui } = await searchParams;
+  const { error, message, returnTo, ui } = await searchParams;
   const preferences = await getLearnerPreferences();
   const language = ui
     ? resolveInterfaceLanguage(ui)
@@ -33,11 +35,11 @@ export default async function LoginPage({
           <span className="section-label">Authentication</span>
           <h1>Login to Nyra</h1>
           <p>
-            Continue your German learning path with a persistent mock session that is ready for a real backend.
+            Continue your German learning path with secure Supabase authentication.
           </p>
           <div className="auth-note">
             <ShieldCheck size={18} aria-hidden="true" />
-            <span>Your learning space opens with the same profile and progress waiting for you.</span>
+            <span>Your learning space opens with your Nyra profile and progress waiting for you.</span>
           </div>
         </div>
 
@@ -48,6 +50,16 @@ export default async function LoginPage({
               <h2 id="login-title">Login</h2>
             </div>
           </div>
+          {error ? (
+            <div className="auth-error" role="alert">
+              <span>{error}</span>
+            </div>
+          ) : null}
+          {message === "password-updated" ? (
+            <div className="auth-success" role="status">
+              <span>Password changed successfully. You can now sign in.</span>
+            </div>
+          ) : null}
           <AuthForm mode="login" returnTo={safeReturnTo(returnTo ?? null)} />
         </section>
       </section>

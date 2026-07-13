@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { CreditCard, KeyRound, LogOut, Mail, Save, Settings, UserRound } from "lucide-react";
 import { logoutAction } from "@/lib/auth/actions";
-import type { AuthSession } from "@/lib/auth/mock-session";
+import type { AuthSession } from "@/lib/auth/session";
 import type { InterfaceLanguageCode } from "@/lib/i18n/interface-language";
 import { withInterfaceLanguage } from "@/lib/i18n/interface-language";
 
@@ -15,7 +15,7 @@ const labels = {
     displayName: "نام نمایشی",
     email: "ایمیل",
     password: "رمز عبور",
-    passwordValue: "مدیریت رمز عبور با اتصال API واقعی فعال می‌شود.",
+    passwordValue: "بازنشانی رمز عبور با ایمیل امن Supabase انجام می‌شود.",
     save: "ذخیره تغییرات",
     logout: "خروج",
     plan: "Standard",
@@ -29,7 +29,7 @@ const labels = {
     displayName: "Display name",
     email: "Email",
     password: "Password",
-    passwordValue: "Password changes will use the production API when it is connected.",
+    passwordValue: "Password resets use Supabase secure email flow.",
     save: "Save changes",
     logout: "Logout",
     plan: "Standard",
@@ -43,7 +43,7 @@ const labels = {
     displayName: "Anzeigename",
     email: "E-Mail",
     password: "Passwort",
-    passwordValue: "Passwortaenderungen nutzen spaeter die Produktions-API.",
+    passwordValue: "Passwort-Zuruecksetzungen laufen ueber sichere Supabase-E-Mails.",
     save: "Aenderungen speichern",
     logout: "Abmelden",
     plan: "Standard",

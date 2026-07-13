@@ -1,14 +1,14 @@
-import { UserPlus } from "lucide-react";
+import { KeyRound } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
-import { AuthForm } from "@/components/auth/auth-form";
+import { UpdatePasswordForm } from "@/components/auth/update-password-form";
 import {
   interfaceCopy,
   resolveInterfaceLanguage
 } from "@/lib/i18n/interface-language";
 import { getLearnerPreferences } from "@/lib/learner/preferences";
 
-export default async function SignupPage({
+export default async function UpdatePasswordPage({
   searchParams
 }: {
   searchParams: Promise<{
@@ -25,29 +25,27 @@ export default async function SignupPage({
   return (
     <main className={`site-shell ${copy.dir === "rtl" ? "learner-rtl" : ""}`} dir={copy.dir}>
       <AnimatedBackdrop />
-      <AppHeader language={language} currentPath="/signup" />
+      <AppHeader language={language} currentPath="/auth/update-password" />
 
       <section className="auth-page">
         <div className="auth-copy">
-          <span className="section-label">New Learner</span>
-          <h1>Create your account</h1>
-          <p>
-            Start with Supabase Auth while Nyra keeps your learning profile separate.
-          </p>
+          <span className="section-label">Authentication</span>
+          <h1>Update your password</h1>
+          <p>Choose a new password for your Nyra account.</p>
           <div className="auth-note">
-            <UserPlus size={18} aria-hidden="true" />
-            <span>Your Learner Profile starts with goals, level, and daily practice preferences.</span>
+            <KeyRound size={18} aria-hidden="true" />
+            <span>Supabase verifies the reset link before Nyra updates your session.</span>
           </div>
         </div>
 
-        <section className="app-panel auth-card" aria-labelledby="signup-title">
+        <section className="app-panel auth-card" aria-labelledby="update-password-title">
           <div className="app-panel-header">
             <div>
-              <p className="panel-kicker">Join Nyra</p>
-              <h2 id="signup-title">Sign Up</h2>
+              <p className="panel-kicker">Password Reset</p>
+              <h2 id="update-password-title">New Password</h2>
             </div>
           </div>
-          <AuthForm mode="signup" />
+          <UpdatePasswordForm />
         </section>
       </section>
     </main>

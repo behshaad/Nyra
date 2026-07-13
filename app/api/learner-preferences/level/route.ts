@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getAuthSession } from "@/lib/auth/server";
 import { getPrisma } from "@/lib/db/prisma";
 import { defaultLevelLabel, devAuthUserId, safeReturnTo } from "@/lib/learner/preferences";
 import { sampleCourse } from "@/lib/learning/sample-content";
@@ -12,10 +13,11 @@ export async function GET(request: NextRequest) {
     ? requestedLevel
     : defaultLevelLabel;
   const returnTo = safeReturnTo(searchParams.get("returnTo"));
+  const session = await getAuthSession();
 
   await getPrisma().learnerProfile.update({
     where: {
-      authUserId: devAuthUserId
+      authUserId: session?.id ?? devAuthUserId
     },
     data: {
       currentLevel

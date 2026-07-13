@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getAuthSession } from "@/lib/auth/server";
 import { getPrisma } from "@/lib/db/prisma";
 import { devAuthUserId } from "@/lib/learner/preferences";
 import { QuestionEngine } from "@/lib/question-engine";
@@ -16,9 +17,10 @@ export async function POST(request: Request) {
   }
 
   const db = getPrisma();
+  const authSession = await getAuthSession();
   const learnerProfile = await db.learnerProfile.findUnique({
     where: {
-      authUserId: devAuthUserId
+      authUserId: authSession?.id ?? devAuthUserId
     },
     select: {
       id: true

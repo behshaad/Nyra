@@ -22,8 +22,8 @@ import {
   resolveInterfaceLanguage
 } from "@/lib/i18n/interface-language";
 import { profileCopy, text } from "@/lib/i18n/page-copy";
-import { getLearnerPreferences } from "@/lib/learner/preferences";
-import { devLearnerProfile } from "@/lib/learning/sample-content";
+import { getLearnerPreferencesForAuthUser } from "@/lib/learner/preferences";
+import { getLearnerProfileView } from "@/lib/learner/profile";
 import { getPracticeJourney } from "@/lib/practice/journey";
 import type { CSSProperties } from "react";
 
@@ -134,8 +134,11 @@ export default async function ProfilePage({
   }>;
 }) {
   const { ui } = await searchParams;
-  const preferences = await getLearnerPreferences();
   const session = await getAuthSession();
+  const [preferences, learnerProfile] = await Promise.all([
+    getLearnerPreferencesForAuthUser(session?.id),
+    getLearnerProfileView(session?.id)
+  ]);
   const language = ui
     ? resolveInterfaceLanguage(ui)
     : preferences.interfaceLanguage;
@@ -148,7 +151,7 @@ export default async function ProfilePage({
   const currentLevel = journey.levels.find((level) => level.label === currentLevelLabel);
   const progressPercent = formatPercent(journey.completedCount, journey.totalCount);
   const completedLessonsPercent = formatPercent(journey.completedCount, journey.totalCount);
-  const dailyGoalPercent = formatPercent(devLearnerProfile.dailyGoalMinutes, 60);
+  const dailyGoalPercent = formatPercent(learnerProfile.dailyGoalMinutes, 60);
   const dailyStreak = 12;
   const reviewReadinessPercent = journey.totalCount === 0
     ? 100
@@ -162,7 +165,7 @@ export default async function ProfilePage({
     { periodStart: "2026-05-27", periodEnd: "2026-05-27" },
     { periodStart: "2026-05-28", periodEnd: "2026-05-28" }
   ];
-  const displayName = session?.fullName ?? devLearnerProfile.displayName;
+  const displayName = session?.fullName ?? learnerProfile.displayName;
   const initials = displayName
     .split(/\s+/)
     .filter(Boolean)
@@ -187,19 +190,19 @@ export default async function ProfilePage({
     },
     {
       label: progress.dailyGoal,
-      value: `${devLearnerProfile.dailyGoalMinutes} ${progress.minutes}`,
+      value: `${learnerProfile.dailyGoalMinutes} ${progress.minutes}`,
       icon: Target
     }
   ];
   const profileDetails = [
     {
       label: progress.sourceLanguage,
-      value: devLearnerProfile.sourceLanguage,
+      value: learnerProfile.sourceLanguage,
       icon: Languages
     },
     {
       label: progress.targetLanguage,
-      value: devLearnerProfile.targetLanguage,
+      value: learnerProfile.targetLanguage,
       icon: Languages
     },
     {
@@ -217,13 +220,13 @@ export default async function ProfilePage({
     {
       label: progress.currentLevel,
       value: currentLevelLabel,
-      detail: currentLevel?.title ?? devLearnerProfile.currentLevel,
+      detail: currentLevel?.title ?? learnerProfile.currentLevel,
       icon: Trophy,
       accent: "level"
     },
     {
       label: progress.dailyGoal,
-      value: String(devLearnerProfile.dailyGoalMinutes),
+      value: String(learnerProfile.dailyGoalMinutes),
       detail: progress.minutes,
       icon: Target,
       accent: "goal",

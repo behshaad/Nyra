@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from "react";
 import type { ReactNode } from "react";
-import type { AuthSession } from "@/lib/auth/mock-session";
+import type { AuthSession } from "@/lib/auth/session";
 
 const AuthContext = createContext<AuthSession | null>(null);
 

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requireAdminApiAccess } from "@/lib/auth/admin-access";
 import { getPrisma } from "@/lib/db/prisma";
 import { parseResourceInput } from "@/lib/resources/resource-validation";
 
@@ -10,6 +11,9 @@ export async function PATCH(
     }>;
   }
 ) {
+  const denied = await requireAdminApiAccess(request);
+  if (denied) return denied;
+
   const { resourceSlug } = await context.params;
   const body = (await request.json()) as Record<string, unknown>;
   const parsed = parseResourceInput(body);

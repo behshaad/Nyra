@@ -1,9 +1,5 @@
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
-import {
-  decodeAuthSession,
-  isSessionExpired,
-  mockAuthCookieName
-} from "@/lib/auth/mock-session";
 
 const adminUsername = process.env.ADMIN_USERNAME;
 const adminPassword = process.env.ADMIN_PASSWORD;
@@ -35,18 +31,62 @@ function decodeBasicAuth(header: string | null) {
   };
 }
 
-export function middleware(request: NextRequest) {
-  const { pathname, search } = request.nextUrl;
-  const session = decodeAuthSession(request.cookies.get(mockAuthCookieName)?.value);
-  const activeSession = session && !isSessionExpired(session) ? session : null;
+function hasBasicAdminAccess(request: NextRequest) {
+  const credentials = decodeBasicAuth(request.headers.get("authorization"));
 
-  if ((pathname === "/login" || pathname === "/signup") && activeSession) {
+  return Boolean(
+    adminUsername &&
+      adminPassword &&
+      credentials?.username === adminUsername &&
+      credentials.password === adminPassword
+  );
+}
+
+async function getSupabaseUser(request: NextRequest, response: NextResponse) {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const publishableKey =
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!url || !publishableKey) {
+    return null;
+  }
+
+  const supabase = createServerClient(url, publishableKey, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
+      },
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value, options }) => {
+          request.cookies.set(name, value);
+          response.cookies.set(name, value, options as CookieOptions);
+        });
+      }
+    }
+  });
+  const {
+    data: { user },
+    error
+  } = await supabase.auth.getUser();
+
+  return error ? null : user;
+}
+
+export async function middleware(request: NextRequest) {
+  const { pathname, search } = request.nextUrl;
+  const response = NextResponse.next({
+    request
+  });
+  const activeUser = await getSupabaseUser(request, response);
+
+  if ((pathname === "/login" || pathname === "/signup") && activeUser) {
     return NextResponse.redirect(new globalThis.URL("/profile", request.url));
   }
 
   if (pathname.startsWith("/profile")) {
-    if (activeSession) {
-      return NextResponse.next();
+    if (activeUser) {
+      return response;
     }
 
     const loginUrl = new globalThis.URL("/login", request.url);
@@ -56,22 +96,15 @@ export function middleware(request: NextRequest) {
   }
 
   if (!pathname.startsWith("/admin") && !pathname.startsWith("/api/admin")) {
-    return NextResponse.next();
+    return response;
   }
 
-  if (activeSession?.role === "ADMIN") {
-    return NextResponse.next();
+  if (hasBasicAdminAccess(request)) {
+    return response;
   }
 
-  const credentials = decodeBasicAuth(request.headers.get("authorization"));
-
-  if (
-    adminUsername &&
-    adminPassword &&
-    credentials?.username === adminUsername &&
-    credentials.password === adminPassword
-  ) {
-    return NextResponse.next();
+  if (activeUser) {
+    return response;
   }
 
   if (pathname.startsWith("/api/admin")) {
@@ -89,5 +122,13 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/login", "/signup", "/profile/:path*", "/admin/:path*", "/api/admin/:path*"]
+  matcher: [
+    "/login",
+    "/signup",
+    "/profile/:path*",
+    "/admin/:path*",
+    "/api/admin/:path*",
+    "/auth/callback",
+    "/auth/update-password"
+  ]
 };
