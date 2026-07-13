@@ -25,7 +25,7 @@ A learner-facing adventure map owned by a Level, where the learner sees that Lev
 _Avoid_: Lesson world, module map
 
 **Unit Node**:
-A learner-facing node inside a Level World that represents one Unit and leads the learner into that Unit's Skills.
+A learner-facing node inside a Level World that represents one Unit and leads the learner into that Unit's Skills. A Unit Node can use localized map-label language such as Lesson, درس, or Lektion without changing the canonical domain term Unit.
 _Avoid_: Skill node, lesson node
 
 **Curriculum Reference**:
