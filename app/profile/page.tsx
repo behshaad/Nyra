@@ -1,6 +1,8 @@
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
 import { ProfileAccountSection } from "@/components/profile-account-section";
+import { CircleProgress } from "@/components/ui/circle-progress";
+import { StreakCard, type StreakPeriod } from "@/components/ui/streak-card";
 import { getAuthSession } from "@/lib/auth/server";
 import {
   BarChart3,
@@ -12,7 +14,8 @@ import {
   ShieldCheck,
   Target,
   Trophy,
-  UserRound
+  UserRound,
+  type LucideIcon
 } from "lucide-react";
 import {
   interfaceCopy,
@@ -22,6 +25,7 @@ import { profileCopy, text } from "@/lib/i18n/page-copy";
 import { getLearnerPreferences } from "@/lib/learner/preferences";
 import { devLearnerProfile } from "@/lib/learning/sample-content";
 import { getPracticeJourney } from "@/lib/practice/journey";
+import type { CSSProperties } from "react";
 
 const progressCopy = {
   fa: {
@@ -38,6 +42,8 @@ const progressCopy = {
     overall: "پیشرفت کلی",
     days: "روز",
     minutes: "دقیقه",
+    longestStreak: "بهترین",
+    totalStreak: "مجموع",
     heroLabel: "Profile",
     learnerProfile: "Learner Profile",
     sourceLanguage: "زبان مبدا",
@@ -59,6 +65,8 @@ const progressCopy = {
     overall: "Overall Progress",
     days: "days",
     minutes: "min",
+    longestStreak: "Best",
+    totalStreak: "Total",
     heroLabel: "Profile",
     learnerProfile: "Learner Profile",
     sourceLanguage: "Source Language",
@@ -80,6 +88,8 @@ const progressCopy = {
     overall: "Gesamtfortschritt",
     days: "Tage",
     minutes: "Min.",
+    longestStreak: "Bestwert",
+    totalStreak: "Gesamt",
     heroLabel: "Profile",
     learnerProfile: "Lernprofil",
     sourceLanguage: "Ausgangssprache",
@@ -92,6 +102,29 @@ const progressCopy = {
 function formatPercent(done: number, total: number) {
   return total === 0 ? 0 : Math.round((done / total) * 100);
 }
+
+type ProfileStat =
+  | {
+      label: string;
+      value: string;
+      detail: string;
+      icon: LucideIcon;
+      accent: string;
+      ringValue?: number;
+      barValue?: number;
+      barLabel?: string;
+    }
+  | {
+      label: string;
+      value: string;
+      detail: string;
+      icon: LucideIcon;
+      accent: "streak";
+      streak: StreakPeriod[];
+      currentStreak: number;
+      longestStreak: number;
+      total: number;
+    };
 
 export default async function ProfilePage({
   searchParams
@@ -114,6 +147,21 @@ export default async function ProfilePage({
   const currentLevelLabel = journey.currentNode?.levelLabel ?? preferences.currentLevel;
   const currentLevel = journey.levels.find((level) => level.label === currentLevelLabel);
   const progressPercent = formatPercent(journey.completedCount, journey.totalCount);
+  const completedLessonsPercent = formatPercent(journey.completedCount, journey.totalCount);
+  const dailyGoalPercent = formatPercent(devLearnerProfile.dailyGoalMinutes, 60);
+  const dailyStreak = 12;
+  const reviewReadinessPercent = journey.totalCount === 0
+    ? 100
+    : Math.max(0, 100 - Math.round((journey.needsReviewCount / journey.totalCount) * 100));
+  const xpGoal = 20000;
+  const xpProgressPercent = Math.min(100, Math.round((journey.totalXp / xpGoal) * 100));
+  const streak = [
+    { periodStart: "2026-05-24", periodEnd: "2026-05-24" },
+    { periodStart: "2026-05-25", periodEnd: "2026-05-25" },
+    { periodStart: "2026-05-26", periodEnd: "2026-05-26" },
+    { periodStart: "2026-05-27", periodEnd: "2026-05-27" },
+    { periodStart: "2026-05-28", periodEnd: "2026-05-28" }
+  ];
   const displayName = session?.fullName ?? devLearnerProfile.displayName;
   const initials = displayName
     .split(/\s+/)
@@ -165,48 +213,65 @@ export default async function ProfilePage({
       icon: ShieldCheck
     }
   ];
-  const profileStats = [
+  const profileStats: ProfileStat[] = [
     {
       label: progress.currentLevel,
       value: currentLevelLabel,
       detail: currentLevel?.title ?? devLearnerProfile.currentLevel,
-      icon: Trophy
+      icon: Trophy,
+      accent: "level"
     },
     {
       label: progress.dailyGoal,
       value: String(devLearnerProfile.dailyGoalMinutes),
       detail: progress.minutes,
-      icon: Target
+      icon: Target,
+      accent: "goal",
+      ringValue: dailyGoalPercent
     },
     {
       label: progress.lessons,
       value: `${journey.completedCount} / ${journey.totalCount}`,
       detail: progress.overall,
-      icon: BookOpenCheck
+      icon: BookOpenCheck,
+      accent: "lessons",
+      ringValue: completedLessonsPercent
     },
     {
       label: progress.xp,
       value: journey.totalXp.toLocaleString("en-US"),
       detail: journey.course?.title ?? "Learning Path",
-      icon: Gem
+      icon: Gem,
+      accent: "xp",
+      barValue: xpProgressPercent,
+      barLabel: `${xpProgressPercent}%`
     },
     {
       label: progress.dailyStreak,
-      value: "12",
+      value: String(dailyStreak),
       detail: progress.days,
-      icon: Flame
+      icon: Flame,
+      accent: "streak",
+      streak,
+      currentStreak: dailyStreak,
+      longestStreak: 100,
+      total: 131
     },
     {
       label: progress.completion,
       value: `${progressPercent}%`,
       detail: `${progressPercent}% ${progress.overall}`,
-      icon: ShieldCheck
+      icon: ShieldCheck,
+      accent: "completion",
+      ringValue: progressPercent
     },
     {
       label: progress.review,
       value: String(journey.needsReviewCount),
       detail: progress.review,
-      icon: Trophy
+      icon: Trophy,
+      accent: "review",
+      ringValue: reviewReadinessPercent
     }
   ];
 
@@ -273,12 +338,57 @@ export default async function ProfilePage({
             {profileStats.map((stat) => {
               const Icon = stat.icon;
 
+              if ("streak" in stat) {
+                return (
+                  <StreakCard
+                    currentStreak={stat.currentStreak}
+                    key={stat.label}
+                    labels={{
+                      title: stat.label,
+                      days: stat.detail,
+                      longest: progress.longestStreak,
+                      total: progress.totalStreak
+                    }}
+                    longestStreak={stat.longestStreak}
+                    streak={stat.streak}
+                    total={stat.total}
+                  />
+                );
+              }
+
               return (
-                <article className="profile-progress-card" key={stat.label}>
-                  <Icon size={20} />
-                  <span>{stat.label}</span>
-                  <strong>{stat.value}</strong>
-                  <small>{stat.detail}</small>
+                <article className={`profile-progress-card profile-progress-card-${stat.accent}`} key={stat.label}>
+                  <div className="profile-progress-card-visual" aria-hidden="true">
+                    {typeof stat.ringValue === "number" ? (
+                      <CircleProgress value={stat.ringValue} maxValue={100} size={56} strokeWidth={5} />
+                    ) : (
+                      <span className="profile-progress-icon">
+                        <Icon size={22} />
+                      </span>
+                    )}
+                  </div>
+                  <div className="profile-progress-card-copy">
+                    <span>{stat.label}</span>
+                    <strong>{stat.value}</strong>
+                    <small>{stat.detail}</small>
+                    {typeof stat.barValue === "number" ? (
+                      <div
+                        aria-label={`${stat.label} ${stat.barLabel}`}
+                        className="profile-linear-progress profile-linear-progress-striped"
+                        role="progressbar"
+                        style={
+                          {
+                            "--profile-linear-progress-value": `${stat.barValue}%`
+                          } as CSSProperties
+                        }
+                        aria-valuemax={100}
+                        aria-valuemin={0}
+                        aria-valuenow={stat.barValue}
+                      >
+                        <span />
+                      </div>
+                    ) : null}
+                  </div>
                 </article>
               );
             })}

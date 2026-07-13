@@ -28,8 +28,23 @@ function isMissingThemeColumnError(error: unknown) {
   );
 }
 
+function isDatabaseUnavailableError(error: unknown) {
+  return (
+    error instanceof Error &&
+    (error.message.includes("DATABASE_URL is required") ||
+      error.message.includes("Can't reach database server"))
+  );
+}
+
+function defaultLearnerPreferences(): LearnerPreferences {
+  return {
+    interfaceLanguage: defaultInterfaceLanguage,
+    interfaceTheme: defaultInterfaceTheme,
+    currentLevel: defaultLevelLabel
+  };
+}
+
 export async function getLearnerPreferences(): Promise<LearnerPreferences> {
-  const db = getPrisma();
   let learnerProfile:
     | {
         interfaceLanguage: string;
@@ -39,6 +54,8 @@ export async function getLearnerPreferences(): Promise<LearnerPreferences> {
     | null;
 
   try {
+    const db = getPrisma();
+
     learnerProfile = await db.learnerProfile.findUnique({
       where: {
         authUserId: devAuthUserId
@@ -50,9 +67,15 @@ export async function getLearnerPreferences(): Promise<LearnerPreferences> {
       }
     });
   } catch (error) {
+    if (isDatabaseUnavailableError(error)) {
+      return defaultLearnerPreferences();
+    }
+
     if (!isMissingThemeColumnError(error)) {
       throw error;
     }
+
+    const db = getPrisma();
 
     learnerProfile = await db.learnerProfile.findUnique({
       where: {
