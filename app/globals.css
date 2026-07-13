@@ -1425,6 +1425,121 @@ h3 {
   width: 100%;
 }
 
+.sparkles-preview {
+  align-items: center;
+  background: #050607;
+  border: 1px solid rgba(246, 201, 214, 0.12);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  height: 40rem;
+  justify-content: center;
+  margin: 30px auto 0;
+  max-width: 1402px;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.sparkles-preview h2 {
+  color: #fff8fb;
+  font-size: clamp(3rem, 10vw, 8.4rem);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 0.95;
+  margin: 0;
+  position: relative;
+  text-align: center;
+  z-index: 2;
+}
+
+.sparkles-preview-beam {
+  height: 10rem;
+  max-width: min(40rem, 100%);
+  position: relative;
+  width: 40rem;
+}
+
+.sparkles-gradient {
+  left: 20%;
+  position: absolute;
+  top: 0;
+}
+
+.sparkles-gradient-indigo-soft {
+  background: linear-gradient(90deg, transparent, #6366f1, transparent);
+  filter: blur(6px);
+  height: 2px;
+  width: 75%;
+}
+
+.sparkles-gradient-indigo {
+  background: linear-gradient(90deg, transparent, #6366f1, transparent);
+  height: 1px;
+  width: 75%;
+}
+
+.sparkles-gradient-sky-soft {
+  background: linear-gradient(90deg, transparent, #0ea5e9, transparent);
+  filter: blur(6px);
+  height: 5px;
+  left: 60%;
+  width: 25%;
+}
+
+.sparkles-gradient-sky {
+  background: linear-gradient(90deg, transparent, #0ea5e9, transparent);
+  height: 1px;
+  left: 60%;
+  width: 25%;
+}
+
+.sparkles-canvas,
+.sparkles-mask {
+  height: 100%;
+  inset: 0;
+  position: absolute;
+  width: 100%;
+}
+
+.sparkles-mask {
+  background: #050607;
+  mask-image: radial-gradient(350px 200px at top, transparent 20%, white);
+  pointer-events: none;
+}
+
+.sparkles-preview-dark,
+.sparkles-preview-colorful {
+  background: #020617;
+}
+
+.sparkles-fullscreen-layer {
+  inset: 0;
+  position: absolute;
+}
+
+.sparkles-copy {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  z-index: 2;
+}
+
+.sparkles-copy h2 {
+  background: linear-gradient(180deg, #fafafa, #a3a3a3);
+  background-clip: text;
+  color: transparent;
+}
+
+.sparkles-copy p {
+  color: #d4d4d4;
+  margin: 0;
+  text-align: center;
+}
+
 .premium-section {
   align-items: center;
   background: var(--hero-panel);
@@ -3667,6 +3782,15 @@ h3 {
   .home-globe-copy {
     justify-items: center;
     text-align: center;
+  }
+
+  .sparkles-preview {
+    height: 28rem;
+    padding: 0 16px;
+  }
+
+  .sparkles-preview-beam {
+    width: 100%;
   }
 
   .profile-hero-facts {
