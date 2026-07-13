@@ -41,6 +41,7 @@ describe("B1 sample content", () => {
       8,
       12
     ]);
+    expect(publishedB1Skills[4].description).toContain("کنترل B1");
   });
 
   it("uses the current deterministic Question Types for published B1 regular Skills", () => {

@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPrisma } from "@/lib/db/prisma";
 import { defaultLevelLabel, devAuthUserId, safeReturnTo } from "@/lib/learner/preferences";
+import { sampleCourse } from "@/lib/learning/sample-content";
 
-const supportedLevelLabels = new Set(["A1", "A2"]);
+const supportedLevelLabels = new Set(sampleCourse.levels.map((level) => level.label));
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;

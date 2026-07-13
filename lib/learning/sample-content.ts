@@ -730,7 +730,8 @@ function makeCheckpoint(
 function makeA2Checkpoint(
   unit: UnitSpec,
   skills: SampleSkill[],
-  publicationStatus: SampleSkill["publicationStatus"] = "PUBLISHED"
+  publicationStatus: SampleSkill["publicationStatus"] = "PUBLISHED",
+  levelLabel = "A2"
 ): SampleSkill {
   const slug = `${unit.slug}-checkpoint`;
   const questionsByType = {
@@ -755,7 +756,7 @@ function makeA2Checkpoint(
     id: slug,
     slug,
     title: `${unit.title}: آزمونک`,
-    description: `کنترل A2 خودت را در موضوع ${unit.resourceFocus} بسنج.`,
+    description: `کنترل ${levelLabel} خودت را در موضوع ${unit.resourceFocus} بسنج.`,
     kind: "UNIT_CHECKPOINT",
     xp: 120,
     passingScore: 70,
@@ -3356,7 +3357,7 @@ function buildB1Units(): SampleUnit[] {
       slug: unit.slug,
       title: unit.title,
       summary: unit.summary,
-      skills: [...skills, makeA2Checkpoint(unit, skills)]
+      skills: [...skills, makeA2Checkpoint(unit, skills, "PUBLISHED", "B1")]
     };
   });
 
