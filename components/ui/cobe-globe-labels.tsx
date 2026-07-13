@@ -98,17 +98,17 @@ export function GlobeLabels({
         dark: 0,
         diffuse: 1.5,
         mapSamples: 16000,
-        mapBrightness: 9,
-        baseColor: [1, 1, 1],
-        markerColor: [0.55, 0.35, 0.75],
-        glowColor: [0.94, 0.93, 0.91],
+        mapBrightness: 5.8,
+        baseColor: [0.34, 0.32, 0.28],
+        markerColor: [0.79, 0.39, 0.26],
+        glowColor: [0.94, 0.9, 0.84],
         markerElevation: 0,
         markers: markers.map((m) => ({ location: m.location, size: 0.025, id: m.id })),
         arcs: [],
         arcColor: [0.6, 0.4, 0.8],
         arcWidth: 0.5,
         arcHeight: 0.25,
-        opacity: 0.7
+        opacity: 0.96
       });
 
       function animate() {
