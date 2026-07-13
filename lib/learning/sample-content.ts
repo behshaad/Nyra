@@ -77,6 +77,8 @@ export type SampleCourse = {
   }>;
 };
 
+export type LearningContentDisplayLanguage = "fa" | "en" | "de";
+
 type SkillSpec = {
   slug: string;
   title: string;
@@ -1781,6 +1783,182 @@ function buildUnits() {
   units[units.length - 1].skills.push(makeFinalTest(units));
 
   return units;
+}
+
+type LearningPathDisplaySkill = {
+  title: string;
+  description: string;
+};
+
+type LearningPathDisplayUnit = {
+  title: string;
+  summary: string;
+  skills: Record<string, LearningPathDisplaySkill>;
+};
+
+export type LearningPathDisplayCopy = {
+  levelTitle: string;
+  units: Record<string, LearningPathDisplayUnit>;
+};
+
+const persianTextPattern = /[\u0600-\u06FF]/;
+
+function titleCase(value: string) {
+  return value.replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function humanizeSlug(slug: string) {
+  return titleCase(
+    slug
+      .replace(/^(a\d|b\d|c\d)-/, "")
+      .replace(/-checkpoint$/, " checkpoint")
+      .replace(/-/g, " ")
+  );
+}
+
+function nonPersianOrFallback(value: string, fallback: string) {
+  return persianTextPattern.test(value) ? fallback : value;
+}
+
+function fallbackSkillDescription(title: string) {
+  return `Practice ${title.toLowerCase()}.`;
+}
+
+function levelDisplayTitle(levelLabel: string, title: string, language: LearningContentDisplayLanguage) {
+  if (language === "fa") {
+    return title;
+  }
+
+  if (language === "de") {
+    return `${levelLabel}-Lernpfad`;
+  }
+
+  return `${levelLabel} Learning Path`;
+}
+
+function a1EnglishDisplayUnits() {
+  return Object.fromEntries(
+    unitSpecs.map((unit) => {
+      const skills = Object.fromEntries(
+        unit.skills.map((skill) => [
+          skill.slug,
+          {
+            title: skill.title,
+            description: skill.description
+          }
+        ])
+      );
+      const checkpointTitle = `${unit.title}: Unit Checkpoint`;
+
+      skills[`${unit.slug}-checkpoint`] = {
+        title: checkpointTitle,
+        description: `Check your A1 control for ${unit.resourceFocus}.`
+      };
+
+      return [
+        unit.slug,
+        {
+          title: unit.title,
+          summary: unit.summary,
+          skills
+        }
+      ];
+    })
+  );
+}
+
+export function getLearningPathDisplayCopy(
+  levelLabel: string,
+  language: LearningContentDisplayLanguage = "fa"
+): LearningPathDisplayCopy {
+  const level = sampleCourse.levels.find((candidate) => candidate.label === levelLabel);
+
+  if (!level) {
+    return {
+      levelTitle:
+        language === "de" ? `${levelLabel}-Lernpfad` : `${levelLabel} Learning Path`,
+      units: {}
+    };
+  }
+
+  if (language === "fa") {
+    return {
+      levelTitle: level.title,
+      units: Object.fromEntries(
+        level.units.map((unit) => [
+          unit.slug,
+          {
+            title: unit.title,
+            summary: unit.summary,
+            skills: Object.fromEntries(
+              unit.skills.map((skill) => [
+                skill.slug,
+                {
+                  title: skill.title,
+                  description: skill.description
+                }
+              ])
+            )
+          }
+        ])
+      )
+    };
+  }
+
+  const a1Units = levelLabel === "A1" ? a1EnglishDisplayUnits() : {};
+
+  return {
+    levelTitle: levelDisplayTitle(level.label, level.title, language),
+    units: Object.fromEntries(
+      level.units.map((unit) => {
+        const unitFallback = a1Units[unit.slug];
+        const unitTitle = nonPersianOrFallback(
+          unitFallback?.title ?? unit.title,
+          humanizeSlug(unit.slug)
+        );
+        const summary = nonPersianOrFallback(
+          unitFallback?.summary ?? unit.summary,
+          `Practice ${unitTitle.toLowerCase()} topics.`
+        );
+
+        return [
+          unit.slug,
+          {
+            title: unitTitle,
+            summary,
+            skills: Object.fromEntries(
+              unit.skills.map((skill) => {
+                const skillFallback = unitFallback?.skills[skill.slug];
+                const skillTitle = nonPersianOrFallback(
+                  skillFallback?.title ?? skill.title,
+                  skill.kind === "FINAL_TEST"
+                    ? `Final ${level.label} Test`
+                    : skill.kind === "UNIT_CHECKPOINT"
+                      ? `${unitTitle}: Unit Checkpoint`
+                      : humanizeSlug(skill.slug)
+                );
+
+                return [
+                  skill.slug,
+                  {
+                    title: skillTitle,
+                    description: nonPersianOrFallback(
+                      skillFallback?.description ?? skill.description,
+                      skill.kind === "FINAL_TEST"
+                        ? `Review and check your ${level.label} progress.`
+                        : skill.kind === "UNIT_CHECKPOINT"
+                          ? `Check your ${level.label} control for this unit.`
+                          : fallbackSkillDescription(skillTitle)
+                    )
+                  }
+                ];
+              })
+            )
+          }
+        ];
+      })
+    )
+  };
 }
 
 const a2UnitOneSpec: UnitSpec = {

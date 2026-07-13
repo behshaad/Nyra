@@ -40,7 +40,7 @@ export default async function LearnPage({
   const selectedLevel =
     sampleCourse.levels.find((level) => level.label === selectedLevelLabel) ??
     sampleCourse.levels[0];
-  const progress = await getLearningPathProgress(selectedLevelLabel);
+  const progress = await getLearningPathProgress(selectedLevelLabel, language);
   const levelText = {
     label: copy.learn.label.replaceAll("A1", selectedLevelLabel),
     progress: copy.learn.progress.replaceAll("A1", selectedLevelLabel),

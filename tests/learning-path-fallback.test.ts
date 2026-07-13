@@ -29,6 +29,17 @@ describe("learning path fallback", () => {
     expect(progress.units[0]?.skills).toHaveLength(5);
   });
 
+  it("uses non-Persian A1 titles when the interface language is English", async () => {
+    const { getLearningPathProgress } = await import("@/lib/learning/path-progress");
+
+    const progress = await getLearningPathProgress("A1", "en");
+
+    expect(progress.units[0]?.title).toBe("First contacts");
+    expect(progress.units[0]?.skills[0]?.title).toBe("Greet and say your name");
+    expect(progress.units[0]?.title).not.toMatch(/[\u0600-\u06FF]/);
+    expect(progress.units[0]?.skills[0]?.description).not.toMatch(/[\u0600-\u06FF]/);
+  });
+
   it("includes B2 skill routes when the database has no seeded levels", async () => {
     const { getFlatPublishedSkills } = await import("@/lib/learning/path-progress");
 

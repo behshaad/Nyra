@@ -5,7 +5,11 @@ import {
 } from "@/lib/generated/prisma/enums";
 import { getPrisma } from "@/lib/db/prisma";
 import { defaultLevelLabel, devAuthUserId } from "@/lib/learner/preferences";
-import { sampleCourse } from "@/lib/learning/sample-content";
+import {
+  getLearningPathDisplayCopy,
+  sampleCourse,
+  type LearningContentDisplayLanguage
+} from "@/lib/learning/sample-content";
 
 type CompletionMetadata = {
   scorePercent?: unknown;
@@ -208,10 +212,12 @@ export async function getNextSkillSlug(skillSlug: string, levelLabel = defaultLe
 }
 
 export async function getLearningPathProgress(
-  levelLabel = defaultLevelLabel
+  levelLabel = defaultLevelLabel,
+  interfaceLanguage: LearningContentDisplayLanguage = "fa"
 ): Promise<LearningPathProgressView> {
   const db = getPrisma();
   const units = await getUnitsForPath(levelLabel);
+  const displayCopy = getLearningPathDisplayCopy(levelLabel, interfaceLanguage);
   const flatSkills = units.flatMap((unit) =>
     unit.skills.map((skill) => ({
       ...skillToFlatView(skill),
@@ -273,8 +279,10 @@ export async function getLearningPathProgress(
   let nextSkill: PathSkillView | null = null;
 
   const unitsWithProgress = units.map((unit) => {
+    const displayUnit = displayCopy.units[unit.slug];
     const skills = unit.skills.map((skill) => {
       const completion = completionBySkillSlug.get(skill.slug);
+      const displaySkill = displayUnit?.skills[skill.slug];
       const needsReview = completion?.passed === false;
       const state: SkillProgressState = completion
         ? needsReview
@@ -285,6 +293,8 @@ export async function getLearningPathProgress(
           : "upcoming";
       const view: PathSkillView = {
         ...skillToFlatView(skill),
+        title: displaySkill?.title ?? skill.title,
+        description: displaySkill?.description ?? skill.description,
         state,
         scorePercent: completion?.scorePercent ?? null,
         passed: completion?.passed ?? null
@@ -304,8 +314,8 @@ export async function getLearningPathProgress(
     return {
       slug: unit.slug,
       order: unit.order,
-      title: unit.title,
-      summary: unit.summary,
+      title: displayUnit?.title ?? unit.title,
+      summary: displayUnit?.summary ?? unit.summary,
       skills,
       completedCount,
       needsReviewCount,
