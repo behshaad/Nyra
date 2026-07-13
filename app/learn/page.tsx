@@ -9,10 +9,7 @@ import {
   withInterfaceLanguage
 } from "@/lib/i18n/interface-language";
 import { getLearnerPreferences } from "@/lib/learner/preferences";
-import {
-  getLevelContentSummary,
-  sampleCourse
-} from "@/lib/learning/sample-content";
+import { sampleCourse } from "@/lib/learning/sample-content";
 import { getLearningPathProgress } from "@/lib/learning/path-progress";
 
 const publishedLevelLabels = new Set(sampleCourse.levels.map((level) => level.label));
@@ -40,14 +37,12 @@ export default async function LearnPage({
   )
     ? preferences.currentLevel
     : "A1";
-  const summary = getLevelContentSummary(selectedLevelLabel);
   const selectedLevel =
     sampleCourse.levels.find((level) => level.label === selectedLevelLabel) ??
     sampleCourse.levels[0];
   const progress = await getLearningPathProgress(selectedLevelLabel);
   const levelText = {
     label: copy.learn.label.replaceAll("A1", selectedLevelLabel),
-    body: copy.learn.body(summary).replaceAll("A1", selectedLevelLabel),
     progress: copy.learn.progress.replaceAll("A1", selectedLevelLabel),
     completeLabel: copy.learn.completeLabel.replaceAll("A1", selectedLevelLabel),
     finalTest: copy.learn.finalTest.replaceAll("A1", selectedLevelLabel)
@@ -74,10 +69,7 @@ export default async function LearnPage({
       />
 
       <section className="route-page">
-        <div className="route-hero compact">
-          <span className="section-label">{levelText.label}</span>
-          <h1>{copy.learn.title}</h1>
-          <p>{levelText.body}</p>
+        <div className="learn-level-switcher">
           <div className="level-selector" aria-label={copy.learn.levelLabel}>
             {levelOptions.map((level) =>
               level.active ? (

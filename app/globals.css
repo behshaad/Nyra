@@ -793,6 +793,15 @@ h3 {
   margin-top: 26px;
 }
 
+.learn-level-switcher {
+  display: flex;
+  justify-content: center;
+}
+
+.learn-level-switcher .level-selector {
+  margin-top: 0;
+}
+
 .level-selector {
   display: flex;
   flex-wrap: wrap;
