@@ -1599,24 +1599,39 @@ h3 {
   width: 100%;
 }
 
-.pricing-glass-bg-obsidian {
-  background: #050505;
+.pricing-glass-bg-nyra-dusk {
+  background:
+    radial-gradient(circle at 12% 18%, rgba(231, 143, 165, 0.2), transparent 34%),
+    radial-gradient(circle at 88% 8%, rgba(242, 184, 173, 0.12), transparent 32%),
+    linear-gradient(135deg, #121313, #271622 56%, #2f1c2a);
 }
 
-.pricing-glass-bg-cosmos {
-  background: #0d0b14;
+.pricing-glass-bg-rose-lesson {
+  background:
+    radial-gradient(circle at 18% 28%, rgba(240, 166, 183, 0.24), transparent 34%),
+    radial-gradient(circle at 82% 82%, rgba(146, 115, 148, 0.28), transparent 34%),
+    linear-gradient(135deg, #301f32, #5f3f61 56%, #e78fa5);
 }
 
-.pricing-glass-bg-mariana {
-  background: #06101e;
+.pricing-glass-bg-coral-review {
+  background:
+    radial-gradient(circle at 16% 20%, rgba(242, 184, 173, 0.28), transparent 34%),
+    radial-gradient(circle at 80% 78%, rgba(231, 143, 165, 0.22), transparent 36%),
+    linear-gradient(135deg, #271622, #955366 56%, #f2b8ad);
 }
 
-.pricing-glass-bg-moss {
-  background: #0a120d;
+.pricing-glass-bg-plum-focus {
+  background:
+    radial-gradient(circle at 10% 18%, rgba(231, 143, 165, 0.18), transparent 35%),
+    radial-gradient(circle at 86% 22%, rgba(246, 220, 230, 0.1), transparent 34%),
+    linear-gradient(135deg, #121313, #301f32 48%, #5f3f61);
 }
 
-.pricing-glass-bg-ash {
-  background: #1a0b0b;
+.pricing-glass-bg-soft-a1 {
+  background:
+    radial-gradient(circle at 14% 20%, rgba(255, 255, 255, 0.42), transparent 32%),
+    radial-gradient(circle at 82% 82%, rgba(231, 143, 165, 0.28), transparent 36%),
+    linear-gradient(135deg, #5f3f61, #927394 52%, #f0a6b7);
 }
 
 .pricing-glass-bg-selector {
@@ -1675,24 +1690,24 @@ h3 {
     inset 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-.pricing-glass-swatch-obsidian {
-  background: #050505;
+.pricing-glass-swatch-nyra-dusk {
+  background: linear-gradient(135deg, #121313, #271622, #e78fa5);
 }
 
-.pricing-glass-swatch-cosmos {
-  background: #0d0b14;
+.pricing-glass-swatch-rose-lesson {
+  background: linear-gradient(135deg, #301f32, #5f3f61, #e78fa5);
 }
 
-.pricing-glass-swatch-mariana {
-  background: #06101e;
+.pricing-glass-swatch-coral-review {
+  background: linear-gradient(135deg, #271622, #955366, #f2b8ad);
 }
 
-.pricing-glass-swatch-moss {
-  background: #0a120d;
+.pricing-glass-swatch-plum-focus {
+  background: linear-gradient(135deg, #121313, #301f32, #5f3f61);
 }
 
-.pricing-glass-swatch-ash {
-  background: #1a0b0b;
+.pricing-glass-swatch-soft-a1 {
+  background: linear-gradient(135deg, #5f3f61, #927394, #f0a6b7);
 }
 
 .pricing-glass-demo-inner {

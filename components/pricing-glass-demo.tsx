@@ -10,11 +10,11 @@ type BgOption = {
 };
 
 const BG_COLORS: BgOption[] = [
-  { name: "Obsidian", className: "pricing-glass-bg-obsidian", buttonClass: "pricing-glass-swatch-obsidian" },
-  { name: "Midnight Cosmos", className: "pricing-glass-bg-cosmos", buttonClass: "pricing-glass-swatch-cosmos" },
-  { name: "Mariana Trench", className: "pricing-glass-bg-mariana", buttonClass: "pricing-glass-swatch-mariana" },
-  { name: "Dark Moss", className: "pricing-glass-bg-moss", buttonClass: "pricing-glass-swatch-moss" },
-  { name: "Volcanic Ash", className: "pricing-glass-bg-ash", buttonClass: "pricing-glass-swatch-ash" }
+  { name: "Nyra Dusk", className: "pricing-glass-bg-nyra-dusk", buttonClass: "pricing-glass-swatch-nyra-dusk" },
+  { name: "Rose Lesson", className: "pricing-glass-bg-rose-lesson", buttonClass: "pricing-glass-swatch-rose-lesson" },
+  { name: "Coral Review", className: "pricing-glass-bg-coral-review", buttonClass: "pricing-glass-swatch-coral-review" },
+  { name: "Plum Focus", className: "pricing-glass-bg-plum-focus", buttonClass: "pricing-glass-swatch-plum-focus" },
+  { name: "Soft A1", className: "pricing-glass-bg-soft-a1", buttonClass: "pricing-glass-swatch-soft-a1" }
 ];
 
 const DEMO_TIERS: PricingGlassTier[] = [
@@ -49,7 +49,7 @@ export function PricingGlassDemo() {
   return (
     <section className={`pricing-glass-demo ${BG_COLORS[bgIndex].className}`} aria-label="Pricing plan demo">
       <div className="pricing-glass-bg-selector">
-        <span>Test Backgrounds</span>
+        <span>Nyra Themes</span>
         <div>
           {BG_COLORS.map((color, index) => (
             <button
