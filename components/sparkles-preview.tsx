@@ -1,11 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import React from "react";
 import { SparklesCore } from "@/components/ui/sparkles";
 
-export function SparklesPreview() {
+export function SparklesPreview({ href = "/practice" }: { href?: string }) {
   return (
-    <section className="sparkles-preview" aria-label="Practice spotlight">
+    <Link className="sparkles-preview" href={href} aria-label="Open practice">
       <h2>practice</h2>
       <div className="sparkles-preview-beam">
         <div className="sparkles-gradient sparkles-gradient-indigo-soft" />
@@ -24,7 +25,7 @@ export function SparklesPreview() {
 
         <div className="sparkles-mask" />
       </div>
-    </section>
+    </Link>
   );
 }
 

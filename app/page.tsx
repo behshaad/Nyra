@@ -87,7 +87,7 @@ export default async function Home({
         </section>
       </section>
 
-      <SparklesPreview />
+      <SparklesPreview href={withInterfaceLanguage("/practice", language)} />
       <HomeGlobeShowcase />
     </main>
   );
