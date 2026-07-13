@@ -1427,10 +1427,10 @@ h3 {
 
 .sparkles-preview {
   align-items: center;
-  background: #050607;
-  border: 1px solid rgba(246, 201, 214, 0.12);
+  background: transparent;
+  border: 1px solid transparent;
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  box-shadow: none;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -1449,8 +1449,8 @@ h3 {
 
 .sparkles-preview:hover,
 .sparkles-preview:focus-visible {
-  border-color: rgba(246, 201, 214, 0.28);
-  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.48);
+  border-color: var(--line);
+  box-shadow: var(--hover-shadow);
   transform: translateY(-2px);
 }
 
@@ -1516,7 +1516,7 @@ h3 {
 }
 
 .sparkles-mask {
-  background: #050607;
+  background: var(--bg);
   mask-image: radial-gradient(350px 200px at top, transparent 20%, white);
   pointer-events: none;
 }
