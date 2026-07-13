@@ -225,9 +225,22 @@ export async function getPracticeJourney(
   const currentSkillSlug = flatSkills.find(
     ({ skill }) => !completionBySkillSlug.has(skill.slug)
   )?.skill.slug;
+  const currentSkillSlugByLevel = new Map<string, string>();
+
+  for (const level of course.levels) {
+    const currentLevelSkill = level.units
+      .flatMap((unit) => unit.skills)
+      .find((skill) => !completionBySkillSlug.has(skill.slug));
+
+    if (currentLevelSkill) {
+      currentSkillSlugByLevel.set(level.id, currentLevelSkill.slug);
+    }
+  }
+
   let currentNode: PracticeJourneyNode | null = null;
 
   const levels = course.levels.map((level) => {
+    const currentLevelSkillSlug = currentSkillSlugByLevel.get(level.id);
     const units = level.units
       .map((unit) => {
         const nodes = unit.skills.map((skill) => {
@@ -237,7 +250,7 @@ export async function getPracticeJourney(
             ? needsReview
               ? "needs_review"
               : "completed"
-            : skill.slug === currentSkillSlug
+            : skill.slug === currentLevelSkillSlug
               ? "current"
               : "locked";
           const node: PracticeJourneyNode = {
@@ -263,7 +276,7 @@ export async function getPracticeJourney(
             href: withInterfaceLanguage(`/learn/${skill.slug}`, input.interfaceLanguage ?? "fa")
           };
 
-          if (state === "current") {
+          if (state === "current" && skill.slug === currentSkillSlug) {
             currentNode = node;
           }
 
