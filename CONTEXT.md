@@ -137,7 +137,7 @@ The learner-owned product identity that describes a person's learning goal, lang
 _Avoid_: Account, user metadata
 
 **Account**:
-The identity, access, contact, and subscription-facing settings around an authenticated person using Nyra. An Account is distinct from the Learner Profile, which owns learning goals and study preferences.
+The identity, access, contact, and subscription-facing settings around an authenticated person using Nyra. An Account has one Learner Profile for now; multiple Courses or Levels belong under that Learner Profile.
 _Avoid_: Learner Profile, learning identity
 
 **Admin Access**:
