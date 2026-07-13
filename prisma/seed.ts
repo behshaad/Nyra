@@ -514,6 +514,37 @@ const b1UnitFlashcardDecks: Array<{
   )
 ];
 
+const b2UnitFlashcardDecks: Array<{
+  slug: string;
+  title: string;
+  description: string;
+  category: string;
+  unitSlug: string;
+  cards: readonly SeedFlashcard[];
+}> = sampleCourse.levels
+  .find((level) => level.label === "B2")
+  ?.units.map((unit, unitIndex) => ({
+    slug: `${unit.slug}-core-vocabulary`,
+    title: `واژگان اصلی B2 واحد ${unitIndex + 1}`,
+    description: `سی فلش‌کارت برای واحد ${unitIndex + 1} B2: ${unit.title}.`,
+    category: `Unit ${unitIndex + 1}`,
+    unitSlug: unit.slug,
+    cards: Array.from({ length: 30 }, (_, cardIndex) => {
+      const regularSkills = unit.skills.filter((skill) => skill.kind === "REGULAR");
+      const skill = regularSkills[cardIndex % Math.max(1, regularSkills.length)];
+      const number = cardIndex + 1;
+      const difficulty = number % 5 === 0 ? "HARD" : number % 2 === 0 ? "MEDIUM" : "EASY";
+
+      return [
+        `${skill.title} ${number}`,
+        `${unit.title} - کارت ${number}`,
+        `Wir ueben ${skill.title} im B2-Kurs.`,
+        `ما در دوره B2 مهارت «${skill.title}» را تمرین می‌کنیم.`,
+        difficulty
+      ] satisfies SeedFlashcard;
+    })
+  })) ?? [];
+
 const connectionString = process.env.DATABASE_URL;
 
 if (!connectionString) {
@@ -665,7 +696,8 @@ async function main() {
 
   const adminFlashcardDecks = [
     ...a2UnitFlashcardDecks.map((deck) => ({ ...deck, levelLabel: "A2" })),
-    ...b1UnitFlashcardDecks.map((deck) => ({ ...deck, levelLabel: "B1" }))
+    ...b1UnitFlashcardDecks.map((deck) => ({ ...deck, levelLabel: "B1" })),
+    ...b2UnitFlashcardDecks.map((deck) => ({ ...deck, levelLabel: "B2" }))
   ];
 
   for (const deck of adminFlashcardDecks) {

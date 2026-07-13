@@ -2897,7 +2897,7 @@ function makeDraftSkill(spec: Pick<SkillSpec, "slug" | "title" | "description" |
   };
 }
 
-function makeFinalTestForLevel(levelLabel: "A2" | "B1", units: SampleUnit[]): SampleSkill {
+function makeFinalTestForLevel(levelLabel: "A2" | "B1" | "B2", units: SampleUnit[]): SampleSkill {
   const slug = `${levelLabel.toLowerCase()}-final-test`;
   const publishedRegularQuestions = units
     .flatMap((unit) => unit.skills)
@@ -3366,6 +3366,336 @@ function buildB1Units(): SampleUnit[] {
   return units;
 }
 
+const b2UnitScaffolds: Array<Omit<UnitSpec, "skills"> & { skills: Array<Pick<SkillSpec, "slug" | "title" | "description" | "focus">> }> = [
+  {
+    slug: "b2-work-careers-and-professional-communication",
+    title: "کار، مسیر شغلی و ارتباط حرفه‌ای",
+    summary: "درباره مسیر شغلی، مسئولیت‌ها، همکاری، درخواست رسمی و بازخورد حرفه‌ای با دقت B2 صحبت کنید.",
+    resourceFocus: "کار، مسیر شغلی، همکاری و نوشتار رسمی",
+    skills: [
+      { slug: "b2-discuss-career-paths", title: "مسیر شغلی را تحلیل کن", description: "تجربه، هدف، تغییر شغل و اولویت‌های کاری را با دلیل و مقایسه توضیح بده.", focus: "مسیر شغلی" },
+      { slug: "b2-negotiate-workplace-responsibilities", title: "مسئولیت کاری را مذاکره کن", description: "وظیفه، زمان‌بندی، محدودیت و راه‌حل را در گفتگوی کاری روشن بیان کن.", focus: "مسئولیت کاری" },
+      { slug: "b2-write-a-formal-request", title: "درخواست رسمی بنویس", description: "درخواست، زمینه، دلیل و انتظار پاسخ را در متن رسمی منسجم کن.", focus: "درخواست رسمی" },
+      { slug: "b2-give-and-receive-feedback", title: "بازخورد حرفه‌ای بده و بگیر", description: "نقد سازنده، پیشنهاد بهبود و واکنش محترمانه را تمرین کن.", focus: "بازخورد" }
+    ]
+  },
+  {
+    slug: "b2-media-digital-life-and-public-opinion",
+    title: "رسانه، زندگی دیجیتال و افکار عمومی",
+    summary: "خبر، شبکه اجتماعی، حریم خصوصی، تبلیغات و اثر رسانه بر نظر عمومی را بررسی کنید.",
+    resourceFocus: "رسانه، خبر، حریم خصوصی و افکار عمومی",
+    skills: [
+      { slug: "b2-evaluate-news-sources", title: "منبع خبری را ارزیابی کن", description: "اعتبار، زاویه دید و جزئیات مهم خبر را تشخیص بده.", focus: "منبع خبری" },
+      { slug: "b2-discuss-social-media-habits", title: "عادت‌های شبکه اجتماعی را بحث کن", description: "فایده، خطر، عادت و مرزهای سالم استفاده دیجیتال را توضیح بده.", focus: "شبکه اجتماعی" },
+      { slug: "b2-argue-about-data-privacy", title: "درباره حریم داده استدلال کن", description: "نگرانی، حق کاربر و مسئولیت شرکت‌ها را با ساختار استدلالی بیان کن.", focus: "حریم داده" },
+      { slug: "b2-analyze-advertising-effects", title: "اثر تبلیغات را تحلیل کن", description: "پیام پنهان، گروه هدف و واکنش شخصی به تبلیغ را دقیق‌تر توضیح بده.", focus: "اثر تبلیغات" }
+    ]
+  },
+  {
+    slug: "b2-society-politics-and-civic-participation",
+    title: "جامعه، سیاست و مشارکت شهروندی",
+    summary: "درباره قانون، حقوق، مشارکت، بحث عمومی و تصمیم‌های اجتماعی موضع دقیق بگیرید.",
+    resourceFocus: "جامعه، حقوق، سیاست و مشارکت",
+    skills: [
+      { slug: "b2-explain-civic-rights", title: "حقوق شهروندی را توضیح بده", description: "حق، مسئولیت و مثال اجتماعی را با زبان روشن B2 بیان کن.", focus: "حقوق شهروندی" },
+      { slug: "b2-discuss-public-decisions", title: "تصمیم عمومی را بحث کن", description: "مزیت، عیب، ذی‌نفع و پیامد یک تصمیم عمومی را بررسی کن.", focus: "تصمیم عمومی" },
+      { slug: "b2-present-a-social-initiative", title: "یک ابتکار اجتماعی را معرفی کن", description: "هدف، مشکل، گروه مخاطب و اثر احتمالی یک پروژه اجتماعی را ارائه بده.", focus: "ابتکار اجتماعی" },
+      { slug: "b2-take-a-position-in-a-debate", title: "در بحث موضع بگیر", description: "نظر، دلیل، مثال و پاسخ به مخالفت را منظم بیان کن.", focus: "موضع‌گیری" }
+    ]
+  },
+  {
+    slug: "b2-environment-consumption-and-sustainability",
+    title: "محیط زیست، مصرف و پایداری",
+    summary: "مصرف، انرژی، آب‌وهوا، حمل‌ونقل و مسئولیت فردی یا جمعی را تحلیل کنید.",
+    resourceFocus: "محیط زیست، مصرف، انرژی و پایداری",
+    skills: [
+      { slug: "b2-compare-sustainable-choices", title: "انتخاب‌های پایدار را مقایسه کن", description: "گزینه‌های مصرفی را از نظر اثر، هزینه و واقع‌بینی مقایسه کن.", focus: "انتخاب پایدار" },
+      { slug: "b2-discuss-climate-responsibility", title: "مسئولیت اقلیمی را بحث کن", description: "نقش فرد، دولت و شرکت‌ها را در مسئله اقلیم توضیح بده.", focus: "مسئولیت اقلیمی" },
+      { slug: "b2-explain-energy-saving-measures", title: "راهکار صرفه‌جویی انرژی را توضیح بده", description: "اقدام، دلیل، شرط و نتیجه صرفه‌جویی را به هم وصل کن.", focus: "صرفه‌جویی انرژی" },
+      { slug: "b2-write-an-opinion-on-consumption", title: "نظر درباره مصرف بنویس", description: "متن کوتاه استدلالی درباره خرید، نیاز و عادت مصرفی آماده کن.", focus: "نظر درباره مصرف" }
+    ]
+  },
+  {
+    slug: "b2-health-psychology-and-wellbeing",
+    title: "سلامت، روان‌شناسی و کیفیت زندگی",
+    summary: "درباره سلامت جسم و روان، استرس، عادت‌ها، توصیه تخصصی و تعادل زندگی صحبت کنید.",
+    resourceFocus: "سلامت، استرس، عادت و کیفیت زندگی",
+    skills: [
+      { slug: "b2-describe-stress-and-causes", title: "استرس و علت‌ها را توصیف کن", description: "نشانه، علت، پیامد و راه‌حل استرس را دقیق بیان کن.", focus: "استرس" },
+      { slug: "b2-discuss-healthy-routines", title: "عادت سالم را بحث کن", description: "خواب، ورزش، تغذیه و مانع‌های تغییر عادت را توضیح بده.", focus: "عادت سالم" },
+      { slug: "b2-understand-medical-advice", title: "توصیه پزشکی را بفهم", description: "توصیه، هشدار، شرط و اقدام بعدی در متن سلامت را دنبال کن.", focus: "توصیه پزشکی" },
+      { slug: "b2-argue-for-work-life-balance", title: "برای تعادل زندگی استدلال کن", description: "نیاز، محدودیت، اولویت و پیشنهاد عملی برای تعادل کار و زندگی بساز.", focus: "تعادل زندگی" }
+    ]
+  },
+  {
+    slug: "b2-education-research-and-lifelong-learning",
+    title: "آموزش، پژوهش و یادگیری مادام‌العمر",
+    summary: "درباره آموزش، دانشگاه، پژوهش، روش یادگیری و ارزیابی منابع علمی صحبت کنید.",
+    resourceFocus: "آموزش، پژوهش، دانشگاه و روش یادگیری",
+    skills: [
+      { slug: "b2-discuss-study-programs", title: "رشته و برنامه تحصیلی را بحث کن", description: "هدف، شرط پذیرش، مزیت و چالش یک مسیر تحصیلی را توضیح بده.", focus: "برنامه تحصیلی" },
+      { slug: "b2-summarize-research-findings", title: "یافته پژوهشی را خلاصه کن", description: "موضوع، روش، نتیجه و محدودیت یک پژوهش ساده را بیان کن.", focus: "یافته پژوهشی" },
+      { slug: "b2-evaluate-learning-strategies", title: "راهبرد یادگیری را ارزیابی کن", description: "روش‌ها را از نظر اثر، زمان و تناسب با هدف مقایسه کن.", focus: "راهبرد یادگیری" },
+      { slug: "b2-participate-in-a-seminar", title: "در سمینار مشارکت کن", description: "سوال، موافقت، مخالفت و جمع‌بندی کوتاه در بحث آموزشی را تمرین کن.", focus: "مشارکت در سمینار" }
+    ]
+  },
+  {
+    slug: "b2-culture-literature-and-identity",
+    title: "فرهنگ، ادبیات و هویت",
+    summary: "اثر فرهنگی، داستان، هویت، مهاجرت و برداشت شخصی از متن یا هنر را تحلیل کنید.",
+    resourceFocus: "فرهنگ، ادبیات، هویت و مهاجرت",
+    skills: [
+      { slug: "b2-interpret-a-literary-excerpt", title: "بخشی از متن ادبی را تفسیر کن", description: "فضا، شخصیت، پیام و برداشت خودت از یک متن کوتاه را بیان کن.", focus: "تفسیر ادبی" },
+      { slug: "b2-discuss-cultural-identity", title: "هویت فرهنگی را بحث کن", description: "تجربه، زبان، تعلق و تغییر هویت را با مثال توضیح بده.", focus: "هویت فرهنگی" },
+      { slug: "b2-describe-artistic-impressions", title: "برداشت هنری را توصیف کن", description: "اثر هنری، احساس، جزئیات و نظر شخصی را منظم بیان کن.", focus: "برداشت هنری" },
+      { slug: "b2-present-a-book-or-film", title: "کتاب یا فیلمی را معرفی کن", description: "موضوع، ساختار، شخصیت‌ها و توصیه خودت را در ارائه کوتاه بیاور.", focus: "معرفی اثر" }
+    ]
+  },
+  {
+    slug: "b2-economy-money-and-consumer-rights",
+    title: "اقتصاد، پول و حقوق مصرف‌کننده",
+    summary: "بودجه، قرارداد، خرید، شکایت، خدمات مالی و تصمیم‌های اقتصادی را دقیق‌تر تمرین کنید.",
+    resourceFocus: "اقتصاد، قرارداد، مصرف‌کننده و خدمات مالی",
+    skills: [
+      { slug: "b2-discuss-personal-budgeting", title: "بودجه شخصی را بحث کن", description: "درآمد، هزینه، اولویت و برنامه مالی را واقع‌بینانه توضیح بده.", focus: "بودجه شخصی" },
+      { slug: "b2-understand-contract-conditions", title: "شرایط قرارداد را بفهم", description: "مدت، هزینه، حق فسخ و بندهای مهم قرارداد را تشخیص بده.", focus: "شرایط قرارداد" },
+      { slug: "b2-make-a-consumer-complaint", title: "شکایت مصرف‌کننده بنویس", description: "مشکل، مدرک، انتظار و مهلت پاسخ را در متن رسمی بیان کن.", focus: "شکایت مصرف‌کننده" },
+      { slug: "b2-compare-financial-services", title: "خدمات مالی را مقایسه کن", description: "کارمزد، خطر، فایده و نیاز شخصی را برای انتخاب مالی بسنج.", focus: "خدمات مالی" }
+    ]
+  },
+  {
+    slug: "b2-science-technology-and-innovation",
+    title: "علم، فناوری و نوآوری",
+    summary: "درباره نوآوری، هوش مصنوعی، پژوهش، اخلاق فناوری و تغییرهای آینده استدلال کنید.",
+    resourceFocus: "علم، فناوری، نوآوری و اخلاق",
+    skills: [
+      { slug: "b2-explain-a-technical-process", title: "فرایند فنی را توضیح بده", description: "مراحل، هدف و نتیجه یک فرایند فنی را با ترتیب منطقی بیان کن.", focus: "فرایند فنی" },
+      { slug: "b2-discuss-ai-and-society", title: "هوش مصنوعی و جامعه را بحث کن", description: "فرصت، خطر، مسئولیت و مثال روزمره فناوری هوشمند را بررسی کن.", focus: "هوش مصنوعی" },
+      { slug: "b2-evaluate-an-innovation", title: "یک نوآوری را ارزیابی کن", description: "فایده، محدودیت، هزینه و اثر اجتماعی یک ایده نو را بسنج.", focus: "نوآوری" },
+      { slug: "b2-write-about-digital-ethics", title: "درباره اخلاق دیجیتال بنویس", description: "حریم، عدالت، شفافیت و مسئولیت را در متن استدلالی کوتاه بیاور.", focus: "اخلاق دیجیتال" }
+    ]
+  },
+  {
+    slug: "b2-migration-housing-and-bureaucracy",
+    title: "مهاجرت، مسکن و اداره‌ها",
+    summary: "موقعیت‌های مهاجرت، قرارداد اجاره، نامه اداری، وقت گرفتن و حل مشکل رسمی را تمرین کنید.",
+    resourceFocus: "مهاجرت، مسکن، اداره و نامه رسمی",
+    skills: [
+      { slug: "b2-describe-migration-experiences", title: "تجربه مهاجرت را توصیف کن", description: "دلیل، چالش، سازگاری و احساس شخصی را دقیق و محترمانه بیان کن.", focus: "تجربه مهاجرت" },
+      { slug: "b2-understand-rental-ads", title: "آگهی اجاره را بفهم", description: "شرط‌ها، هزینه‌ها، موقعیت و نکته‌های مهم آگهی مسکن را تشخیص بده.", focus: "آگهی اجاره" },
+      { slug: "b2-handle-an-office-appointment", title: "وقت اداری را مدیریت کن", description: "درخواست وقت، توضیح مشکل و پرسیدن مدارک لازم را تمرین کن.", focus: "وقت اداری" },
+      { slug: "b2-write-an-official-email", title: "ایمیل اداری بنویس", description: "موضوع، شرح مسئله، درخواست و پیوست‌ها را در لحن رسمی مرتب کن.", focus: "ایمیل اداری" }
+    ]
+  },
+  {
+    slug: "b2-travel-globalization-and-intercultural-communication",
+    title: "سفر، جهانی‌شدن و ارتباط بین‌فرهنگی",
+    summary: "سفر پیچیده‌تر، فرهنگ کاری، سوءتفاهم، جهانی‌شدن و ارتباط بین‌فرهنگی را تحلیل کنید.",
+    resourceFocus: "سفر، جهانی‌شدن، فرهنگ و ارتباط",
+    skills: [
+      { slug: "b2-plan-complex-travel", title: "سفر پیچیده را برنامه‌ریزی کن", description: "مسیر، محدودیت، جایگزین و اولویت‌های چند نفر را هماهنگ کن.", focus: "برنامه سفر پیچیده" },
+      { slug: "b2-discuss-global-connections", title: "پیوندهای جهانی را بحث کن", description: "زنجیره تولید، ارتباط کشورها و اثر انتخاب‌های جهانی را توضیح بده.", focus: "پیوند جهانی" },
+      { slug: "b2-manage-intercultural-misunderstandings", title: "سوءتفاهم بین‌فرهنگی را مدیریت کن", description: "برداشت متفاوت، توضیح محترمانه و راه‌حل ارتباطی بساز.", focus: "سوءتفاهم بین‌فرهنگی" },
+      { slug: "b2-present-cultural-comparisons", title: "مقایسه فرهنگی ارائه بده", description: "شباهت، تفاوت، مثال و احتیاط در تعمیم را در ارائه کوتاه رعایت کن.", focus: "مقایسه فرهنگی" }
+    ]
+  },
+  {
+    slug: "b2-exam-strategies-argumentation-and-final-review",
+    title: "راهبرد آزمون، استدلال و مرور نهایی",
+    summary: "خلاصه‌نویسی، استدلال شفاهی و نوشتاری، مدیریت زمان و مرور تجمعی B2 را کامل کنید.",
+    resourceFocus: "آزمون، استدلال، خلاصه و مرور نهایی",
+    skills: [
+      { slug: "b2-summarize-complex-texts", title: "متن پیچیده را خلاصه کن", description: "ایده اصلی، جزئیات ضروری و حذف اطلاعات فرعی را تمرین کن.", focus: "خلاصه متن" },
+      { slug: "b2-structure-written-arguments", title: "استدلال نوشتاری را ساختار بده", description: "مقدمه، دلیل، مثال، ضدنظر و نتیجه را منسجم بنویس.", focus: "استدلال نوشتاری" },
+      { slug: "b2-manage-speaking-exam-tasks", title: "وظیفه گفتاری آزمون را مدیریت کن", description: "زمان، ساختار پاسخ، تعامل و جمع‌بندی در گفتار آزمونی را تمرین کن.", focus: "گفتار آزمونی" },
+      { slug: "b2-review-recurring-grammar-patterns", title: "الگوهای گرامری پرتکرار را مرور کن", description: "ساختارهای وابسته، مجهول، Konjunktiv و Nominalisierung را در کاربرد مرور کن.", focus: "مرور گرامر" }
+    ]
+  }
+];
+
+const b2UnitLanguage = [
+  {
+    word: "die Berufserfahrung",
+    meaning: "تجربه شغلی",
+    phrase: "Je mehr Berufserfahrung ich sammle, desto klarer werden meine Ziele.",
+    phraseMeaning: "هرچه تجربه شغلی بیشتری جمع کنم، هدف‌هایم روشن‌تر می‌شوند",
+    blankSentence: "Je mehr Berufserfahrung ich sammle, ___ klarer werden meine Ziele.",
+    blankAnswer: "desto",
+    orderedWords: ["Je", "mehr", "Berufserfahrung", "ich", "sammle", "desto", "klarer", "werden", "meine", "Ziele"],
+    grammarPoint: "ساختار je ... desto برای بیان رابطه دو تغییر در استدلال B2 کاربرد دارد.",
+    miniAnswer: "گوینده رابطه بین تجربه شغلی و هدف‌های روشن‌تر را توضیح می‌دهد."
+  },
+  {
+    word: "die Glaubwuerdigkeit",
+    meaning: "اعتبار / قابل اعتماد بودن",
+    phrase: "Bevor ich einen Artikel teile, pruefe ich seine Glaubwuerdigkeit.",
+    phraseMeaning: "قبل از اینکه مقاله‌ای را به اشتراک بگذارم، اعتبارش را بررسی می‌کنم",
+    blankSentence: "Bevor ich einen Artikel teile, ___ ich seine Glaubwuerdigkeit.",
+    blankAnswer: "pruefe",
+    orderedWords: ["Bevor", "ich", "einen", "Artikel", "teile", "pruefe", "ich", "seine", "Glaubwuerdigkeit"],
+    grammarPoint: "در جمله فرعی با bevor فعل صرف‌شده در پایان بخش فرعی می‌آید.",
+    miniAnswer: "متن درباره ارزیابی منبع پیش از انتشار آن است."
+  },
+  {
+    word: "die Beteiligung",
+    meaning: "مشارکت",
+    phrase: "Anstatt nur zu kritisieren, beteiligen sich viele Menschen an lokalen Projekten.",
+    phraseMeaning: "به جای فقط انتقاد کردن، افراد زیادی در پروژه‌های محلی مشارکت می‌کنند",
+    blankSentence: "Anstatt nur zu kritisieren, ___ sich viele Menschen an lokalen Projekten.",
+    blankAnswer: "beteiligen",
+    orderedWords: ["Anstatt", "nur", "zu", "kritisieren", "beteiligen", "sich", "viele", "Menschen"],
+    grammarPoint: "Anstatt ... zu + Infinitiv برای بیان جایگزین یک رفتار به کار می‌رود.",
+    miniAnswer: "تمرکز جمله روی مشارکت فعال به جای انتقاد صرف است."
+  },
+  {
+    word: "die Nachhaltigkeit",
+    meaning: "پایداری",
+    phrase: "Indem wir weniger verschwenden, handeln wir nachhaltiger.",
+    phraseMeaning: "با کمتر هدر دادن، پایدارتر عمل می‌کنیم",
+    blankSentence: "___ wir weniger verschwenden, handeln wir nachhaltiger.",
+    blankAnswer: "Indem",
+    orderedWords: ["Indem", "wir", "weniger", "verschwenden", "handeln", "wir", "nachhaltiger"],
+    grammarPoint: "Indem روش یا وسیله رسیدن به نتیجه را معرفی می‌کند.",
+    miniAnswer: "جمله راه رسیدن به رفتار پایدارتر را نشان می‌دهد."
+  },
+  {
+    word: "die Belastung",
+    meaning: "فشار / بار روانی یا جسمی",
+    phrase: "Wer dauerhaft unter Belastung steht, sollte rechtzeitig Unterstuetzung suchen.",
+    phraseMeaning: "کسی که دائماً تحت فشار است، باید به‌موقع دنبال حمایت باشد",
+    blankSentence: "Wer dauerhaft unter Belastung steht, ___ rechtzeitig Unterstuetzung suchen.",
+    blankAnswer: "sollte",
+    orderedWords: ["Wer", "dauerhaft", "unter", "Belastung", "steht", "sollte", "Unterstuetzung", "suchen"],
+    grammarPoint: "جمله با wer می‌تواند نقش فاعل جمله اصلی را داشته باشد.",
+    miniAnswer: "متن درباره فشار طولانی و نیاز به حمایت به‌موقع است."
+  },
+  {
+    word: "die Erkenntnis",
+    meaning: "یافته / بینش",
+    phrase: "Die Studie zeigt, dass regelmaessige Wiederholung langfristig wirksam ist.",
+    phraseMeaning: "پژوهش نشان می‌دهد که مرور منظم در بلندمدت موثر است",
+    blankSentence: "Die Studie zeigt, ___ regelmaessige Wiederholung langfristig wirksam ist.",
+    blankAnswer: "dass",
+    orderedWords: ["Die", "Studie", "zeigt", "dass", "regelmaessige", "Wiederholung", "wirksam", "ist"],
+    grammarPoint: "در گزارش یافته‌ها، dass جمله وابسته محتوای نتیجه را معرفی می‌کند.",
+    miniAnswer: "متن یک یافته درباره اثر مرور منظم گزارش می‌کند."
+  },
+  {
+    word: "die Zugehoerigkeit",
+    meaning: "تعلق",
+    phrase: "Obwohl ich zwischen zwei Kulturen lebe, empfinde ich Zugehoerigkeit.",
+    phraseMeaning: "با اینکه بین دو فرهنگ زندگی می‌کنم، احساس تعلق دارم",
+    blankSentence: "___ ich zwischen zwei Kulturen lebe, empfinde ich Zugehoerigkeit.",
+    blankAnswer: "Obwohl",
+    orderedWords: ["Obwohl", "ich", "zwischen", "zwei", "Kulturen", "lebe", "empfinde", "ich", "Zugehoerigkeit"],
+    grammarPoint: "Obwohl تضاد بین انتظار و واقعیت را در جمله وابسته نشان می‌دهد.",
+    miniAnswer: "گوینده با وجود زندگی بین دو فرهنگ احساس تعلق دارد."
+  },
+  {
+    word: "die Vertragsbedingung",
+    meaning: "شرط قرارداد",
+    phrase: "Falls die Vertragsbedingungen unklar sind, frage ich schriftlich nach.",
+    phraseMeaning: "اگر شرایط قرارداد نامشخص باشد، کتبی سوال می‌کنم",
+    blankSentence: "Falls die Vertragsbedingungen unklar sind, ___ ich schriftlich nach.",
+    blankAnswer: "frage",
+    orderedWords: ["Falls", "die", "Vertragsbedingungen", "unklar", "sind", "frage", "ich", "schriftlich", "nach"],
+    grammarPoint: "Falls شرط احتمالی را معرفی می‌کند و فعل بخش فرعی در پایان می‌آید.",
+    miniAnswer: "گوینده در برابر ابهام قرارداد پیگیری کتبی انجام می‌دهد."
+  },
+  {
+    word: "die Innovation",
+    meaning: "نوآوری",
+    phrase: "Die Innovation wird nur akzeptiert, wenn sie transparent erklaert wird.",
+    phraseMeaning: "نوآوری فقط وقتی پذیرفته می‌شود که شفاف توضیح داده شود",
+    blankSentence: "Die Innovation wird nur akzeptiert, wenn sie transparent ___ wird.",
+    blankAnswer: "erklaert",
+    orderedWords: ["Die", "Innovation", "wird", "akzeptiert", "wenn", "sie", "transparent", "erklaert", "wird"],
+    grammarPoint: "Passiv با wird + Partizip II برای تمرکز روی عمل یا نتیجه استفاده می‌شود.",
+    miniAnswer: "پذیرش نوآوری به توضیح شفاف آن وابسته است."
+  },
+  {
+    word: "die Aufenthaltsgenehmigung",
+    meaning: "مجوز اقامت",
+    phrase: "Sobald die Unterlagen vollstaendig sind, beantrage ich die Aufenthaltsgenehmigung.",
+    phraseMeaning: "به محض کامل شدن مدارک، مجوز اقامت را درخواست می‌دهم",
+    blankSentence: "Sobald die Unterlagen vollstaendig sind, ___ ich die Aufenthaltsgenehmigung.",
+    blankAnswer: "beantrage",
+    orderedWords: ["Sobald", "die", "Unterlagen", "vollstaendig", "sind", "beantrage", "ich", "die", "Aufenthaltsgenehmigung"],
+    grammarPoint: "Sobald زمان شروع عمل اصلی پس از کامل شدن شرط زمانی را نشان می‌دهد.",
+    miniAnswer: "اقدام اداری پس از کامل شدن مدارک انجام می‌شود."
+  },
+  {
+    word: "die interkulturelle Kommunikation",
+    meaning: "ارتباط بین‌فرهنگی",
+    phrase: "Missverstaendnisse lassen sich vermeiden, indem man Erwartungen offen anspricht.",
+    phraseMeaning: "سوءتفاهم‌ها را می‌توان با بیان روشن انتظارها کاهش داد",
+    blankSentence: "Missverstaendnisse lassen sich vermeiden, ___ man Erwartungen offen anspricht.",
+    blankAnswer: "indem",
+    orderedWords: ["Missverstaendnisse", "lassen", "sich", "vermeiden", "indem", "man", "Erwartungen", "offen", "anspricht"],
+    grammarPoint: "Sich lassen + Infinitiv راهی برای بیان امکان انجام کاری است.",
+    miniAnswer: "بیان روشن انتظارها به کاهش سوءتفاهم کمک می‌کند."
+  },
+  {
+    word: "die Schlussfolgerung",
+    meaning: "نتیجه‌گیری",
+    phrase: "Nachdem ich beide Positionen verglichen habe, formuliere ich eine Schlussfolgerung.",
+    phraseMeaning: "بعد از مقایسه هر دو موضع، یک نتیجه‌گیری بیان می‌کنم",
+    blankSentence: "Nachdem ich beide Positionen verglichen habe, ___ ich eine Schlussfolgerung.",
+    blankAnswer: "formuliere",
+    orderedWords: ["Nachdem", "ich", "beide", "Positionen", "verglichen", "habe", "formuliere", "ich", "eine", "Schlussfolgerung"],
+    grammarPoint: "Nachdem ترتیب زمانی دو مرحله در استدلال یا خلاصه‌نویسی را نشان می‌دهد.",
+    miniAnswer: "نتیجه‌گیری پس از مقایسه دو موضع نوشته می‌شود."
+  }
+] satisfies Array<Pick<SkillSpec, "word" | "meaning" | "phrase" | "phraseMeaning" | "blankSentence" | "blankAnswer" | "orderedWords" | "grammarPoint" | "miniAnswer">>;
+
+function makeB2SkillSpec(
+  unit: Omit<UnitSpec, "skills">,
+  skill: Pick<SkillSpec, "slug" | "title" | "description" | "focus">,
+  unitIndex: number
+): SkillSpec {
+  const language = b2UnitLanguage[unitIndex];
+
+  return {
+    ...skill,
+    ...language,
+    blankChoices: [language.blankAnswer, "weil", "obwohl"],
+    situation: `در موضوع ${unit.resourceFocus} باید درباره «${skill.focus}» با دقت، دلیل و ساختار B2 صحبت کنید.`,
+    miniText: `Sara bereitet eine B2-Aufgabe zu ${skill.focus} vor. ${language.phrase} Danach sammelt sie Argumente und Beispiele.`,
+    miniAnswer: `${language.miniAnswer} این تمرین به «${skill.focus}» مربوط است.`
+  };
+}
+
+function buildB2UnitSpecs(): UnitSpec[] {
+  return b2UnitScaffolds.map((unit, unitIndex) => ({
+    slug: unit.slug,
+    title: unit.title,
+    summary: unit.summary,
+    resourceFocus: unit.resourceFocus,
+    skills: unit.skills.map((skill) =>
+      makeB2SkillSpec(unit, skill, unitIndex)
+    )
+  }));
+}
+
+function buildB2Units(): SampleUnit[] {
+  const units = buildB2UnitSpecs().map((unit) => {
+    const skills = unit.skills.map((skill) =>
+      makeSkill(skill, "PUBLISHED", makeA2SkillQuestions)
+    );
+
+    return {
+      slug: unit.slug,
+      title: unit.title,
+      summary: unit.summary,
+      skills: [...skills, makeA2Checkpoint(unit, skills, "PUBLISHED", "B2")]
+    };
+  });
+
+  units[units.length - 1].skills.push(makeFinalTestForLevel("B2", units));
+
+  return units;
+}
+
 export const devLearnerProfile = {
   id: "dev-learner",
   displayName: "Dev Learner",
@@ -3397,6 +3727,11 @@ export const sampleCourse: SampleCourse = {
       label: "B1",
       title: "استقلال B1",
       units: buildB1Units()
+    },
+    {
+      label: "B2",
+      title: "پیشرفته B2",
+      units: buildB2Units()
     }
   ]
 };
@@ -3417,6 +3752,26 @@ const b1AdditionalLearningGuides: SampleResource[] = b1GuideUnits.slice(1).map((
   },
   content:
     `این راهنما واحد ${index + 2} B1 را به موقعیت‌های اصلی «${unit.title}» وصل می‌کند. توضیح‌ها فارسی هستند و نمونه‌های تمرین آلمانی می‌مانند تا زبان‌آموز بتواند ${unit.resourceFocus} را با دقت B1 تمرین کند.`,
+  publicationStatus: "PUBLISHED",
+  unitSlug: unit.slug,
+  skillSlug: unit.skills[0]?.slug
+}));
+const b2GuideUnits = buildB2UnitSpecs();
+const b2LearningGuides: SampleResource[] = b2GuideUnits.map((unit, index) => ({
+  slug: `${unit.slug}-persian-guide`,
+  title: `راهنمای B2: ${unit.title}`,
+  description: `پشتیبانی فارسی برای ${unit.resourceFocus}.`,
+  type: "LEARNING_GUIDE",
+  levelLabel: "B2",
+  language: "fa/de",
+  thumbnailIcon: "landmark",
+  metadata: {
+    length: "28 min",
+    format: "Persian-first guide",
+    focus: `B2 Unit ${index + 1}`
+  },
+  content:
+    `این راهنما واحد ${index + 1} B2 را به موقعیت‌های اصلی «${unit.title}» وصل می‌کند. توضیح‌ها فارسی هستند و نمونه‌های آلمانی در سطح B2 باقی می‌مانند تا زبان‌آموز بتواند ${unit.resourceFocus} را با استدلال، دقت گرامری و واژگان پیشرفته‌تر تمرین کند.`,
   publicationStatus: "PUBLISHED",
   unitSlug: unit.slug,
   skillSlug: unit.skills[0]?.slug
@@ -3822,7 +4177,8 @@ export const sampleResources: SampleResource[] = [
     unitSlug: "b1-travel-plans-and-holiday-stories",
     skillSlug: "b1-plan-a-trip-and-explain-preferences"
   },
-  ...b1AdditionalLearningGuides
+  ...b1AdditionalLearningGuides,
+  ...b2LearningGuides
 ];
 
 export function getPublishedSkills() {
