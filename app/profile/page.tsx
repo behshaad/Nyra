@@ -23,6 +23,7 @@ import { profileCopy, text } from "@/lib/i18n/page-copy";
 import { getLearnerPreferences } from "@/lib/learner/preferences";
 import { devLearnerProfile } from "@/lib/learning/sample-content";
 import { getPracticeJourney } from "@/lib/practice/journey";
+import type { CSSProperties } from "react";
 
 const progressCopy = {
   fa: {
@@ -121,6 +122,8 @@ export default async function ProfilePage({
   const reviewReadinessPercent = journey.totalCount === 0
     ? 100
     : Math.max(0, 100 - Math.round((journey.needsReviewCount / journey.totalCount) * 100));
+  const xpGoal = 20000;
+  const xpProgressPercent = Math.min(100, Math.round((journey.totalXp / xpGoal) * 100));
   const displayName = session?.fullName ?? devLearnerProfile.displayName;
   const initials = displayName
     .split(/\s+/)
@@ -186,7 +189,7 @@ export default async function ProfilePage({
       detail: progress.minutes,
       icon: Target,
       accent: "goal",
-      progressValue: dailyGoalPercent
+      ringValue: dailyGoalPercent
     },
     {
       label: progress.lessons,
@@ -194,14 +197,16 @@ export default async function ProfilePage({
       detail: progress.overall,
       icon: BookOpenCheck,
       accent: "lessons",
-      progressValue: completedLessonsPercent
+      ringValue: completedLessonsPercent
     },
     {
       label: progress.xp,
       value: journey.totalXp.toLocaleString("en-US"),
       detail: journey.course?.title ?? "Learning Path",
       icon: Gem,
-      accent: "xp"
+      accent: "xp",
+      barValue: xpProgressPercent,
+      barLabel: `${xpProgressPercent}%`
     },
     {
       label: progress.dailyStreak,
@@ -209,7 +214,7 @@ export default async function ProfilePage({
       detail: progress.days,
       icon: Flame,
       accent: "streak",
-      progressValue: formatPercent(dailyStreak, 30)
+      ringValue: formatPercent(dailyStreak, 30)
     },
     {
       label: progress.completion,
@@ -217,7 +222,7 @@ export default async function ProfilePage({
       detail: `${progressPercent}% ${progress.overall}`,
       icon: ShieldCheck,
       accent: "completion",
-      progressValue: progressPercent
+      ringValue: progressPercent
     },
     {
       label: progress.review,
@@ -225,7 +230,7 @@ export default async function ProfilePage({
       detail: progress.review,
       icon: Trophy,
       accent: "review",
-      progressValue: reviewReadinessPercent
+      ringValue: reviewReadinessPercent
     }
   ];
 
@@ -295,8 +300,8 @@ export default async function ProfilePage({
               return (
                 <article className={`profile-progress-card profile-progress-card-${stat.accent}`} key={stat.label}>
                   <div className="profile-progress-card-visual" aria-hidden="true">
-                    {typeof stat.progressValue === "number" ? (
-                      <CircleProgress value={stat.progressValue} maxValue={100} size={56} strokeWidth={5} />
+                    {typeof stat.ringValue === "number" ? (
+                      <CircleProgress value={stat.ringValue} maxValue={100} size={56} strokeWidth={5} />
                     ) : (
                       <span className="profile-progress-icon">
                         <Icon size={22} />
@@ -307,6 +312,23 @@ export default async function ProfilePage({
                     <span>{stat.label}</span>
                     <strong>{stat.value}</strong>
                     <small>{stat.detail}</small>
+                    {typeof stat.barValue === "number" ? (
+                      <div
+                        aria-label={`${stat.label} ${stat.barLabel}`}
+                        className="profile-linear-progress profile-linear-progress-striped"
+                        role="progressbar"
+                        style={
+                          {
+                            "--profile-linear-progress-value": `${stat.barValue}%`
+                          } as CSSProperties
+                        }
+                        aria-valuemax={100}
+                        aria-valuemin={0}
+                        aria-valuenow={stat.barValue}
+                      >
+                        <span />
+                      </div>
+                    ) : null}
                   </div>
                 </article>
               );

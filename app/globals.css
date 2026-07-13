@@ -2445,6 +2445,7 @@ h3 {
   display: grid;
   gap: 7px;
   min-width: 0;
+  width: 100%;
 }
 
 .profile-progress-card span,
@@ -2466,6 +2467,55 @@ h3 {
 .profile-progress-card small {
   font-size: 0.78rem;
   line-height: 1.4;
+}
+
+.profile-linear-progress {
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.25),
+    0 1px rgba(255, 255, 255, 0.08);
+  margin-top: 4px;
+  overflow: hidden;
+  padding: 5px;
+  width: 100%;
+}
+
+.profile-linear-progress span {
+  background-color: var(--profile-card-accent);
+  border-radius: 4px;
+  display: block;
+  height: 12px;
+  width: var(--profile-linear-progress-value);
+}
+
+.profile-linear-progress-striped span {
+  animation: profileProgressStrike 1200ms ease-out both;
+  background-color: #fcbc51;
+  background-image:
+    linear-gradient(
+      45deg,
+      rgb(252, 163, 17) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgb(252, 163, 17) 50%,
+      rgb(252, 163, 17) 75%,
+      transparent 75%,
+      transparent
+    ),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.06));
+  background-size: 18px 18px, 100% 100%;
+  box-shadow: 0 0 18px rgba(252, 188, 81, 0.2);
+}
+
+@keyframes profileProgressStrike {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: var(--profile-linear-progress-value);
+  }
 }
 
 .circle-progress {
@@ -2497,6 +2547,12 @@ h3 {
 
 .circle-progress.dark .circle-progress-value {
   stroke: #f8f4f1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile-linear-progress-striped span {
+    animation: none;
+  }
 }
 
 .profile-hero {
