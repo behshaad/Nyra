@@ -1369,11 +1369,10 @@ h3 {
 .home-globe-showcase {
   align-items: center;
   animation: floatIn 850ms 180ms ease both;
-  background: var(--panel);
-  backdrop-filter: blur(28px);
-  border: 1px solid var(--line);
+  background: transparent;
+  border: 0;
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  box-shadow: none;
   direction: ltr;
   display: grid;
   gap: 44px;
