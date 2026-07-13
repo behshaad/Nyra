@@ -2764,9 +2764,7 @@ h3 {
 }
 
 .resource-card-media::after {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(48, 31, 50, 0.2)),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.14), transparent 42%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(48, 31, 50, 0.16));
   content: "";
   inset: 0;
   pointer-events: none;
@@ -2781,7 +2779,7 @@ h3 {
 
 .resource-card-meta span {
   align-items: center;
-  background: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(18px);
   border: 1px solid var(--line);
   border-radius: 7px;
@@ -2799,21 +2797,18 @@ h3 {
 .resource-library-card {
   animation: resourceCardReveal 1800ms cubic-bezier(0.16, 1, 0.3, 1) both;
   background:
-    radial-gradient(circle at 16% 0%, rgba(201, 100, 66, 0.12), transparent 34%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(245, 244, 239, 0.78)),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.58)),
     var(--surface);
   backdrop-filter: blur(22px);
-  border: 1px solid rgba(201, 100, 66, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.72);
   border-radius: var(--radius);
-  box-shadow:
-    10px 10px 0 rgba(20, 20, 19, 0.04),
-    0 18px 44px rgba(92, 49, 76, 0.09);
+  box-shadow: 0 18px 44px rgba(92, 49, 76, 0.09);
   cursor: pointer;
   display: grid;
-  gap: 14px;
+  gap: 13px;
   grid-template-rows: auto auto 1fr auto auto;
   overflow: hidden;
-  padding: 10px 10px 16px;
+  padding: 10px 10px 14px;
   transition:
     border-color 700ms ease,
     box-shadow 700ms ease,
@@ -2837,21 +2832,9 @@ h3 {
 }
 
 .resource-library-card:hover {
-  border-color: rgba(201, 100, 66, 0.34);
-  box-shadow:
-    7px 7px 0 rgba(201, 100, 66, 0.12),
-    0 22px 54px rgba(92, 49, 76, 0.14);
+  border-color: rgba(146, 115, 148, 0.28);
+  box-shadow: 0 22px 54px rgba(92, 49, 76, 0.14);
   transform: translateY(-4px);
-}
-
-.resource-library-card:focus-visible {
-  border-color: rgba(201, 100, 66, 0.56);
-  box-shadow:
-    0 0 0 4px var(--focus),
-    7px 7px 0 rgba(201, 100, 66, 0.12),
-    0 22px 54px rgba(92, 49, 76, 0.14);
-  outline: none;
-  transform: translateY(-2px);
 }
 
 .resource-card-media {
@@ -2859,23 +2842,19 @@ h3 {
   background:
     radial-gradient(circle at 16% 12%, rgba(255, 255, 255, 0.55), transparent 34%),
     var(--accent-soft);
-  border: 1px solid rgba(201, 100, 66, 0.16);
   border-radius: 8px;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.42);
   overflow: hidden;
   position: relative;
 }
 
 .resource-card-media-icon {
   align-items: center;
-  background: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.78);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(201, 100, 66, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.76);
   border-radius: 8px;
   bottom: 10px;
-  box-shadow:
-    5px 5px 0 rgba(20, 20, 19, 0.08),
-    0 10px 26px rgba(92, 49, 76, 0.12);
+  box-shadow: 0 10px 26px rgba(92, 49, 76, 0.12);
   color: var(--green-dark);
   display: inline-flex;
   height: 38px;
@@ -2890,12 +2869,12 @@ h3 {
   align-items: flex-start;
   display: flex;
   gap: 12px;
-  padding: 4px 6px 0;
+  padding: 2px 4px 0;
 }
 
 .resource-card-header h2 {
   font-size: 1.25rem;
-  line-height: 1.22;
+  line-height: 1.15;
   margin: 5px 0 0;
 }
 
@@ -2915,12 +2894,12 @@ h3 {
 }
 
 .resource-content {
-  background: rgba(255, 255, 255, 0.62);
-  border: 1px solid rgba(201, 100, 66, 0.14);
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(146, 115, 148, 0.1);
   border-radius: var(--radius);
   display: grid;
   gap: 8px;
-  padding: 14px;
+  padding: 12px;
 }
 
 .resource-card-meta {
@@ -2936,46 +2915,38 @@ h3 {
 }
 
 :root[data-theme="dark"] .resource-card-meta span {
-  background: rgba(33, 33, 33, 0.78);
+  background: rgba(48, 28, 43, 0.74);
 }
 
 :root[data-theme="dark"] .resource-library-card {
   background:
-    radial-gradient(circle at 16% 0%, rgba(224, 93, 56, 0.16), transparent 34%),
-    linear-gradient(145deg, rgba(36, 30, 34, 0.94), rgba(32, 32, 32, 0.76)),
+    linear-gradient(145deg, rgba(48, 28, 43, 0.9), rgba(48, 28, 43, 0.62)),
     var(--surface);
-  border-color: rgba(224, 93, 56, 0.22);
-  box-shadow:
-    10px 10px 0 rgba(0, 0, 0, 0.18),
-    0 18px 44px rgba(0, 0, 0, 0.2);
+  border-color: rgba(246, 201, 214, 0.16);
 }
 
 :root[data-theme="dark"] .resource-content,
 :root[data-theme="dark"] .resource-card-media-icon {
-  background: rgba(33, 33, 33, 0.78);
-  border-color: rgba(224, 93, 56, 0.18);
+  background: rgba(48, 28, 43, 0.74);
+  border-color: rgba(246, 201, 214, 0.16);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) .resource-card-meta span {
-    background: rgba(33, 33, 33, 0.78);
+    background: rgba(48, 28, 43, 0.74);
   }
 
   :root:not([data-theme]) .resource-library-card {
     background:
-      radial-gradient(circle at 16% 0%, rgba(224, 93, 56, 0.16), transparent 34%),
-      linear-gradient(145deg, rgba(36, 30, 34, 0.94), rgba(32, 32, 32, 0.76)),
+      linear-gradient(145deg, rgba(48, 28, 43, 0.9), rgba(48, 28, 43, 0.62)),
       var(--surface);
-    border-color: rgba(224, 93, 56, 0.22);
-    box-shadow:
-      10px 10px 0 rgba(0, 0, 0, 0.18),
-      0 18px 44px rgba(0, 0, 0, 0.2);
+    border-color: rgba(246, 201, 214, 0.16);
   }
 
   :root:not([data-theme]) .resource-content,
   :root:not([data-theme]) .resource-card-media-icon {
-    background: rgba(33, 33, 33, 0.78);
-    border-color: rgba(224, 93, 56, 0.18);
+    background: rgba(48, 28, 43, 0.74);
+    border-color: rgba(246, 201, 214, 0.16);
   }
 }
 
@@ -4282,21 +4253,6 @@ h3 {
 
   .flashcard-library-grid {
     grid-template-columns: 1fr;
-  }
-
-  .resource-library-card {
-    box-shadow:
-      6px 6px 0 rgba(20, 20, 19, 0.04),
-      0 16px 34px rgba(92, 49, 76, 0.1);
-  }
-
-  .resource-card-header {
-    padding-inline: 2px;
-  }
-
-  .resource-card-meta span {
-    max-width: 100%;
-    white-space: normal;
   }
 
   .flashcard-add-button {
