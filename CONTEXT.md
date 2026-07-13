@@ -133,7 +133,7 @@ The next recommended Skill or assessment in the learner's current Learning Path 
 _Avoid_: Next lesson
 
 **Learner Profile**:
-The learner-owned product identity that describes a person's learning goal, languages, current level, daily goal, preferences, and onboarding state.
+The learner-owned product identity that describes a person's learning goal, languages, current level, daily goal, preferences, and onboarding state. A Learner Profile can be provisioned when an authenticated person first enters Nyra, but it remains distinct from the Account.
 _Avoid_: Account, user metadata
 
 **Account**:
