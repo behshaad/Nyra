@@ -11,3 +11,4 @@ __pycache__/
 *.pyc
 
 lib/generated/prisma/
+.vercel/
