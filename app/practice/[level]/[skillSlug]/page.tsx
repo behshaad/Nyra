@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { SkillPlayer } from "@/components/practice/world/skill-player";
+import { getAuthSession } from "@/lib/auth/server";
 import { resolveInterfaceLanguage } from "@/lib/i18n/interface-language";
 import { getLearnerPreferences } from "@/lib/learner/preferences";
 import { getPracticeJourney } from "@/lib/practice/journey";
@@ -30,15 +31,24 @@ export default async function PracticeSkillPage({
     redirect(practiceHref);
   }
 
-  const journey = await getPracticeJourney({
-    interfaceLanguage: language
-  });
+  const [journey, session] = await Promise.all([
+    getPracticeJourney({
+      interfaceLanguage: language
+    }),
+    getAuthSession()
+  ]);
+  const isAdmin = session?.role === "ADMIN";
   const journeyLevel = journey.levels.find((candidate) => candidate.label === normalizedLevel);
   const skill = journeyLevel?.units
     .flatMap((unit) => unit.nodes)
     .find((candidate) => candidate.slug === skillSlug);
 
-  if (!journeyLevel || journeyLevel.totalCount === 0 || !skill || skill.state === "locked") {
+  if (
+    !journeyLevel ||
+    journeyLevel.totalCount === 0 ||
+    !skill ||
+    (skill.state === "locked" && !isAdmin)
+  ) {
     redirect(worldHref);
   }
 

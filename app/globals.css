@@ -6352,6 +6352,27 @@ h3 {
   font-size: 0.82rem;
 }
 
+.practice-review-answer {
+  background: rgba(255, 242, 209, 0.1);
+  border: 1px solid rgba(255, 242, 209, 0.22);
+  border-radius: 8px;
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+}
+
+.practice-review-answer small {
+  color: rgba(248, 243, 250, 0.58);
+  font-size: 0.7rem;
+  font-weight: 850;
+}
+
+.practice-review-answer strong {
+  color: #fffaff;
+  font-size: 0.94rem;
+  line-height: 1.25;
+}
+
 .practice-word-tile {
   min-height: 38px;
   padding: 8px 11px;
@@ -6615,6 +6636,208 @@ h3 {
   z-index: 7;
 }
 
+.unit-world-rail {
+  gap: clamp(4px, 1.35vh, 10px);
+  top: 31%;
+}
+
+.unit-world-rail button {
+  min-height: 18px;
+}
+
+.unit-world-rail strong {
+  font-size: 0.5rem;
+}
+
+.unit-world-rail small {
+  font-size: 0.34rem;
+}
+
+.unit-node-layer {
+  height: 100%;
+}
+
+.unit-node-position {
+  z-index: 14;
+}
+
+.unit-world-node {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: #fffaff;
+  cursor: pointer;
+  display: grid;
+  filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.42));
+  justify-items: center;
+  min-width: 72px;
+  padding: 0;
+  position: relative;
+  text-align: center;
+}
+
+.unit-world-node:disabled {
+  cursor: default;
+}
+
+.unit-pin {
+  align-items: center;
+  background:
+    radial-gradient(circle at 34% 22%, rgba(255, 255, 255, 0.72), transparent 19%),
+    linear-gradient(145deg, #f6d99b 0%, #272f35 36%, #141a20 100%);
+  border: 2px solid rgba(246, 217, 155, 0.9);
+  border-radius: 999px 999px 999px 18px;
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    inset 0 -10px 16px rgba(0, 0, 0, 0.32);
+  display: inline-flex;
+  height: clamp(42px, 5.2vh, 56px);
+  justify-content: center;
+  position: relative;
+  transform: rotate(-45deg);
+  width: clamp(42px, 5.2vh, 56px);
+}
+
+.unit-pin::before {
+  background: linear-gradient(145deg, rgba(21, 28, 34, 0.96), rgba(47, 58, 66, 0.9));
+  border: 1px solid rgba(246, 217, 155, 0.42);
+  border-radius: 999px;
+  content: "";
+  inset: 7px;
+  position: absolute;
+}
+
+.unit-pin-number,
+.unit-pin-state {
+  position: relative;
+  transform: rotate(45deg);
+  z-index: 2;
+}
+
+.unit-pin-number {
+  color: #fff6d8;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1rem, 2.55vh, 1.42rem);
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.unit-pin-state {
+  align-items: center;
+  background: rgba(3, 10, 15, 0.68);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  bottom: -2px;
+  color: rgba(255, 246, 216, 0.92);
+  display: inline-flex;
+  height: 20px;
+  justify-content: center;
+  position: absolute;
+  right: -4px;
+  width: 20px;
+}
+
+.unit-lesson-plate {
+  background: linear-gradient(180deg, rgba(24, 30, 38, 0.94), rgba(11, 15, 22, 0.92));
+  border: 1px solid rgba(246, 217, 155, 0.58);
+  border-radius: 5px;
+  box-shadow:
+    0 8px 14px rgba(0, 0, 0, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  color: #fff0b9;
+  font-size: clamp(0.55rem, 1.45vh, 0.74rem);
+  font-weight: 900;
+  line-height: 1;
+  margin-top: -2px;
+  min-width: 62px;
+  padding: 4px 7px 5px;
+  white-space: nowrap;
+}
+
+.unit-node-progress {
+  background: rgba(5, 16, 24, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: rgba(248, 243, 250, 0.76);
+  font-size: 0.42rem;
+  font-weight: 850;
+  margin-top: 3px;
+  padding: 2px 5px;
+}
+
+.unit-admin-badge {
+  background: rgba(216, 233, 255, 0.14);
+  border: 1px solid rgba(216, 233, 255, 0.28);
+  border-radius: 999px;
+  color: rgba(236, 245, 247, 0.88);
+  font-size: 0.38rem;
+  font-weight: 850;
+  margin-top: 3px;
+  padding: 2px 5px;
+  white-space: nowrap;
+}
+
+.unit-world-node.completed .unit-pin {
+  background:
+    radial-gradient(circle at 34% 22%, rgba(255, 255, 255, 0.72), transparent 19%),
+    linear-gradient(145deg, #d7f3dd 0%, #78c791 48%, #1f583e 100%);
+  border-color: rgba(215, 243, 221, 0.86);
+}
+
+.unit-world-node.needs_review .unit-pin {
+  background:
+    radial-gradient(circle at 34% 22%, rgba(255, 255, 255, 0.72), transparent 19%),
+    linear-gradient(145deg, #ffe5b7 0%, #c98da0 48%, #5f3f61 100%);
+}
+
+.unit-world-node.current .unit-pin {
+  box-shadow:
+    0 0 0 8px rgba(246, 217, 155, 0.16),
+    0 0 34px rgba(246, 217, 155, 0.72),
+    0 13px 24px rgba(0, 0, 0, 0.46),
+    inset 0 1px 0 rgba(255, 255, 255, 0.38),
+    inset 0 -10px 16px rgba(0, 0, 0, 0.32);
+}
+
+.unit-world-node.locked .unit-pin {
+  background:
+    radial-gradient(circle at 34% 22%, rgba(255, 255, 255, 0.22), transparent 19%),
+    linear-gradient(145deg, rgba(94, 111, 133, 0.82), rgba(25, 38, 55, 0.96));
+  border-color: rgba(180, 195, 210, 0.44);
+  filter: saturate(0.72) brightness(0.86);
+}
+
+.unit-world-node.locked .unit-lesson-plate,
+.unit-world-node.locked .unit-node-progress {
+  opacity: 0.72;
+}
+
+.unit-world-node.admin-preview .unit-pin,
+.unit-world-node.admin-preview .unit-lesson-plate {
+  border-color: rgba(216, 233, 255, 0.58);
+}
+
+.unit-region-label {
+  align-items: flex-start;
+  display: grid;
+  gap: 1px;
+  min-width: 70px;
+  text-align: left;
+}
+
+.unit-region-label small {
+  color: rgba(248, 243, 250, 0.58);
+  font-size: 0.42rem;
+  font-weight: 850;
+  line-height: 1.1;
+}
+
+.learner-rtl .unit-region-label {
+  text-align: right;
+}
+
 .world-map-stage .practice-progress-sidebar {
   gap: 8px;
   max-height: calc(100dvh - 68px);
@@ -6795,6 +7018,57 @@ h3 {
     font-size: clamp(0.36rem, 1.8vw, 0.45rem);
   }
 
+  .unit-world-rail {
+    gap: clamp(3px, 1.1vw, 6px);
+    top: 30%;
+  }
+
+  .unit-world-rail button {
+    min-height: 17px;
+  }
+
+  .unit-world-rail strong {
+    font-size: clamp(0.42rem, 2vw, 0.54rem);
+  }
+
+  .unit-world-rail small {
+    display: none;
+  }
+
+  .unit-world-node {
+    min-width: 56px;
+  }
+
+  .unit-pin {
+    height: clamp(34px, 8.8vw, 45px);
+    width: clamp(34px, 8.8vw, 45px);
+  }
+
+  .unit-pin::before {
+    inset: 6px;
+  }
+
+  .unit-pin-number {
+    font-size: clamp(0.82rem, 4vw, 1.1rem);
+  }
+
+  .unit-pin-state {
+    height: 17px;
+    right: -5px;
+    width: 17px;
+  }
+
+  .unit-lesson-plate {
+    font-size: clamp(0.46rem, 2.2vw, 0.6rem);
+    min-width: 50px;
+    padding: 3px 5px 4px;
+  }
+
+  .unit-node-progress,
+  .unit-admin-badge {
+    display: none;
+  }
+
   .level-world-node {
     min-height: 62px;
     min-width: 44px;
@@ -6834,6 +7108,19 @@ h3 {
   .world-region-label {
     font-size: clamp(0.48rem, 2.1vw, 0.58rem);
     padding: 2px 6px;
+  }
+
+  .unit-region-label {
+    min-width: 54px;
+    max-width: 96px;
+  }
+
+  .unit-region-label strong {
+    overflow-wrap: anywhere;
+  }
+
+  .unit-region-label small {
+    font-size: clamp(0.34rem, 1.65vw, 0.4rem);
   }
 
   .world-map-stage .practice-progress-sidebar {

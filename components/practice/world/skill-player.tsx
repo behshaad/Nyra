@@ -5,7 +5,7 @@ import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import clsx from "clsx";
-import { ArrowLeft, Check, ChevronRight, RotateCcw } from "lucide-react";
+import { ArrowLeft, Check, ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
 import type {
   AnswerFeedbackView,
   LearningQuestionView,
@@ -23,6 +23,8 @@ type LastFeedback = AnswerFeedbackView & {
   submittedAnswer: string;
   answeredQuestion: LearningQuestionView;
 };
+
+type AnswerReview = LastFeedback;
 
 type SessionCopy = (typeof interfaceCopy)["fa"]["session"];
 
@@ -62,6 +64,8 @@ export function SkillPlayer({
   const copy = interfaceCopy[language].session;
   const [loadState, setLoadState] = useState<LoadState>({ status: "loading" });
   const [lastFeedback, setLastFeedback] = useState<LastFeedback | null>(null);
+  const [answerHistory, setAnswerHistory] = useState<AnswerReview[]>([]);
+  const [reviewIndex, setReviewIndex] = useState<number | null>(null);
   const [submittingAnswer, setSubmittingAnswer] = useState<string | null>(null);
   const [typedAnswer, setTypedAnswer] = useState("");
   const [selectedTileIds, setSelectedTileIds] = useState<string[]>([]);
@@ -72,6 +76,8 @@ export function SkillPlayer({
   async function startSession() {
     setLoadState({ status: "loading" });
     setLastFeedback(null);
+    setAnswerHistory([]);
+    setReviewIndex(null);
     setCompletionVisible(false);
 
     try {
@@ -99,9 +105,11 @@ export function SkillPlayer({
   }, [skillSlug]);
 
   const session = loadState.status === "ready" ? loadState.session : null;
+  const activeReview =
+    reviewIndex === null ? null : answerHistory[reviewIndex] ?? null;
   const displayQuestion = useMemo(
-    () => lastFeedback?.answeredQuestion ?? session?.currentQuestion ?? null,
-    [lastFeedback, session]
+    () => activeReview?.answeredQuestion ?? lastFeedback?.answeredQuestion ?? session?.currentQuestion ?? null,
+    [activeReview, lastFeedback, session]
   );
   const wordTiles = useMemo(
     () =>
@@ -117,12 +125,18 @@ export function SkillPlayer({
   const builtWordOrderAnswer = selectedTileLabels.join(" ");
   const availableTiles = wordTiles.filter((tile) => !selectedTileIds.includes(tile.id));
   const remainingQuestionCount = session?.remainingQuestionCount ?? initialQuestionCount;
-  const currentQuestionNumber = lastFeedback?.completed
+  const currentQuestionNumber = activeReview
+    ? reviewIndex === null
+      ? 1
+      : reviewIndex + 1
+    : lastFeedback?.completed
     ? initialQuestionCount
     : Math.min(
         initialQuestionCount,
         Math.max(1, initialQuestionCount - remainingQuestionCount + 1)
       );
+  const feedbackForDisplay = activeReview ?? lastFeedback;
+  const reviewingPreviousQuestion = Boolean(activeReview);
 
   useEffect(() => {
     setTypedAnswer("");
@@ -143,7 +157,7 @@ export function SkillPlayer({
   }, [completionVisible, router, worldHref]);
 
   async function submitAnswer(option: string) {
-    if (!session || !session.currentQuestion || lastFeedback || completionVisible) {
+    if (!session || !session.currentQuestion || lastFeedback || activeReview || completionVisible) {
       return;
     }
 
@@ -159,11 +173,14 @@ export function SkillPlayer({
       });
       const feedback = await readJson<AnswerFeedbackView>(response);
 
-      setLastFeedback({
+      const answeredFeedback = {
         ...feedback,
         submittedAnswer: option,
         answeredQuestion: session.currentQuestion
-      });
+      };
+
+      setLastFeedback(answeredFeedback);
+      setAnswerHistory((current) => [...current, answeredFeedback]);
 
       if (feedback.completed) {
         globalThis.setTimeout(() => {
@@ -197,6 +214,11 @@ export function SkillPlayer({
   }
 
   function continueSession() {
+    if (activeReview) {
+      setReviewIndex(null);
+      return;
+    }
+
     if (!session || !lastFeedback) {
       return;
     }
@@ -220,6 +242,14 @@ export function SkillPlayer({
     });
     setLastFeedback(null);
   }
+
+  const reviewPreviousQuestion = () => {
+    if (answerHistory.length === 0 || lastFeedback) {
+      return;
+    }
+
+    setReviewIndex(answerHistory.length - 1);
+  };
 
   const goBackToWorld = () => {
     router.push(worldHref);
@@ -267,8 +297,17 @@ export function SkillPlayer({
               {copy.question} {currentQuestionNumber} / {initialQuestionCount}
             </strong>
           </div>
+          <button
+            className="practice-player-back"
+            disabled={answerHistory.length === 0 || Boolean(lastFeedback) || reviewingPreviousQuestion}
+            type="button"
+            onClick={reviewPreviousQuestion}
+          >
+            <ChevronLeft size={18} />
+            <span>Previous</span>
+          </button>
         </div>
-        <ProgressBar value={lastFeedback?.progressPercent ?? session.progressPercent} />
+        <ProgressBar value={feedbackForDisplay?.progressPercent ?? session.progressPercent} />
         <AnimatePresence mode="wait">
           <QuestionCard
             availableTiles={availableTiles}
@@ -277,7 +316,7 @@ export function SkillPlayer({
             displayQuestion={displayQuestion}
             key={displayQuestion.id}
             language={language}
-            lastFeedback={lastFeedback}
+            lastFeedback={feedbackForDisplay}
             selectedTileIds={selectedTileIds}
             selectedTileLabels={selectedTileLabels}
             setSelectedTileIds={setSelectedTileIds}
@@ -287,24 +326,25 @@ export function SkillPlayer({
             submitWordOrderAnswer={submitWordOrderAnswer}
             submittingAnswer={submittingAnswer}
             typedAnswer={typedAnswer}
+            reviewingPreviousQuestion={reviewingPreviousQuestion}
           />
         </AnimatePresence>
-        {lastFeedback ? (
+        {feedbackForDisplay ? (
           <motion.div
-            className={clsx("practice-player-feedback", lastFeedback.isCorrect ? "correct" : "wrong")}
+            className={clsx("practice-player-feedback", feedbackForDisplay.isCorrect ? "correct" : "wrong")}
             dir={interfaceDirection(language)}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.22 }}
           >
-            <strong>{lastFeedback.isCorrect ? copy.correct : copy.mistake}</strong>
-            <p>{lastFeedback.explanation}</p>
+            <strong>{feedbackForDisplay.isCorrect ? copy.correct : copy.mistake}</strong>
+            <p>{feedbackForDisplay.explanation}</p>
             <button
               className="practice-player-button"
               type="button"
-              onClick={lastFeedback.completed ? goBackToWorld : continueSession}
+              onClick={feedbackForDisplay.completed && !activeReview ? goBackToWorld : continueSession}
             >
-              {lastFeedback.completed ? "Back to world" : copy.continue}
+              {activeReview ? "Back to current question" : feedbackForDisplay.completed ? "Back to world" : copy.continue}
               <ChevronRight size={17} />
             </button>
           </motion.div>
@@ -357,7 +397,8 @@ export function QuestionCard({
   submitTypedAnswer,
   submitWordOrderAnswer,
   submittingAnswer,
-  typedAnswer
+  typedAnswer,
+  reviewingPreviousQuestion
 }: {
   availableTiles: Array<{ id: string; label: string }>;
   builtWordOrderAnswer: string;
@@ -374,8 +415,10 @@ export function QuestionCard({
   submitWordOrderAnswer: (event: FormEvent) => void;
   submittingAnswer: string | null;
   typedAnswer: string;
+  reviewingPreviousQuestion: boolean;
 }) {
   const cardDirection = interfaceDirection(language);
+  const reviewAnswer = reviewingPreviousQuestion ? lastFeedback?.submittedAnswer ?? "" : "";
 
   return (
     <motion.div
@@ -388,20 +431,27 @@ export function QuestionCard({
     >
       <span>{displayQuestion.helper ?? copy.question}</span>
       <h2>{displayQuestion.prompt}</h2>
+      {reviewAnswer ? (
+        <div className="practice-review-answer" dir={getTextDirection(reviewAnswer)}>
+          <small>Your answer</small>
+          <strong>{reviewAnswer}</strong>
+        </div>
+      ) : null}
       {displayQuestion.type === "FILL_IN_BLANK" ? (
         <form className="practice-player-form" onSubmit={submitTypedAnswer}>
           <input
             aria-label={displayQuestion.prompt}
-            dir={getTextDirection(typedAnswer)}
-            disabled={Boolean(lastFeedback) || Boolean(submittingAnswer)}
+            dir={getTextDirection(reviewAnswer || typedAnswer)}
+            disabled={Boolean(lastFeedback) || Boolean(submittingAnswer) || reviewingPreviousQuestion}
             onChange={(event) => setTypedAnswer(event.target.value)}
-            value={typedAnswer}
+            value={reviewAnswer || typedAnswer}
           />
           <button
             className="practice-player-button"
             disabled={
               Boolean(lastFeedback) ||
               Boolean(submittingAnswer) ||
+              reviewingPreviousQuestion ||
               typedAnswer.trim().length === 0
             }
             type="submit"
@@ -416,7 +466,7 @@ export function QuestionCard({
               selectedTileLabels.map((tile, index) => (
                 <button
                   className="practice-word-tile selected"
-                  disabled={Boolean(lastFeedback) || Boolean(submittingAnswer)}
+                  disabled={Boolean(lastFeedback) || Boolean(submittingAnswer) || reviewingPreviousQuestion}
                   key={`${tile}-${index}`}
                   onClick={() =>
                     setSelectedTileIds((current) =>
@@ -437,7 +487,7 @@ export function QuestionCard({
               <button
                 className="practice-word-tile"
                 dir={getTextDirection(tile.label)}
-                disabled={Boolean(lastFeedback) || Boolean(submittingAnswer)}
+                disabled={Boolean(lastFeedback) || Boolean(submittingAnswer) || reviewingPreviousQuestion}
                 key={tile.id}
                 onClick={() => setSelectedTileIds((current) => [...current, tile.id])}
                 type="button"
@@ -451,6 +501,7 @@ export function QuestionCard({
             disabled={
               Boolean(lastFeedback) ||
               Boolean(submittingAnswer) ||
+              reviewingPreviousQuestion ||
               selectedTileIds.length === 0
             }
             type="submit"
@@ -468,7 +519,7 @@ export function QuestionCard({
                   (lastFeedback.isCorrect ? "correct" : "wrong")
               )}
               dir={getTextDirection(option)}
-              disabled={Boolean(lastFeedback) || Boolean(submittingAnswer)}
+              disabled={Boolean(lastFeedback) || Boolean(submittingAnswer) || reviewingPreviousQuestion}
               key={option}
               onClick={() => void submitAnswer(option)}
               type="button"

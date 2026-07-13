@@ -15,7 +15,7 @@ const levelWorlds: Record<string, LevelWorldConfig> = {
     label: "A1",
     title: "A1 World",
     region: "Dorfleben",
-    backgroundImage: "/practice/worlds/a1-world.png",
+    backgroundImage: "/practice/germany-journey-map.png",
     tone: "village",
     artworkAspectRatio: "768 / 1376",
     nodeLayout: "embedded-path"

@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { WorldPage } from "@/components/practice/world/level-world";
+import { getAuthSession } from "@/lib/auth/server";
 import { resolveInterfaceLanguage } from "@/lib/i18n/interface-language";
 import { getLearnerPreferences } from "@/lib/learner/preferences";
 import { getLevelWorldConfig } from "@/lib/practice/level-worlds";
@@ -27,11 +28,12 @@ export default async function PracticeLevelPage({
     redirect(returnToPractice);
   }
 
-  const [journey, world] = await Promise.all([
+  const [journey, world, session] = await Promise.all([
     getPracticeJourney({
       interfaceLanguage: language
     }),
-    Promise.resolve(getLevelWorldConfig(normalizedLevel))
+    Promise.resolve(getLevelWorldConfig(normalizedLevel)),
+    getAuthSession()
   ]);
   const journeyLevel = journey.levels.find((candidate) => candidate.label === normalizedLevel);
 
@@ -43,6 +45,7 @@ export default async function PracticeLevelPage({
     <main className={`practice-shell ${language === "fa" ? "learner-rtl" : ""}`} dir="ltr">
       <WorldPage
         initialJourney={journey}
+        isAdmin={session?.role === "ADMIN"}
         language={language}
         levelLabel={normalizedLevel}
         world={world}
