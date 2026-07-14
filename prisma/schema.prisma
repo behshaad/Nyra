@@ -76,6 +76,16 @@ enum FlashcardReviewResult {
   UNKNOWN
 }
 
+enum AccountStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum AuthTokenType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+
 model Course {
   id                String   @id @default(uuid())
   slug              String   @unique
@@ -187,6 +197,51 @@ model LearnerProfile {
   progressEvents   ProgressEvent[]
   flashcardDecks   FlashcardDeck[]
   flashcardReviewStates FlashcardReviewState[]
+}
+
+model User {
+  id              String        @id @default(uuid())
+  email           String        @unique
+  name            String
+  passwordHash    String?
+  emailVerifiedAt DateTime?
+  status          AccountStatus @default(ACTIVE)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  providerAccounts ProviderAccount[]
+  authTokens        AuthToken[]
+}
+
+model ProviderAccount {
+  id                String    @id @default(uuid())
+  userId            String
+  provider          String
+  providerAccountId String
+  email             String
+  emailVerifiedAt   DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@index([email])
+}
+
+model AuthToken {
+  id        String        @id @default(uuid())
+  userId    String
+  type      AuthTokenType
+  tokenHash String        @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime      @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type])
 }
 
 model AdminAccess {

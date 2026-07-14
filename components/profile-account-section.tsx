@@ -2,7 +2,10 @@
 
 import Link from "next/link";
 import { CreditCard, KeyRound, LogOut, Mail, Save, Settings, UserRound } from "lucide-react";
-import { logoutAction } from "@/lib/auth/actions";
+import {
+  logoutAction,
+  resendVerificationForSessionAction
+} from "@/lib/auth/actions";
 import type { AuthSession } from "@/lib/auth/session";
 import type { InterfaceLanguageCode } from "@/lib/i18n/interface-language";
 import { withInterfaceLanguage } from "@/lib/i18n/interface-language";
@@ -14,8 +17,10 @@ const labels = {
     subscription: "Pricing / Subscription",
     displayName: "نام نمایشی",
     email: "ایمیل",
+    emailUnverified: "ایمیل شما هنوز تایید نشده است. برای بازیابی رمز عبور و عملیات حساس، آن را تایید کنید.",
+    resendVerification: "ارسال دوباره ایمیل تایید",
     password: "رمز عبور",
-    passwordValue: "بازنشانی رمز عبور با ایمیل امن Supabase انجام می‌شود.",
+    passwordValue: "رمز عبور با هش امن در حساب Nyra نگهداری می‌شود.",
     save: "ذخیره تغییرات",
     logout: "خروج",
     plan: "Standard",
@@ -28,8 +33,10 @@ const labels = {
     subscription: "Pricing / Subscription",
     displayName: "Display name",
     email: "Email",
+    emailUnverified: "Your email is not verified yet. Verify it to enable password recovery and sensitive account actions.",
+    resendVerification: "Resend verification email",
     password: "Password",
-    passwordValue: "Password resets use Supabase secure email flow.",
+    passwordValue: "Passwords are stored with secure Nyra-owned hashes.",
     save: "Save changes",
     logout: "Logout",
     plan: "Standard",
@@ -42,8 +49,10 @@ const labels = {
     subscription: "Preise / Abo",
     displayName: "Anzeigename",
     email: "E-Mail",
+    emailUnverified: "Ihre E-Mail ist noch nicht bestaetigt. Bestaetigen Sie sie fuer Passwortwiederherstellung und sensible Kontoaktionen.",
+    resendVerification: "Bestaetigungs-E-Mail erneut senden",
     password: "Passwort",
-    passwordValue: "Passwort-Zuruecksetzungen laufen ueber sichere Supabase-E-Mails.",
+    passwordValue: "Passwoerter werden mit sicheren Nyra-Hashes gespeichert.",
     save: "Aenderungen speichern",
     logout: "Abmelden",
     plan: "Standard",
@@ -84,9 +93,21 @@ export function ProfileAccountSection({
             <span>{copy.email}</span>
             <div>
               <Mail size={18} aria-hidden="true" />
-              <input defaultValue={session?.email ?? "learner@nyra.local"} type="email" />
+              <input
+                defaultValue={session?.email ?? "learner@nyra.local"}
+                readOnly
+                type="email"
+              />
             </div>
           </label>
+          {session && !session.emailVerifiedAt ? (
+            <form action={resendVerificationForSessionAction} className="auth-inline-callout">
+              <span>{copy.emailUnverified}</span>
+              <button className="secondary-button compact" type="submit">
+                {copy.resendVerification}
+              </button>
+            </form>
+          ) : null}
           <div className="account-setting-row compact-row">
             <KeyRound size={18} aria-hidden="true" />
             <div>

@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { NextResponse } from "next/server";
+import type { AuthSession } from "@/lib/auth/session";
 import { getAuthSession } from "@/lib/auth/server";
 
 const adminUsername = process.env.ADMIN_USERNAME;
@@ -35,6 +36,18 @@ export function hasBasicAdminAccess(header: string | null) {
   );
 }
 
+export function adminPageAccessRedirectForSession(session: AuthSession | null) {
+  if (!session) {
+    return "/login?returnTo=/admin";
+  }
+
+  if (session.role !== "ADMIN") {
+    return "/admin-access-denied";
+  }
+
+  return null;
+}
+
 export async function requireAdminPageAccess() {
   const headerStore = await headers();
 
@@ -43,12 +56,13 @@ export async function requireAdminPageAccess() {
   }
 
   const session = await getAuthSession();
+  const redirectTo = adminPageAccessRedirectForSession(session);
 
-  if (session?.role === "ADMIN") {
+  if (!redirectTo) {
     return;
   }
 
-  redirect("/login?returnTo=/admin");
+  redirect(redirectTo);
 }
 
 export async function requireAdminApiAccess(request: Request) {

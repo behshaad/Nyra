@@ -37,7 +37,7 @@ describe("Nyra auth identity boundary", () => {
 
     const profile = await ensureLearnerProfileForIdentity(
       {
-        id: "supabase-user-1",
+        id: "auth-user-1",
         email: "sara@example.com",
         fullName: "Sara"
       },
@@ -48,7 +48,7 @@ describe("Nyra auth identity boundary", () => {
     );
 
     expect(profile).toMatchObject({
-      authUserId: "supabase-user-1",
+      authUserId: "auth-user-1",
       displayName: "Sara",
       sourceLanguage: "Persian",
       targetLanguage: "German",
@@ -64,14 +64,14 @@ describe("Nyra auth identity boundary", () => {
   it("does not create a duplicate profile for an existing identity", async () => {
     const existing = {
       id: "profile-1",
-      authUserId: "supabase-user-1",
+      authUserId: "auth-user-1",
       displayName: "Existing Learner"
     };
     const { db } = learnerProfileStore(existing);
 
     const profile = await ensureLearnerProfileForIdentity(
       {
-        id: "supabase-user-1",
+        id: "auth-user-1",
         email: "sara@example.com"
       },
       {},
@@ -101,10 +101,10 @@ describe("Nyra auth identity boundary", () => {
     await expect(getAuthRoleForIdentity("admin-user", db)).resolves.toBe("USER");
   });
 
-  it("builds a compatibility session view from Supabase identity and Nyra data", async () => {
+  it("builds a session view from Auth.js identity and Nyra data", async () => {
     const { db } = learnerProfileStore({
       id: "profile-1",
-      authUserId: "supabase-user-1",
+      authUserId: "auth-user-1",
       displayName: "Nyra Name"
     });
 
@@ -112,8 +112,9 @@ describe("Nyra auth identity boundary", () => {
 
     const session = await buildAuthSessionView(
       {
-        id: "supabase-user-1",
+        id: "auth-user-1",
         email: "sara@example.com",
+        emailVerifiedAt: "2026-07-14T00:00:00.000Z",
         fullName: "Provider Name",
         expiresAt: "2026-08-01T00:00:00.000Z"
       },
@@ -122,11 +123,11 @@ describe("Nyra auth identity boundary", () => {
     );
 
     expect(session).toEqual({
-      id: "supabase-user-1",
+      id: "auth-user-1",
       email: "sara@example.com",
+      emailVerifiedAt: "2026-07-14T00:00:00.000Z",
       fullName: "Nyra Name",
       role: "ADMIN",
-      remember: true,
       expiresAt: "2026-08-01T00:00:00.000Z"
     });
   });

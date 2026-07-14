@@ -1,4 +1,4 @@
-import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
 const adminUsername = process.env.ADMIN_USERNAME;
@@ -26,8 +26,8 @@ function decodeBasicAuth(header: string | null) {
   }
 
   return {
-    username: decoded.slice(0, separatorIndex),
-    password: decoded.slice(separatorIndex + 1)
+    password: decoded.slice(separatorIndex + 1),
+    username: decoded.slice(0, separatorIndex)
   };
 }
 
@@ -42,51 +42,21 @@ function hasBasicAdminAccess(request: NextRequest) {
   );
 }
 
-async function getSupabaseUser(request: NextRequest, response: NextResponse) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const publishableKey =
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!url || !publishableKey) {
-    return null;
-  }
-
-  const supabase = createServerClient(url, publishableKey, {
-    cookies: {
-      getAll() {
-        return request.cookies.getAll();
-      },
-      setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value, options }) => {
-          request.cookies.set(name, value);
-          response.cookies.set(name, value, options as CookieOptions);
-        });
-      }
-    }
-  });
-  const {
-    data: { user },
-    error
-  } = await supabase.auth.getUser();
-
-  return error ? null : user;
-}
-
 export async function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
-  const response = NextResponse.next({
-    request
+  const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET
   });
-  const activeUser = await getSupabaseUser(request, response);
+  const isSignedIn = Boolean(token?.sub);
 
-  if ((pathname === "/login" || pathname === "/signup") && activeUser) {
+  if ((pathname === "/login" || pathname === "/signup") && isSignedIn) {
     return NextResponse.redirect(new globalThis.URL("/profile", request.url));
   }
 
   if (pathname.startsWith("/profile")) {
-    if (activeUser) {
-      return response;
+    if (isSignedIn) {
+      return NextResponse.next();
     }
 
     const loginUrl = new globalThis.URL("/login", request.url);
@@ -96,15 +66,11 @@ export async function middleware(request: NextRequest) {
   }
 
   if (!pathname.startsWith("/admin") && !pathname.startsWith("/api/admin")) {
-    return response;
+    return NextResponse.next();
   }
 
-  if (hasBasicAdminAccess(request)) {
-    return response;
-  }
-
-  if (activeUser) {
-    return response;
+  if (hasBasicAdminAccess(request) || isSignedIn) {
+    return NextResponse.next();
   }
 
   if (pathname.startsWith("/api/admin")) {
@@ -127,8 +93,6 @@ export const config = {
     "/signup",
     "/profile/:path*",
     "/admin/:path*",
-    "/api/admin/:path*",
-    "/auth/callback",
-    "/auth/update-password"
+    "/api/admin/:path*"
   ]
 };

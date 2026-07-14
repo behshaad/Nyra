@@ -22,13 +22,34 @@ npm run dev
 
 Open `http://localhost:3000`.
 
-Admin routes are protected by a temporary Basic Auth bridge until Supabase Auth
-and Nyra-owned admin roles are wired in. Set these values outside local
-development when accessing `/admin` or `/api/admin/*`:
+Authentication uses Auth.js with Nyra-owned accounts in the project database.
+Credentials, Google OAuth provider links, email verification, password reset
+tokens, Learner Profiles, and AdminAccess are stored in PostgreSQL. Set these
+values locally:
 
 ```bash
-ADMIN_USERNAME=...
-ADMIN_PASSWORD=...
+DATABASE_URL=...
+NEXTAUTH_SECRET=...
+# Optional, enables Google Sign-In
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+# Optional, sends auth mail through Resend instead of local console logging
+RESEND_API_KEY=...
+AUTH_EMAIL_FROM=...
+```
+
+Create the seeded admin and student accounts:
+
+```bash
+npm run db:push
+npm run auth:seed-users
+```
+
+Seeded users:
+
+```text
+admin@nyra.local / Admin123!
+student@nyra.local / Student123!
 ```
 
 ## Database
@@ -58,5 +79,6 @@ npm run prisma:generate
 ```bash
 npm run typecheck
 npm run lint
+npm test
 npm run build
 ```

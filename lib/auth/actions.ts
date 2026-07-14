@@ -1,11 +1,22 @@
 "use server";
 
-import { headers } from "next/headers";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { AuthConfigurationError, isAuthConfigurationError } from "@/lib/auth/config";
-import { buildAuthSessionView } from "@/lib/auth/nyra-identity";
-import { createSupabaseServerClient } from "@/lib/auth/supabase-server";
-import { safeReturnTo } from "@/lib/learner/preferences";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth/options";
+import {
+  createPasswordAccount,
+  normalizeEmail,
+  validEmail
+} from "@/lib/auth/account";
+import { getPrisma } from "@/lib/db/prisma";
+import { hashPassword } from "@/lib/auth/password";
+import { ensureLearnerProfileForIdentity } from "@/lib/auth/nyra-identity";
+import {
+  consumeAuthToken,
+  sendPasswordResetEmail,
+  sendVerificationEmail
+} from "@/lib/auth/tokens";
 
 export type AuthActionState = {
   error?: string;
@@ -13,7 +24,6 @@ export type AuthActionState = {
   values?: {
     email?: string;
     fullName?: string;
-    remember?: boolean;
   };
 };
 
@@ -21,115 +31,6 @@ function formString(formData: globalThis.FormData, key: string) {
   const value = formData.get(key);
 
   return typeof value === "string" ? value : "";
-}
-
-function normalizeEmail(email: string) {
-  return email.trim().toLowerCase();
-}
-
-function authErrorMessage(error: unknown) {
-  if (isAuthConfigurationError(error)) {
-    return error.message;
-  }
-
-  return error instanceof Error ? error.message : "Authentication failed.";
-}
-
-async function requestOrigin() {
-  const headerStore = await headers();
-  const host = headerStore.get("x-forwarded-host") ?? headerStore.get("host");
-  const protocol = headerStore.get("x-forwarded-proto") ?? "http";
-
-  if (!host) {
-    throw new AuthConfigurationError("Unable to determine the request origin.");
-  }
-
-  return `${protocol}://${host}`;
-}
-
-async function provisionCurrentUser(input: {
-  fullName?: string;
-  interfaceLanguage?: "fa" | "en" | "de";
-}) {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-    error
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    throw new Error("Unable to load the authenticated user.");
-  }
-
-  const {
-    data: { session }
-  } = await supabase.auth.getSession();
-
-  await buildAuthSessionView({
-    id: user.id,
-    email: user.email ?? "",
-    fullName:
-      input.fullName ??
-      (typeof user.user_metadata?.full_name === "string"
-        ? user.user_metadata.full_name
-        : typeof user.user_metadata?.name === "string"
-          ? user.user_metadata.name
-          : null),
-    expiresAt: session?.expires_at
-      ? new Date(session.expires_at * 1000).toISOString()
-      : null
-  }, {
-    displayName: input.fullName,
-    interfaceLanguage: input.interfaceLanguage
-  });
-}
-
-export async function loginAction(
-  _state: AuthActionState,
-  formData: globalThis.FormData
-): Promise<AuthActionState> {
-  const email = normalizeEmail(formString(formData, "email"));
-  const password = formString(formData, "password");
-  const remember = formData.get("remember") === "on";
-  const returnTo = safeReturnTo(formString(formData, "returnTo"));
-
-  if (!email || !password) {
-    return {
-      error: "Email and password are required.",
-      values: { email, remember }
-    };
-  }
-
-  if (password.length < 6) {
-    return {
-      error: "Password must be at least 6 characters.",
-      values: { email, remember }
-    };
-  }
-
-  try {
-    const supabase = await createSupabaseServerClient();
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-
-    if (error) {
-      return {
-        error: error.message,
-        values: { email, remember }
-      };
-    }
-
-    await provisionCurrentUser({});
-  } catch (error) {
-    return {
-      error: authErrorMessage(error),
-      values: { email, remember }
-    };
-  }
-
-  redirect(returnTo);
 }
 
 export async function signupAction(
@@ -140,7 +41,6 @@ export async function signupAction(
   const email = normalizeEmail(formString(formData, "email"));
   const password = formString(formData, "password");
   const confirmPassword = formString(formData, "confirmPassword");
-  let shouldRedirectToProfile = false;
 
   if (!fullName || !email || !password || !confirmPassword) {
     return {
@@ -149,9 +49,16 @@ export async function signupAction(
     };
   }
 
-  if (password.length < 6) {
+  if (!validEmail(email)) {
     return {
-      error: "Password must be at least 6 characters.",
+      error: "Enter a valid email address.",
+      values: { email, fullName }
+    };
+  }
+
+  if (password.length < 8) {
+    return {
+      error: "Password must be at least 8 characters.",
       values: { email, fullName }
     };
   }
@@ -164,68 +71,40 @@ export async function signupAction(
   }
 
   try {
-    const origin = await requestOrigin();
-    const supabase = await createSupabaseServerClient();
-    const { data, error } = await supabase.auth.signUp({
+    const { error, user } = await createPasswordAccount({
       email,
-      password,
-      options: {
-        data: {
-          full_name: fullName
-        },
-        emailRedirectTo: `${origin}/auth/callback?next=/profile`
-      }
+      fullName,
+      password
     });
 
-    if (error) {
+    if (error || !user) {
       return {
-        error: error.message,
+        error: error ?? "Unable to create account.",
         values: { email, fullName }
       };
     }
 
-    if (data.session) {
-      await provisionCurrentUser({ fullName });
-      shouldRedirectToProfile = true;
-    } else {
-      return {
-        success: "Check your email to verify your account before signing in.",
-        values: { email, fullName }
-      };
-    }
+    await ensureLearnerProfileForIdentity({
+      id: user.id,
+      email: user.email,
+      emailVerifiedAt: user.emailVerifiedAt,
+      fullName: user.name
+    });
+    await sendVerificationEmail({
+      email: user.email,
+      userId: user.id
+    });
   } catch (error) {
     return {
-      error: authErrorMessage(error),
+      error: error instanceof Error ? error.message : "Unable to create account.",
       values: { email, fullName }
     };
   }
 
-  if (shouldRedirectToProfile) {
-    redirect("/profile");
-  }
-
   return {
-    success: "Check your email to verify your account before signing in.",
+    success: "Account created. Signing you in...",
     values: { email, fullName }
   };
-}
-
-export async function googleSignInAction(formData: globalThis.FormData) {
-  const returnTo = safeReturnTo(formString(formData, "returnTo") || "/profile");
-  const origin = await requestOrigin();
-  const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(returnTo)}`
-    }
-  });
-
-  if (error || !data.url) {
-    redirect(`/login?error=${encodeURIComponent(error?.message ?? "Google sign-in failed.")}`);
-  }
-
-  redirect(data.url);
 }
 
 export async function requestPasswordResetAction(
@@ -233,57 +112,51 @@ export async function requestPasswordResetAction(
   formData: globalThis.FormData
 ): Promise<AuthActionState> {
   const email = normalizeEmail(formString(formData, "email"));
+  const success = "If an eligible account exists, you'll receive an email with the next steps.";
 
-  if (!email) {
+  if (!validEmail(email)) {
     return {
-      error: "Email is required.",
+      success,
       values: { email }
     };
   }
 
-  try {
-    const origin = await requestOrigin();
-    const supabase = await createSupabaseServerClient();
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${origin}/auth/callback?next=/auth/update-password`
-    });
-
-    if (error) {
-      return {
-        error: error.message,
-        values: { email }
-      };
+  const user = await getPrisma().user.findUnique({
+    where: {
+      email
     }
+  });
 
-    return {
-      success: "Check your email for a secure password reset link.",
-      values: { email }
-    };
-  } catch (error) {
-    return {
-      error: authErrorMessage(error),
-      values: { email }
-    };
+  if (user?.status === "ACTIVE" && user.emailVerifiedAt) {
+    await sendPasswordResetEmail({
+      email: user.email,
+      userId: user.id
+    });
   }
+
+  return {
+    success,
+    values: { email }
+  };
 }
 
-export async function updatePasswordAction(
+export async function resetPasswordAction(
   _state: AuthActionState,
   formData: globalThis.FormData
 ): Promise<AuthActionState> {
+  const token = formString(formData, "token");
   const password = formString(formData, "password");
   const confirmPassword = formString(formData, "confirmPassword");
-  let shouldRedirectToProfile = false;
 
-  if (!password || !confirmPassword) {
+  if (!token || !password || !confirmPassword) {
     return {
       error: "All fields are required."
     };
   }
 
-  if (password.length < 6) {
+  if (password.length < 8) {
     return {
-      error: "Password must be at least 6 characters."
+      error: "Password must be at least 8 characters."
     };
   }
 
@@ -293,42 +166,90 @@ export async function updatePasswordAction(
     };
   }
 
-  try {
-    const supabase = await createSupabaseServerClient();
-    const { error } = await supabase.auth.updateUser({
-      password
-    });
+  const user = await consumeAuthToken(token, "PASSWORD_RESET");
 
-    if (error) {
-      return {
-        error: error.message
-      };
-    }
-
-    const {
-      data: { user }
-    } = await supabase.auth.getUser();
-
-    if (user) {
-      await provisionCurrentUser({});
-      shouldRedirectToProfile = true;
-    }
-  } catch (error) {
+  if (!user) {
     return {
-      error: authErrorMessage(error)
+      error: "This reset link is invalid or expired."
     };
   }
 
-  if (shouldRedirectToProfile) {
-    redirect("/profile");
+  await getPrisma().user.update({
+    data: {
+      passwordHash: await hashPassword(password)
+    },
+    where: {
+      id: user.id
+    }
+  });
+
+  return {
+    success: "Password changed successfully. You can now sign in."
+  };
+}
+
+export async function verifyEmailAction(token: string): Promise<AuthActionState> {
+  const user = await consumeAuthToken(token, "EMAIL_VERIFICATION");
+
+  if (!user) {
+    return {
+      error: "This verification link is invalid or expired."
+    };
   }
 
-  redirect("/login?message=password-updated");
+  await getPrisma().user.update({
+    data: {
+      emailVerifiedAt: user.emailVerifiedAt ?? new Date()
+    },
+    where: {
+      id: user.id
+    }
+  });
+
+  return {
+    success: "Email verified successfully."
+  };
+}
+
+export async function resendVerificationForSessionAction() {
+  const session = await getServerSession(authOptions);
+  const userId = session?.user
+    ? (session.user as typeof session.user & { id?: string }).id
+    : null;
+
+  if (!userId) {
+    redirect("/login");
+  }
+
+  const user = await getPrisma().user.findUnique({
+    where: {
+      id: userId
+    }
+  });
+
+  if (user?.status === "ACTIVE" && !user.emailVerifiedAt) {
+    await sendVerificationEmail({
+      email: user.email,
+      userId: user.id
+    });
+  }
+
+  redirect("/profile?verification=sent");
 }
 
 export async function logoutAction() {
-  const supabase = await createSupabaseServerClient();
+  const cookieStore = await cookies();
 
-  await supabase.auth.signOut();
+  for (const name of [
+    "next-auth.session-token",
+    "__Secure-next-auth.session-token",
+    "next-auth.callback-url",
+    "__Secure-next-auth.callback-url",
+    "next-auth.csrf-token",
+    "__Host-next-auth.csrf-token"
+  ]) {
+    cookieStore.delete(name);
+  }
+
   redirect("/login");
 }

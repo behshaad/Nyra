@@ -141,12 +141,20 @@ A seeded Learner Profile used only for local development, testing, sample data, 
 _Avoid_: Test user, default account
 
 **Account**:
-The identity, access, contact, and subscription-facing settings around an authenticated person using Nyra. An Account has one Learner Profile for now; multiple Courses or Levels belong under that Learner Profile.
-_Avoid_: Learner Profile, learning identity
+The identity, credentials, access, contact, and subscription-facing settings around an authenticated person using Nyra. For the MVP, an Account is unique by verified email and has one Learner Profile for now; multiple Courses or Levels belong under that Learner Profile.
+_Avoid_: Learner Profile, learning identity, provider identity
+
+**Disabled Account**:
+An Account that Nyra has soft-disabled so it can no longer sign in or create new authenticated sessions. A Disabled Account retains its Learner Profile, progress, flashcards, and history rather than being hard-deleted.
+_Avoid_: Deleted account, banned user
+
+**Email Verification**:
+An account trust signal proving that an Account's email address can receive messages for that person. Email Verification can be required for sensitive account, billing, recovery, and admin-adjacent operations, but it does not block learning access and does not grant Admin Access.
+_Avoid_: Login approval, admin approval
 
 **Admin Access**:
-Permission for a trusted operator to manage Nyra content and review operational surfaces. Admin Access belongs to Nyra-owned roles, while identity and sessions belong to the authentication provider.
-_Avoid_: Admin preview, shared admin password
+The single durable permission that lets a trusted operator manage Nyra content and review operational surfaces. Admin Access remains distinct from a Learner Profile; session roles such as Admin or User are derived views, not a separate authorization model.
+_Avoid_: Admin preview, shared admin password, role system
 
 **Source Language**:
 The language a learner uses as their base for explanations, translations, and learning support.
