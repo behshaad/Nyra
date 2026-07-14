@@ -141,11 +141,11 @@ A seeded Learner Profile used only for local development, testing, sample data, 
 _Avoid_: Test user, default account
 
 **Account**:
-The identity, access, contact, and subscription-facing settings around an authenticated person using Nyra. An Account has one Learner Profile for now; multiple Courses or Levels belong under that Learner Profile.
-_Avoid_: Learner Profile, learning identity
+The identity, credentials, access, contact, and subscription-facing settings around an authenticated person using Nyra. An Account has one Learner Profile for now; multiple Courses or Levels belong under that Learner Profile.
+_Avoid_: Learner Profile, learning identity, provider identity
 
 **Admin Access**:
-Permission for a trusted operator to manage Nyra content and review operational surfaces. Admin Access belongs to Nyra-owned roles, while identity and sessions belong to the authentication provider.
+Permission for a trusted operator to manage Nyra content and review operational surfaces. Admin Access belongs to Nyra-owned account permissions and remains distinct from a Learner Profile.
 _Avoid_: Admin preview, shared admin password
 
 **Source Language**:
