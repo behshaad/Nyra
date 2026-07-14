@@ -22,14 +22,30 @@ npm run dev
 
 Open `http://localhost:3000`.
 
-Authentication uses Auth.js with Nyra-owned accounts in the project database.
+Authentication uses Auth.js v4 with Nyra-owned accounts in the project database.
 Credentials, Google OAuth provider links, email verification, password reset
-tokens, Learner Profiles, and AdminAccess are stored in PostgreSQL. Set these
-values locally:
+tokens, Learner Profiles, and AdminAccess are stored in PostgreSQL.
+
+Copy `.env.example` to `.env` for local development. Required values:
 
 ```bash
 DATABASE_URL=...
 NEXTAUTH_SECRET=...
+```
+
+`NEXTAUTH_SECRET` is the Auth.js secret this project reads in
+`lib/auth/options.ts` and `middleware.ts`. `AUTH_SECRET` is not used by this
+project.
+
+Production should also set the canonical URL:
+
+```bash
+NEXTAUTH_URL=https://nyra-jet.vercel.app
+```
+
+Optional integrations:
+
+```bash
 # Optional, enables Google Sign-In
 GOOGLE_CLIENT_ID=...
 GOOGLE_CLIENT_SECRET=...

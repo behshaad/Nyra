@@ -19,6 +19,19 @@ Local development:
 ```text
 DATABASE_URL=...
 NEXTAUTH_SECRET=...
+NEXTAUTH_URL=http://localhost:3000
+```
+
+`NEXTAUTH_SECRET` is required because `lib/auth/options.ts` passes
+`process.env.NEXTAUTH_SECRET` to Auth.js and `middleware.ts` uses the same value
+to decode JWTs. This project does not read `AUTH_SECRET`.
+
+Production required values:
+
+```text
+DATABASE_URL=...
+NEXTAUTH_SECRET=...
+NEXTAUTH_URL=https://nyra-jet.vercel.app
 ```
 
 Optional integrations:

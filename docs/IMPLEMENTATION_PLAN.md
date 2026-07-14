@@ -144,7 +144,8 @@ Files to modify:
 Dependencies:
 
 - Phase 1.
-- `DATABASE_URL` and `NEXTAUTH_SECRET`.
+- `DATABASE_URL` and `NEXTAUTH_SECRET`; this Auth.js v4 setup reads `NEXTAUTH_SECRET`, not `AUTH_SECRET`.
+- Production should also set `NEXTAUTH_URL` to the public origin.
 - Optional `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `RESEND_API_KEY`, and `AUTH_EMAIL_FROM`.
 
 Acceptance Criteria:

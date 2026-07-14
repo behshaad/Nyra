@@ -23,3 +23,5 @@ Anonymous authentication flows must not reveal whether an email exists, is verif
 MVP sessions should use one simple Auth.js policy: a rolling 30-day session for all signed-in accounts. Nyra should not implement Remember Me, trusted devices, device/session management, session revocation, or login history until a future requirement justifies that complexity.
 
 For the MVP, Account lifecycle supports active accounts and soft-disabled accounts only. A Disabled Account cannot sign in or create new sessions, but Nyra retains its Learner Profile, progress, flashcards, and history; self-service account deletion, data export, scheduled deletion, and broader privacy workflows are post-MVP features.
+
+Production Auth.js configuration requires `NEXTAUTH_SECRET`; Nyra's current Auth.js v4 integration does not read `AUTH_SECRET`. Production should also set `NEXTAUTH_URL` to the public deployment origin for canonical callback and email links.
