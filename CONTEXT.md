@@ -144,6 +144,10 @@ _Avoid_: Test user, default account
 The identity, credentials, access, contact, and subscription-facing settings around an authenticated person using Nyra. For the MVP, an Account is unique by verified email and has one Learner Profile for now; multiple Courses or Levels belong under that Learner Profile.
 _Avoid_: Learner Profile, learning identity, provider identity
 
+**Disabled Account**:
+An Account that Nyra has soft-disabled so it can no longer sign in or create new authenticated sessions. A Disabled Account retains its Learner Profile, progress, flashcards, and history rather than being hard-deleted.
+_Avoid_: Deleted account, banned user
+
 **Email Verification**:
 An account trust signal proving that an Account's email address can receive messages for that person. Email Verification can be required for sensitive account, billing, recovery, and admin-adjacent operations, but it does not block learning access and does not grant Admin Access.
 _Avoid_: Login approval, admin approval

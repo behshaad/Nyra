@@ -21,3 +21,5 @@ Password reset requires Email Verification. Public password reset requests shoul
 Anonymous authentication flows must not reveal whether an email exists, is verified, is registered, or is disabled. Forgot-password, login, and password reset requests should use generic public responses; personalized guidance such as "verify your email" or "resend verification email" belongs only in authenticated or cryptographically verified contexts.
 
 MVP sessions should use one simple Auth.js policy: a rolling 30-day session for all signed-in accounts. Nyra should not implement Remember Me, trusted devices, device/session management, session revocation, or login history until a future requirement justifies that complexity.
+
+For the MVP, Account lifecycle supports active accounts and soft-disabled accounts only. A Disabled Account cannot sign in or create new sessions, but Nyra retains its Learner Profile, progress, flashcards, and history; self-service account deletion, data export, scheduled deletion, and broader privacy workflows are post-MVP features.
