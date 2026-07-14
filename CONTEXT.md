@@ -144,6 +144,10 @@ _Avoid_: Test user, default account
 The identity, credentials, access, contact, and subscription-facing settings around an authenticated person using Nyra. For the MVP, an Account is unique by verified email and has one Learner Profile for now; multiple Courses or Levels belong under that Learner Profile.
 _Avoid_: Learner Profile, learning identity, provider identity
 
+**Email Verification**:
+An account trust signal proving that an Account's email address can receive messages for that person. Email Verification can be required for sensitive account, billing, recovery, and admin-adjacent operations, but it does not block learning access and does not grant Admin Access.
+_Avoid_: Login approval, admin approval
+
 **Admin Access**:
 The single durable permission that lets a trusted operator manage Nyra content and review operational surfaces. Admin Access remains distinct from a Learner Profile; session roles such as Admin or User are derived views, not a separate authorization model.
 _Avoid_: Admin preview, shared admin password, role system
