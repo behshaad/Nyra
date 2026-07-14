@@ -1,43 +1,49 @@
-import { isAuthConfigurationError } from "@/lib/auth/config";
-import { buildAuthSessionView } from "@/lib/auth/nyra-identity";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth/options";
+import { getPrisma } from "@/lib/db/prisma";
+import {
+  buildAuthSessionView,
+  ensureLearnerProfileForIdentity
+} from "@/lib/auth/nyra-identity";
 import type { AuthSession } from "@/lib/auth/session";
-import { createSupabaseServerClient } from "@/lib/auth/supabase-server";
-
-function metadataString(value: unknown) {
-  return typeof value === "string" ? value : "";
-}
 
 export async function getAuthSession(): Promise<AuthSession | null> {
-  try {
-    const supabase = await createSupabaseServerClient();
-    const {
-      data: { user },
-      error
-    } = await supabase.auth.getUser();
+  const session = await getServerSession(authOptions);
+  const user = session?.user as
+    | {
+        email?: string | null;
+        emailVerifiedAt?: string | null;
+        id?: string | null;
+        name?: string | null;
+      }
+    | undefined;
 
-    if (error || !user) {
-      return null;
-    }
-
-    const {
-      data: { session }
-    } = await supabase.auth.getSession();
-
-    return buildAuthSessionView({
-      id: user.id,
-      email: user.email ?? "",
-      fullName:
-        metadataString(user.user_metadata?.full_name) ||
-        metadataString(user.user_metadata?.name),
-      expiresAt: session?.expires_at
-        ? new Date(session.expires_at * 1000).toISOString()
-        : null
-    });
-  } catch (error) {
-    if (isAuthConfigurationError(error)) {
-      return null;
-    }
-
-    throw error;
+  if (!session || !user?.id || !user.email) {
+    return null;
   }
+
+  const dbUser = await getPrisma().user.findUnique({
+    where: {
+      id: user.id
+    }
+  });
+
+  if (!dbUser || dbUser.status !== "ACTIVE") {
+    return null;
+  }
+
+  await ensureLearnerProfileForIdentity({
+    id: dbUser.id,
+    email: dbUser.email,
+    emailVerifiedAt: dbUser.emailVerifiedAt,
+    fullName: dbUser.name
+  });
+
+  return buildAuthSessionView({
+    id: dbUser.id,
+    email: dbUser.email,
+    emailVerifiedAt: dbUser.emailVerifiedAt,
+    fullName: dbUser.name,
+    expiresAt: session.expires
+  });
 }

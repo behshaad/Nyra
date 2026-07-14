@@ -14,23 +14,38 @@ export function loadLocalEnv() {
 export function getAuthEnvStatus(): AuthEnvStatus[] {
   return [
     {
-      key: "NEXT_PUBLIC_SUPABASE_URL",
-      present: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
-      required: true
-    },
-    {
-      key: "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
-      present: Boolean(process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY),
-      required: true
-    },
-    {
       key: "DATABASE_URL",
       present: Boolean(process.env.DATABASE_URL),
       required: true
     },
     {
-      key: "SUPABASE_SERVICE_ROLE_KEY",
-      present: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
+      key: "NEXTAUTH_SECRET",
+      present: Boolean(process.env.NEXTAUTH_SECRET),
+      required: true
+    },
+    {
+      key: "NEXTAUTH_URL",
+      present: Boolean(process.env.NEXTAUTH_URL),
+      required: false
+    },
+    {
+      key: "GOOGLE_CLIENT_ID",
+      present: Boolean(process.env.GOOGLE_CLIENT_ID),
+      required: false
+    },
+    {
+      key: "GOOGLE_CLIENT_SECRET",
+      present: Boolean(process.env.GOOGLE_CLIENT_SECRET),
+      required: false
+    },
+    {
+      key: "RESEND_API_KEY",
+      present: Boolean(process.env.RESEND_API_KEY),
+      required: false
+    },
+    {
+      key: "AUTH_EMAIL_FROM",
+      present: Boolean(process.env.AUTH_EMAIL_FROM),
       required: false
     }
   ];

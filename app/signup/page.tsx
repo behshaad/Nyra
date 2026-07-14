@@ -32,7 +32,7 @@ export default async function SignupPage({
           <span className="section-label">New Learner</span>
           <h1>Create your account</h1>
           <p>
-            Start with Supabase Auth while Nyra keeps your learning profile separate.
+            Start with a Nyra account while your Learner Profile stays separate.
           </p>
           <div className="auth-note">
             <UserPlus size={18} aria-hidden="true" />
@@ -47,7 +47,12 @@ export default async function SignupPage({
               <h2 id="signup-title">Sign Up</h2>
             </div>
           </div>
-          <AuthForm mode="signup" />
+          <AuthForm
+            googleEnabled={Boolean(
+              process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+            )}
+            mode="signup"
+          />
         </section>
       </section>
     </main>

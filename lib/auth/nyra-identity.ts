@@ -40,6 +40,7 @@ type NyraDb = {
 export type AuthenticatedIdentity = {
   id: string;
   email: string;
+  emailVerifiedAt?: Date | string | null;
   fullName?: string | null;
   expiresAt?: string | null;
 };
@@ -125,9 +126,11 @@ export async function buildAuthSessionView(
   return {
     id: identity.id,
     email: identity.email,
+    emailVerifiedAt: identity.emailVerifiedAt
+      ? new Date(identity.emailVerifiedAt).toISOString()
+      : null,
     fullName: learnerProfile.displayName,
     role,
-    remember: true,
     expiresAt: identity.expiresAt ?? null
   };
 }

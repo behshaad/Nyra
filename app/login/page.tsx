@@ -35,7 +35,7 @@ export default async function LoginPage({
           <span className="section-label">Authentication</span>
           <h1>Login to Nyra</h1>
           <p>
-            Continue your German learning path with secure Supabase authentication.
+            Continue your German learning path with your secure Nyra account.
           </p>
           <div className="auth-note">
             <ShieldCheck size={18} aria-hidden="true" />
@@ -60,7 +60,13 @@ export default async function LoginPage({
               <span>Password changed successfully. You can now sign in.</span>
             </div>
           ) : null}
-          <AuthForm mode="login" returnTo={safeReturnTo(returnTo ?? null)} />
+          <AuthForm
+            googleEnabled={Boolean(
+              process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+            )}
+            mode="login"
+            returnTo={safeReturnTo(returnTo ?? null)}
+          />
         </section>
       </section>
     </main>

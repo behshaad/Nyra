@@ -5,10 +5,10 @@ import type { AuthSession } from "@/lib/auth/session";
 function session(role: AuthSession["role"]): AuthSession {
   return {
     email: "learner@example.com",
+    emailVerifiedAt: null,
     expiresAt: null,
     fullName: "Learner",
     id: "auth-user-1",
-    remember: true,
     role
   };
 }

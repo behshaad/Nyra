@@ -6,22 +6,31 @@ Use these steps to run Nyra locally by hand.
 
 - Node.js is installed.
 - Dependencies are installed with `npm install`.
-- The database connection required by Prisma is available in your environment.
+- PostgreSQL is running.
+- `DATABASE_URL` points at the project database.
+- `NEXTAUTH_SECRET` is set to a stable random value.
 
 ## Authentication Environment
 
-Supabase Auth is required for real sign in, sign up, Google Sign-In, password reset, and protected-route QA.
+Nyra authentication uses Auth.js with Nyra-owned users, bcrypt password hashes, Google OAuth provider links, email verification/reset tokens, disabled-account status, and secure HTTP-only session cookies.
 
 Local development:
 
 ```text
 DATABASE_URL=...
-NEXT_PUBLIC_SUPABASE_URL=...
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=...
-SUPABASE_SERVICE_ROLE_KEY=...
+NEXTAUTH_SECRET=...
 ```
 
-`SUPABASE_SERVICE_ROLE_KEY` is required only for the local seed-user script. It must stay server-only and must never be exposed with a `NEXT_PUBLIC_` prefix.
+Optional integrations:
+
+```text
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+RESEND_API_KEY=...
+AUTH_EMAIL_FROM=...
+```
+
+If `RESEND_API_KEY` and `AUTH_EMAIL_FROM` are missing, authentication emails are logged to the local server console for development.
 
 Check local auth configuration without printing secret values:
 
@@ -29,58 +38,15 @@ Check local auth configuration without printing secret values:
 npm run auth:check-env
 ```
 
-Vercel Preview and Production need the same public auth variables configured in the matching Vercel environment. `DATABASE_URL` must point to a database reachable from Vercel. Keep `SUPABASE_SERVICE_ROLE_KEY` out of browser-exposed environments.
-
-## Supabase Auth Setup
-
-- Enable Email/Password authentication in Supabase Auth.
-- Configure Google Sign-In through Supabase Auth only.
-- Add local and deployed callback URLs to the Supabase redirect allow-list:
-
-```text
-http://localhost:3000/auth/callback
-http://localhost:3001/auth/callback
-https://<preview-domain>/auth/callback
-https://<production-domain>/auth/callback
-```
-
-- Password reset emails should redirect to `/auth/callback?next=/auth/update-password`.
-- Email verification is supported whether the Supabase project returns an immediate session or requires email confirmation first.
-
-## Start the Development Server
+Generate a local Auth.js secret if needed:
 
 ```bash
-npm run dev
-```
-
-The app should be available at:
-
-```text
-http://localhost:3000
-```
-
-If another process already uses port `3000`, Next.js may choose another port. In this workspace, the app is often run at:
-
-```text
-http://localhost:3001
-```
-
-## Useful Local Pages
-
-```text
-http://localhost:3001/login?ui=en
-http://localhost:3001/signup?ui=en
-http://localhost:3001/auth/update-password?ui=en
-http://localhost:3001/profile?ui=en
-http://localhost:3001/admin?ui=en
-http://localhost:3001/practice?ui=en
-http://localhost:3001/practice/a1?ui=en
-http://localhost:3001/learn?ui=en
+openssl rand -base64 32
 ```
 
 ## Database Setup
 
-Generate the Prisma client after dependency changes:
+Generate the Prisma client after dependency or schema changes:
 
 ```bash
 npm run prisma:generate
@@ -98,13 +64,19 @@ Seed local sample content:
 npm run db:seed
 ```
 
-## Admin Access
+Reset the local database when you want a clean run:
 
-Admin Access is Nyra-owned and stored in the application database. Do not use Supabase roles, JWT claims, email prefixes, or production administrator credentials.
+```bash
+dropdb nyra_dev
+createdb nyra_dev
+npm run db:push
+npm run db:seed
+npm run auth:seed-users
+```
 
 ## Seed Authentication Users
 
-The seed script creates or updates two Supabase Auth users through the Supabase Admin API and reconciles Nyra-owned records in the application database. It is idempotent and can be run repeatedly without creating duplicate Learner Profiles or AdminAccess records.
+The auth seed script creates or updates two verified active Nyra `User` records, bcrypt-hashes their passwords, reconciles their Learner Profiles, and grants AdminAccess only to the admin user. It is idempotent and safe to run multiple times.
 
 ```bash
 npm run auth:seed-users
@@ -119,7 +91,8 @@ Password: Admin123!
 
 Expected records:
 
-- Supabase Auth user exists and is email-confirmed.
+- `User` exists with a bcrypt `passwordHash`.
+- `emailVerifiedAt` is set and `status = ACTIVE`.
 - Learner Profile exists.
 - AdminAccess exists and has `revokedAt = null`.
 
@@ -132,34 +105,51 @@ Password: Student123!
 
 Expected records:
 
-- Supabase Auth user exists and is email-confirmed.
+- `User` exists with a bcrypt `passwordHash`.
+- `emailVerifiedAt` is set and `status = ACTIVE`.
 - Learner Profile exists.
 - No AdminAccess record exists.
 
-Grant Admin Access manually for a real authenticated Supabase user id:
+Grant AdminAccess manually for a user id:
 
 ```sql
 insert into "AdminAccess" ("id", "authUserId", "grantedBy")
-values (gen_random_uuid(), '<supabase-user-id>', '<granting-operator-id>')
+values (gen_random_uuid(), '<user-id>', '<granting-operator-id>')
 on conflict ("authUserId")
 do update set "revokedAt" = null, "updatedAt" = now();
 ```
 
-Revoke Admin Access:
+Revoke AdminAccess:
 
 ```sql
 update "AdminAccess"
 set "revokedAt" = now(), "updatedAt" = now()
-where "authUserId" = '<supabase-user-id>';
+where "authUserId" = '<user-id>';
 ```
 
-## Verification Commands
+## Start the Development Server
 
 ```bash
-npm run typecheck
-npm run lint
-npm run test
-npm run build
+npm run dev
+```
+
+Open:
+
+```text
+http://localhost:3000
+```
+
+Useful local pages:
+
+```text
+http://localhost:3000/login?ui=en
+http://localhost:3000/signup?ui=en
+http://localhost:3000/forgot-password
+http://localhost:3000/profile?ui=en
+http://localhost:3000/admin?ui=en
+http://localhost:3000/admin-access-denied
+http://localhost:3000/practice?ui=en
+http://localhost:3000/learn?ui=en
 ```
 
 ## Authentication QA Checklist
@@ -175,7 +165,7 @@ npm run auth:seed-users
 - Open `/login?ui=en`.
 - Sign in with `admin@nyra.local` and `Admin123!`.
 - Confirm the app redirects to `/profile` or the requested `returnTo` URL.
-- Refresh the page and confirm the session is restored.
+- Refresh and confirm the session is restored.
 
 3. Login as student:
 
@@ -183,57 +173,81 @@ npm run auth:seed-users
 - Open `/login?ui=en`.
 - Sign in with `student@nyra.local` and `Student123!`.
 - Confirm the app redirects to `/profile` or the requested `returnTo` URL.
-- Refresh the page and confirm the session is restored.
+- Refresh and confirm the session is restored.
 
-4. Verify admin page:
+4. Verify signup:
+
+- Open `/signup?ui=en`.
+- Create a new account with a unique email and an 8+ character password.
+- Confirm the account is created, logged in, and redirected to `/profile`.
+- Confirm a verification email is sent through Resend or logged locally.
+- Confirm exactly one Learner Profile exists for the new user id.
+
+5. Verify admin page:
 
 - As the admin user, open `/admin?ui=en`.
 - Confirm the admin dashboard loads.
-- Confirm an admin API route does not return `401` or `403`.
+- Confirm an admin API mutation reaches validation instead of returning `401` or `403`.
 
-5. Verify student admin denial:
+6. Verify student admin denial:
 
 - As the student user, open `/admin?ui=en`.
 - Confirm the app shows `/admin-access-denied`.
-- Confirm an admin API route returns `403` with `Admin Access is required.`
+- Confirm an admin API mutation returns `403` with `Admin Access is required.`
 
-6. Verify learner profile provisioning:
+7. Verify learner profile provisioning:
 
-- Delete the seeded user's Learner Profile row only.
-- Login again as that user.
+- Delete a user's Learner Profile row only.
+- Login or refresh as that user.
 - Confirm exactly one Learner Profile row is recreated for that `authUserId`.
-- Login/refresh again and confirm no duplicate Learner Profile is created.
+- Login or refresh again and confirm no duplicate Learner Profile is created.
 
-7. Verify logout:
+8. Verify logout:
 
 - Use the logout control.
 - Confirm the app redirects to `/login`.
 - Open `/profile` and confirm it redirects to `/login?returnTo=/profile`.
 
-8. Verify Google login:
-
-- Enable Google Sign-In in Supabase Auth.
-- Ensure `/auth/callback` is on the Supabase redirect allow-list for local and deployed domains.
-- Open `/login?ui=en`.
-- Click Continue with Google.
-- Complete the provider flow.
-- Confirm the app returns through `/auth/callback`, lands on `/profile` or the requested `returnTo`, creates exactly one Learner Profile, and restores the session after refresh.
-
-9. Verify error handling:
+9. Verify errors:
 
 - Submit login with an invalid password and confirm a form error appears.
-- Open `/auth/callback` without a `code` and confirm it redirects to `/login` with an invalid-link error.
-- Temporarily remove `NEXT_PUBLIC_SUPABASE_URL` or `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, restart the dev server, and confirm login actions show a normal error instead of the Next.js runtime overlay.
+- Try signing up with an existing email and confirm a uniqueness error appears.
 
-## Deferred Account Features
+10. Verify email verification:
 
-These are intentionally deferred to the future `account-profile` milestone:
+- Use the verification link from the local console or email provider.
+- Confirm `/verify-email` marks `emailVerifiedAt`.
+- Confirm the profile no longer prompts for verification.
 
-- Profile photo upload
-- Supabase Storage integration
-- Avatar management
-- Account settings
-- Notification preferences
+11. Verify password reset:
+
+- Open `/forgot-password`.
+- Submit a verified account email and confirm the public response is generic.
+- Use the reset link from the local console or email provider.
+- Confirm `/reset-password` changes the password.
+- Submit an unverified account email and confirm no reset email is sent.
+
+12. Verify Google OAuth when configured:
+
+- Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`.
+- Sign in with a Google account whose email matches an existing Nyra user.
+- Confirm no duplicate `User` or Learner Profile is created.
+- Confirm a new verified Google email creates one Nyra `User`, one ProviderAccount, and one Learner Profile.
+
+13. Verify disabled accounts:
+
+- Set a user's `status` to `DISABLED`.
+- Confirm credentials login fails with the same generic invalid-credentials behavior.
+- Confirm existing server-side session resolution no longer treats the user as signed in.
+
+## Verification Commands
+
+```bash
+npm run lint
+npm run typecheck
+npm test
+npm run build
+```
 
 ## Stop the Server
 

@@ -2,10 +2,8 @@ import { afterEach, describe, expect, it } from "vitest";
 import { getAuthEnvStatus, missingRequiredAuthEnv } from "@/scripts/auth-env";
 
 const authEnvKeys = [
-  "NEXT_PUBLIC_SUPABASE_URL",
-  "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
   "DATABASE_URL",
-  "SUPABASE_SERVICE_ROLE_KEY"
+  "NEXTAUTH_SECRET"
 ] as const;
 
 const originalEnv = Object.fromEntries(
@@ -33,26 +31,24 @@ describe("auth env checks", () => {
     clearAuthEnv();
 
     expect(missingRequiredAuthEnv()).toEqual([
-      "NEXT_PUBLIC_SUPABASE_URL",
-      "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
-      "DATABASE_URL"
+      "DATABASE_URL",
+      "NEXTAUTH_SECRET"
     ]);
   });
 
-  it("treats the service role key as optional for app startup", () => {
+  it("passes when the database and Auth.js secret are configured", () => {
     clearAuthEnv();
-    process.env.NEXT_PUBLIC_SUPABASE_URL = "https://example.supabase.co";
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY = "publishable";
     process.env.DATABASE_URL = "postgres://example";
+    process.env.NEXTAUTH_SECRET = "secret";
 
     expect(missingRequiredAuthEnv()).toEqual([]);
     expect(
       getAuthEnvStatus().find(
-        (entry) => entry.key === "SUPABASE_SERVICE_ROLE_KEY"
+        (entry) => entry.key === "NEXTAUTH_SECRET"
       )
     ).toMatchObject({
-      present: false,
-      required: false
+      present: true,
+      required: true
     });
   });
 });

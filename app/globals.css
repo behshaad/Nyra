@@ -3178,9 +3178,15 @@ h3 {
 }
 
 .auth-form-row a,
-.auth-switch a {
+.auth-switch a,
+.auth-small-link {
   color: var(--green-dark);
   font-weight: 850;
+}
+
+.auth-small-link {
+  justify-self: flex-start;
+  text-decoration: none;
 }
 
 .auth-checkbox {
@@ -3229,6 +3235,18 @@ h3 {
   gap: 9px;
   line-height: 1.45;
   padding: 11px 12px;
+}
+
+.auth-inline-callout {
+  align-items: flex-start;
+  background: rgba(211, 164, 74, 0.12);
+  border: 1px solid rgba(211, 164, 74, 0.28);
+  border-radius: 8px;
+  color: var(--text);
+  display: grid;
+  gap: 10px;
+  line-height: 1.45;
+  padding: 12px;
 }
 
 .auth-reset-form {

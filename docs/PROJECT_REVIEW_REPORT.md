@@ -80,14 +80,14 @@ Recommended direction:
 
 ## 7. Architecture Review
 
-The planned stack is reasonable: Next.js, React, TypeScript, TailwindCSS, PostgreSQL, Prisma, Supabase Auth/Storage, Vercel.
+The planned stack is reasonable: Next.js, React, TypeScript, TailwindCSS, PostgreSQL, Prisma, Auth.js, Vercel.
 
 Recommended architecture:
 
 - Next.js app with domain-oriented modules rather than generic `backend/` folders.
 - Server-side authorization for all admin and subscription-gated routes.
 - PostgreSQL as the source of truth for content, progress, billing state, and events.
-- Supabase Auth only for identity/session management, not as the full domain model.
+- Auth.js for secure sessions, with Nyra-owned users, password hashes, provider links, AdminAccess, and learner profiles in PostgreSQL.
 - A clear separation between authored content and runtime learning sessions.
 - Event-style records for progress, XP, streaks, and answers, with derived summaries for dashboards.
 
@@ -275,4 +275,3 @@ Recommendations:
 8. Build with mobile-first Persian/German typography and RTL/LTR handling from the first UI milestone.
 9. Add security and audit requirements before implementing admin or payments.
 10. Do not implement code until the contradictions above are approved or revised.
-

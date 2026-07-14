@@ -124,17 +124,16 @@ Goal: Let users sign up, sign in, and own a learner profile.
 
 Tasks:
 
-- Configure Supabase Auth.
-- Build sign up, login, logout, password reset.
-- Create profile model and profile setup flow.
-- Add protected route handling.
+- Configure Auth.js credentials and Google OAuth.
+- Build sign up, login, logout, email verification, and password reset.
+- Create Nyra-owned User, provider-link, verification/reset token, AdminAccess, and Learner Profile models.
+- Add protected route and admin API handling.
 
 Files to create:
 
 - `lib/auth/*`
 - `app/(auth)/login/page.tsx`
 - `app/(auth)/signup/page.tsx`
-- `app/(auth)/reset-password/page.tsx`
 - `app/(learner)/onboarding/page.tsx`
 - `prisma/schema.prisma`
 
@@ -145,17 +144,20 @@ Files to modify:
 Dependencies:
 
 - Phase 1.
-- Supabase project credentials.
+- `DATABASE_URL` and `NEXTAUTH_SECRET`.
+- Optional `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `RESEND_API_KEY`, and `AUTH_EMAIL_FROM`.
 
 Acceptance Criteria:
 
-- User can sign up, verify/login, logout, and create a profile.
+- User can sign up, login, logout, verify email, reset a password after verification, and create a profile.
 - Protected pages reject unauthenticated users.
+- AdminAccess remains the only durable admin authorization source.
+- Disabled accounts cannot sign in.
 - Profile stores native language, learning goal, daily goal, and current level.
 
 Estimated Complexity: Medium
 Estimated Development Time: 2-4 days
-Possible Risks: Supabase profile sync edge cases.
+Possible Risks: session and Learner Profile provisioning edge cases.
 
 ## Phase 4: Core Content Schema
 

@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useState, useTransition } from "react";
+import { signIn } from "next-auth/react";
 import {
   AlertCircle,
   ArrowRight,
-  Chrome,
+  BadgeCheck,
   EyeOff,
   KeyRound,
   LockKeyhole,
@@ -13,49 +14,87 @@ import {
   UserRound
 } from "lucide-react";
 import type { AuthActionState } from "@/lib/auth/actions";
-import {
-  googleSignInAction,
-  loginAction,
-  requestPasswordResetAction,
-  signupAction
-} from "@/lib/auth/actions";
+import { signupAction } from "@/lib/auth/actions";
 
 type AuthMode = "login" | "signup";
 
-const initialState: AuthActionState = {};
-
 export function AuthForm({
+  googleEnabled = false,
   mode,
   returnTo = "/profile"
 }: {
+  googleEnabled?: boolean;
   mode: AuthMode;
   returnTo?: string;
 }) {
   const isLogin = mode === "login";
-  const [state, action, isPending] = useActionState(
-    isLogin ? loginAction : signupAction,
-    initialState
-  );
-  const [resetState, resetAction, isResetPending] = useActionState(
-    requestPasswordResetAction,
-    initialState
-  );
+  const [state, setState] = useState<AuthActionState>({});
+  const [isPending, startTransition] = useTransition();
+
+  function submitAuth(formData: globalThis.FormData) {
+    setState({});
+
+    startTransition(async () => {
+      if (isLogin) {
+        const email = String(formData.get("email") ?? "").trim().toLowerCase();
+        const password = String(formData.get("password") ?? "");
+
+        if (!email || !password) {
+          setState({
+            error: "Email and password are required.",
+            values: { email }
+          });
+          return;
+        }
+
+        const result = await signIn("credentials", {
+          email,
+          password,
+          redirect: false
+        });
+
+        if (!result?.ok) {
+          setState({
+            error: "Invalid login credentials",
+            values: { email }
+          });
+          return;
+        }
+
+        window.location.assign(returnTo);
+        return;
+      }
+
+      const result = await signupAction({}, formData);
+
+      if (result.error) {
+        setState(result);
+        return;
+      }
+
+      const email = String(formData.get("email") ?? "").trim().toLowerCase();
+      const password = String(formData.get("password") ?? "");
+      const signInResult = await signIn("credentials", {
+        email,
+        password,
+        redirect: false
+      });
+
+      if (!signInResult?.ok) {
+        setState({
+          error: "Account created, but automatic login failed. Please log in.",
+          values: { email, fullName: String(formData.get("fullName") ?? "") }
+        });
+        return;
+      }
+
+      window.location.assign("/profile");
+    });
+  }
 
   return (
     <div className="auth-form-stack">
-      <form action={googleSignInAction} className="auth-provider-form">
-        <input name="returnTo" type="hidden" value={returnTo} />
-        <button className="secondary-button auth-provider-button" type="submit">
-          <Chrome size={18} aria-hidden="true" />
-          <span>Continue with Google</span>
-        </button>
-      </form>
-
-      <div className="auth-divider" aria-hidden="true">
-        <span>or</span>
-      </div>
-
-      <form action={action} className="auth-form">
+      <form action={submitAuth} className="auth-form">
         {isLogin ? <input name="returnTo" type="hidden" value={returnTo} /> : null}
 
         {state.error ? (
@@ -107,11 +146,11 @@ export function AuthForm({
           <span>Password</span>
           <div>
             <LockKeyhole size={18} aria-hidden="true" />
-            <input
-              autoComplete={isLogin ? "current-password" : "new-password"}
-              name="password"
-              placeholder="Enter password"
-              required
+              <input
+                autoComplete={isLogin ? "current-password" : "new-password"}
+                name="password"
+                placeholder="Enter password"
+                required
               type="password"
             />
           </div>
@@ -134,23 +173,31 @@ export function AuthForm({
         ) : null}
 
         {isLogin ? (
-          <div className="auth-form-row">
-            <label className="auth-checkbox">
-              <input
-                defaultChecked={state.values?.remember ?? true}
-                name="remember"
-                type="checkbox"
-              />
-              <span>Remember Me</span>
-            </label>
-            <Link href="/login#forgot-password">Forgot Password</Link>
-          </div>
+          <Link className="auth-small-link" href="/forgot-password">
+            Forgot password?
+          </Link>
         ) : null}
 
         <button className="primary-button auth-submit" disabled={isPending} type="submit">
           <span>{isPending ? "Please wait..." : isLogin ? "Login" : "Create Account"}</span>
           <ArrowRight size={18} aria-hidden="true" />
         </button>
+
+        {googleEnabled ? (
+          <button
+            className="secondary-button auth-submit"
+            disabled={isPending}
+            onClick={() => {
+              void signIn("google", {
+                callbackUrl: returnTo
+              });
+            }}
+            type="button"
+          >
+            <BadgeCheck size={18} aria-hidden="true" />
+            <span>Continue with Google</span>
+          </button>
+        ) : null}
 
         <p className="auth-switch">
           {isLogin ? "New to Nyra?" : "Already have an account?"}{" "}
@@ -159,44 +206,6 @@ export function AuthForm({
           </Link>
         </p>
       </form>
-
-      {isLogin ? (
-        <form action={resetAction} className="auth-reset-form" id="forgot-password">
-          <div>
-            <strong>Forgot Password?</strong>
-            <span>Send a secure reset link to your email.</span>
-          </div>
-          {resetState.error ? (
-            <div className="auth-error" role="alert">
-              <AlertCircle size={18} aria-hidden="true" />
-              <span>{resetState.error}</span>
-            </div>
-          ) : null}
-          {resetState.success ? (
-            <div className="auth-success" role="status">
-              <KeyRound size={18} aria-hidden="true" />
-              <span>{resetState.success}</span>
-            </div>
-          ) : null}
-          <label className="auth-field">
-            <span>Email</span>
-            <div>
-              <Mail size={18} aria-hidden="true" />
-              <input
-                autoComplete="email"
-                defaultValue={resetState.values?.email ?? state.values?.email ?? ""}
-                name="email"
-                placeholder="learner@nyra.local"
-                required
-                type="email"
-              />
-            </div>
-          </label>
-          <button className="secondary-button auth-submit" disabled={isResetPending} type="submit">
-            <span>{isResetPending ? "Sending..." : "Send reset link"}</span>
-          </button>
-        </form>
-      ) : null}
     </div>
   );
 }
