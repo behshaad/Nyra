@@ -11,3 +11,5 @@ The authentication system does not depend on Supabase Auth or another external i
 Google Sign-In remains in scope through an Auth.js OAuth provider rather than Supabase Auth.
 
 For the MVP, Nyra has only two effective session roles: User and Admin. AdminAccess is the source of truth for Admin; the session role is a derived convenience and should not become a separate persistent role model.
+
+For the MVP, Nyra has one Account per verified email address. A Google OAuth identity with a verified email should link to the existing Nyra `User` for that email instead of creating a duplicate account, and an email/password credential added later for the same verified email should point to the same `User`.

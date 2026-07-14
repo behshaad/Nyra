@@ -141,7 +141,7 @@ A seeded Learner Profile used only for local development, testing, sample data, 
 _Avoid_: Test user, default account
 
 **Account**:
-The identity, credentials, access, contact, and subscription-facing settings around an authenticated person using Nyra. An Account has one Learner Profile for now; multiple Courses or Levels belong under that Learner Profile.
+The identity, credentials, access, contact, and subscription-facing settings around an authenticated person using Nyra. For the MVP, an Account is unique by verified email and has one Learner Profile for now; multiple Courses or Levels belong under that Learner Profile.
 _Avoid_: Learner Profile, learning identity, provider identity
 
 **Admin Access**:
