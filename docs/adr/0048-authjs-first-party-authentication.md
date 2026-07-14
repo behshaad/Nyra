@@ -19,3 +19,5 @@ Email/password registration should not block learning while the email is unverif
 Password reset requires Email Verification. Public password reset requests should use generic responses to avoid revealing whether an email address is registered or eligible; internally, Nyra should send reset mail only when the account exists and its email is verified. If a signed-in or otherwise safely identified unverified account needs recovery help, Nyra should guide the person toward resending the verification email before allowing reset.
 
 Anonymous authentication flows must not reveal whether an email exists, is verified, is registered, or is disabled. Forgot-password, login, and password reset requests should use generic public responses; personalized guidance such as "verify your email" or "resend verification email" belongs only in authenticated or cryptographically verified contexts.
+
+MVP sessions should use one simple Auth.js policy: a rolling 30-day session for all signed-in accounts. Nyra should not implement Remember Me, trusted devices, device/session management, session revocation, or login history until a future requirement justifies that complexity.
