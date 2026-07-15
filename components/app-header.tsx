@@ -3,7 +3,8 @@ import {
   type InterfaceLanguageCode
 } from "@/lib/i18n/interface-language";
 import type { InterfaceThemeCode } from "@/lib/i18n/interface-theme";
-import { getLearnerPreferences } from "@/lib/learner/preferences";
+import { getAuthSession } from "@/lib/auth/server";
+import { getLearnerPreferencesForAuthUser } from "@/lib/learner/preferences";
 import { ThemeSync } from "@/components/theme-sync";
 import { AppHeaderClient } from "@/components/app-header-client";
 
@@ -16,7 +17,11 @@ export async function AppHeader({
   theme?: InterfaceThemeCode;
   currentPath?: string;
 }) {
-  const preferences = language && theme ? null : await getLearnerPreferences();
+  const session = language && theme ? null : await getAuthSession();
+  const preferences =
+    language && theme
+      ? null
+      : await getLearnerPreferencesForAuthUser(session?.id);
   const activeLanguage = language ?? preferences?.interfaceLanguage ?? "fa";
   const activeTheme = theme ?? preferences?.interfaceTheme ?? "SYSTEM";
   const copy = interfaceCopy[activeLanguage];

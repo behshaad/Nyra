@@ -248,7 +248,7 @@ export function PracticeSidebar({
 }) {
   return (
     <aside className="practice-sidebar" aria-label="Practice navigation">
-      <Link className="practice-brand" href="/">
+      <Link className="practice-brand" href={language === "fa" ? "/" : `/?ui=${language}`}>
         <span className="practice-brand-mark">L</span>
         <strong>Lingoix</strong>
       </Link>

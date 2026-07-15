@@ -294,6 +294,8 @@ a {
 .brand {
   border-radius: 7px;
   flex: 0 0 auto;
+  position: relative;
+  z-index: 1;
 }
 
 .brand-mark {
@@ -1457,7 +1459,10 @@ h3 {
 
 .sparkles-preview {
   align-items: center;
-  background: transparent;
+  background:
+    radial-gradient(circle at 50% 12%, rgba(99, 102, 241, 0.2), transparent 34%),
+    radial-gradient(circle at 50% 82%, rgba(14, 165, 233, 0.16), transparent 30%),
+    #020617;
   border: 1px solid transparent;
   border-radius: var(--radius);
   box-shadow: none;
@@ -1486,6 +1491,7 @@ h3 {
 
 .sparkles-preview h2 {
   color: #fff8fb;
+  text-shadow: 0 16px 38px rgba(2, 6, 23, 0.5);
   font-size: clamp(3rem, 10vw, 8.4rem);
   font-weight: 900;
   letter-spacing: 0;
@@ -1546,7 +1552,7 @@ h3 {
 }
 
 .sparkles-mask {
-  background: var(--bg);
+  background: #020617;
   mask-image: radial-gradient(350px 200px at top, transparent 20%, white);
   pointer-events: none;
 }
