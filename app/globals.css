@@ -6729,7 +6729,7 @@ h3 {
 .journey-map-canvas.is-entering-world .journey-world-markers,
 .journey-map-canvas.is-entering-world .journey-ambient-layer {
   opacity: 0;
-  transition: opacity 420ms ease;
+  transition: opacity 220ms ease;
 }
 
 .level-node-position.is-entering {

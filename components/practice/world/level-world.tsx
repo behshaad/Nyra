@@ -37,6 +37,10 @@ type UnitPoint = {
   layoutLabel: UnitWorldLabel;
 };
 
+const WORLD_ENTRY_ROUTE_DELAY_MS = 280;
+const WORLD_ENTRY_FLASH_SECONDS = 0.34;
+const WORLD_ENTRY_NODE_SECONDS = 0.32;
+
 function localizedNumber(value: number, language: InterfaceLanguageCode) {
   if (language !== "fa") {
     return String(value);
@@ -312,7 +316,7 @@ export function WorldPage({
           language
         )
       );
-    }, 620);
+    }, WORLD_ENTRY_ROUTE_DELAY_MS);
   };
 
   return (
@@ -394,7 +398,7 @@ export function WorldPage({
                   className="world-transition-overlay"
                   initial={{ opacity: 0, scale: 0.24 }}
                   animate={{ opacity: [0, 0.84, 1], scale: [0.24, 1.6, 4.8] }}
-                  transition={{ duration: 0.64, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: WORLD_ENTRY_FLASH_SECONDS, ease: [0.22, 1, 0.36, 1] }}
                   style={{ left: `${enteringPoint.x}%`, top: `${enteringPoint.y}%` }}
                 />
               ) : null}
@@ -492,7 +496,7 @@ function UnitNode({
           className="unit-pin"
           transition={
             entering
-              ? { duration: 0.46, ease: [0.22, 1, 0.36, 1] }
+              ? { duration: WORLD_ENTRY_NODE_SECONDS, ease: [0.22, 1, 0.36, 1] }
               : point.state === "current"
                 ? { duration: 2.2, ease: "easeInOut", repeat: Infinity }
                 : undefined
