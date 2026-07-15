@@ -1475,18 +1475,7 @@ h3 {
   max-width: 1402px;
   overflow: hidden;
   position: relative;
-  transition:
-    border-color 180ms ease,
-    box-shadow 180ms ease,
-    transform 180ms ease;
   width: 100%;
-}
-
-.sparkles-preview:hover,
-.sparkles-preview:focus-visible {
-  border-color: var(--line);
-  box-shadow: var(--hover-shadow);
-  transform: translateY(-2px);
 }
 
 .sparkles-preview h2 {
