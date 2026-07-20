@@ -263,3 +263,7 @@ _Avoid_: Independent Question release, partial Skill update
 **Flashcard Deck Revision**:
 A Content Revision containing an admin-authored Flashcard Deck's metadata and complete ordered set of Flashcard Revisions. A Flashcard Deck Revision is reviewed and published as one unit.
 _Avoid_: Independent admin Flashcard release, partial Deck update
+
+**Resource Revision**:
+A Content Revision containing a Resource's authored content, metadata, destinations, and media references. A Resource Revision is reviewed and published independently of the Unit or Skill it supports.
+_Avoid_: Parent Skill revision, partial Resource update
