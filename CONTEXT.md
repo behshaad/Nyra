@@ -239,3 +239,15 @@ _Avoid_: Cascade deletion, deleting published content
 **Content Readiness**:
 An administrator-facing assessment of whether learning content is complete enough for its publication state. Content Readiness is derived independently of Publication Status, so Published content can still need attention.
 _Avoid_: Publication Status, ready to publish
+
+**Content Revision**:
+An authored version of a stable learning-content identity. Revisions allow content to change without breaking learner history, ordering, or analytics tied to that identity.
+_Avoid_: Duplicate content, copied item
+
+**Draft Revision**:
+The editable Content Revision being prepared for review while the current Published Revision, if any, remains learner-visible.
+_Avoid_: Editing Published content, replacement item
+
+**Published Revision**:
+The approved Content Revision currently used by the learner experience. A content identity has at most one Published Revision at a time.
+_Avoid_: Published item, live draft

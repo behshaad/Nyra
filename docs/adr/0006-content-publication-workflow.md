@@ -10,4 +10,6 @@ Every newly created admin-authored Skill, Question, Resource, Flashcard Deck, an
 
 In Review is a mandatory gate between Draft and Published. The same administrator may submit content for review and publish it during the MVP, but submission and publication remain distinct confirmed actions with separate audit records; Nyra does not introduce reviewer roles or second-person approval requirements.
 
+Published content is not edited in place. Editing creates or resumes a Draft Revision attached to the same stable content identity, while learners continue receiving the current Published Revision. Publishing promotes the reviewed revision atomically, preserving the identity used by learner history, ordering, relationships, and analytics; administrators do not archive and duplicate content merely to revise it.
+
 A Skill cannot become or remain Published unless it contains at least one Published required Question. Publishing an invalid Skill is blocked, as is archiving, unpublishing, moving, or deleting a Question when that change would leave its Published Skill without a Published required Question. Nyra explains the dependency and requires the administrator to change the parent Skill explicitly; it never silently changes the Skill's Publication Status as a side effect.
