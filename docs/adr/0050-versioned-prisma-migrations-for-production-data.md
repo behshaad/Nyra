@@ -1,3 +1,5 @@
 # Versioned Prisma migrations for production data
 
 Nyra will apply Admin Panel and future production schema changes through committed Prisma migrations rather than relying on `prisma db push`. Migrations must preserve existing learner and authored content through explicit backfills when required, giving deployments a reviewable schema history and preventing destructive drift once the database contains operational data.
+
+The content-revision migration preserves every existing stable content identity and backfills each canonical Skill, Question, Resource, admin-authored Flashcard Deck, and admin-authored Flashcard as an initial revision in its current lifecycle state. Existing relationships keep stable identity references, while Learning Sessions, Question Attempts, and revision-sensitive history are deterministically pinned to the backfilled revisions. Learner-created Flashcards remain outside the admin revision lifecycle, and the migration must include validation counts rather than reset or reseed production data.
