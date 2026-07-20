@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdminApiAccess } from "@/lib/auth/admin-access";
 import { getPrisma } from "@/lib/db/prisma";
+import { recordAdminAudit } from "@/lib/admin/audit-log";
 
 type MoveDirection = "up" | "down";
 
@@ -110,6 +111,19 @@ export async function PATCH(
 
   if ("error" in result) {
     return NextResponse.json({ error: result.error }, { status: result.status });
+  }
+
+  if (result.moved) {
+    await recordAdminAudit(request, {
+      action: "question.reorder",
+      entityType: "Question",
+      entityId: questionId,
+      summary: `Moved Question ${direction} in Skill ${result.skillSlug}`,
+      after: {
+        direction,
+        skillSlug: result.skillSlug
+      }
+    });
   }
 
   return NextResponse.json(result);

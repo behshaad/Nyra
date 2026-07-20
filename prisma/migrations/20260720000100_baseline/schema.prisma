@@ -86,18 +86,6 @@ enum AuthTokenType {
   PASSWORD_RESET
 }
 
-enum AdminActorType {
-  AUTH_USER
-  BASIC_AUTH_ADMIN
-}
-
-enum ErrorSeverity {
-  INFO
-  WARNING
-  ERROR
-  CRITICAL
-}
-
 model Course {
   id                String   @id @default(uuid())
   slug              String   @unique
@@ -184,16 +172,16 @@ model Question {
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
 
-  skill               Skill                        @relation(fields: [skillId], references: [id], onDelete: Cascade)
-  attempts            QuestionAttempt[]
+  skill    Skill             @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  attempts QuestionAttempt[]
   suggestedFlashcards QuestionSuggestedFlashcard[]
 
   @@unique([skillId, order])
 }
 
 model LearnerProfile {
-  id                 String         @id @default(uuid())
-  authUserId         String?        @unique
+  id                 String   @id @default(uuid())
+  authUserId         String?  @unique
   displayName        String
   sourceLanguage     String
   targetLanguage     String
@@ -201,31 +189,28 @@ model LearnerProfile {
   interfaceTheme     InterfaceTheme @default(SYSTEM)
   currentLevel       String
   dailyGoalMinutes   Int
-  onboardingComplete Boolean        @default(false)
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
+  onboardingComplete Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
-  learningSessions      LearningSession[]
-  progressEvents        ProgressEvent[]
-  flashcardDecks        FlashcardDeck[]
+  learningSessions LearningSession[]
+  progressEvents   ProgressEvent[]
+  flashcardDecks   FlashcardDeck[]
   flashcardReviewStates FlashcardReviewState[]
 }
 
 model User {
-  id                String        @id @default(uuid())
-  email             String        @unique
-  name              String
-  passwordHash      String?
-  emailVerifiedAt   DateTime?
-  status            AccountStatus @default(ACTIVE)
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
-  lastLoginAt       DateTime?
-  lastLoginProvider String?
-  lastLoginIpHash   String?
+  id              String        @id @default(uuid())
+  email           String        @unique
+  name            String
+  passwordHash    String?
+  emailVerifiedAt DateTime?
+  status          AccountStatus @default(ACTIVE)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
   providerAccounts ProviderAccount[]
-  authTokens       AuthToken[]
+  authTokens        AuthToken[]
 }
 
 model ProviderAccount {
@@ -267,47 +252,6 @@ model AdminAccess {
   revokedAt  DateTime?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
-}
-
-model AdminAuditLog {
-  id              String         @id @default(uuid())
-  actorType       AdminActorType
-  actorAuthUserId String?
-  actorEmail      String?
-  action          String
-  entityType      String
-  entityId        String?
-  summary         String
-  before          Json?
-  after           Json?
-  requestId       String?
-  ipHash          String?
-  userAgent       String?
-  createdAt       DateTime       @default(now())
-
-  @@index([createdAt])
-  @@index([actorAuthUserId, createdAt])
-  @@index([entityType, entityId, createdAt])
-  @@index([action, createdAt])
-}
-
-model ApplicationErrorLog {
-  id          String        @id @default(uuid())
-  severity    ErrorSeverity @default(ERROR)
-  fingerprint String
-  route       String?
-  method      String?
-  message     String
-  stack       String?
-  context     Json?
-  requestId   String?
-  resolvedAt  DateTime?
-  createdAt   DateTime      @default(now())
-
-  @@index([createdAt])
-  @@index([severity, createdAt])
-  @@index([fingerprint, createdAt])
-  @@index([resolvedAt, createdAt])
 }
 
 model LearningSession {
@@ -399,24 +343,24 @@ model FlashcardDeck {
 }
 
 model Flashcard {
-  id                    String              @id @default(uuid())
-  deckId                String
-  order                 Int
-  front                 String
-  back                  String
-  article               String?
-  example               String
-  exampleMeaning        String
+  id             String              @id @default(uuid())
+  deckId         String
+  order          Int
+  front          String
+  back           String
+  article        String?
+  example        String
+  exampleMeaning String
   pronunciation         String?
   pronunciationAudioUrl String?
   difficulty            FlashcardDifficulty @default(MEDIUM)
-  publicationStatus     PublicationStatus   @default(PUBLISHED)
+  publicationStatus     PublicationStatus    @default(PUBLISHED)
   notes                 String?
   createdAt             DateTime            @default(now())
   updatedAt             DateTime            @updatedAt
 
-  deck                 FlashcardDeck                @relation(fields: [deckId], references: [id], onDelete: Cascade)
-  reviewStates         FlashcardReviewState[]
+  deck FlashcardDeck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  reviewStates FlashcardReviewState[]
   suggestedByQuestions QuestionSuggestedFlashcard[]
 
   @@unique([deckId, order])
@@ -437,17 +381,17 @@ model QuestionSuggestedFlashcard {
 }
 
 model FlashcardReviewState {
-  id               String    @id @default(uuid())
+  id               String   @id @default(uuid())
   learnerProfileId String
   flashcardId      String
-  intervalStep     Int       @default(0)
-  dueAt            DateTime  @default(now())
+  intervalStep     Int      @default(0)
+  dueAt            DateTime @default(now())
   lastReviewedAt   DateTime?
-  reviewCount      Int       @default(0)
-  knownCount       Int       @default(0)
-  unknownCount     Int       @default(0)
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  reviewCount      Int      @default(0)
+  knownCount       Int      @default(0)
+  unknownCount     Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   learnerProfile LearnerProfile @relation(fields: [learnerProfileId], references: [id], onDelete: Cascade)
   flashcard      Flashcard      @relation(fields: [flashcardId], references: [id], onDelete: Cascade)

@@ -65,6 +65,16 @@ const providers: NextAuthOptions["providers"] = [
         id: user.id
       });
 
+      await getPrisma().user.update({
+        where: {
+          id: user.id
+        },
+        data: {
+          lastLoginAt: new Date(),
+          lastLoginProvider: "credentials"
+        }
+      });
+
       return {
         email: user.email,
         emailVerifiedAt: user.emailVerifiedAt?.toISOString() ?? null,
@@ -129,6 +139,16 @@ export const authOptions: NextAuthOptions = {
         emailVerifiedAt: nyraUser.emailVerifiedAt,
         fullName: nyraUser.name,
         id: nyraUser.id
+      });
+
+      await getPrisma().user.update({
+        where: {
+          id: nyraUser.id
+        },
+        data: {
+          lastLoginAt: new Date(),
+          lastLoginProvider: account.provider
+        }
       });
 
       return true;

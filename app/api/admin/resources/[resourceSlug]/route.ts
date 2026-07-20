@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAdminApiAccess } from "@/lib/auth/admin-access";
 import { getPrisma } from "@/lib/db/prisma";
 import { parseResourceInput } from "@/lib/resources/resource-validation";
+import { recordAdminAudit } from "@/lib/admin/audit-log";
 
 export async function PATCH(
   request: Request,
@@ -100,6 +101,15 @@ export async function PATCH(
       unitId: input.unitId,
       skillId: input.skillId
     }
+  });
+
+  await recordAdminAudit(request, {
+    action: "resource.update",
+    entityType: "Resource",
+    entityId: resource.id,
+    summary: `Updated Resource ${resource.slug}`,
+    before: current,
+    after: resource
   });
 
   return NextResponse.json({

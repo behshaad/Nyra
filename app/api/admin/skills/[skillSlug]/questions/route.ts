@@ -6,6 +6,7 @@ import {
   PublicationStatus
 } from "@/lib/generated/prisma/enums";
 import { parseQuestionInput } from "@/lib/admin/question-validation";
+import { recordAdminAudit } from "@/lib/admin/audit-log";
 
 export async function POST(
   request: Request,
@@ -96,6 +97,14 @@ export async function POST(
     }
 
     return created;
+  });
+
+  await recordAdminAudit(request, {
+    action: "question.create",
+    entityType: "Question",
+    entityId: question.id,
+    summary: `Created Question in Skill ${skill.slug}`,
+    after: question
   });
 
   return NextResponse.json({

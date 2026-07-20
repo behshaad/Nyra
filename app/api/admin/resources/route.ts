@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAdminApiAccess } from "@/lib/auth/admin-access";
 import { getPrisma } from "@/lib/db/prisma";
 import { parseResourceInput } from "@/lib/resources/resource-validation";
+import { recordAdminAudit } from "@/lib/admin/audit-log";
 
 export async function POST(request: Request) {
   const denied = await requireAdminApiAccess(request);
@@ -74,6 +75,14 @@ export async function POST(request: Request) {
       unitId: input.unitId,
       skillId: input.skillId
     }
+  });
+
+  await recordAdminAudit(request, {
+    action: "resource.create",
+    entityType: "Resource",
+    entityId: resource.id,
+    summary: `Created Resource ${resource.slug}`,
+    after: resource
   });
 
   return NextResponse.json(

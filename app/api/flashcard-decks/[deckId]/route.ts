@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdminApiAccess } from "@/lib/auth/admin-access";
+import { recordAdminAudit } from "@/lib/admin/audit-log";
 import { getPrisma } from "@/lib/db/prisma";
 import { PublicationStatus } from "@/lib/generated/prisma/enums";
 import {
@@ -67,6 +68,15 @@ export async function PATCH(
       }
     });
 
+    await recordAdminAudit(request, {
+      action: "flashcard_deck.archive",
+      entityType: "FlashcardDeck",
+      entityId: updated.id,
+      summary: `Archived admin Flashcard Deck ${updated.slug}`,
+      before: deck,
+      after: updated
+    });
+
     return NextResponse.json({
       id: updated.id,
       publicationStatus: updated.publicationStatus
@@ -92,6 +102,17 @@ export async function PATCH(
     },
     data: parsedUpdate.input
   });
+
+  if (deck.ownerType === "ADMIN") {
+    await recordAdminAudit(request, {
+      action: "flashcard_deck.update",
+      entityType: "FlashcardDeck",
+      entityId: updated.id,
+      summary: `Updated admin Flashcard Deck ${updated.slug}`,
+      before: deck,
+      after: updated
+    });
+  }
 
   return NextResponse.json({
     id: updated.id,

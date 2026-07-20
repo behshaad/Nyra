@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdminApiAccess } from "@/lib/auth/admin-access";
+import { recordAdminAudit } from "@/lib/admin/audit-log";
 import { getPrisma } from "@/lib/db/prisma";
 import { FlashcardDeckOwnerType } from "@/lib/generated/prisma/enums";
 import { canCreateFlashcardInDeck } from "@/lib/flashcards/flashcard-access";
@@ -63,6 +64,16 @@ export async function POST(request: Request) {
   }
 
   const card = await createFlashcard(parsed.input);
+
+  if (deck.ownerType === FlashcardDeckOwnerType.ADMIN) {
+    await recordAdminAudit(request, {
+      action: "flashcard.create",
+      entityType: "Flashcard",
+      entityId: card.id,
+      summary: `Created Flashcard in admin deck ${deck.id}`,
+      after: card
+    });
+  }
 
   return NextResponse.json(
     {

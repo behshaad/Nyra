@@ -6,6 +6,7 @@ import {
   PublicationStatus
 } from "@/lib/generated/prisma/enums";
 import { parseQuestionInput } from "@/lib/admin/question-validation";
+import { recordAdminAudit } from "@/lib/admin/audit-log";
 
 export async function PATCH(
   request: Request,
@@ -92,6 +93,15 @@ export async function PATCH(
     }
 
     return updated;
+  });
+
+  await recordAdminAudit(request, {
+    action: "question.update",
+    entityType: "Question",
+    entityId: question.id,
+    summary: `Updated Question in Skill ${current.skill.slug}`,
+    before: current,
+    after: question
   });
 
   return NextResponse.json({

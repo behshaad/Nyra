@@ -77,6 +77,25 @@ npm run db:push
 npm run db:seed
 ```
 
+Production schema changes use committed Prisma migrations:
+
+```bash
+npm run db:migrate:status
+npm run db:migrate:deploy
+```
+
+Databases created before `prisma/migrations` was introduced must be checked
+against the baseline schema, then marked once before deployment:
+
+```bash
+npx prisma migrate diff --from-config-datasource --to-schema prisma/migrations/20260720000100_baseline/schema.prisma --exit-code
+npx prisma migrate resolve --applied 20260720000100_baseline
+npm run db:migrate:deploy
+```
+
+Do not mark the baseline as applied when the schema-diff command reports
+unexpected drift. Back up production data before the first migration deployment.
+
 For local development on macOS, the current setup uses PostgreSQL 16 through Homebrew:
 
 ```bash

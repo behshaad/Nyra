@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAdminApiAccess } from "@/lib/auth/admin-access";
 import { getPrisma } from "@/lib/db/prisma";
 import { parseSkillInput } from "@/lib/admin/skill-validation";
+import { recordAdminAudit } from "@/lib/admin/audit-log";
 
 export async function PATCH(
   request: Request,
@@ -41,6 +42,15 @@ export async function PATCH(
       id: current.id
     },
     data: parsed.input
+  });
+
+  await recordAdminAudit(request, {
+    action: "skill.update",
+    entityType: "Skill",
+    entityId: skill.id,
+    summary: `Updated Skill ${skill.slug}`,
+    before: current,
+    after: skill
   });
 
   return NextResponse.json({

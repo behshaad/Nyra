@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAdminApiAccess } from "@/lib/auth/admin-access";
 import { PublicationStatus } from "@/lib/generated/prisma/enums";
 import { getPrisma } from "@/lib/db/prisma";
+import { recordAdminAudit } from "@/lib/admin/audit-log";
 
 export async function PATCH(
   request: Request,
@@ -29,13 +30,22 @@ export async function PATCH(
     );
   }
 
-  await db.resource.update({
+  const resource = await db.resource.update({
     where: {
       id: current.id
     },
     data: {
       publicationStatus: PublicationStatus.ARCHIVED
     }
+  });
+
+  await recordAdminAudit(request, {
+    action: "resource.archive",
+    entityType: "Resource",
+    entityId: resource.id,
+    summary: `Archived Resource ${resource.slug}`,
+    before: current,
+    after: resource
   });
 
   return NextResponse.json({
