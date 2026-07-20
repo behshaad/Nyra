@@ -5,3 +5,5 @@ Nyra content will move through Draft, In Review, Published, and Archived states.
 ## Consequences
 
 Admin workflows must make review explicit before learner exposure. Learner-facing content queries should exclude Draft, In Review, and Archived content unless a later feature deliberately exposes previews or historical completions.
+
+A Skill cannot become or remain Published unless it contains at least one Published required Question. Publishing an invalid Skill is blocked, as is archiving, unpublishing, moving, or deleting a Question when that change would leave its Published Skill without a Published required Question. Nyra explains the dependency and requires the administrator to change the parent Skill explicitly; it never silently changes the Skill's Publication Status as a side effect.
