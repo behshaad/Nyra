@@ -275,3 +275,7 @@ _Avoid_: Parent Skill revision, partial Resource update
 **Course Structure Revision**:
 A Content Revision containing the membership and ordering of Levels, Units, and Skills within a Course. It is reviewed and published as one hierarchy without owning learning content or Journey Presentation.
 _Avoid_: Course publication status, Journey Presentation, Skill Revision
+
+**Course Release**:
+An atomic promotion of compatible reviewed Course Structure and Journey Presentation revisions when a structural change affects the learner-visible Practice Journey.
+_Avoid_: Course publication status, content release, independent structure publish
