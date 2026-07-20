@@ -215,3 +215,7 @@ _Avoid_: Deleted, hidden
 **Protected Deletion**:
 Permanent removal of Draft content that has no learner history or other protected references. Published or historically referenced content must be Archived so learner attempts, progress, and analytics history remain intact.
 _Avoid_: Cascade deletion, deleting published content
+
+**Content Readiness**:
+An administrator-facing assessment of whether learning content is complete enough for its publication state. Content Readiness is derived independently of Publication Status, so Published content can still need attention.
+_Avoid_: Publication Status, ready to publish
