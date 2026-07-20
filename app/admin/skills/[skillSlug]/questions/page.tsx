@@ -6,6 +6,7 @@ import { AppHeader } from "@/components/app-header";
 import { AdminQuestionMoveButton } from "@/components/admin-question-move-button";
 import { getQuestionsForSkill } from "@/lib/admin/question-repository";
 import { questionOptionsFrom } from "@/lib/question-engine/question-options";
+import { canEditDraftContent, draftRevisionRequiredMessage } from "@/lib/admin/content-editability";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +24,8 @@ export default async function SkillQuestionsPage({
     notFound();
   }
 
+  const canEditSkill = canEditDraftContent({ aggregateStatus: skill.publicationStatus });
+
   return (
     <main className="site-shell admin-ltr" dir="ltr">
       <AnimatedBackdrop />
@@ -38,14 +41,14 @@ export default async function SkillQuestionsPage({
           <h1>Edit Questions.</h1>
           <p>
             Update existing Questions for {skill.unit.level.label} / {skill.unit.title} /{" "}
-            {skill.title}. New Published required Questions appear in newly started learner
-            sessions.
+            {skill.title}. Draft Questions can be added and reordered here. Submitted,
+            Published, and Archived content remains read-only.
           </p>
           <div className="route-actions">
-            <Link className="primary-button" href={`/admin/skills/${skill.slug}/questions/new`}>
+            {canEditSkill ? <Link className="primary-button" href={`/admin/skills/${skill.slug}/questions/new`}>
               <Plus size={18} />
               New Question
-            </Link>
+            </Link> : <span className="admin-read-only-notice">{draftRevisionRequiredMessage}</span>}
           </div>
         </div>
 
@@ -61,6 +64,12 @@ export default async function SkillQuestionsPage({
           <div className="admin-preview">
             {skill.questions.map((question, index) => {
               const options = questionOptionsFrom(question.choices);
+              const canEditQuestion = canEditDraftContent({
+                aggregateStatus: skill.publicationStatus,
+                itemStatus: question.publicationStatus
+              });
+              const previousQuestion = skill.questions[index - 1];
+              const nextQuestion = skill.questions[index + 1];
 
               return (
                 <article className="admin-row question-row" key={question.id}>
@@ -89,12 +98,20 @@ export default async function SkillQuestionsPage({
                     <AdminQuestionMoveButton
                       questionId={question.id}
                       direction="up"
-                      disabled={index === 0}
+                      disabled={
+                        index === 0 ||
+                        !canEditQuestion ||
+                        previousQuestion?.publicationStatus !== "DRAFT"
+                      }
                     />
                     <AdminQuestionMoveButton
                       questionId={question.id}
                       direction="down"
-                      disabled={index === skill.questions.length - 1}
+                      disabled={
+                        index === skill.questions.length - 1 ||
+                        !canEditQuestion ||
+                        nextQuestion?.publicationStatus !== "DRAFT"
+                      }
                     />
                   </div>
                   <Link
@@ -102,7 +119,7 @@ export default async function SkillQuestionsPage({
                     href={`/admin/questions/${question.id}/edit`}
                   >
                     <Pencil size={16} />
-                    Edit
+                    {canEditQuestion ? "Edit" : "View"}
                   </Link>
                 </article>
               );

@@ -189,27 +189,31 @@ function JourneyProviders({ children }: { children: ReactNode }) {
 
 export function LearningJourney({
   initialJourney,
-  language
+  language,
+  mode = "learner"
 }: {
   initialJourney: PracticeJourneyView;
   language: InterfaceLanguageCode;
+  mode?: "learner" | "preview";
 }) {
   return (
     <JourneyProviders>
-      <PracticeWorld initialJourney={initialJourney} language={language} />
+      <PracticeWorld initialJourney={initialJourney} language={language} mode={mode} />
     </JourneyProviders>
   );
 }
 
 function PracticeWorld({
   initialJourney,
-  language
+  language,
+  mode
 }: {
   initialJourney: PracticeJourneyView;
   language: InterfaceLanguageCode;
+  mode: "learner" | "preview";
 }) {
   const { data: journey } = useQuery({
-    queryKey: ["practice-journey", language],
+    queryKey: ["practice-journey", language, mode],
     queryFn: async () => {
       const response = await fetch(`/api/practice-journey?ui=${language}`);
 
@@ -219,6 +223,7 @@ function PracticeWorld({
 
       return (await response.json()) as PracticeJourneyView;
     },
+    enabled: mode === "learner",
     initialData: initialJourney
   });
   const focusedLevelLabel = useJourneyStore((state) => state.focusedLevelLabel);
@@ -231,13 +236,14 @@ function PracticeWorld({
 
   return (
     <section className="practice-stage world-map-stage" aria-label="Practice world map">
-      <PracticeSidebar language={language} />
+      <PracticeSidebar language={language} preview={mode === "preview"} />
       <div className="practice-main">
         <div className="practice-content world-map-content">
           <WorldMap
             activeLevel={activeLevel}
             levels={levels}
             onFocusLevel={setFocusedLevelLabel}
+            preview={mode === "preview"}
           />
         </div>
       </div>
@@ -246,9 +252,11 @@ function PracticeWorld({
 }
 
 export function PracticeSidebar({
-  language
+  language,
+  preview = false
 }: {
   language: InterfaceLanguageCode;
+  preview?: boolean;
 }) {
   return (
     <aside className="practice-sidebar" aria-label="Practice navigation">
@@ -256,12 +264,17 @@ export function PracticeSidebar({
         <span className="practice-brand-mark">L</span>
         <strong>Lingoix</strong>
       </Link>
-      <nav className="practice-side-nav">
+      <nav className="practice-side-nav" aria-disabled={preview || undefined}>
         {navItems.map((item) => {
           const Icon = item.icon;
           const href = language === "fa" ? item.href : `${item.href}?ui=${language}`;
 
-          return (
+          return preview ? (
+            <span className={item.href === "/practice" ? "active" : ""} key={`${item.href}-${item.label}`}>
+              <Icon size={16} />
+              <span>{item.label}</span>
+            </span>
+          ) : (
             <Link
               className={item.href === "/practice" ? "active" : ""}
               href={href}
@@ -280,11 +293,13 @@ export function PracticeSidebar({
 function WorldMap({
   activeLevel,
   levels,
-  onFocusLevel
+  onFocusLevel,
+  preview
 }: {
   activeLevel?: WorldLevel;
   levels: WorldLevel[];
   onFocusLevel: (label: string) => void;
+  preview: boolean;
 }) {
   const router = useRouter();
   const [debugLayout, setDebugLayout] = useState<Record<WorldLevelLabel, WorldMapPoint>>(
@@ -362,7 +377,7 @@ function WorldMap({
   };
 
   const enterWorld = (level: WorldLevel) => {
-    if (!level.canEnter || DEBUG_WORLD_LAYOUT || enteringLevelLabel) {
+    if (!level.canEnter || DEBUG_WORLD_LAYOUT || enteringLevelLabel || preview) {
       return;
     }
 

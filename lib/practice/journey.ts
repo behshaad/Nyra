@@ -84,7 +84,14 @@ export type GetPracticeJourneyInput = {
   authUserId?: string;
   courseSlug?: string;
   interfaceLanguage?: InterfaceLanguageCode;
+  progressMode?: "learner" | "clean";
 };
+
+export function resolvePracticeProgressAuthUserId(input: GetPracticeJourneyInput) {
+  return input.progressMode === "clean"
+    ? undefined
+    : resolveLearnerAuthUserId(input.authUserId);
+}
 
 function metadataFrom(value: unknown): CompletionMetadata {
   return value && typeof value === "object" ? (value as CompletionMetadata) : {};
@@ -180,7 +187,7 @@ export async function getPracticeJourney(
       getLearningPathDisplayCopy(level.label, input.interfaceLanguage ?? "fa")
     ])
   );
-  const authUserId = resolveLearnerAuthUserId(input.authUserId);
+  const authUserId = resolvePracticeProgressAuthUserId(input);
   const learnerProfile = authUserId
     ? await db.learnerProfile.findUnique({
         where: {

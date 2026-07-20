@@ -9,6 +9,7 @@ import {
   getSuggestedFlashcardOptions
 } from "@/lib/admin/question-repository";
 import { questionOptionsFrom } from "@/lib/question-engine/question-options";
+import { canEditDraftContent, draftRevisionRequiredMessage } from "@/lib/admin/content-editability";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +31,10 @@ export default async function EditQuestionPage({
   }
 
   const options = questionOptionsFrom(question.choices);
+  const canEdit = canEditDraftContent({
+    aggregateStatus: question.skill.publicationStatus,
+    itemStatus: question.publicationStatus
+  });
 
   return (
     <main className="site-shell admin-ltr" dir="ltr">
@@ -43,14 +48,14 @@ export default async function EditQuestionPage({
             Back to Questions
           </Link>
           <span className="section-label">Dev Admin</span>
-          <h1>Edit Question.</h1>
+          <h1>{canEdit ? "Edit Question." : "View Question."}</h1>
           <p>
             Update prompt, choices, correct answer, and feedback for {question.skill.title}.
           </p>
         </div>
 
         <section className="app-panel route-panel">
-          <AdminQuestionForm
+          {canEdit ? <AdminQuestionForm
             questionId={question.id}
             skillSlug={question.skill.slug}
             initialValues={{
@@ -69,7 +74,18 @@ export default async function EditQuestionPage({
               )
             }}
             suggestedFlashcardOptions={suggestedFlashcardOptions}
-          />
+          /> : (
+            <div className="admin-read-only-content">
+              <div className="admin-read-only-notice" role="note">{draftRevisionRequiredMessage}</div>
+              <dl>
+                <div><dt>Status</dt><dd>{question.publicationStatus}</dd></div>
+                <div><dt>Type</dt><dd>{question.type.replaceAll("_", " ")}</dd></div>
+                <div><dt>Prompt</dt><dd>{question.prompt}</dd></div>
+                <div><dt>Correct answer</dt><dd>{question.correctAnswer}</dd></div>
+                <div><dt>Explanation</dt><dd>{question.explanation}</dd></div>
+              </dl>
+            </div>
+          )}
         </section>
       </section>
     </main>

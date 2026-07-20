@@ -3,6 +3,8 @@ import { requireAdminApiAccess } from "@/lib/auth/admin-access";
 import { getPrisma } from "@/lib/db/prisma";
 import { parseSkillInput } from "@/lib/admin/skill-validation";
 import { recordAdminAudit } from "@/lib/admin/audit-log";
+import { canEditDraftContent, draftRevisionRequiredMessage } from "@/lib/admin/content-editability";
+import { PublicationStatus } from "@/lib/generated/prisma/enums";
 
 export async function PATCH(
   request: Request,
@@ -35,6 +37,13 @@ export async function PATCH(
       { error: "Skill was not found." },
       { status: 404 }
     );
+  }
+
+  if (
+    !canEditDraftContent({ aggregateStatus: current.publicationStatus }) ||
+    parsed.input.publicationStatus !== PublicationStatus.DRAFT
+  ) {
+    return NextResponse.json({ error: draftRevisionRequiredMessage }, { status: 409 });
   }
 
   const skill = await db.skill.update({

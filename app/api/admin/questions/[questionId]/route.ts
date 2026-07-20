@@ -7,6 +7,7 @@ import {
 } from "@/lib/generated/prisma/enums";
 import { parseQuestionInput } from "@/lib/admin/question-validation";
 import { recordAdminAudit } from "@/lib/admin/audit-log";
+import { canEditDraftContent, draftRevisionRequiredMessage } from "@/lib/admin/content-editability";
 
 export async function PATCH(
   request: Request,
@@ -42,6 +43,16 @@ export async function PATCH(
       { error: "Question was not found." },
       { status: 404 }
     );
+  }
+
+  if (
+    !canEditDraftContent({
+      aggregateStatus: current.skill.publicationStatus,
+      itemStatus: current.publicationStatus
+    }) ||
+    parsed.input.publicationStatus !== PublicationStatus.DRAFT
+  ) {
+    return NextResponse.json({ error: draftRevisionRequiredMessage }, { status: 409 });
   }
 
   const { suggestedFlashcardIds, ...questionInput } = parsed.input;

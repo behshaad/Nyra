@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAdminApiAccess } from "@/lib/auth/admin-access";
 import { getPrisma } from "@/lib/db/prisma";
 import { recordAdminAudit } from "@/lib/admin/audit-log";
+import { canEditDraftContent, draftRevisionRequiredMessage } from "@/lib/admin/content-editability";
 
 type MoveDirection = "up" | "down";
 
@@ -40,7 +41,8 @@ export async function PATCH(
       include: {
         skill: {
           select: {
-            slug: true
+            slug: true,
+            publicationStatus: true
           }
         }
       }
@@ -48,6 +50,15 @@ export async function PATCH(
 
     if (!current) {
       return { status: 404 as const, error: "Question was not found." };
+    }
+
+    if (
+      !canEditDraftContent({
+        aggregateStatus: current.skill.publicationStatus,
+        itemStatus: current.publicationStatus
+      })
+    ) {
+      return { status: 409 as const, error: draftRevisionRequiredMessage };
     }
 
     const neighbor = await tx.question.findFirst({
@@ -73,6 +84,10 @@ export async function PATCH(
         skillSlug: current.skill.slug,
         moved: false
       };
+    }
+
+    if (neighbor.publicationStatus !== "DRAFT") {
+      return { status: 409 as const, error: draftRevisionRequiredMessage };
     }
 
     const temporaryOrder = -Math.abs(current.order || 1);

@@ -32,10 +32,7 @@ const questionTypes = [
 ];
 
 const publicationStatuses = [
-  { value: "DRAFT", label: "Draft" },
-  { value: "IN_REVIEW", label: "In Review" },
-  { value: "PUBLISHED", label: "Published" },
-  { value: "ARCHIVED", label: "Archived" }
+  { value: "DRAFT", label: "Draft" }
 ];
 
 export function AdminQuestionForm({
