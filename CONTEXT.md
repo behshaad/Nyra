@@ -124,6 +124,10 @@ _Avoid_: Study list, random deck
 The ordered learner-facing route through a Level's Units and Skills. A Learning Path can show upcoming Skills before all of them are fully authored, as long as publication state makes learner availability clear.
 _Avoid_: Course outline, syllabus
 
+**Practice Journey**:
+The complete learner-facing progression experience for a Course, composed of its Level Worlds and their Learning Paths.
+_Avoid_: Learning Path, Level World, curriculum hierarchy
+
 **Compact Learning Path**:
 A learner-facing Learning Path view that shows the Level structure without listing every Skill at once. The learner should see a selected Unit, its Skills, and the recommended next action without excessive scrolling.
 _Avoid_: Full syllabus list, long path page
