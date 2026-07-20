@@ -136,6 +136,10 @@ _Avoid_: Next lesson
 The learner-owned product identity that describes a person's learning goal, languages, current level, daily goal, preferences, and onboarding state. A Learner Profile can be provisioned when an authenticated person first enters Nyra, but it remains distinct from the Account.
 _Avoid_: Account, user metadata
 
+**Active Learner**:
+A Learner Profile that performs at least one meaningful learning action during a measured period, such as starting a Skill, submitting a Question answer, completing a Skill, or reviewing a Flashcard. Signing in or viewing a page without a learning action does not make a learner active.
+_Avoid_: Active User, logged-in user, page visitor
+
 **Demo Learner Profile**:
 A seeded Learner Profile used only for local development, testing, sample data, or demonstration. A Demo Learner Profile is not a real authenticated learner and must remain isolated from real learner progress, preferences, and achievements.
 _Avoid_: Test user, default account
