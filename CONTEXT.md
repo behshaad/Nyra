@@ -237,8 +237,12 @@ Permanent removal of Draft content that has no learner history or other protecte
 _Avoid_: Cascade deletion, deleting published content
 
 **Content Readiness**:
-An administrator-facing assessment of whether learning content is complete enough for its publication state. Content Readiness is derived independently of Publication Status, so Published content can still need attention.
+An administrator-facing assessment of whether learning content is complete enough for its publication state and applicable authored-content target. Content Readiness is derived independently of Publication Status, so Published or Runnable content can still need attention.
 _Avoid_: Publication Status, ready to publish
+
+**Runnable Skill**:
+A Published Skill with enough Published required Questions to start and complete a Learning Session. Runnable does not mean the Skill meets its Content Readiness target.
+_Avoid_: Content-ready Skill, playable Skill
 
 **Content Revision**:
 An authored version of a stable learning-content identity. Revisions allow content to change without breaking learner history, ordering, or analytics tied to that identity.
