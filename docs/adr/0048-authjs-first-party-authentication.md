@@ -12,6 +12,8 @@ Google Sign-In remains in scope through an Auth.js OAuth provider rather than Su
 
 For the MVP, Nyra has only two effective session roles: User and Admin. AdminAccess is the source of truth for Admin; the session role is a derived convenience and should not become a separate persistent role model.
 
+User administration may store a single last-successful-login timestamp, provider, and optional hashed IP signal for operational display. This snapshot is not login history and does not introduce session management, trusted devices, or a browsable authentication-event timeline.
+
 For the MVP, Nyra has one Account per verified email address. A Google OAuth identity with a verified email should link to the existing Nyra `User` for that email instead of creating a duplicate account, and an email/password credential added later for the same verified email should point to the same `User`.
 
 Email/password registration should not block learning while the email is unverified. Unverified learners may sign in, complete lessons, earn XP, use flashcards, and use resources; Email Verification is required for sensitive account operations such as password recovery, email changes, future billing/subscription features, and any admin-adjacent operation. Admin authorization still comes only from active AdminAccess, never from Email Verification alone.
