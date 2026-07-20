@@ -20,6 +20,8 @@ Published content is not edited in place. Editing creates or resumes a Draft Rev
 
 Each revisioned aggregate has at most one open successor to its current Published Revision. That successor is either Draft or In Review, never multiple competing branches; editing resumes it, publishing promotes it, and discarding removes only an open Draft. A branching editorial workflow can be introduced only through a later explicit decision.
 
+Mutable Drafts use optimistic concurrency. Every save, reorder, review transition, discard, and publication validates the revision version loaded by the administrator and rejects stale writes with an explicit conflict instead of silently applying last-write-wins; the MVP may require reload and manual reapplication rather than providing automatic content merges.
+
 A Skill and its complete ordered Question set form one publication aggregate. Skill metadata, Question content, Question membership, and Question ordering are prepared in the Skill's Draft Revision and promoted atomically after review; a Question cannot independently alter a Published Skill. Skill and Question identities remain stable across revisions, and learner attempts identify the exact Question Revision presented.
 
 An admin-authored Flashcard Deck and its complete ordered Flashcard set form one publication aggregate. Deck metadata, Flashcard content, membership, and ordering are promoted atomically, and a Deck requires at least one learner-ready Flashcard to be runnable. Active Review Queues pin exact Deck and Flashcard Revisions, while new Suggested Flashcard recommendations resolve stable Flashcard identities to their current Published Revisions. Learner-created Decks and Flashcards do not enter the admin publication workflow.
