@@ -9,3 +9,5 @@ Practice Journey presentation changes remain Draft until an Admin publishes the 
 Administrator previews use isolated simulated learner progress rather than the administrator's Learner Profile. Previewing must neither depend on nor mutate the operator's personal learning history.
 
 Learner Preview and Draft Journey Preview live behind the server-verified Admin Access boundary and reuse the production learner renderer with authorized preview inputs. Public Practice routes and query parameters cannot activate preview behavior or expose Draft content.
+
+Learner Preview defaults to the Persian Interface Language and lets administrators switch temporarily among all supported Interface Languages inside the preview. Preview language selection does not change administrator or learner preferences, the Course, or simulated progression.
