@@ -251,3 +251,7 @@ _Avoid_: Editing Published content, replacement item
 **Published Revision**:
 The approved Content Revision currently used by the learner experience. A content identity has at most one Published Revision at a time.
 _Avoid_: Published item, live draft
+
+**Skill Revision**:
+A Content Revision containing a Skill's authored metadata and complete ordered set of Question Revisions. A Skill Revision is reviewed and published as one unit.
+_Avoid_: Independent Question release, partial Skill update
