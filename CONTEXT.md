@@ -267,3 +267,7 @@ _Avoid_: Independent admin Flashcard release, partial Deck update
 **Resource Revision**:
 A Content Revision containing a Resource's authored content, metadata, destinations, and media references. A Resource Revision is reviewed and published independently of the Unit or Skill it supports.
 _Avoid_: Parent Skill revision, partial Resource update
+
+**Course Structure Revision**:
+A Content Revision containing the membership and ordering of Levels, Units, and Skills within a Course. It is reviewed and published as one hierarchy without owning learning content or Journey Presentation.
+_Avoid_: Course publication status, Journey Presentation, Skill Revision
