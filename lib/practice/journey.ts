@@ -1,6 +1,6 @@
 import { PublicationStatus, ProgressEventType, SkillKind } from "@/lib/generated/prisma/enums";
 import { getPrisma } from "@/lib/db/prisma";
-import { devAuthUserId } from "@/lib/learner/preferences";
+import { resolveLearnerAuthUserId } from "@/lib/auth/learner-access";
 import { withInterfaceLanguage, type InterfaceLanguageCode } from "@/lib/i18n/interface-language";
 import { getLearningPathDisplayCopy } from "@/lib/learning/sample-content";
 
@@ -180,14 +180,17 @@ export async function getPracticeJourney(
       getLearningPathDisplayCopy(level.label, input.interfaceLanguage ?? "fa")
     ])
   );
-  const learnerProfile = await db.learnerProfile.findUnique({
-    where: {
-      authUserId: input.authUserId ?? devAuthUserId
-    },
-    select: {
-      id: true
-    }
-  });
+  const authUserId = resolveLearnerAuthUserId(input.authUserId);
+  const learnerProfile = authUserId
+    ? await db.learnerProfile.findUnique({
+        where: {
+          authUserId
+        },
+        select: {
+          id: true
+        }
+      })
+    : null;
   const completionBySkillSlug = new Map<
     string,
     { scorePercent: number | null; passed: boolean | null }

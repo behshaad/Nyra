@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requireAdminApiAccess } from "@/lib/auth/admin-access";
 import { getPrisma } from "@/lib/db/prisma";
 import {
   FlashcardDeckOwnerType,
@@ -12,10 +13,6 @@ import {
 import { getDevLearnerProfileId } from "@/lib/flashcards/flashcard-repository";
 import { parseFlashcardUpdateInput } from "@/lib/flashcards/flashcard-validation";
 
-function clean(value: unknown) {
-  return typeof value === "string" ? value.trim() : "";
-}
-
 export async function PATCH(
   request: Request,
   context: {
@@ -26,15 +23,10 @@ export async function PATCH(
 ) {
   const { flashcardId } = await context.params;
   const body = (await request.json()) as Record<string, unknown>;
-  const publicationStatus = clean(body.publicationStatus);
-  const actorOwnerType = clean(body.actorOwnerType) || FlashcardDeckOwnerType.LEARNER;
-
-  if (!Object.values(FlashcardDeckOwnerType).includes(actorOwnerType as FlashcardDeckOwnerType)) {
-    return NextResponse.json(
-      { error: "Flashcard actor owner type is invalid." },
-      { status: 400 }
-    );
-  }
+  const publicationStatus =
+    typeof body.publicationStatus === "string"
+      ? body.publicationStatus.trim()
+      : "";
 
   const db = getPrisma();
   const learnerProfileId = await getDevLearnerProfileId();
@@ -58,6 +50,11 @@ export async function PATCH(
       { error: "Flashcard was not found." },
       { status: 404 }
     );
+  }
+
+  if (flashcard.deck.ownerType === FlashcardDeckOwnerType.ADMIN) {
+    const denied = await requireAdminApiAccess(request);
+    if (denied) return denied;
   }
 
   if (publicationStatus === PublicationStatus.ARCHIVED) {
@@ -84,7 +81,7 @@ export async function PATCH(
   }
 
   const parsed = parseFlashcardUpdateInput(body, {
-    requireRichContent: actorOwnerType === FlashcardDeckOwnerType.ADMIN
+    requireRichContent: flashcard.deck.ownerType === FlashcardDeckOwnerType.ADMIN
   });
 
   if (!parsed.ok) {
@@ -92,7 +89,7 @@ export async function PATCH(
   }
 
   const canEdit = canCreateFlashcardInDeck({
-    actorOwnerType: actorOwnerType as FlashcardDeckOwnerType,
+    actorIsAdmin: flashcard.deck.ownerType === FlashcardDeckOwnerType.ADMIN,
     learnerProfileId,
     deck: flashcard.deck
   });
@@ -128,7 +125,7 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  _request: Request,
+  request: Request,
   context: {
     params: Promise<{
       flashcardId: string;
@@ -157,6 +154,11 @@ export async function DELETE(
       { error: "Flashcard was not found." },
       { status: 404 }
     );
+  }
+
+  if (flashcard.deck.ownerType === FlashcardDeckOwnerType.ADMIN) {
+    const denied = await requireAdminApiAccess(request);
+    if (denied) return denied;
   }
 
   if (!canDeleteLearnerFlashcardDeck({ learnerProfileId, deck: flashcard.deck })) {

@@ -187,12 +187,14 @@ export class QuestionEngine {
 
   async submitAnswer(input: {
     sessionId: string;
+    learnerProfileId: string;
     submittedAnswer: string;
   }): Promise<AnswerFeedbackView> {
     return this.db.$transaction(async (tx) => {
-      const session = await tx.learningSession.findUniqueOrThrow({
+      const session = await tx.learningSession.findFirstOrThrow({
         where: {
-          id: input.sessionId
+          id: input.sessionId,
+          learnerProfileId: input.learnerProfileId
         },
         include: {
           attempts: true,
@@ -200,7 +202,8 @@ export class QuestionEngine {
             include: {
               questions: {
                 where: {
-                  required: true
+                  required: true,
+                  publicationStatus: PublicationStatus.PUBLISHED
                 },
                 orderBy: {
                   order: "asc"

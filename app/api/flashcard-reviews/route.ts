@@ -3,12 +3,22 @@ import {
   FlashcardReviewResult,
   reviewFlashcard
 } from "@/lib/flashcards/flashcard-review-repository";
+import { getDevLearnerProfileId } from "@/lib/flashcards/flashcard-repository";
 
 function clean(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
 }
 
 export async function POST(request: Request) {
+  const learnerProfileId = await getDevLearnerProfileId();
+
+  if (!learnerProfileId) {
+    return NextResponse.json(
+      { error: "Authentication is required." },
+      { status: 401 }
+    );
+  }
+
   const body = (await request.json()) as Record<string, unknown>;
   const flashcardId = clean(body.flashcardId);
   const result = clean(body.result);

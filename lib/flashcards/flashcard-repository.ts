@@ -3,8 +3,8 @@ import {
   PublicationStatus
 } from "@/lib/generated/prisma/enums";
 import { getAuthSession } from "@/lib/auth/server";
+import { resolveLearnerAuthUserId } from "@/lib/auth/learner-access";
 import { getPrisma } from "@/lib/db/prisma";
-import { devAuthUserId } from "@/lib/learner/preferences";
 import type {
   FlashcardDeckInput,
   FlashcardInput
@@ -18,9 +18,15 @@ type FlashcardReviewStateSummary = {
 export async function getDevLearnerProfileId() {
   const db = getPrisma();
   const session = await getAuthSession();
+  const authUserId = resolveLearnerAuthUserId(session?.id);
+
+  if (!authUserId) {
+    return null;
+  }
+
   const learnerProfile = await db.learnerProfile.findUnique({
     where: {
-      authUserId: session?.id ?? devAuthUserId
+      authUserId
     },
     select: {
       id: true
@@ -148,12 +154,19 @@ export async function getFlashcardUnitOptions() {
   });
 }
 
-export async function createFlashcardDeck(input: FlashcardDeckInput) {
+export async function createFlashcardDeck(
+  input: FlashcardDeckInput,
+  learnerProfileId?: string | null
+) {
   const db = getPrisma();
-  const learnerProfileId =
+  const ownerLearnerProfileId =
     input.ownerType === FlashcardDeckOwnerType.LEARNER
-      ? await getDevLearnerProfileId()
+      ? learnerProfileId ?? await getDevLearnerProfileId()
       : null;
+
+  if (input.ownerType === FlashcardDeckOwnerType.LEARNER && !ownerLearnerProfileId) {
+    throw new Error("Authentication is required to create a personal Flashcard Deck.");
+  }
 
   return db.flashcardDeck.create({
     data: {
@@ -166,7 +179,7 @@ export async function createFlashcardDeck(input: FlashcardDeckInput) {
       colorKey: input.colorKey,
       ownerType: input.ownerType,
       publicationStatus: input.publicationStatus,
-      learnerProfileId,
+      learnerProfileId: ownerLearnerProfileId,
       unitId: input.unitId
     }
   });

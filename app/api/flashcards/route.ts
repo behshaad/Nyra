@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requireAdminApiAccess } from "@/lib/auth/admin-access";
 import { getPrisma } from "@/lib/db/prisma";
 import { FlashcardDeckOwnerType } from "@/lib/generated/prisma/enums";
 import { canCreateFlashcardInDeck } from "@/lib/flashcards/flashcard-access";
@@ -8,33 +9,14 @@ import {
 } from "@/lib/flashcards/flashcard-repository";
 import { parseFlashcardInput } from "@/lib/flashcards/flashcard-validation";
 
-function clean(value: unknown) {
-  return typeof value === "string" ? value.trim() : "";
-}
-
 export async function POST(request: Request) {
   const body = (await request.json()) as Record<string, unknown>;
-  const actorOwnerType = clean(body.actorOwnerType) || FlashcardDeckOwnerType.LEARNER;
-  const parsed = parseFlashcardInput(body, {
-    requireRichContent: actorOwnerType === FlashcardDeckOwnerType.ADMIN
-  });
-
-  if (!parsed.ok) {
-    return NextResponse.json({ error: parsed.error }, { status: 400 });
-  }
-
   const db = getPrisma();
-
-  if (!Object.values(FlashcardDeckOwnerType).includes(actorOwnerType as FlashcardDeckOwnerType)) {
-    return NextResponse.json(
-      { error: "Flashcard actor owner type is invalid." },
-      { status: 400 }
-    );
-  }
+  const deckId = typeof body.deckId === "string" ? body.deckId.trim() : "";
 
   const deck = await db.flashcardDeck.findUnique({
     where: {
-      id: parsed.input.deckId
+      id: deckId
     },
     select: {
       id: true,
@@ -50,9 +32,25 @@ export async function POST(request: Request) {
     );
   }
 
-  const learnerProfileId = await getDevLearnerProfileId();
+  let learnerProfileId: string | null = null;
+
+  if (deck.ownerType === FlashcardDeckOwnerType.ADMIN) {
+    const denied = await requireAdminApiAccess(request);
+    if (denied) return denied;
+  } else {
+    learnerProfileId = await getDevLearnerProfileId();
+  }
+
+  const parsed = parseFlashcardInput(body, {
+    requireRichContent: deck.ownerType === FlashcardDeckOwnerType.ADMIN
+  });
+
+  if (!parsed.ok) {
+    return NextResponse.json({ error: parsed.error }, { status: 400 });
+  }
+
   const canCreate = canCreateFlashcardInDeck({
-    actorOwnerType: actorOwnerType as FlashcardDeckOwnerType,
+    actorIsAdmin: deck.ownerType === FlashcardDeckOwnerType.ADMIN,
     learnerProfileId,
     deck
   });

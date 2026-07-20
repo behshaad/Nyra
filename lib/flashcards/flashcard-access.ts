@@ -6,16 +6,16 @@ export type FlashcardDeckAccessRecord = {
 };
 
 export function canCreateFlashcardInDeck(input: {
-  actorOwnerType: FlashcardDeckOwnerType;
+  actorIsAdmin: boolean;
   learnerProfileId: string | null;
   deck: FlashcardDeckAccessRecord;
 }) {
-  if (input.actorOwnerType === FlashcardDeckOwnerType.ADMIN) {
-    return input.deck.ownerType === FlashcardDeckOwnerType.ADMIN;
+  if (input.deck.ownerType === FlashcardDeckOwnerType.ADMIN) {
+    return input.actorIsAdmin;
   }
 
   return (
-    input.deck.ownerType === FlashcardDeckOwnerType.LEARNER &&
+    !input.actorIsAdmin &&
     Boolean(input.learnerProfileId) &&
     input.deck.learnerProfileId === input.learnerProfileId
   );

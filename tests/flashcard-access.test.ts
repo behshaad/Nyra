@@ -10,7 +10,7 @@ describe("flashcard deck access", () => {
   it("allows admins to create cards in admin decks", () => {
     expect(
       canCreateFlashcardInDeck({
-        actorOwnerType: FlashcardDeckOwnerType.ADMIN,
+        actorIsAdmin: true,
         learnerProfileId: null,
         deck: {
           ownerType: FlashcardDeckOwnerType.ADMIN,
@@ -23,7 +23,7 @@ describe("flashcard deck access", () => {
   it("prevents learners from creating cards in admin decks", () => {
     expect(
       canCreateFlashcardInDeck({
-        actorOwnerType: FlashcardDeckOwnerType.LEARNER,
+        actorIsAdmin: false,
         learnerProfileId: "learner-1",
         deck: {
           ownerType: FlashcardDeckOwnerType.ADMIN,
@@ -36,7 +36,7 @@ describe("flashcard deck access", () => {
   it("allows learners to create cards only in their own learner decks", () => {
     expect(
       canCreateFlashcardInDeck({
-        actorOwnerType: FlashcardDeckOwnerType.LEARNER,
+        actorIsAdmin: false,
         learnerProfileId: "learner-1",
         deck: {
           ownerType: FlashcardDeckOwnerType.LEARNER,
@@ -46,11 +46,24 @@ describe("flashcard deck access", () => {
     ).toBe(true);
     expect(
       canCreateFlashcardInDeck({
-        actorOwnerType: FlashcardDeckOwnerType.LEARNER,
+        actorIsAdmin: false,
         learnerProfileId: "learner-1",
         deck: {
           ownerType: FlashcardDeckOwnerType.LEARNER,
           learnerProfileId: "learner-2"
+        }
+      })
+    ).toBe(false);
+  });
+
+  it("never grants admin-deck access from learner ownership context", () => {
+    expect(
+      canCreateFlashcardInDeck({
+        actorIsAdmin: false,
+        learnerProfileId: "learner-1",
+        deck: {
+          ownerType: FlashcardDeckOwnerType.ADMIN,
+          learnerProfileId: null
         }
       })
     ).toBe(false);

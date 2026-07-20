@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAuthSession } from "@/lib/auth/server";
+import { resolveLearnerAuthUserId } from "@/lib/auth/learner-access";
 import { getPrisma } from "@/lib/db/prisma";
-import { devAuthUserId } from "@/lib/learner/preferences";
 import { QuestionEngine } from "@/lib/question-engine";
 
 export async function POST(request: Request) {
@@ -18,9 +18,18 @@ export async function POST(request: Request) {
 
   const db = getPrisma();
   const authSession = await getAuthSession();
+  const authUserId = resolveLearnerAuthUserId(authSession?.id);
+
+  if (!authUserId) {
+    return NextResponse.json(
+      { error: "Authentication is required." },
+      { status: 401 }
+    );
+  }
+
   const learnerProfile = await db.learnerProfile.findUnique({
     where: {
-      authUserId: authSession?.id ?? devAuthUserId
+      authUserId
     },
     select: {
       id: true
@@ -29,8 +38,8 @@ export async function POST(request: Request) {
 
   if (!learnerProfile) {
     return NextResponse.json(
-      { error: "Development learner is missing. Run npm run db:seed." },
-      { status: 500 }
+      { error: "Learner Profile was not found." },
+      { status: 404 }
     );
   }
 

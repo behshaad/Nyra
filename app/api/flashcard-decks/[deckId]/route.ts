@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requireAdminApiAccess } from "@/lib/auth/admin-access";
 import { getPrisma } from "@/lib/db/prisma";
 import { PublicationStatus } from "@/lib/generated/prisma/enums";
 import {
@@ -42,6 +43,11 @@ export async function PATCH(
       { error: "Flashcard deck was not found." },
       { status: 404 }
     );
+  }
+
+  if (deck.ownerType === "ADMIN") {
+    const denied = await requireAdminApiAccess(request);
+    if (denied) return denied;
   }
 
   if (publicationStatus === PublicationStatus.ARCHIVED) {
@@ -103,7 +109,7 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  _request: Request,
+  request: Request,
   context: {
     params: Promise<{
       deckId: string;
@@ -129,6 +135,11 @@ export async function DELETE(
       { error: "Flashcard deck was not found." },
       { status: 404 }
     );
+  }
+
+  if (deck.ownerType === "ADMIN") {
+    const denied = await requireAdminApiAccess(request);
+    if (denied) return denied;
   }
 
   if (!canDeleteLearnerFlashcardDeck({ learnerProfileId, deck })) {

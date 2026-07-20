@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
+import { requireAdminApiAccess } from "@/lib/auth/admin-access";
 import { getPrisma } from "@/lib/db/prisma";
 import { FlashcardDeckOwnerType } from "@/lib/generated/prisma/enums";
-import { createFlashcardDeck } from "@/lib/flashcards/flashcard-repository";
+import {
+  createFlashcardDeck,
+  getDevLearnerProfileId
+} from "@/lib/flashcards/flashcard-repository";
 import { parseFlashcardDeckInput } from "@/lib/flashcards/flashcard-validation";
 
 function clean(value: unknown) {
@@ -17,6 +21,22 @@ export async function POST(request: Request) {
 
   if (!parsed.ok) {
     return NextResponse.json({ error: parsed.error }, { status: 400 });
+  }
+
+  let learnerProfileId: string | null = null;
+
+  if (parsed.input.ownerType === FlashcardDeckOwnerType.ADMIN) {
+    const denied = await requireAdminApiAccess(request);
+    if (denied) return denied;
+  } else {
+    learnerProfileId = await getDevLearnerProfileId();
+
+    if (!learnerProfileId) {
+      return NextResponse.json(
+        { error: "Authentication is required." },
+        { status: 401 }
+      );
+    }
   }
 
   const db = getPrisma();
@@ -48,7 +68,7 @@ export async function POST(request: Request) {
     }
   }
 
-  const deck = await createFlashcardDeck(parsed.input);
+  const deck = await createFlashcardDeck(parsed.input, learnerProfileId);
 
   return NextResponse.json(
     {
