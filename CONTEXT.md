@@ -20,6 +20,14 @@ _Avoid_: Stage
 A learner-facing control for choosing which Level's Learning Path to view or continue, such as A1 or A2.
 _Avoid_: Language toggle, course switcher
 
+**Current Level**:
+The earliest learner-available Level that the learner has not completed. Current Level is derived from progress and is distinct from the Level the learner has selected to view.
+_Avoid_: Selected Level, currentLevel preference
+
+**Selected Level**:
+The learner-available Level a learner has chosen to view or most recently visited. Selecting a Level does not change progression or make it the Current Level.
+_Avoid_: Current Level, active proficiency
+
 **Level World**:
 A learner-facing adventure map owned by a Level, where the learner sees that Level's Units as nodes on a themed path.
 _Avoid_: Lesson world, module map
