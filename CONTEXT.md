@@ -160,6 +160,10 @@ _Avoid_: Login approval, admin approval
 The single durable permission that lets a trusted operator manage Nyra content and review operational surfaces. Admin Access remains distinct from a Learner Profile; session roles such as Admin or User are derived views, not a separate authorization model.
 _Avoid_: Admin preview, shared admin password, role system
 
+**Admin Notification**:
+An actionable operational event shown to administrators, such as content awaiting review, a failed media operation, a high-severity application error, a security action, or a content-integrity warning. Admin Notifications are distinct from learner messages and must represent real system state.
+_Avoid_: Learner notification, placeholder alert, marketing message
+
 **Source Language**:
 The language a learner uses as their base for explanations, translations, and learning support.
 _Avoid_: Native language
