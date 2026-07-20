@@ -233,7 +233,7 @@ Content that has been removed from normal learner access without deleting its hi
 _Avoid_: Deleted, hidden
 
 **Protected Deletion**:
-Permanent removal of Draft content that has no learner history or other protected references. Published or historically referenced content must be Archived so learner attempts, progress, and analytics history remain intact.
+Permanent removal of a never-published content identity that has no learner history or protected references. A Draft Revision of an existing identity can be discarded without deleting that identity, while previously Published or historically referenced content must be Archived.
 _Avoid_: Cascade deletion, deleting published content
 
 **Content Readiness**:

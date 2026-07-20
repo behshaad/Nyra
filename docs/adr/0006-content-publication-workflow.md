@@ -14,6 +14,8 @@ Draft is the only editable lifecycle state. In Review is a frozen review snapsho
 
 Archived content cannot return directly to Published and is not duplicated to restore it. Revising for republication creates a Draft Revision on the same stable content identity, which must pass through In Review before publication; historical Learning Sessions, Question Attempts, and analytics remain attached to their original revisions.
 
+A Draft Revision can be discarded without deleting its stable content identity or current Published Revision. Permanent Protected Deletion is limited to a never-published identity with no learner history or protected references; In Review content must return to Draft first. Any identity that has ever been Published and all revisions used by learner history remain immutable and can only be Archived through ordinary administration. Exceptional legal or privacy erasure is a separate operational process.
+
 Published content is not edited in place. Editing creates or resumes a Draft Revision attached to the same stable content identity, while learners continue receiving the current Published Revision. Publishing promotes the reviewed revision atomically, preserving the identity used by learner history, ordering, relationships, and analytics; administrators do not archive and duplicate content merely to revise it.
 
 A Skill and its complete ordered Question set form one publication aggregate. Skill metadata, Question content, Question membership, and Question ordering are prepared in the Skill's Draft Revision and promoted atomically after review; a Question cannot independently alter a Published Skill. Skill and Question identities remain stable across revisions, and learner attempts identify the exact Question Revision presented.
