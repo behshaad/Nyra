@@ -12,6 +12,8 @@ In Review is a mandatory gate between Draft and Published. The same administrato
 
 Draft is the only editable lifecycle state. In Review is a frozen review snapshot; changing it requires an explicit, audited Return to Draft action that invalidates the pending review. Published and Archived content are also immutable, with Published changes prepared through Draft Revisions rather than direct mutation.
 
+Archived content cannot return directly to Published and is not duplicated to restore it. Revising for republication creates a Draft Revision on the same stable content identity, which must pass through In Review before publication; historical Learning Sessions, Question Attempts, and analytics remain attached to their original revisions.
+
 Published content is not edited in place. Editing creates or resumes a Draft Revision attached to the same stable content identity, while learners continue receiving the current Published Revision. Publishing promotes the reviewed revision atomically, preserving the identity used by learner history, ordering, relationships, and analytics; administrators do not archive and duplicate content merely to revise it.
 
 A Skill and its complete ordered Question set form one publication aggregate. Skill metadata, Question content, Question membership, and Question ordering are prepared in the Skill's Draft Revision and promoted atomically after review; a Question cannot independently alter a Published Skill. Skill and Question identities remain stable across revisions, and learner attempts identify the exact Question Revision presented.
