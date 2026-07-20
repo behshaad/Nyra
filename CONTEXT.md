@@ -125,7 +125,7 @@ A Flashcard the learner has reviewed before and should review again now accordin
 _Avoid_: New card, overdue-only card
 
 **Review Queue**:
-The set of New Flashcards and Due Flashcards selected for an intentional Flashcard review session.
+The ordered set of exact Flashcard Revisions selected for an intentional review session from a learner's New Flashcards and Due Flashcards.
 _Avoid_: Study list, random deck
 
 **Learning Path**:
@@ -259,3 +259,7 @@ _Avoid_: Published item, live draft
 **Skill Revision**:
 A Content Revision containing a Skill's authored metadata and complete ordered set of Question Revisions. A Skill Revision is reviewed and published as one unit.
 _Avoid_: Independent Question release, partial Skill update
+
+**Flashcard Deck Revision**:
+A Content Revision containing an admin-authored Flashcard Deck's metadata and complete ordered set of Flashcard Revisions. A Flashcard Deck Revision is reviewed and published as one unit.
+_Avoid_: Independent admin Flashcard release, partial Deck update
