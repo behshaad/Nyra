@@ -5,3 +5,5 @@ Nyra will move Practice Journey presentation from code-owned constants into data
 Course, Level, and Unit remain structural containers without independent publication states. Their learner availability is derived from learner-available descendant content; administrators can still see empty or Draft-only containers so they can complete the hierarchy before it appears to learners.
 
 Practice Journey presentation changes remain Draft until an Admin publishes the complete validated configuration atomically. Draft preview and discard operate independently of content publication, so publishing a Journey never publishes Draft Skills or Questions and incomplete visual edits never leak into the learner experience.
+
+Administrator previews use isolated simulated learner progress rather than the administrator's Learner Profile. Previewing must neither depend on nor mutate the operator's personal learning history.
