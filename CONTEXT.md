@@ -128,6 +128,10 @@ _Avoid_: Course outline, syllabus
 The complete learner-facing progression experience for a Course, composed of its Level Worlds and their Learning Paths.
 _Avoid_: Learning Path, Level World, curriculum hierarchy
 
+**Learner Availability**:
+The derived determination that content can appear in the learner experience. A structural container is available only through learner-available content within it, rather than through its own publication state.
+_Avoid_: Publication Status, Content Readiness, visibility flag
+
 **Compact Learning Path**:
 A learner-facing Learning Path view that shows the Level structure without listing every Skill at once. The learner should see a selected Unit, its Skills, and the recommended next action without excessive scrolling.
 _Avoid_: Full syllabus list, long path page
