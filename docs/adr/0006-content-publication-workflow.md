@@ -10,6 +10,8 @@ Every newly created admin-authored Skill, Question, Resource, Flashcard Deck, an
 
 In Review is a mandatory gate between Draft and Published. The same administrator may submit content for review and publish it during the MVP, but submission and publication remain distinct confirmed actions with separate audit records; Nyra does not introduce reviewer roles or second-person approval requirements.
 
+Draft is the only editable lifecycle state. In Review is a frozen review snapshot; changing it requires an explicit, audited Return to Draft action that invalidates the pending review. Published and Archived content are also immutable, with Published changes prepared through Draft Revisions rather than direct mutation.
+
 Published content is not edited in place. Editing creates or resumes a Draft Revision attached to the same stable content identity, while learners continue receiving the current Published Revision. Publishing promotes the reviewed revision atomically, preserving the identity used by learner history, ordering, relationships, and analytics; administrators do not archive and duplicate content merely to revise it.
 
 A Skill and its complete ordered Question set form one publication aggregate. Skill metadata, Question content, Question membership, and Question ordering are prepared in the Skill's Draft Revision and promoted atomically after review; a Question cannot independently alter a Published Skill. Skill and Question identities remain stable across revisions, and learner attempts identify the exact Question Revision presented.
