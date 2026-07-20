@@ -136,6 +136,10 @@ _Avoid_: Course outline, syllabus
 The complete learner-facing progression experience for a Course, composed of its Level Worlds and their Learning Paths.
 _Avoid_: Learning Path, Level World, curriculum hierarchy
 
+**Journey Presentation**:
+The authored visual configuration of a Practice Journey, including Level World copy, artwork, tones, and node placement. Journey Presentation does not own curriculum hierarchy, learning content, Learner Availability, or progress.
+_Avoid_: Practice Journey, Course Structure, learner progress
+
 **Learner Availability**:
 The derived determination that content can appear in the learner experience. A structural container is available only through learner-available content within it, rather than through its own publication state.
 _Avoid_: Publication Status, Content Readiness, visibility flag
