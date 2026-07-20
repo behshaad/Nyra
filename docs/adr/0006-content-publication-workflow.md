@@ -14,4 +14,6 @@ Published content is not edited in place. Editing creates or resumes a Draft Rev
 
 A Skill and its complete ordered Question set form one publication aggregate. Skill metadata, Question content, Question membership, and Question ordering are prepared in the Skill's Draft Revision and promoted atomically after review; a Question cannot independently alter a Published Skill. Skill and Question identities remain stable across revisions, and learner attempts identify the exact Question Revision presented.
 
+A Learning Session pins the Published Skill Revision and ordered Question Revisions available when the session starts. An active session continues against those revisions after a newer revision is published, while new sessions use the newest Published Revision. Withdrawal can prevent new sessions but does not rewrite the content or history of an existing session.
+
 A Skill cannot become or remain Published unless it contains at least one Published required Question. Publishing an invalid Skill is blocked, as is archiving, unpublishing, moving, or deleting a Question when that change would leave its Published Skill without a Published required Question. Nyra explains the dependency and requires the administrator to change the parent Skill explicitly; it never silently changes the Skill's Publication Status as a side effect.

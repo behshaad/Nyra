@@ -57,7 +57,7 @@ The authored answer pattern for a Question, such as multiple choice, fill-in-bla
 _Avoid_: UI widget, answer mode
 
 **Question Attempt**:
-A learner's submitted response to a Question at a specific moment.
+A learner's submitted response to an exact Question Revision at a specific moment.
 _Avoid_: Answer, response record
 
 **Question Review**:
@@ -85,7 +85,7 @@ The kind of support a Resource provides, such as book, video, audio lesson, exte
 _Avoid_: Category
 
 **Learning Session**:
-A learner's active or completed run through a Skill, including ordered Questions, feedback, retries, completion, and summary.
+A learner's active or completed run through an exact Skill Revision and its ordered Question Revisions, including feedback, retries, completion, and summary.
 _Avoid_: Lesson session, practice run
 
 **Unit Checkpoint**:
