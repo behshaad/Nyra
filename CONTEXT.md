@@ -203,3 +203,7 @@ _Avoid_: Live
 **Archived**:
 Content that has been removed from normal learner access without deleting its history.
 _Avoid_: Deleted, hidden
+
+**Protected Deletion**:
+Permanent removal of Draft content that has no learner history or other protected references. Published or historically referenced content must be Archived so learner attempts, progress, and analytics history remain intact.
+_Avoid_: Cascade deletion, deleting published content
