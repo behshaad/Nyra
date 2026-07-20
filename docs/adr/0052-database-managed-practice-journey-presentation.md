@@ -7,3 +7,5 @@ Course, Level, and Unit remain structural containers without independent publica
 Practice Journey presentation changes remain Draft until an Admin publishes the complete validated configuration atomically. Draft preview and discard operate independently of content publication, so publishing a Journey never publishes Draft Skills or Questions and incomplete visual edits never leak into the learner experience.
 
 Administrator previews use isolated simulated learner progress rather than the administrator's Learner Profile. Previewing must neither depend on nor mutate the operator's personal learning history.
+
+Learner Preview and Draft Journey Preview live behind the server-verified Admin Access boundary and reuse the production learner renderer with authorized preview inputs. Public Practice routes and query parameters cannot activate preview behavior or expose Draft content.
