@@ -1,3 +1,5 @@
 # Public Vercel Blob for MVP learning media
 
 Nyra will store administrator-uploaded images, PDFs, audio, and video in a public Vercel Blob store for the MVP. Public Blob fits Nyra's Vercel Deployment Target and serves learner-facing media directly without routing downloads through application functions; admin authorization, file-type and size validation, randomized paths, and database-backed media metadata remain application responsibilities. Private or access-controlled storage is deferred until Nyra has media that must not be publicly retrievable.
+
+Media Items use operational states such as Uploading, Ready, Failed, and Quarantined rather than the Draft, In Review, Published, and Archived content lifecycle. Content publication governs learner exposure through revision references. Permanent Media Item deletion is allowed only when no current or historical protected revision references it; replacing or removing a Draft reference does not erase media required by Published revisions or learner history.
