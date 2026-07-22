@@ -1,0 +1,1 @@
+export default function AdminMediaLoading() { return <div className="media-admin-page" aria-busy="true" aria-label="Loading Media Library"><div className="media-admin-skeleton is-hero" /><div className="media-admin-skeleton is-upload" /><div className="media-admin-skeleton is-grid" /></div>; }

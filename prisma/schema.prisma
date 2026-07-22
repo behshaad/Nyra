@@ -98,6 +98,20 @@ enum ErrorSeverity {
   CRITICAL
 }
 
+enum MediaKind {
+  IMAGE
+  DOCUMENT
+  AUDIO
+  VIDEO
+}
+
+enum MediaOperationalState {
+  UPLOADING
+  READY
+  FAILED
+  QUARANTINED
+}
+
 model Course {
   id                String   @id @default(uuid())
   slug              String   @unique
@@ -375,6 +389,50 @@ model Resource {
 
   unit  Unit?  @relation(fields: [unitId], references: [id], onDelete: SetNull)
   skill Skill? @relation(fields: [skillId], references: [id], onDelete: SetNull)
+}
+
+model MediaItem {
+  id               String                @id @default(uuid())
+  displayName      String
+  description      String?
+  attribution      String?
+  sourceNotes      String?
+  originalFilename String
+  pathname         String                @unique
+  publicUrl         String                @unique
+  mimeType          String
+  kind              MediaKind
+  byteSize          BigInt
+  checksum          String                @unique
+  operationalState MediaOperationalState @default(READY)
+  uploadedByType    AdminActorType
+  uploadedByUserId  String?
+  uploadedByEmail   String?
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+
+  usages MediaUsage[]
+
+  @@index([kind, operationalState])
+  @@index([createdAt])
+}
+
+model MediaUsage {
+  id          String   @id @default(uuid())
+  mediaItemId String
+  ownerType   String
+  ownerId     String
+  revisionId  String?
+  context     String?
+  altText     String?
+  caption     String?
+  protected   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  mediaItem MediaItem @relation(fields: [mediaItemId], references: [id], onDelete: Restrict)
+
+  @@unique([mediaItemId, ownerType, ownerId, revisionId, context])
+  @@index([ownerType, ownerId])
 }
 
 model FlashcardDeck {
