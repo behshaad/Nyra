@@ -73,7 +73,7 @@ A Flashcard explicitly linked to a Question to help a learner review the gap rev
 _Avoid_: Related card, automatic recommendation
 
 **Resource**:
-Supporting learning material that helps a learner study outside a Skill's required Questions. In A1, Resources can include warmups, grammar summaries, vocabulary support, pronunciation notes, reading support, and worksheets attached to a Unit or Skill.
+Supporting learning material that helps a learner study outside a Skill's required Questions. In A1, Resources can include warmups, grammar summaries, vocabulary support, pronunciation notes, reading support, and worksheets. A Resource has exactly one placement: Level-wide, attached to a Unit, or attached to a Skill. Skill placement derives the parent Unit and Level, and Unit placement derives the parent Level; administrators cannot author contradictory hierarchy fields.
 _Avoid_: Extra, asset
 
 **Resource Library**:
