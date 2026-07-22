@@ -3,11 +3,14 @@ import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AdminResourceForm } from "@/components/admin-resource-form";
+import { AdminResourceArchiveButton } from "@/components/admin-resource-archive-button";
 import { AppHeader } from "@/components/app-header";
 import {
   getResourceBySlug,
   getResourceFormOptions
 } from "@/lib/resources/resource-repository";
+import { canEditDraftContent, draftRevisionRequiredMessage } from "@/lib/admin/content-editability";
+import { PublicationStatus } from "@/lib/generated/prisma/enums";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +30,7 @@ export default async function EditResourcePage({
   if (!resource) {
     notFound();
   }
+  const editable = canEditDraftContent({ aggregateStatus: resource.publicationStatus });
 
   return (
     <main className="site-shell admin-ltr" dir="ltr">
@@ -35,14 +39,14 @@ export default async function EditResourcePage({
 
       <section className="route-page admin-route">
         <div className="route-hero compact">
-          <Link className="ghost-button" href="/admin">
+          <Link className="ghost-button" href="/admin/resources">
             <ArrowLeft size={17} />
-            Back to Admin
+            Back to Resource Studio
           </Link>
-          <span className="section-label">Dev Admin</span>
-          <h1>Edit Resource.</h1>
+          <span className="section-label">Resource Studio</span>
+          <h1>{editable ? "Edit Resource Draft." : "View Resource."}</h1>
           <p>
-            Update learner-facing Resource content or archive it without deleting history.
+            {editable ? "Update this Draft. Publication changes use the review workflow." : draftRevisionRequiredMessage}
           </p>
         </div>
 
@@ -50,6 +54,7 @@ export default async function EditResourcePage({
           <AdminResourceForm
             mode="edit"
             resourceSlug={resource.slug}
+            editable={editable}
             initialValues={{
               title: resource.title,
               slug: resource.slug,
@@ -65,6 +70,7 @@ export default async function EditResourcePage({
                   : "",
               description: resource.description,
               content: resource.content,
+              url: resource.url ?? "",
               unitId: resource.unitId ?? "",
               skillId: resource.skillId ?? "",
               publicationStatus: resource.publicationStatus
@@ -73,6 +79,7 @@ export default async function EditResourcePage({
               id: unit.id,
               slug: unit.slug,
               title: unit.title,
+              levelLabel: unit.level.label,
               skills: unit.skills.map((skill) => ({
                 id: skill.id,
                 slug: skill.slug,
@@ -80,6 +87,9 @@ export default async function EditResourcePage({
               }))
             }))}
           />
+          {resource.publicationStatus === PublicationStatus.PUBLISHED ? (
+            <div className="resource-admin-archive"><AdminResourceArchiveButton resourceSlug={resource.slug} /></div>
+          ) : null}
         </section>
       </section>
     </main>

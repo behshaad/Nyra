@@ -72,6 +72,7 @@ export default async function ResourceDetailPage({
     resource.metadata && typeof resource.metadata === "object"
       ? Object.entries(resource.metadata as Record<string, unknown>)
       : [];
+  const destinationLabel = language === "fa" ? "باز کردن منبع" : language === "de" ? "Ressource öffnen" : "Open Resource";
 
   return (
     <main className={`site-shell ${copy.dir === "rtl" ? "learner-rtl" : ""}`} dir={copy.dir}>
@@ -138,15 +139,21 @@ export default async function ResourceDetailPage({
             </dl>
           ) : null}
 
-          {resource.skill ? (
+          {resource.url || resource.skill ? (
             <div className="route-actions">
-              <Link
+              {resource.url ? (
+                <a className="primary-button" href={resource.url} rel="noopener noreferrer" target="_blank">
+                  {destinationLabel}
+                  <ExternalLink size={18} />
+                </a>
+              ) : null}
+              {resource.skill ? <Link
                 className="primary-button"
                 href={withInterfaceLanguage(`/learn/${resource.skill.slug}`, language)}
               >
                 {text(resourceCopy.practice, language)} {resource.skill.title}
                 <ArrowRight size={18} />
-              </Link>
+              </Link> : null}
             </div>
           ) : null}
         </article>

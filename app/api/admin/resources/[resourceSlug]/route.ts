@@ -3,6 +3,8 @@ import { requireAdminApiAccess } from "@/lib/auth/admin-access";
 import { getPrisma } from "@/lib/db/prisma";
 import { parseResourceInput } from "@/lib/resources/resource-validation";
 import { recordAdminAudit } from "@/lib/admin/audit-log";
+import { canEditDraftContent, draftRevisionRequiredMessage } from "@/lib/admin/content-editability";
+import { PublicationStatus } from "@/lib/generated/prisma/enums";
 
 export async function PATCH(
   request: Request,
@@ -38,6 +40,16 @@ export async function PATCH(
     );
   }
 
+  if (!canEditDraftContent({ aggregateStatus: current.publicationStatus })) {
+    return NextResponse.json({ error: draftRevisionRequiredMessage }, { status: 409 });
+  }
+  if (input.publicationStatus !== PublicationStatus.DRAFT) {
+    return NextResponse.json(
+      { error: "Generic Resource editing cannot change Publication Status." },
+      { status: 400 }
+    );
+  }
+
   if (input.slug !== resourceSlug) {
     const existing = await db.resource.findUnique({
       where: {
@@ -53,11 +65,13 @@ export async function PATCH(
     }
   }
 
-  if (input.unitId) {
+  let levelLabel = input.levelLabel;
+  let unitId = input.unitId;
+
+  if (unitId) {
     const unit = await db.unit.findUnique({
-      where: {
-        id: input.unitId
-      }
+      where: { id: unitId },
+      include: { level: true }
     });
 
     if (!unit) {
@@ -66,13 +80,13 @@ export async function PATCH(
         { status: 400 }
       );
     }
+    levelLabel = unit.level.label;
   }
 
   if (input.skillId) {
     const skill = await db.skill.findUnique({
-      where: {
-        id: input.skillId
-      }
+      where: { id: input.skillId },
+      include: { unit: { include: { level: true } } }
     });
 
     if (!skill) {
@@ -81,6 +95,14 @@ export async function PATCH(
         { status: 400 }
       );
     }
+    if (unitId && skill.unitId !== unitId) {
+      return NextResponse.json(
+        { error: "Related Skill must belong to the selected Unit." },
+        { status: 400 }
+      );
+    }
+    unitId = skill.unitId;
+    levelLabel = skill.unit.level.label;
   }
 
   const resource = await db.resource.update({
@@ -92,13 +114,13 @@ export async function PATCH(
       slug: input.slug,
       description: input.description,
       content: input.content,
-      levelLabel: input.levelLabel,
+      url: input.url,
+      levelLabel,
       language: input.language,
       thumbnailIcon: input.thumbnailIcon,
       metadata: input.metadata,
       type: input.type,
-      publicationStatus: input.publicationStatus,
-      unitId: input.unitId,
+      unitId,
       skillId: input.skillId
     }
   });

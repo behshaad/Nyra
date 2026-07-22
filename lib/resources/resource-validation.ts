@@ -1,3 +1,4 @@
+import { URL } from "node:url";
 import {
   PublicationStatus,
   ResourceType
@@ -8,6 +9,7 @@ export type ResourceInput = {
   slug: string;
   description: string;
   content: string;
+  url: string | null;
   levelLabel: string;
   language: string;
   thumbnailIcon: string;
@@ -41,6 +43,7 @@ export function parseResourceInput(body: Record<string, unknown>):
   const slug = clean(body.slug).toLowerCase();
   const description = clean(body.description);
   const content = clean(body.content);
+  const url = optionalId(body.url);
   const levelLabel = clean(body.levelLabel) || "A1";
   const language = clean(body.language) || "fa";
   const thumbnailIcon = clean(body.thumbnailIcon) || "book-open";
@@ -50,10 +53,10 @@ export function parseResourceInput(body: Record<string, unknown>):
   const unitId = optionalId(body.unitId);
   const skillId = optionalId(body.skillId);
 
-  if (!title || !slug || !description || !content) {
+  if (!title || !slug) {
     return {
       ok: false,
-      error: "Title, slug, description, and content are required."
+      error: "Title and slug are required."
     };
   }
 
@@ -69,6 +72,14 @@ export function parseResourceInput(body: Record<string, unknown>):
       ok: false,
       error: "Resource Type is invalid."
     };
+  }
+
+  if (url) {
+    try {
+      if (new URL(url).protocol !== "https:") throw new Error();
+    } catch {
+      return { ok: false, error: "Resource URL must be a valid HTTPS URL." };
+    }
   }
 
   const metadata = metadataRaw
@@ -100,6 +111,7 @@ export function parseResourceInput(body: Record<string, unknown>):
       slug,
       description,
       content,
+      url,
       levelLabel,
       language,
       thumbnailIcon,

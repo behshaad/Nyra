@@ -30,6 +30,13 @@ export async function PATCH(
     );
   }
 
+  if (current.publicationStatus !== PublicationStatus.PUBLISHED) {
+    return NextResponse.json(
+      { error: "Only a Published Resource can be archived." },
+      { status: 409 }
+    );
+  }
+
   const resource = await db.resource.update({
     where: {
       id: current.id

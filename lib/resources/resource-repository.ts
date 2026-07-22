@@ -37,7 +37,11 @@ export async function getAdminResourcesFromDb() {
 
   return db.resource.findMany({
     include: {
-      unit: true,
+      unit: {
+        include: {
+          level: true
+        }
+      },
       skill: true
     },
     orderBy: {
@@ -51,6 +55,7 @@ export async function getResourceFormOptions() {
 
   return db.unit.findMany({
     include: {
+      level: true,
       skills: {
         orderBy: {
           order: "asc"
