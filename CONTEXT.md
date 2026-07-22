@@ -112,6 +112,10 @@ _Avoid_: Vocabulary item, term card
 An optional audio recording attached to a Flashcard to demonstrate the German prompt's pronunciation during study or review.
 _Avoid_: Speech evaluation, audio lesson
 
+**Media Item**:
+An administrator-uploaded image, PDF, audio file, or video with a stable identity, descriptive metadata, and known usage references. A Media Item can be reused by multiple learning-content or presentation revisions without duplicating the underlying file.
+_Avoid_: Asset, upload, attachment
+
 **Spaced Repetition**:
 A review scheduling method that decides when a learner should see a Flashcard again based on the learner's previous review result for that Flashcard.
 _Avoid_: Random review, simple shuffle
