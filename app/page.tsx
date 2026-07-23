@@ -3,7 +3,6 @@ import { ArrowRight, BookOpen, ChartNoAxesCombined, Crown, Sparkles } from "luci
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
 import { HomeGlobeShowcase } from "@/components/home-globe-showcase";
-import { HomeLayeredMotion } from "@/components/home-layered-motion";
 import { SparklesPreview } from "@/components/sparkles-preview";
 import {
   interfaceCopy,
@@ -36,85 +35,60 @@ export default async function Home({
       <AnimatedBackdrop />
       <AppHeader language={language} currentPath="/" />
 
-      <HomeLayeredMotion>
-        <section className="hero-section layered-home-hero">
-          <div
-            className="home-depth-orbit home-depth-orbit-one"
-            data-home-depth="-12"
-            aria-hidden="true"
-          />
-          <div
-            className="home-depth-orbit home-depth-orbit-two"
-            data-home-depth="18"
-            aria-hidden="true"
-          />
-
-          <div className="hero-copy" data-home-reveal="copy" data-home-depth="10">
-            <div className="eyebrow">
-              <Sparkles size={16} />
-              {copy.home.eyebrow}
-            </div>
-            <h1>{copy.home.title}</h1>
-            <p>{copy.home.body}</p>
-            <div className="hero-actions">
-              {firstSkill ? (
-                <Link
-                  className="primary-button"
-                  href={withInterfaceLanguage(`/learn/${firstSkill.slug}`, language)}
-                >
-                  {copy.home.startA1}
-                  <ArrowRight size={18} />
-                </Link>
-              ) : null}
-              <Link className="secondary-button" href={withInterfaceLanguage("/learn", language)}>
-                {copy.home.viewPath}
+      <section className="hero-section">
+        <div className="hero-copy">
+          <div className="eyebrow">
+            <Sparkles size={16} />
+            {copy.home.eyebrow}
+          </div>
+          <h1>{copy.home.title}</h1>
+          <p>{copy.home.body}</p>
+          <div className="hero-actions">
+            {firstSkill ? (
+              <Link
+                className="primary-button"
+                href={withInterfaceLanguage(`/learn/${firstSkill.slug}`, language)}
+              >
+                {copy.home.startA1}
+                <ArrowRight size={18} />
               </Link>
-            </div>
+            ) : null}
+            <Link className="secondary-button" href={withInterfaceLanguage("/learn", language)}>
+              {copy.home.viewPath}
+            </Link>
           </div>
+        </div>
 
-          <div
-            className="home-hero-globe-layer"
-            data-home-reveal="globe"
-            data-home-depth="-18"
-          >
-            <HomeGlobeShowcase layered />
-          </div>
-
-          <section
-            className="app-panel home-foundation-layer"
-            aria-label="Nyra foundation"
-            data-home-reveal="panel"
-            data-home-depth="24"
-          >
-            <div className="app-panel-header">
-              <div>
-                <p className="panel-kicker">{copy.home.panelKicker}</p>
-                <h2>
-                  A1 · {summary.questionCount} {copy.home.questionCount}
-                </h2>
-              </div>
-              <span className="status-pill">
-                {summary.regularSkillCount} {copy.home.skillCount}
-              </span>
+        <section className="app-panel" aria-label="Nyra foundation">
+          <div className="app-panel-header">
+            <div>
+              <p className="panel-kicker">{copy.home.panelKicker}</p>
+              <h2>
+                A1 · {summary.questionCount} {copy.home.questionCount}
+              </h2>
             </div>
-            <div className="foundation-grid">
-              {copy.home.cards.map((card, index) => {
-                const Icon = foundationIcons[index] ?? BookOpen;
+            <span className="status-pill">
+              {summary.regularSkillCount} {copy.home.skillCount}
+            </span>
+          </div>
+          <div className="foundation-grid">
+            {copy.home.cards.map((card, index) => {
+              const Icon = foundationIcons[index] ?? BookOpen;
 
-                return (
-                  <article className="feature-card" key={card.title}>
+              return (
+              <article className="feature-card" key={card.title}>
                   <Icon size={22} />
-                    <h3>{card.title}</h3>
-                    <p>{card.description}</p>
-                  </article>
-                );
-              })}
-            </div>
-          </section>
+                <h3>{card.title}</h3>
+                <p>{card.description}</p>
+              </article>
+              );
+            })}
+          </div>
         </section>
-      </HomeLayeredMotion>
+      </section>
 
       <SparklesPreview href={withInterfaceLanguage("/practice", language)} />
+      <HomeGlobeShowcase />
     </main>
   );
 }
