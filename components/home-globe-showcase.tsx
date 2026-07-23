@@ -3,9 +3,12 @@
 import { Globe2 } from "lucide-react";
 import { GlobeLabels } from "@/components/ui/cobe-globe-labels";
 
-export function HomeGlobeShowcase() {
+export function HomeGlobeShowcase({ layered = false }: { layered?: boolean }) {
   return (
-    <section className="home-globe-showcase" aria-label="Global learning preview">
+    <section
+      className={`home-globe-showcase${layered ? " home-globe-showcase--layered" : ""}`}
+      aria-label="Global learning preview"
+    >
       <div className="home-globe-stage">
         <GlobeLabels />
       </div>
