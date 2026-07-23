@@ -1,6 +1,6 @@
 export type InterfaceThemeCode = "SYSTEM" | "LIGHT" | "DARK";
 
-export const defaultInterfaceTheme: InterfaceThemeCode = "SYSTEM";
+export const defaultInterfaceTheme: InterfaceThemeCode = "DARK";
 
 const themes = new Set<InterfaceThemeCode>(["SYSTEM", "LIGHT", "DARK"]);
 

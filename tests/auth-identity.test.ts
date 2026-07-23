@@ -53,7 +53,7 @@ describe("Nyra auth identity boundary", () => {
       sourceLanguage: "Persian",
       targetLanguage: "German",
       interfaceLanguage: "en",
-      interfaceTheme: "SYSTEM",
+      interfaceTheme: "DARK",
       currentLevel: "A1",
       dailyGoalMinutes: 10,
       onboardingComplete: false

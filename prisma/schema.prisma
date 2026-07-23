@@ -212,7 +212,7 @@ model LearnerProfile {
   sourceLanguage     String
   targetLanguage     String
   interfaceLanguage  String
-  interfaceTheme     InterfaceTheme @default(SYSTEM)
+  interfaceTheme     InterfaceTheme @default(DARK)
   currentLevel       String
   dailyGoalMinutes   Int
   onboardingComplete Boolean        @default(false)
