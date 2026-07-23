@@ -6,7 +6,7 @@
     "predev": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\"",
     "dev": "next dev",
     "build": "next build",
-    "vercel-build": "prisma migrate resolve --applied 20260720000100_baseline && prisma migrate deploy && next build",
+    "vercel-build": "prisma migrate deploy && next build",
     "start": "next start",
     "postinstall": "prisma generate",
     "lint": "eslint .",
