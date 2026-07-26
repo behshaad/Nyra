@@ -24,7 +24,10 @@ import {
   X
 } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
-import type { InterfaceLanguageCode } from "@/lib/i18n/interface-language";
+import {
+  type InterfaceLanguageCode,
+  withInterfaceLanguage
+} from "@/lib/i18n/interface-language";
 
 type NavItem = {
   href: string;
@@ -168,7 +171,11 @@ export function AdminShell({
   return (
     <div className={`admin-shell ${isPersian ? "admin-shell-rtl" : ""}`} dir={isPersian ? "rtl" : "ltr"}>
       <aside className="admin-shell-sidebar">
-        <Link className="admin-shell-brand" href="/admin" aria-label="Nyra Admin">
+        <Link
+          aria-label={isPersian ? "خانه Nyra" : "Nyra home"}
+          className="admin-shell-brand"
+          href={withInterfaceLanguage("/", language)}
+        >
           <span>N</span>
           <div>
             <strong>Nyra</strong>
