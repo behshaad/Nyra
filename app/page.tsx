@@ -92,7 +92,12 @@ export default async function Home({
         href={withInterfaceLanguage("/practice", language)}
         label={copy.nav.practice}
       />
-      <HomeGlobeShowcase />
+      <HomeGlobeShowcase
+        ariaLabel={copy.home.globeAriaLabel}
+        body={copy.home.globeBody}
+        direction={copy.dir}
+        kicker={copy.home.globeKicker}
+      />
     </main>
   );
 }

@@ -1406,7 +1406,6 @@ h3 {
   border: 0;
   border-radius: var(--radius);
   box-shadow: none;
-  direction: ltr;
   display: grid;
   gap: 44px;
   grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1fr);

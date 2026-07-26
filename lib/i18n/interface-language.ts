@@ -31,6 +31,9 @@ export type InterfaceCopy = {
     questionCount: string;
     skillCount: string;
     practiceCalloutAriaLabel: string;
+    globeAriaLabel: string;
+    globeKicker: string;
+    globeBody: string;
     cards: Array<{
       title: string;
       description: string;
@@ -216,6 +219,9 @@ export const interfaceCopy: Record<InterfaceLanguageCode, InterfaceCopy> = {
       questionCount: "سؤال",
       skillCount: "مهارت",
       practiceCalloutAriaLabel: "باز کردن بخش تمرین",
+      globeAriaLabel: "پیش‌نمایش جهانی یادگیری",
+      globeKicker: "تمرین جهانی",
+      globeBody: "جاهایی را که زبان می‌تواند تو را به آن‌ها ببرد کاوش کن؛ Nyra قدم بعدی را همیشه روشن نگه می‌دارد.",
       cards: [
         {
           title: "مسیر یادگیری A1",
@@ -331,6 +337,9 @@ export const interfaceCopy: Record<InterfaceLanguageCode, InterfaceCopy> = {
       questionCount: "Questions",
       skillCount: "Skills",
       practiceCalloutAriaLabel: "Open practice",
+      globeAriaLabel: "Global learning preview",
+      globeKicker: "Global practice",
+      globeBody: "Spin through the places language can take you while Nyra keeps the next step clear.",
       cards: [
         {
           title: "A1 learning path",
@@ -446,6 +455,9 @@ export const interfaceCopy: Record<InterfaceLanguageCode, InterfaceCopy> = {
       questionCount: "Fragen",
       skillCount: "Skills",
       practiceCalloutAriaLabel: "Uebung oeffnen",
+      globeAriaLabel: "Globale Lernvorschau",
+      globeKicker: "Global ueben",
+      globeBody: "Entdecke, wohin Sprache dich bringen kann, waehrend Nyra den naechsten Schritt klar haelt.",
       cards: [
         {
           title: "A1-Lernpfad",
