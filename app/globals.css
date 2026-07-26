@@ -3017,24 +3017,8 @@ h3 {
   margin-top: 28px;
 }
 
-.resource-search-section {
-  align-items: center;
-  display: grid;
-  gap: 18px;
-  grid-template-columns: minmax(0, 0.8fr) minmax(320px, 0.55fr);
+.resource-search-controls {
   margin-top: 24px;
-}
-
-.resource-search-section h1 {
-  font-size: clamp(2rem, 5vw, 4.1rem);
-  line-height: 1.04;
-  margin: 4px 0 0;
-}
-
-.resource-search-section p {
-  color: var(--muted);
-  line-height: 1.7;
-  margin: 10px 0 0;
 }
 
 .search-bar {
@@ -5364,8 +5348,7 @@ h3 {
   .auth-page,
   .profile-account-grid,
   .profile-hero,
-  .profile-layout,
-  .resource-search-section {
+  .profile-layout {
     grid-template-columns: 1fr;
   }
 

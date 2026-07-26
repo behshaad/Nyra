@@ -120,12 +120,10 @@ export default async function ResourcesPage({
       <AppHeader language={language} currentPath="/resources" />
 
       <section className="route-page">
-        <section className="resource-search-section" aria-labelledby="resource-search-title">
-          <div>
-            <p className="panel-kicker">{text(resourceCopy.label, language)}</p>
-            <h1 id="resource-search-title">{text(resourceCopy.title, language)}</h1>
-            <p>{text(resourceCopy.body, language)}</p>
-          </div>
+        <section
+          aria-label={text(resourceCopy.label, language)}
+          className="resource-search-controls"
+        >
           <SearchBar
             action="/resources"
             defaultValue={query}
