@@ -112,6 +112,7 @@ export function AdminShell({
   const session = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
+  const [languagePending, setLanguagePending] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [query, setQuery] = useState("");
   const profileRef = useRef<globalThis.HTMLDivElement>(null);
@@ -272,6 +273,7 @@ export function AdminShell({
                 aria-haspopup="menu"
                 aria-label={isPersian ? `تغییر زبان رابط: ${language.toUpperCase()}` : `Change interface language: ${language.toUpperCase()}`}
                 className="admin-language-trigger"
+                disabled={languagePending}
                 onClick={() => {
                   setLanguageOpen((open) => !open);
                   setProfileOpen(false);
@@ -295,13 +297,32 @@ export function AdminShell({
                   ] as const).map((option) => (
                     <Link
                       aria-current={option.code === language ? "true" : undefined}
+                      aria-disabled={languagePending}
                       className={option.code === language ? "active" : undefined}
                       href={interfaceLanguagePreferenceHref({
                         language: option.code,
                         returnTo: withInterfaceLanguage(pathname, option.code)
                       })}
                       key={option.code}
-                      onClick={() => setLanguageOpen(false)}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        if (languagePending || option.code === language) {
+                          setLanguageOpen(false);
+                          return;
+                        }
+
+                        setLanguagePending(true);
+                        setLanguageOpen(false);
+                        const location = globalThis.location;
+                        const returnTo = withInterfaceLanguage(
+                          `${location.pathname}${location.search}${location.hash}`,
+                          option.code
+                        );
+                        location.assign(interfaceLanguagePreferenceHref({
+                          language: option.code,
+                          returnTo
+                        }));
+                      }}
                       role="menuitem"
                     >
                       <span>{option.label}</span>
