@@ -12,6 +12,7 @@ import {
   FileQuestion,
   FileText,
   FlaskConical,
+  Globe2,
   Image,
   LayoutDashboard,
   Map,
@@ -25,6 +26,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
 import {
+  interfaceLanguagePreferenceHref,
   type InterfaceLanguageCode,
   withInterfaceLanguage
 } from "@/lib/i18n/interface-language";
@@ -109,14 +111,17 @@ export function AdminShell({
   const router = useRouter();
   const session = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [languageOpen, setLanguageOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [query, setQuery] = useState("");
   const profileRef = useRef<globalThis.HTMLDivElement>(null);
+  const languageRef = useRef<globalThis.HTMLDivElement>(null);
   const isPersian = language === "fa";
   const segments = pathname.split("/").filter(Boolean);
 
   useEffect(() => {
     setMobileOpen(false);
+    setLanguageOpen(false);
     setProfileOpen(false);
   }, [pathname]);
 
@@ -128,6 +133,14 @@ export function AdminShell({
         !profileRef.current.contains(event.target)
       ) {
         setProfileOpen(false);
+      }
+
+      if (
+        languageRef.current &&
+        event.target instanceof globalThis.Node &&
+        !languageRef.current.contains(event.target)
+      ) {
+        setLanguageOpen(false);
       }
     }
 
@@ -252,6 +265,52 @@ export function AdminShell({
           </form>
 
           <div className="admin-topbar-actions">
+            <div className="admin-language-menu" ref={languageRef}>
+              <button
+                aria-controls="admin-language-options"
+                aria-expanded={languageOpen}
+                aria-haspopup="menu"
+                aria-label={isPersian ? `تغییر زبان رابط: ${language.toUpperCase()}` : `Change interface language: ${language.toUpperCase()}`}
+                className="admin-language-trigger"
+                onClick={() => {
+                  setLanguageOpen((open) => !open);
+                  setProfileOpen(false);
+                }}
+                type="button"
+              >
+                <Globe2 aria-hidden="true" size={17} />
+                <span>{language.toUpperCase()}</span>
+                <ChevronDown aria-hidden="true" size={13} />
+              </button>
+              {languageOpen ? (
+                <div
+                  aria-label={isPersian ? "زبان رابط" : "Interface language"}
+                  className="admin-language-dropdown"
+                  id="admin-language-options"
+                  role="menu"
+                >
+                  {([
+                    { code: "fa", label: "فارسی" },
+                    { code: "en", label: "English" }
+                  ] as const).map((option) => (
+                    <Link
+                      aria-current={option.code === language ? "true" : undefined}
+                      className={option.code === language ? "active" : undefined}
+                      href={interfaceLanguagePreferenceHref({
+                        language: option.code,
+                        returnTo: withInterfaceLanguage(pathname, option.code)
+                      })}
+                      key={option.code}
+                      onClick={() => setLanguageOpen(false)}
+                      role="menuitem"
+                    >
+                      <span>{option.label}</span>
+                      <small>{option.code.toUpperCase()}</small>
+                    </Link>
+                  ))}
+                </div>
+              ) : null}
+            </div>
             <Link className="admin-icon-button" href="/admin/notifications" aria-label={isPersian ? "اعلان‌ها" : "Notifications"}>
               <Bell size={18} />
             </Link>

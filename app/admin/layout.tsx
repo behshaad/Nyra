@@ -11,12 +11,10 @@ export default async function AdminLayout({
 }) {
   await requireAdminPageAccess();
   const session = await getAuthSession();
-  const preferences = session
-    ? await getLearnerPreferencesForAuthUser(session.id)
-    : null;
+  const preferences = await getLearnerPreferencesForAuthUser(session?.id);
 
   return (
-    <AdminShell language={preferences?.interfaceLanguage ?? "en"}>
+    <AdminShell language={preferences.interfaceLanguage}>
       {children}
     </AdminShell>
   );
