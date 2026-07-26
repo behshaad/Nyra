@@ -44,6 +44,10 @@ _Avoid_: Source content, imported textbook
 A synthetic-data study that evaluates learner-performance analysis, error-pattern detection, and adaptive recommendations without claiming validation through real learner outcomes.
 _Avoid_: Learner study, production experiment, validated intervention
 
+**Research Artifact**:
+A generated report, figure, table, dataset, or manifest produced by Adaptive Learning Research.
+_Avoid_: Output file, research asset, attachment
+
 **Unit**:
 A themed group of Skills inside a Level. For A1, a Unit represents a major learner-facing theme aligned to the Curriculum Reference's broad lesson progression, not a copied textbook chapter.
 _Avoid_: Module, chapter
