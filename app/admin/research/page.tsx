@@ -26,7 +26,6 @@ export default async function ResearchIndexPage() {
   return (
     <main className="research-page" dir={language === "fa" ? "rtl" : "ltr"}>
       <ResearchPageHeader eyebrow={t.latestRun} title={t.indexTitle} body={t.indexBody} />
-      <aside className="research-notice" role="note">{t.syntheticNotice}</aside>
 
       <section className="research-metrics" aria-label={t.latestRun}>
         <article><Brain /><strong>{research.manifest.learners}</strong><span>{t.learners}</span></article>

@@ -34,7 +34,6 @@ export default async function ResearchResultsPage() {
         body={t.resultsBody}
         actions={<><ResearchLink href="/admin/research" secondary>{t.artifacts}</ResearchLink><a className="primary-link compact-link" href="/api/admin/research/report"><Download size={16} />{t.report}</a></>}
       />
-      <aside className="research-notice" role="note">{t.syntheticNotice}</aside>
 
       <section className="research-figure-grid">
         {research.figures.map((fileName) => (

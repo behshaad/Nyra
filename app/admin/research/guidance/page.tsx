@@ -22,7 +22,6 @@ export default async function ResearchGuidancePage() {
         body={t.guidanceBody}
         actions={<ResearchLink href="/admin/research/adaptive-learning">{t.results}</ResearchLink>}
       />
-      <aside className="research-notice" role="note">{t.syntheticNotice}</aside>
       <section className="research-guidance-grid">
         {sections.map(({ icon: Icon, title, body }) => (
           <article className="research-panel" key={title}>
