@@ -87,7 +87,11 @@ export default async function Home({
         </section>
       </section>
 
-      <SparklesPreview href={withInterfaceLanguage("/practice", language)} />
+      <SparklesPreview
+        ariaLabel={copy.home.practiceCalloutAriaLabel}
+        href={withInterfaceLanguage("/practice", language)}
+        label={copy.nav.practice}
+      />
       <HomeGlobeShowcase />
     </main>
   );

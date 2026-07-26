@@ -30,6 +30,7 @@ export type InterfaceCopy = {
     panelKicker: string;
     questionCount: string;
     skillCount: string;
+    practiceCalloutAriaLabel: string;
     cards: Array<{
       title: string;
       description: string;
@@ -214,6 +215,7 @@ export const interfaceCopy: Record<InterfaceLanguageCode, InterfaceCopy> = {
       panelKicker: "نسخه فعلی",
       questionCount: "سؤال",
       skillCount: "مهارت",
+      practiceCalloutAriaLabel: "باز کردن بخش تمرین",
       cards: [
         {
           title: "مسیر یادگیری A1",
@@ -328,6 +330,7 @@ export const interfaceCopy: Record<InterfaceLanguageCode, InterfaceCopy> = {
       panelKicker: "Current slice",
       questionCount: "Questions",
       skillCount: "Skills",
+      practiceCalloutAriaLabel: "Open practice",
       cards: [
         {
           title: "A1 learning path",
@@ -442,6 +445,7 @@ export const interfaceCopy: Record<InterfaceLanguageCode, InterfaceCopy> = {
       panelKicker: "Aktueller Stand",
       questionCount: "Fragen",
       skillCount: "Skills",
+      practiceCalloutAriaLabel: "Uebung oeffnen",
       cards: [
         {
           title: "A1-Lernpfad",
