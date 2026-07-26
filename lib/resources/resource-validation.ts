@@ -13,6 +13,7 @@ export type ResourceInput = {
   levelLabel: string;
   language: string;
   thumbnailIcon: string;
+  thumbnailMediaId: string | null;
   metadata: Record<string, string>;
   type: ResourceType;
   publicationStatus: PublicationStatus;
@@ -47,6 +48,7 @@ export function parseResourceInput(body: Record<string, unknown>):
   const levelLabel = clean(body.levelLabel) || "A1";
   const language = clean(body.language) || "fa";
   const thumbnailIcon = clean(body.thumbnailIcon) || "book-open";
+  const thumbnailMediaId = optionalId(body.thumbnailMediaId);
   const metadataRaw = clean(body.metadata);
   const type = clean(body.type);
   const publicationStatus = clean(body.publicationStatus);
@@ -115,6 +117,7 @@ export function parseResourceInput(body: Record<string, unknown>):
       levelLabel,
       language,
       thumbnailIcon,
+      thumbnailMediaId,
       metadata,
       type: type as ResourceType,
       publicationStatus: publicationStatus as PublicationStatus,

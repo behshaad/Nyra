@@ -4004,10 +4004,17 @@ h3 {
     rgba(40, 42, 48, 0.58);
 }
 
-.resource-card-media img {
+.resource-card-media img,
+.resource-card-media-image {
   height: 100%;
   object-fit: cover;
   width: 100%;
+}
+
+.resource-card-media-image {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .resource-card-meta span {
@@ -5271,6 +5278,34 @@ h3 {
   grid-column: 1 / -1;
 }
 
+.resource-image-selection {
+  align-items: center;
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(180px, 280px) minmax(0, 1fr);
+  padding: 14px;
+}
+
+.resource-image-selection-preview {
+  aspect-ratio: 16 / 9;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  width: 100%;
+}
+
+.resource-image-selection > div:last-child {
+  align-items: flex-start;
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+}
+
 @keyframes riseIn {
   from {
     opacity: 0;
@@ -5471,6 +5506,7 @@ h3 {
   .resource-library,
   .resource-meta-grid,
   .form-grid,
+  .resource-image-selection,
   .resource-rail,
   .mini-panel-grid,
   .analytics-grid {

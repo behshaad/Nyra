@@ -3,12 +3,18 @@ import { ArrowLeft } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AdminResourceForm } from "@/components/admin-resource-form";
 import { AppHeader } from "@/components/app-header";
-import { getResourceFormOptions } from "@/lib/resources/resource-repository";
+import {
+  getResourceFormOptions,
+  getResourceImageOptions
+} from "@/lib/resources/resource-repository";
 
 export const dynamic = "force-dynamic";
 
 export default async function NewResourcePage() {
-  const units = await getResourceFormOptions();
+  const [units, mediaImages] = await Promise.all([
+    getResourceFormOptions(),
+    getResourceImageOptions()
+  ]);
 
   return (
     <main className="site-shell admin-ltr" dir="ltr">
@@ -30,6 +36,7 @@ export default async function NewResourcePage() {
 
         <section className="app-panel route-panel">
           <AdminResourceForm
+            mediaImages={mediaImages}
             units={units.map((unit) => ({
               id: unit.id,
               slug: unit.slug,

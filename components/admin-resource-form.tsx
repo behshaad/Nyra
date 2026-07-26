@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, Save } from "lucide-react";
 
 type SkillOption = { id: string; slug: string; title: string };
+type MediaImageOption = { id: string; displayName: string; publicUrl: string };
 type UnitOption = {
   id: string;
   slug: string;
@@ -19,6 +20,7 @@ type ResourceInitialValues = {
   levelLabel: string;
   language: string;
   thumbnailIcon: string;
+  thumbnailMediaId: string;
   metadata: string;
   description: string;
   content: string;
@@ -45,12 +47,14 @@ function slugify(value: string) {
 
 export function AdminResourceForm({
   units,
+  mediaImages,
   mode = "create",
   resourceSlug,
   initialValues,
   editable = true
 }: {
   units: UnitOption[];
+  mediaImages: MediaImageOption[];
   mode?: "create" | "edit";
   resourceSlug?: string;
   initialValues?: ResourceInitialValues;
@@ -63,6 +67,7 @@ export function AdminResourceForm({
   const [levelLabel, setLevelLabel] = useState(initialValues?.levelLabel ?? units[0]?.levelLabel ?? "A1");
   const [language, setLanguage] = useState(initialValues?.language ?? "fa");
   const [thumbnailIcon, setThumbnailIcon] = useState(initialValues?.thumbnailIcon ?? "book-open");
+  const [thumbnailMediaId, setThumbnailMediaId] = useState(initialValues?.thumbnailMediaId ?? "");
   const [metadata, setMetadata] = useState(initialValues?.metadata ?? "");
   const [description, setDescription] = useState(initialValues?.description ?? "");
   const [content, setContent] = useState(initialValues?.content ?? "");
@@ -73,6 +78,7 @@ export function AdminResourceForm({
   const [submitting, setSubmitting] = useState(false);
   const levels = useMemo(() => [...new Set(units.map((unit) => unit.levelLabel))], [units]);
   const selectedUnit = units.find((unit) => unit.id === unitId);
+  const selectedImage = mediaImages.find((image) => image.id === thumbnailMediaId);
   const needsDestination = ["EXTERNAL_LINK", "VIDEO", "AUDIO_LESSON"].includes(type);
 
   async function submitResource(event: FormEvent) {
@@ -85,7 +91,7 @@ export function AdminResourceForm({
       const response = await fetch(endpoint, {
         method: mode === "edit" ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, slug, type, levelLabel, language, thumbnailIcon, metadata, description, content, url, unitId, skillId, publicationStatus: "DRAFT" })
+        body: JSON.stringify({ title, slug, type, levelLabel, language, thumbnailIcon, thumbnailMediaId, metadata, description, content, url, unitId, skillId, publicationStatus: "DRAFT" })
       });
       const data = (await response.json()) as { slug?: string; error?: string };
       if (!response.ok || !data.slug) throw new Error(data.error ?? "Unable to save Resource.");
@@ -116,6 +122,30 @@ export function AdminResourceForm({
           <label><span>Level</span><select value={levelLabel} onChange={(event) => { setLevelLabel(event.target.value); setUnitId(""); setSkillId(""); }}>{levels.map((level) => <option key={level}>{level}</option>)}</select></label>
           <label><span>Language coverage</span><input value={language} onChange={(event) => setLanguage(event.target.value)} placeholder="fa" /><small>Current records are single-locale until Resource Revisions add trilingual fields.</small></label>
           <label><span>Thumbnail Icon</span><select value={thumbnailIcon} onChange={(event) => setThumbnailIcon(event.target.value)}>{resourceIcons.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+          <label className="form-grid-wide">
+            <span>Resource image</span>
+            <select value={thumbnailMediaId} onChange={(event) => setThumbnailMediaId(event.target.value)}>
+              <option value="">Default Resource image</option>
+              {mediaImages.map((image) => <option key={image.id} value={image.id}>{image.displayName}</option>)}
+            </select>
+            <small>Select a ready image from Media Library. Changing it updates the learner-facing Resource card.</small>
+          </label>
+          {selectedImage ? (
+            <div className="resource-image-selection form-grid-wide">
+              <div
+                aria-label={`Preview of ${selectedImage.displayName}`}
+                className="resource-image-selection-preview"
+                role="img"
+                style={{ backgroundImage: `url(${JSON.stringify(selectedImage.publicUrl)})` }}
+              />
+              <div>
+                <strong>{selectedImage.displayName}</strong>
+                <button className="ghost-button" type="button" onClick={() => setThumbnailMediaId("")}>
+                  Use default image
+                </button>
+              </div>
+            </div>
+          ) : null}
           <label><span>Related Unit</span><select value={unitId} onChange={(event) => chooseUnit(event.target.value)}><option value="">Level-wide</option>{units.filter((unit) => unit.levelLabel === levelLabel).map((unit) => <option key={unit.id} value={unit.id}>{unit.title}</option>)}</select></label>
           <label className="form-grid-wide"><span>Related Skill</span><select value={skillId} disabled={!editable || !selectedUnit} onChange={(event) => setSkillId(event.target.value)}><option value="">No Skill (Unit Resource)</option>{selectedUnit?.skills.map((skill) => <option key={skill.id} value={skill.id}>{skill.title}</option>)}</select></label>
           <label className="form-grid-wide"><span>{needsDestination ? "HTTPS destination (required before publication)" : "HTTPS destination (optional)"}</span><input type="url" pattern="https://.*" value={url} onChange={(event) => setUrl(event.target.value)} placeholder="https://…" /></label>

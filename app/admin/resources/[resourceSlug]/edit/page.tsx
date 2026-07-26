@@ -7,7 +7,8 @@ import { AdminResourceArchiveButton } from "@/components/admin-resource-archive-
 import { AppHeader } from "@/components/app-header";
 import {
   getResourceBySlug,
-  getResourceFormOptions
+  getResourceFormOptions,
+  getResourceImageOptions
 } from "@/lib/resources/resource-repository";
 import { canEditDraftContent, draftRevisionRequiredMessage } from "@/lib/admin/content-editability";
 import { PublicationStatus } from "@/lib/generated/prisma/enums";
@@ -22,9 +23,10 @@ export default async function EditResourcePage({
   }>;
 }) {
   const { resourceSlug } = await params;
-  const [resource, units] = await Promise.all([
+  const [resource, units, mediaImages] = await Promise.all([
     getResourceBySlug(resourceSlug),
-    getResourceFormOptions()
+    getResourceFormOptions(),
+    getResourceImageOptions()
   ]);
 
   if (!resource) {
@@ -52,6 +54,7 @@ export default async function EditResourcePage({
 
         <section className="app-panel route-panel">
           <AdminResourceForm
+            mediaImages={mediaImages}
             mode="edit"
             resourceSlug={resource.slug}
             editable={editable}
@@ -62,6 +65,7 @@ export default async function EditResourcePage({
               levelLabel: resource.levelLabel,
               language: resource.language,
               thumbnailIcon: resource.thumbnailIcon,
+              thumbnailMediaId: resource.thumbnailMediaId ?? "",
               metadata:
                 resource.metadata && typeof resource.metadata === "object"
                   ? Object.entries(resource.metadata as Record<string, unknown>)

@@ -3,7 +3,11 @@ import { requireAdminApiAccess } from "@/lib/auth/admin-access";
 import { getPrisma } from "@/lib/db/prisma";
 import { parseResourceInput } from "@/lib/resources/resource-validation";
 import { recordAdminAudit } from "@/lib/admin/audit-log";
-import { PublicationStatus } from "@/lib/generated/prisma/enums";
+import {
+  MediaKind,
+  MediaOperationalState,
+  PublicationStatus
+} from "@/lib/generated/prisma/enums";
 
 export async function POST(request: Request) {
   const denied = await requireAdminApiAccess(request);
@@ -74,22 +78,52 @@ export async function POST(request: Request) {
     levelLabel = skill.unit.level.label;
   }
 
-  const resource = await db.resource.create({
-    data: {
-      title: input.title,
-      slug: input.slug,
-      description: input.description,
-      content: input.content,
-      url: input.url,
-      levelLabel,
-      language: input.language,
-      thumbnailIcon: input.thumbnailIcon,
-      metadata: input.metadata,
-      type: input.type,
-      publicationStatus: input.publicationStatus,
-      unitId,
-      skillId: input.skillId
+  if (input.thumbnailMediaId) {
+    const image = await db.mediaItem.findFirst({
+      where: {
+        id: input.thumbnailMediaId,
+        kind: MediaKind.IMAGE,
+        operationalState: MediaOperationalState.READY
+      },
+      select: { id: true }
+    });
+    if (!image) {
+      return NextResponse.json({ error: "Selected Resource image is unavailable." }, { status: 400 });
     }
+  }
+
+  const resource = await db.$transaction(async (transaction) => {
+    const created = await transaction.resource.create({
+      data: {
+        title: input.title,
+        slug: input.slug,
+        description: input.description,
+        content: input.content,
+        url: input.url,
+        levelLabel,
+        language: input.language,
+        thumbnailIcon: input.thumbnailIcon,
+        metadata: input.metadata,
+        type: input.type,
+        publicationStatus: input.publicationStatus,
+        unitId,
+        skillId: input.skillId
+      }
+    });
+
+    if (input.thumbnailMediaId) {
+      await transaction.mediaUsage.create({
+        data: {
+          mediaItemId: input.thumbnailMediaId,
+          ownerType: "RESOURCE",
+          ownerId: created.id,
+          context: "thumbnail",
+          altText: input.title
+        }
+      });
+    }
+
+    return created;
   });
 
   await recordAdminAudit(request, {

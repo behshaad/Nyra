@@ -167,12 +167,19 @@ export default async function ResourcesPage({
                 key={resource.slug}
               >
                 <div className="resource-card-media" aria-hidden="true">
-                  <Image
-                    alt=""
-                    fill
-                    sizes="(max-width: 1040px) 100vw, 33vw"
-                    src="/resources/resource-library-photo.jpg"
-                  />
+                  {resource.thumbnailImageUrl ? (
+                    <div
+                      className="resource-card-media-image"
+                      style={{ backgroundImage: `url(${JSON.stringify(resource.thumbnailImageUrl)})` }}
+                    />
+                  ) : (
+                    <Image
+                      alt=""
+                      fill
+                      sizes="(max-width: 1040px) 100vw, 33vw"
+                      src="/resources/resource-library-photo.jpg"
+                    />
+                  )}
                   <span className="resource-card-media-icon">
                     <Icon size={18} />
                   </span>
