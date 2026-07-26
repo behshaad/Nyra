@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
-import { ResourceSpotlightCard } from "@/components/resource-spotlight-card";
 import { SearchBar } from "@/components/ui/search-bar";
 import {
   interfaceCopy,
@@ -152,8 +151,6 @@ export default async function ResourcesPage({
             </span>
           ))}
         </div>
-
-        {hasSearch ? null : <ResourceSpotlightCard />}
 
         <section className="resource-library" aria-label="Published resources">
           {visibleResources.map((resource) => {
