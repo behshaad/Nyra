@@ -1,11 +1,13 @@
 import {
   interfaceCopy,
+  resolveSupportedInterfaceLanguage,
   type InterfaceLanguageCode
 } from "@/lib/i18n/interface-language";
 import type { InterfaceThemeCode } from "@/lib/i18n/interface-theme";
 import { getAuthSession } from "@/lib/auth/server";
 import { getLearnerPreferencesForAuthUser } from "@/lib/learner/preferences";
 import { ThemeSync } from "@/components/theme-sync";
+import { InterfaceLanguageSync } from "@/components/interface-language-sync";
 import { AppHeaderClient } from "@/components/app-header-client";
 
 export async function AppHeader({
@@ -22,13 +24,17 @@ export async function AppHeader({
     language && theme
       ? null
       : await getLearnerPreferencesForAuthUser(session?.id);
-  const activeLanguage = language ?? preferences?.interfaceLanguage ?? "fa";
+  const activeLanguage = resolveSupportedInterfaceLanguage(
+    language,
+    preferences?.interfaceLanguage
+  );
   const activeTheme = theme ?? preferences?.interfaceTheme ?? "SYSTEM";
   const copy = interfaceCopy[activeLanguage];
 
   return (
     <>
       <ThemeSync theme={activeTheme} />
+      <InterfaceLanguageSync language={activeLanguage} />
       <AppHeaderClient
         currentPath={currentPath}
         labels={{

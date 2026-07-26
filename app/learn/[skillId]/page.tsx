@@ -5,7 +5,7 @@ import { AppHeader } from "@/components/app-header";
 import { BackendSkillSession } from "@/components/backend-skill-session";
 import {
   interfaceCopy,
-  resolveInterfaceLanguage,
+  resolveSupportedInterfaceLanguage,
   withInterfaceLanguage
 } from "@/lib/i18n/interface-language";
 import { getLearnerPreferences } from "@/lib/learner/preferences";
@@ -29,7 +29,7 @@ export default async function SkillPage({
   const { ui } = await searchParams;
   const preferences = await getLearnerPreferences();
   const language = ui
-    ? resolveInterfaceLanguage(ui)
+    ? resolveSupportedInterfaceLanguage(ui, preferences.interfaceLanguage)
     : preferences.interfaceLanguage;
   const copy = interfaceCopy[language];
   const [skill, flatSkills] = await Promise.all([

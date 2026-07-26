@@ -16,7 +16,7 @@ import { ResourceSpotlightCard } from "@/components/resource-spotlight-card";
 import { SearchBar } from "@/components/ui/search-bar";
 import {
   interfaceCopy,
-  resolveInterfaceLanguage,
+  resolveSupportedInterfaceLanguage,
   withInterfaceLanguage
 } from "@/lib/i18n/interface-language";
 import { resourceCopy, resourceTypeCopy, text } from "@/lib/i18n/page-copy";
@@ -102,7 +102,7 @@ export default async function ResourcesPage({
   const { q, ui } = await searchParams;
   const preferences = await getLearnerPreferences();
   const language = ui
-    ? resolveInterfaceLanguage(ui)
+    ? resolveSupportedInterfaceLanguage(ui, preferences.interfaceLanguage)
     : preferences.interfaceLanguage;
   const copy = interfaceCopy[language];
   const resources = (await getPublishedResourcesFromDb()).map((resource) =>

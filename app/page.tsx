@@ -6,7 +6,7 @@ import { HomeGlobeShowcase } from "@/components/home-globe-showcase";
 import { SparklesPreview } from "@/components/sparkles-preview";
 import {
   interfaceCopy,
-  resolveInterfaceLanguage,
+  resolveSupportedInterfaceLanguage,
   withInterfaceLanguage
 } from "@/lib/i18n/interface-language";
 import { getLearnerPreferences } from "@/lib/learner/preferences";
@@ -24,7 +24,7 @@ export default async function Home({
   const { ui } = await searchParams;
   const preferences = await getLearnerPreferences();
   const language = ui
-    ? resolveInterfaceLanguage(ui)
+    ? resolveSupportedInterfaceLanguage(ui, preferences.interfaceLanguage)
     : preferences.interfaceLanguage;
   const copy = interfaceCopy[language];
   const summary = getA1ContentSummary();

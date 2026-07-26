@@ -4,7 +4,7 @@ import { AppHeader } from "@/components/app-header";
 import { AuthForm } from "@/components/auth/auth-form";
 import {
   interfaceCopy,
-  resolveInterfaceLanguage
+  resolveSupportedInterfaceLanguage
 } from "@/lib/i18n/interface-language";
 import { getLearnerPreferences, safeReturnTo } from "@/lib/learner/preferences";
 
@@ -21,7 +21,7 @@ export default async function LoginPage({
   const { error, message, returnTo, ui } = await searchParams;
   const preferences = await getLearnerPreferences();
   const language = ui
-    ? resolveInterfaceLanguage(ui)
+    ? resolveSupportedInterfaceLanguage(ui, preferences.interfaceLanguage)
     : preferences.interfaceLanguage;
   const copy = interfaceCopy[language];
 

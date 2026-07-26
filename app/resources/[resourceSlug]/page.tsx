@@ -16,7 +16,7 @@ import { AppHeader } from "@/components/app-header";
 import { PublicationStatus } from "@/lib/generated/prisma/enums";
 import {
   interfaceCopy,
-  resolveInterfaceLanguage,
+  resolveSupportedInterfaceLanguage,
   withInterfaceLanguage
 } from "@/lib/i18n/interface-language";
 import {
@@ -57,7 +57,7 @@ export default async function ResourceDetailPage({
   const { ui } = await searchParams;
   const preferences = await getLearnerPreferences();
   const language = ui
-    ? resolveInterfaceLanguage(ui)
+    ? resolveSupportedInterfaceLanguage(ui, preferences.interfaceLanguage)
     : preferences.interfaceLanguage;
   const copy = interfaceCopy[language];
   const rawResource = await getResourceBySlug(resourceSlug);

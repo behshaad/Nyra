@@ -19,7 +19,7 @@ import { AnimatedBackdrop } from "@/components/animated-backdrop";
 import { AppHeader } from "@/components/app-header";
 import {
   interfaceCopy,
-  resolveInterfaceLanguage,
+  resolveSupportedInterfaceLanguage,
   withInterfaceLanguage
 } from "@/lib/i18n/interface-language";
 import {
@@ -161,7 +161,7 @@ export default async function AdminPage({
   const { ui } = await searchParams;
   const preferences = await getLearnerPreferences();
   const language = ui
-    ? resolveInterfaceLanguage(ui)
+    ? resolveSupportedInterfaceLanguage(ui, preferences.interfaceLanguage)
     : preferences.interfaceLanguage;
   const copy = interfaceCopy[language];
   const t = labels[language];

@@ -8,7 +8,7 @@ import {
 import { localizeFlashcardDeckForInterface } from "@/lib/flashcards/flashcard-display";
 import {
   interfaceCopy,
-  resolveInterfaceLanguage
+  resolveSupportedInterfaceLanguage
 } from "@/lib/i18n/interface-language";
 import { getLearnerPreferences } from "@/lib/learner/preferences";
 
@@ -22,7 +22,7 @@ export default async function FlashcardsPage({
   const { ui } = await searchParams;
   const preferences = await getLearnerPreferences();
   const language = ui
-    ? resolveInterfaceLanguage(ui)
+    ? resolveSupportedInterfaceLanguage(ui, preferences.interfaceLanguage)
     : preferences.interfaceLanguage;
   const copy = interfaceCopy[language];
   const [decks, units] = await Promise.all([

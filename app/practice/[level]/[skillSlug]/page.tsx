@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { SkillPlayer } from "@/components/practice/world/skill-player";
 import { getAuthSession } from "@/lib/auth/server";
-import { resolveInterfaceLanguage } from "@/lib/i18n/interface-language";
+import { resolveSupportedInterfaceLanguage } from "@/lib/i18n/interface-language";
 import { getLearnerPreferencesForAuthUser } from "@/lib/learner/preferences";
 import { getPracticeJourney } from "@/lib/practice/journey";
 
@@ -21,7 +21,7 @@ export default async function PracticeSkillPage({
   const normalizedLevel = level.toUpperCase();
   const session = await getAuthSession();
   const preferences = await getLearnerPreferencesForAuthUser(session?.id);
-  const language = ui ? resolveInterfaceLanguage(ui) : preferences.interfaceLanguage;
+  const language = ui ? resolveSupportedInterfaceLanguage(ui, preferences.interfaceLanguage) : preferences.interfaceLanguage;
   const practiceHref = language === "fa" ? "/practice" : `/practice?ui=${language}`;
   const worldHref =
     language === "fa"

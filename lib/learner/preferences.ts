@@ -1,7 +1,8 @@
 import { getPrisma } from "@/lib/db/prisma";
 import {
   defaultInterfaceLanguage,
-  resolveInterfaceLanguage,
+  interfaceLanguageCookie,
+  resolveSupportedInterfaceLanguage,
   type InterfaceLanguageCode
 } from "@/lib/i18n/interface-language";
 import {
@@ -45,8 +46,9 @@ export function defaultLearnerPreferences(): LearnerPreferences {
 }
 
 export async function getLearnerPreferencesForAuthUser(
-  authUserId = devAuthUserId
+  authUserId?: string
 ): Promise<LearnerPreferences> {
+  const resolvedAuthUserId = authUserId ?? devAuthUserId;
   let learnerProfile:
     | {
         interfaceLanguage: string;
@@ -60,7 +62,7 @@ export async function getLearnerPreferencesForAuthUser(
 
     learnerProfile = await db.learnerProfile.findUnique({
       where: {
-        authUserId
+        authUserId: resolvedAuthUserId
       },
       select: {
         interfaceLanguage: true,
@@ -81,7 +83,7 @@ export async function getLearnerPreferencesForAuthUser(
 
     learnerProfile = await db.learnerProfile.findUnique({
       where: {
-        authUserId
+        authUserId: resolvedAuthUserId
       },
       select: {
         interfaceLanguage: true,
@@ -90,9 +92,23 @@ export async function getLearnerPreferencesForAuthUser(
     });
   }
 
+  let guestLanguage: string | undefined;
+  if (!authUserId) {
+    try {
+      const { cookies } = await import("next/headers");
+      guestLanguage = (await cookies()).get(interfaceLanguageCookie)?.value;
+    } catch {
+      // Request cookies are unavailable in scripts and isolated unit tests.
+    }
+  }
+
   return {
-    interfaceLanguage: resolveInterfaceLanguage(
-      learnerProfile?.interfaceLanguage ?? defaultInterfaceLanguage
+    interfaceLanguage: resolveSupportedInterfaceLanguage(
+      guestLanguage,
+      resolveSupportedInterfaceLanguage(
+        learnerProfile?.interfaceLanguage,
+        defaultInterfaceLanguage
+      )
     ),
     interfaceTheme: resolveInterfaceTheme(
       learnerProfile?.interfaceTheme ?? defaultInterfaceTheme
@@ -102,7 +118,7 @@ export async function getLearnerPreferencesForAuthUser(
 }
 
 export async function getLearnerPreferences(): Promise<LearnerPreferences> {
-  return getLearnerPreferencesForAuthUser(devAuthUserId);
+  return getLearnerPreferencesForAuthUser();
 }
 
 export function safeReturnTo(value: string | null) {

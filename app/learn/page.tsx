@@ -6,7 +6,7 @@ import { getAuthSession } from "@/lib/auth/server";
 import {
   interfaceCopy,
   levelPreferenceHref,
-  resolveInterfaceLanguage,
+  resolveSupportedInterfaceLanguage,
   withInterfaceLanguage
 } from "@/lib/i18n/interface-language";
 import { getLearnerPreferencesForAuthUser } from "@/lib/learner/preferences";
@@ -31,7 +31,7 @@ export default async function LearnPage({
   const session = await getAuthSession();
   const preferences = await getLearnerPreferencesForAuthUser(session?.id);
   const language = ui
-    ? resolveInterfaceLanguage(ui)
+    ? resolveSupportedInterfaceLanguage(ui, preferences.interfaceLanguage)
     : preferences.interfaceLanguage;
   const copy = interfaceCopy[language];
   const selectedLevelLabel = levelOptions.some(

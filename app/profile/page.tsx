@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import {
   interfaceCopy,
-  resolveInterfaceLanguage
+  resolveSupportedInterfaceLanguage
 } from "@/lib/i18n/interface-language";
 import { profileCopy, text } from "@/lib/i18n/page-copy";
 import { getLearnerPreferencesForAuthUser } from "@/lib/learner/preferences";
@@ -140,7 +140,7 @@ export default async function ProfilePage({
     getLearnerProfileView(session?.id)
   ]);
   const language = ui
-    ? resolveInterfaceLanguage(ui)
+    ? resolveSupportedInterfaceLanguage(ui, preferences.interfaceLanguage)
     : preferences.interfaceLanguage;
   const copy = interfaceCopy[language];
   const journey = await getPracticeJourney({

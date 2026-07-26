@@ -4,7 +4,7 @@ import { AppHeader } from "@/components/app-header";
 import { PricingGlassDemo } from "@/components/pricing-glass-demo";
 import {
   interfaceCopy,
-  resolveInterfaceLanguage
+  resolveSupportedInterfaceLanguage
 } from "@/lib/i18n/interface-language";
 import { pricingCopy, text } from "@/lib/i18n/page-copy";
 import { getLearnerPreferences } from "@/lib/learner/preferences";
@@ -25,7 +25,7 @@ export default async function PricingPage({
   const { ui } = await searchParams;
   const preferences = await getLearnerPreferences();
   const language = ui
-    ? resolveInterfaceLanguage(ui)
+    ? resolveSupportedInterfaceLanguage(ui, preferences.interfaceLanguage)
     : preferences.interfaceLanguage;
   const copy = interfaceCopy[language];
 

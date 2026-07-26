@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { WorldPage } from "@/components/practice/world/level-world";
 import { getAuthSession } from "@/lib/auth/server";
-import { resolveInterfaceLanguage } from "@/lib/i18n/interface-language";
+import { resolveSupportedInterfaceLanguage } from "@/lib/i18n/interface-language";
 import { getLearnerPreferencesForAuthUser } from "@/lib/learner/preferences";
 import { getLevelWorldConfig } from "@/lib/practice/level-worlds";
 import { getPracticeJourney } from "@/lib/practice/journey";
@@ -22,7 +22,7 @@ export default async function PracticeLevelPage({
   const normalizedLevel = level.toUpperCase();
   const session = await getAuthSession();
   const preferences = await getLearnerPreferencesForAuthUser(session?.id);
-  const language = ui ? resolveInterfaceLanguage(ui) : preferences.interfaceLanguage;
+  const language = ui ? resolveSupportedInterfaceLanguage(ui, preferences.interfaceLanguage) : preferences.interfaceLanguage;
   const returnToPractice = language === "fa" ? "/practice" : `/practice?ui=${language}`;
 
   if (!allowedLevels.has(normalizedLevel)) {

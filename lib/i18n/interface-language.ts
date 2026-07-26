@@ -1,4 +1,8 @@
 export type InterfaceLanguageCode = "fa" | "en" | "de";
+export type SupportedInterfaceLanguageCode = "fa" | "en";
+
+export const supportedInterfaceLanguages = ["fa", "en"] as const;
+export const interfaceLanguageCookie = "nyra-interface-language";
 
 export type InterfaceCopy = {
   dir: "rtl" | "ltr";
@@ -104,6 +108,16 @@ export type InterfaceCopy = {
 
 export const defaultInterfaceLanguage: InterfaceLanguageCode = "fa";
 
+export function isInterfaceLanguage(value: unknown): value is InterfaceLanguageCode {
+  return value === "fa" || value === "en" || value === "de";
+}
+
+export function isSupportedInterfaceLanguage(
+  value: unknown
+): value is SupportedInterfaceLanguageCode {
+  return value === "fa" || value === "en";
+}
+
 export function resolveInterfaceLanguage(value: unknown): InterfaceLanguageCode {
   if (value === "en" || value === "English") {
     return "en";
@@ -114,6 +128,21 @@ export function resolveInterfaceLanguage(value: unknown): InterfaceLanguageCode 
   }
 
   return defaultInterfaceLanguage;
+}
+
+export function resolveSupportedInterfaceLanguage(
+  value: unknown,
+  fallback: InterfaceLanguageCode = defaultInterfaceLanguage
+): SupportedInterfaceLanguageCode {
+  if (value === "en" || value === "English") {
+    return "en";
+  }
+
+  if (value === "fa" || value === "Persian" || value === "فارسی") {
+    return "fa";
+  }
+
+  return isSupportedInterfaceLanguage(fallback) ? fallback : "fa";
 }
 
 export function interfaceLanguagePreferenceHref(input: {
@@ -144,14 +173,14 @@ export function withInterfaceLanguage(
   href: string,
   language: InterfaceLanguageCode
 ) {
-  if (language === defaultInterfaceLanguage) {
-    return href;
-  }
-
   const [hrefWithoutHash, hash = ""] = href.split("#");
   const [pathname, query = ""] = hrefWithoutHash.split("?");
   const params = new globalThis.URLSearchParams(query);
-  params.set("ui", language);
+  if (language === defaultInterfaceLanguage) {
+    params.delete("ui");
+  } else {
+    params.set("ui", language);
+  }
   const serialized = params.toString();
   const hashFragment = hash ? `#${hash}` : "";
 

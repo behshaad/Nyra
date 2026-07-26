@@ -24,6 +24,7 @@ import { logoutAction } from "@/lib/auth/actions";
 import {
   interfaceLanguagePreferenceHref,
   type InterfaceLanguageCode,
+  type SupportedInterfaceLanguageCode,
   withInterfaceLanguage
 } from "@/lib/i18n/interface-language";
 import {
@@ -38,12 +39,11 @@ const navItems = [
 ] as const;
 
 const languageOptions: Array<{
-  code: InterfaceLanguageCode;
+  code: SupportedInterfaceLanguageCode;
   label: string;
 }> = [
-  { code: "fa", label: "FA" },
-  { code: "en", label: "EN" },
-  { code: "de", label: "DE" }
+  { code: "fa", label: "فارسی" },
+  { code: "en", label: "English" }
 ];
 
 const labels = {
@@ -417,14 +417,57 @@ function LanguageSwitcher({
   menuLabel: string;
   onOpenChange: (isOpen: boolean) => void;
 }) {
+  const [isPending, setIsPending] = useState(false);
+  const triggerRef = useRef<ElementRef<"button">>(null);
+
+  function focusOption(position: "first" | "last") {
+    globalThis.setTimeout(() => {
+      const items = globalThis.document.querySelectorAll<ElementRef<"a">>(
+        `#${id} [role="menuitem"]`
+      );
+      items[position === "first" ? 0 : items.length - 1]?.focus();
+    });
+  }
+
   return (
-    <div className="language-menu-wrap">
+    <div
+      className="language-menu-wrap"
+      onKeyDown={(event) => {
+        const items = Array.from(
+          globalThis.document.querySelectorAll<ElementRef<"a">>(
+            `#${id} [role="menuitem"]`
+          )
+        );
+        const activeIndex = items.indexOf(
+          globalThis.document.activeElement as ElementRef<"a">
+        );
+
+        if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+          event.preventDefault();
+          if (!isOpen) {
+            onOpenChange(true);
+            focusOption(event.key === "ArrowDown" ? "first" : "last");
+            return;
+          }
+          const offset = event.key === "ArrowDown" ? 1 : -1;
+          items[(activeIndex + offset + items.length) % items.length]?.focus();
+        }
+
+        if (event.key === "Escape") {
+          onOpenChange(false);
+          triggerRef.current?.focus();
+        }
+      }}
+    >
       <button
+        ref={triggerRef}
         className="icon-button language-globe-button"
         type="button"
         aria-expanded={isOpen}
-        aria-label={menuLabel}
+        aria-label={`${menuLabel}: ${language.toUpperCase()}`}
         aria-controls={id}
+        aria-haspopup="menu"
+        disabled={isPending}
         title={menuLabel}
         onClick={() => onOpenChange(!isOpen)}
       >
@@ -454,9 +497,27 @@ function LanguageSwitcher({
                 key={option.code}
                 role="menuitem"
                 aria-current={option.code === language ? "true" : undefined}
-                onClick={() => onOpenChange(false)}
+                aria-disabled={isPending}
+                onClick={(event) => {
+                  event.preventDefault();
+                  if (isPending || option.code === language) {
+                    onOpenChange(false);
+                    return;
+                  }
+                  setIsPending(true);
+                  onOpenChange(false);
+                  const location = globalThis.location;
+                  const returnTo = withInterfaceLanguage(
+                    `${location.pathname}${location.search}${location.hash}`,
+                    option.code
+                  );
+                  location.assign(interfaceLanguagePreferenceHref({
+                    language: option.code,
+                    returnTo
+                  }));
+                }}
               >
-                <span>{option.label}</span>
+                <span>{option.label} ({option.code.toUpperCase()})</span>
               </Link>
             ))}
           </motion.div>
