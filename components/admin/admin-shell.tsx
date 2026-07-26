@@ -11,6 +11,7 @@ import {
   ChevronDown,
   FileQuestion,
   FileText,
+  FlaskConical,
   Image,
   LayoutDashboard,
   Map,
@@ -28,11 +29,11 @@ import type { InterfaceLanguageCode } from "@/lib/i18n/interface-language";
 type NavItem = {
   href: string;
   icon: typeof LayoutDashboard;
-  label: { en: string; fa: string };
+  label: { en: string; fa: string; de?: string };
 };
 
 const navigation: Array<{
-  label?: { en: string; fa: string };
+  label?: { en: string; fa: string; de?: string };
   items: NavItem[];
 }> = [
   {
@@ -56,13 +57,14 @@ const navigation: Array<{
     items: [
       { href: "/admin/users", icon: Users, label: { en: "Users", fa: "کاربران" } },
       { href: "/admin/analytics", icon: BarChart3, label: { en: "Analytics", fa: "تحلیل‌ها" } },
+      { href: "/admin/research", icon: FlaskConical, label: { en: "Adaptive Learning Research", fa: "پژوهش یادگیری تطبیقی", de: "Adaptive-Learning-Forschung" } },
       { href: "/admin/logs", icon: Activity, label: { en: "Operations", fa: "عملیات" } },
       { href: "/admin/settings", icon: Settings, label: { en: "Settings", fa: "تنظیمات" } }
     ]
   }
 ];
 
-const pathLabels: Record<string, { en: string; fa: string }> = {
+const pathLabels: Record<string, { en: string; fa: string; de?: string }> = {
   admin: { en: "Admin", fa: "مدیریت" },
   practice: { en: "Practice Journey", fa: "مسیر تمرین" },
   skills: { en: "Skills", fa: "مهارت‌ها" },
@@ -72,14 +74,19 @@ const pathLabels: Record<string, { en: string; fa: string }> = {
   media: { en: "Media", fa: "رسانه" },
   users: { en: "Users", fa: "کاربران" },
   analytics: { en: "Analytics", fa: "تحلیل‌ها" },
+  research: { en: "Adaptive Learning Research", fa: "پژوهش یادگیری تطبیقی", de: "Adaptive-Learning-Forschung" },
+  "adaptive-learning": { en: "Results", fa: "نتایج", de: "Ergebnisse" },
+  guidance: { en: "Guidance", fa: "راهنما", de: "Leitfaden" },
   logs: { en: "Operations", fa: "عملیات" },
   settings: { en: "Settings", fa: "تنظیمات" },
   edit: { en: "Edit", fa: "ویرایش" },
   new: { en: "New", fa: "جدید" }
 };
 
-function localized(value: { en: string; fa: string }, language: InterfaceLanguageCode) {
-  return language === "fa" ? value.fa : value.en;
+function localized(value: { en: string; fa: string; de?: string }, language: InterfaceLanguageCode) {
+  if (language === "fa") return value.fa;
+  if (language === "de") return value.de ?? value.en;
+  return value.en;
 }
 
 function activePath(pathname: string, href: string) {

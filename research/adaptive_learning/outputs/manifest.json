@@ -1,0 +1,9 @@
+{
+  "seed": 42,
+  "learners": 100,
+  "interactions": 34837,
+  "report": "outputs/final_report.md",
+  "data_dir": "outputs/data",
+  "table_dir": "outputs/tables",
+  "figure_dir": "outputs/figures"
+}
