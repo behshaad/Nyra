@@ -217,11 +217,19 @@ The language a learner is studying in a Course.
 _Avoid_: Learning language
 
 **Interface Language**:
-The language used by Nyra's navigation, controls, account screens, and other product UI. Nyra can offer Persian, English, and German Interface Languages without changing the Course's Source Language or Target Language.
+The language used by Nyra's navigation, controls, account screens, and other product UI. Changing the Interface Language does not change the Course's Source Language or Target Language.
 _Avoid_: App language
 
+**Supported Interface Language**:
+An Interface Language whose complete public and learner-facing experience is translated, directionally correct, and available for learners to select. Persian and English are Supported Interface Languages; German remains preview-only until it meets the same standard.
+_Avoid_: Partially supported language, mixed-language mode
+
+**Preview Interface Language**:
+An Interface Language available only in an isolated administrator preview while its public and learner-facing coverage is incomplete. Selecting a Preview Interface Language does not change a learner's saved Interface Language.
+_Avoid_: Supported language, learner language option
+
 **Interface Language Toggle**:
-A learner-facing control for changing Nyra's Interface Language, such as Persian, English, or German, without changing the learner's Level, Source Language, Target Language, or Course.
+A learner-facing control for changing between Supported Interface Languages without changing the learner's Level, Source Language, Target Language, or Course.
 _Avoid_: Level selector, learning language switcher
 
 **Interface Theme**:
